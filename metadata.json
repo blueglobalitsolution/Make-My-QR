@@ -1,0 +1,7 @@
+{
+  "name": "BarQR Studio SaaS",
+  "description": "Premium QR and Barcode generation platform with user accounts, subscription-gated features, vector exports, and branding tools.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
