@@ -65,7 +65,8 @@ export type ViewState =
   | 'faq'
   | 'admin'
   | 'scan'
-  | 'gateway';
+  | 'gateway'
+  | 'pdf_viewer';
 
 export interface BusinessButton {
   id: string;
@@ -175,4 +176,19 @@ export interface WizardState {
     cornersDotColor?: string;
     frame: FrameType;
   };
+}
+
+export interface FileRecord {
+  id: string;
+  name: string;
+  type: 'pdf' | 'image';
+  mimeType: string;
+  size: number;
+  filePath: string;
+  createdAt: string;
+  qrCodeId?: string;
+}
+
+export interface Database {
+  files: FileRecord[];
 }
