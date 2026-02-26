@@ -49,20 +49,8 @@ export const SOCIAL_ICONS_LIST = Object.keys(SOCIAL_ICONS_MAP);
 export const QR_TYPES_CONFIG = [
   { id: 'website', name: 'Website', desc: 'Link to any website URL', icon: Globe },
   { id: 'pdf', name: 'PDF', desc: 'Show a PDF', icon: FileText },
-  { id: 'links', name: 'Social Networks', desc: 'Share multiple links', icon: LinkIcon },
-  { id: 'vcard', name: 'vCard', desc: 'Share a digital business card', icon: UserCircle },
   { id: 'business', name: 'Business', desc: 'Share information about your business', icon: Briefcase },
-  { id: 'video', name: 'Video', desc: 'Show a video', icon: Video },
-  { id: 'images', name: 'Images', desc: 'Share multiple images', icon: ImageIcon },
-  { id: 'facebook', name: 'Facebook', desc: 'Share your Facebook page', icon: Facebook },
-  { id: 'instagram', name: 'Instagram', desc: 'Share your Instagram', icon: Instagram },
-  { id: 'social', name: 'Social Media', desc: 'Share your social channels', icon: Share2 },
   { id: 'whatsapp', name: 'WhatsApp', desc: 'Get WhatsApp messages', icon: MessageCircle },
-  { id: 'mp3', name: 'MP3', desc: 'Share an audio file', icon: Music },
-  { id: 'menu', name: 'Menu', desc: 'Create a restaurant menu', icon: Utensils },
-  { id: 'apps', name: 'Apps', desc: 'Redirect to an app store', icon: Smartphone },
-  { id: 'coupon', name: 'Coupon', desc: 'Share a coupon', icon: Tag },
-  { id: 'wifi', name: 'WiFi', desc: 'Connect to a Wi-Fi network', icon: Wifi },
 ];
 
 export const INITIAL_HOURS: OpeningHours = DAYS.reduce((acc, day) => ({

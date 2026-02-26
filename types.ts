@@ -66,7 +66,8 @@ export type ViewState =
   | 'admin'
   | 'scan'
   | 'gateway'
-  | 'pdf_viewer';
+  | 'pdf_viewer'
+  | 'business_profile';
 
 export interface BusinessButton {
   id: string;
@@ -191,4 +192,23 @@ export interface FileRecord {
 
 export interface Database {
   files: FileRecord[];
+}
+
+export interface BusinessProfile {
+  id: string;
+  company: string;
+  logo: string;
+  headline: string;
+  aboutCompany: string;
+  phones: ContactField[];
+  emails: ContactField[];
+  address: string;
+  openingHours: OpeningHours;
+  socialNetworks: SocialNetwork[];
+  primaryColor: string;
+  secondaryColor: string;
+  fontTitle: string;
+  fontText: string;
+  createdAt: string;
+  updatedAt: string;
 }

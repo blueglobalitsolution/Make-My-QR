@@ -157,11 +157,12 @@ import {
   Database,
   Cpu
 } from 'lucide-react';
-import { User, QRType, BarcodeFormat, ViewState, WizardState, GeneratedCode, Folder, BusinessConfig, BusinessButton, Palette, OpeningHours, DayConfig, TimeSlot, LocationConfig, ContactInfo, ContactField, SocialNetwork, FrameType, FileRecord } from './types';
+import { User, QRType, BarcodeFormat, ViewState, WizardState, GeneratedCode, Folder, BusinessConfig, BusinessButton, Palette, OpeningHours, DayConfig, TimeSlot, LocationConfig, ContactInfo, ContactField, SocialNetwork, FrameType, FileRecord, BusinessProfile } from './types';
 
 import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
 import { PdfViewer } from './components/PdfViewer';
+import BusinessProfileViewer from './components/BusinessProfileViewer';
 import {
   DAYS, SOCIAL_ICONS_MAP, SOCIAL_ICONS_LIST, QR_TYPES_CONFIG, INITIAL_HOURS,
   INITIAL_LOCATION, INITIAL_CONTACT, DEFAULT_BUSINESS_PRESETS, LINKS_DESIGN_PRESETS,
@@ -169,6 +170,7 @@ import {
 } from './components/constants';
 
 import { saveFile } from './src/services/fileStorage';
+import { getInitialBusinessProfile } from './src/services/businessProfile';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
@@ -191,6 +193,8 @@ const App: React.FC = () => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfFileRecord, setPdfFileRecord] = useState<FileRecord | null>(null);
   const [currentPdfFileId, setCurrentPdfFileId] = useState<string | null>(null);
+
+  const [isStandaloneView, setIsStandaloneView] = useState(false);
 
   const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('ui');
 
@@ -252,11 +256,19 @@ const App: React.FC = () => {
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
 
+  const [businessProfiles, setBusinessProfiles] = useState<BusinessProfile[]>([]);
+  const [isCreatingBusinessProfile, setIsCreatingBusinessProfile] = useState(false);
+  const [editingBusinessProfileId, setEditingBusinessProfileId] = useState<string | null>(null);
+  const [currentBusinessProfile, setCurrentBusinessProfile] = useState<Partial<BusinessProfile>>(getInitialBusinessProfile());
+  const [currentBusinessProfileId, setCurrentBusinessProfileId] = useState<string | null>(null);
+
   // Set initial collapsible section based on type when step 2 is entered
   useEffect(() => {
     if (wizard.step === 2) {
       if (wizard.type === 'links' || wizard.type === 'pdf') {
         setActiveDesignSection('design');
+      } else if (wizard.type === 'business') {
+        setActiveDesignSection('business_design');
       } else {
         setActiveDesignSection('content');
       }
@@ -267,6 +279,12 @@ const App: React.FC = () => {
     const init = async () => {
       const { initDatabase } = await import('./src/utils/database');
       await initDatabase();
+
+      const { initBusinessProfilesDB, getAllBusinessProfiles } = await import('./src/services/businessProfile');
+      await initBusinessProfilesDB();
+
+      const profiles = await getAllBusinessProfiles();
+      setBusinessProfiles(profiles);
     };
     init();
 
@@ -287,11 +305,27 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
-      const match = path.match(/^\/view\/file\/(.+)$/);
-      if (match) {
-        const fileId = match[1];
+      const searchParams = new URLSearchParams(window.location.search);
+      const isStandalone = searchParams.get('standalone') === 'true';
+
+      console.log('Route change - path:', path, 'standalone:', isStandalone, 'search:', window.location.search);
+      setIsStandaloneView(isStandalone);
+
+      const pdfMatch = path.match(/^\/view\/file\/(.+)$/);
+      if (pdfMatch) {
+        const fileId = pdfMatch[1];
+        console.log('PDF match - fileId:', fileId);
         setCurrentPdfFileId(fileId);
         setView('pdf_viewer');
+        return;
+      }
+
+      const businessMatch = path.match(/^\/view\/business/);
+      if (businessMatch) {
+        console.log('Business match - setting business_profile view');
+        setCurrentBusinessProfileId('url-data');
+        setView('business_profile');
+        return;
       }
     };
 
@@ -322,13 +356,40 @@ const App: React.FC = () => {
     setView('landing');
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (wizard.step === 3) {
-      const finalValue = (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links')
-        ? (wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`)
-        : wizard.type === 'whatsapp'
-          ? `https://wa.me/${whatsappPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(whatsappMessage)}`
-          : (wizard.value || "https://qr-code.io");
+      let finalValue = '';
+
+      if (wizard.type === 'business') {
+        const businessData = wizard.business;
+
+        const businessProfileData = {
+          company: businessData?.company || '',
+          logo: businessData?.images?.[0] || '',
+          headline: businessData?.title || '',
+          aboutCompany: businessData?.aboutCompany || '',
+          phones: businessData?.contact?.phones?.filter(p => p.value) || [],
+          emails: businessData?.contact?.emails?.filter(e => e.value) || [],
+          address: businessData?.location?.searchAddress || '',
+          openingHours: businessData?.openingHours || INITIAL_HOURS,
+          socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
+          primaryColor: businessData?.primaryColor || '#527AC9',
+          secondaryColor: businessData?.secondaryColor || '#7EC09F',
+          fontTitle: businessData?.fontTitle || 'Inter',
+          fontText: businessData?.fontText || 'Inter',
+        };
+
+        const profileId = 'b' + Date.now().toString(36);
+        localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
+
+        finalValue = `https://stage.makemyqrcode.com/view/business?id=${profileId}&standalone=true`;
+      } else if (wizard.type === 'pdf' || wizard.type === 'links') {
+        finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
+      } else if (wizard.type === 'whatsapp') {
+        finalValue = `https://wa.me/${whatsappPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
+      } else {
+        finalValue = wizard.value || "https://qr-code.io";
+      }
 
       if (editingId) {
         const existingCode = history.find(h => h.id === editingId);
@@ -548,11 +609,11 @@ const App: React.FC = () => {
       setPdfFileName(file.name);
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(file));
-      
+
       const fileRecord = await saveFile(file);
       setPdfFileRecord(fileRecord);
       setCurrentPdfFileId(fileRecord.id);
-      setWizard(prev => ({ ...prev, value: `http://localhost:3000/view/file/${fileRecord.id}` }));
+      setWizard(prev => ({ ...prev, value: `https://stage.makemyqrcode.com/view/file/${fileRecord.id}?standalone=true` }));
     }
   };
 
@@ -659,30 +720,29 @@ const App: React.FC = () => {
     setActiveDesignSection(activeDesignSection === id ? null : id);
   };
 
+  console.log('Rendering - view:', view, 'isStandaloneView:', isStandaloneView);
+
   return (
     <div className="min-h-screen flex bg-[#f8fafc] overflow-hidden">
-      {view !== 'landing' && view !== 'auth' && (
-        <aside className="w-64 bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col z-40 shrink-0">
+      {view !== 'landing' && view !== 'auth' && !isStandaloneView && (
+        <aside className="fixed top-0 left-0 w-64 bg-white border-r border-slate-200 h-screen flex flex-col z-50 shrink-0">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-8 cursor-pointer" onClick={() => setView('landing')}>
               <div className="bg-[#0ea5e9] p-1.5 rounded-lg shadow-sm"><Barcode className="text-white w-5 h-5" /></div>
               <h1 className="text-xl font-black text-slate-800 tracking-tight">QR <span className="text-[#0ea5e9]">code.io</span></h1>
             </div>
             <nav className="space-y-1">
-              {[{ id: 'wizard', name: 'Create QR Code', icon: Plus }, { id: 'scan', name: 'Scan Code', icon: Scan }, { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 }, { id: 'account', name: 'My Account', icon: UserIcon }].map((item) => (
+              {[{ id: 'wizard', name: 'Create QR Code', icon: Plus }, { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 }].map((item) => (
                 <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all ${view === item.id ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'}`}>
                   <item.icon className="w-4 h-4" /> {item.name}
                 </button>
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4 border-t border-slate-100">
-            <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-slate-400 text-sm font-medium hover:text-red-500 transition-colors"><LogOut className="w-4 h-4" /> Logout</button>
-          </div>
         </aside>
       )}
 
-      <main className="flex-1 overflow-y-auto scrollbar-hide">
+      <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
         {view === 'landing' && (
           <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white text-center">
             <div className="bg-[#0ea5e9] p-5 rounded-[2.5rem] shadow-2xl mb-10 transform -rotate-6"><Barcode className="text-white w-16 h-16" /></div>
@@ -868,8 +928,8 @@ const App: React.FC = () => {
                     <h2 className="text-2xl font-semibold text-slate-800">{editingId ? '1. Update the code type' : '1. Select a type of QR code'}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {QR_TYPES_CONFIG.map(type => (
-                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-6 rounded-2xl shadow-sm flex flex-col items-center border-2 transition-all text-center ${wizard.type === type.id ? 'border-blue-500 bg-blue-50/50' : 'bg-white border-transparent hover:border-slate-100 hover:shadow-lg'}`}>
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-colors ${wizard.type === type.id ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'}`}>
+                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-8 rounded-2xl shadow-sm flex flex-col items-center border-2 transition-all text-center ${wizard.type === type.id ? 'border-blue-500 bg-blue-50/50' : 'bg-white border-transparent hover:border-slate-100 hover:shadow-lg'}`}>
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors ${wizard.type === type.id ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'}`}>
                             <type.icon className="w-6 h-6" />
                           </div>
                           <div className="font-bold text-slate-900 text-sm mb-1">{type.name}</div>
@@ -1370,6 +1430,396 @@ const App: React.FC = () => {
                       </div>
                     )}
 
+                    {wizard.type === 'business' && (
+                      <div className="space-y-8">
+                        {/* Design Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_design')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center">
+                                <PaletteIcon className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Design</h3>
+                                <p className="text-xs text-slate-400 mt-1">Choose colors and fonts for your business page.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_design' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_design' && (
+                            <div className="p-8 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                              <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Color Palette</label>
+                                <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                                  {DEFAULT_BUSINESS_PRESETS.map((p, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={() => {
+                                        updateBusinessField('primaryColor', p.primary);
+                                        updateBusinessField('secondaryColor', p.secondary);
+                                      }}
+                                      className={`flex-shrink-0 w-24 h-12 rounded-xl border-2 transition-all p-1 flex gap-1 ${wizard.business?.primaryColor === p.primary ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-slate-50 bg-white'}`}
+                                    >
+                                      <div className="flex-1 rounded-lg" style={{ backgroundColor: p.primary }} />
+                                      <div className="flex-1 rounded-lg" style={{ backgroundColor: p.secondary }} />
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Primary color</label>
+                                  <div className="flex items-center border-2 border-slate-100 rounded-2xl p-2 gap-4 bg-white group hover:border-blue-200 transition-all">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center relative cursor-pointer" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                                      <input type="color" className="absolute inset-0 opacity-0 cursor-pointer" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
+                                    </div>
+                                    <span className="font-black text-slate-700 text-xs uppercase">{wizard.business?.primaryColor}</span>
+                                  </div>
+                                </div>
+                                <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Secondary color</label>
+                                  <div className="flex items-center border-2 border-slate-100 rounded-2xl p-2 gap-4 bg-white group hover:border-blue-200 transition-all">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center relative cursor-pointer" style={{ backgroundColor: wizard.business?.secondaryColor }}>
+                                      <input type="color" className="absolute inset-0 opacity-0 cursor-pointer" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
+                                    </div>
+                                    <span className="font-black text-slate-700 text-xs uppercase">{wizard.business?.secondaryColor}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Title Font</label>
+                                  <select value={wizard.business?.fontTitle} onChange={(e) => updateBusinessField('fontTitle', e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800 appearance-none">
+                                    {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                                  </select>
+                                </div>
+                                <div className="space-y-3">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Text Font</label>
+                                  <select value={wizard.business?.fontText} onChange={(e) => updateBusinessField('fontText', e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800 appearance-none">
+                                    {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Basic Info Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_basic')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center">
+                                <Info className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Basic Information</h3>
+                                <p className="text-xs text-slate-400 mt-1">Company name, logo, headline and description.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_basic' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_basic' && (
+                            <div className="p-8 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                              <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">Company Logo</label>
+                                <div className="flex items-center gap-6">
+                                  <div className="w-24 h-24 rounded-2xl border-2 border-slate-100 bg-slate-50 overflow-hidden relative group cursor-pointer">
+                                    {wizard.business?.images[0] ? (
+                                      <img src={wizard.business.images[0]} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex flex-col items-center justify-center">
+                                        <ImageIcon className="w-8 h-8 text-slate-300" />
+                                        <span className="text-[8px] font-black uppercase text-slate-400 mt-2">Upload</span>
+                                      </div>
+                                    )}
+                                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleCoverImageUpload} />
+                                  </div>
+                                  {wizard.business?.images[0] && (
+                                    <button onClick={() => updateBusinessField('images', [])} className="px-6 py-2 bg-red-500 text-white rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-red-200 hover:scale-105 transition-transform">Delete</button>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Company Name *</label>
+                                <input type="text" placeholder="Your Company Name" value={wizard.business?.company} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800" />
+                              </div>
+                              <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Headline</label>
+                                <input type="text" placeholder="Welcome to our business" value={wizard.business?.title} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800" />
+                              </div>
+                              <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">About Us Description</label>
+                                  <span className="text-[9px] font-bold text-slate-300">{wizard.business?.aboutCompany?.length || 0}/4000</span>
+                                </div>
+                                <textarea rows={4} placeholder="Tell customers about your business..." value={wizard.business?.aboutCompany} onChange={(e) => updateBusinessField('aboutCompany', e.target.value)} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800 resize-none" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Contact Info Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_contact')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center">
+                                <Phone className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Contact Information</h3>
+                                <p className="text-xs text-slate-400 mt-1">Phone numbers and email addresses.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_contact' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_contact' && (
+                            <div className="p-8 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                              <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Phone Numbers</label>
+                                {(wizard.business?.contact?.phones || []).map((phone, idx) => (
+                                  <div key={phone.id} className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={phone.value}
+                                      onChange={(e) => {
+                                        const newPhones = [...(wizard.business?.contact?.phones || [])];
+                                        newPhones[idx] = { ...newPhones[idx], value: e.target.value };
+                                        updateBusinessField('contact', { ...wizard.business!.contact, phones: newPhones });
+                                      }}
+                                      className="flex-1 px-5 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 font-medium text-slate-700 transition-all"
+                                      placeholder="+1 234 567 8900"
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        const newPhones = (wizard.business?.contact?.phones || []).filter((_, i) => i !== idx);
+                                        updateBusinessField('contact', { ...wizard.business!.contact, phones: newPhones });
+                                      }}
+                                      className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  onClick={() => {
+                                    const newPhones = [...(wizard.business?.contact?.phones || []), { id: 'p' + Date.now(), label: 'Work', value: '', type: 'work' }];
+                                    updateBusinessField('contact', { ...wizard.business!.contact, phones: newPhones });
+                                  }}
+                                  className="text-blue-500 font-bold text-xs flex items-center gap-1"
+                                >
+                                  <Plus className="w-4 h-4" /> Add Phone
+                                </button>
+                              </div>
+
+                              <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Email Addresses</label>
+                                {(wizard.business?.contact?.emails || []).map((email, idx) => (
+                                  <div key={email.id} className="flex items-center gap-2">
+                                    <input
+                                      type="email"
+                                      value={email.value}
+                                      onChange={(e) => {
+                                        const newEmails = [...(wizard.business?.contact?.emails || [])];
+                                        newEmails[idx] = { ...newEmails[idx], value: e.target.value };
+                                        updateBusinessField('contact', { ...wizard.business!.contact, emails: newEmails });
+                                      }}
+                                      className="flex-1 px-5 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 font-medium text-slate-700 transition-all"
+                                      placeholder="info@company.com"
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        const newEmails = (wizard.business?.contact?.emails || []).filter((_, i) => i !== idx);
+                                        updateBusinessField('contact', { ...wizard.business!.contact, emails: newEmails });
+                                      }}
+                                      className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  onClick={() => {
+                                    const newEmails = [...(wizard.business?.contact?.emails || []), { id: 'e' + Date.now(), label: 'Email', value: '', type: 'work' }];
+                                    updateBusinessField('contact', { ...wizard.business!.contact, emails: newEmails });
+                                  }}
+                                  className="text-blue-500 font-bold text-xs flex items-center gap-1"
+                                >
+                                  <Plus className="w-4 h-4" /> Add Email
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Location Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_location')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center">
+                                <MapPin className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Location</h3>
+                                <p className="text-xs text-slate-400 mt-1">Physical address of your business.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_location' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_location' && (
+                            <div className="p-8 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                              <div className="space-y-3">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Physical Address</label>
+                                <input
+                                  type="text"
+                                  placeholder="123 Main St, City, Country"
+                                  value={wizard.business?.location?.searchAddress || ''}
+                                  onChange={(e) => updateBusinessField('location', { ...wizard.business!.location, searchAddress: e.target.value })}
+                                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Opening Hours Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_hours')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center">
+                                <Clock className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Opening Hours</h3>
+                                <p className="text-xs text-slate-400 mt-1">Set your business operating hours.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_hours' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_hours' && (
+                            <div className="p-8 space-y-4 animate-in slide-in-from-top-2 duration-300">
+                              {DAYS.map((day) => {
+                                const dayConfig = wizard.business?.openingHours?.[day];
+                                if (!dayConfig) return null;
+
+                                return (
+                                  <div key={day} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                                    <div className="w-24">
+                                      <span className="font-bold text-slate-700 capitalize">{day}</span>
+                                    </div>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={dayConfig.isOpen}
+                                        onChange={(e) => {
+                                          updateBusinessField('openingHours', {
+                                            ...wizard.business!.openingHours,
+                                            [day]: { ...dayConfig, isOpen: e.target.checked }
+                                          });
+                                        }}
+                                        className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                      />
+                                      <span className="text-sm text-slate-500">Open</span>
+                                    </label>
+                                    {dayConfig.isOpen && (
+                                      <div className="flex items-center gap-2 flex-1">
+                                        <input
+                                          type="time"
+                                          value={dayConfig.slots[0]?.start || '09:00'}
+                                          onChange={(e) => {
+                                            updateBusinessField('openingHours', {
+                                              ...wizard.business!.openingHours,
+                                              [day]: { ...dayConfig, slots: [{ ...dayConfig.slots[0], start: e.target.value }] }
+                                            });
+                                          }}
+                                          className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold"
+                                        />
+                                        <span className="text-slate-400">to</span>
+                                        <input
+                                          type="time"
+                                          value={dayConfig.slots[0]?.end || '17:00'}
+                                          onChange={(e) => {
+                                            updateBusinessField('openingHours', {
+                                              ...wizard.business!.openingHours,
+                                              [day]: { ...dayConfig, slots: [{ ...dayConfig.slots[0], end: e.target.value }] }
+                                            });
+                                          }}
+                                          className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Social Media Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('business_social')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-pink-50 text-pink-500 rounded-2xl flex items-center justify-center">
+                                <Globe className="w-6 h-6" />
+                              </div>
+                              <div className="text-left">
+                                <h3 className="text-xl font-black text-slate-800 leading-none">Social Media</h3>
+                                <p className="text-xs text-slate-400 mt-1">Add your social media links.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'business_social' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'business_social' && (
+                            <div className="p-8 space-y-4 animate-in slide-in-from-top-2 duration-300">
+                              <div className="grid grid-cols-2 gap-4">
+                                {['facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'whatsapp', 'website'].map((platform) => {
+                                  const social = (wizard.business?.socialNetworks || []).find(s => s.platform === platform);
+                                  return (
+                                    <div key={platform} className="space-y-2">
+                                      <label className="text-xs font-bold text-slate-500 capitalize">{platform}</label>
+                                      <input
+                                        type="text"
+                                        value={social?.url || ''}
+                                        onChange={(e) => {
+                                          const newSocials = (wizard.business?.socialNetworks || []).filter(s => s.platform !== platform);
+                                          if (e.target.value) {
+                                            newSocials.push({ id: 's' + Date.now(), platform, url: e.target.value, text: platform });
+                                          }
+                                          updateBusinessField('socialNetworks', newSocials);
+                                        }}
+                                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 text-sm font-bold"
+                                        placeholder={platform === 'website' ? 'https://...' : 'username'}
+                                      />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* QR Name Section */}
+                        <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
+                          <button onClick={() => toggleSection('name')} className="w-full flex items-center justify-between p-6 hover:bg-slate-50 transition-colors border-b border-slate-50">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center">
+                                <Grid3X3 className="w-5 h-5" />
+                              </div>
+                              <div className="text-left">
+                                <h4 className="font-bold text-slate-800 text-lg">Name of the QR Code</h4>
+                                <p className="text-xs text-slate-400">Give your QR code a name to find it later.</p>
+                              </div>
+                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform ${activeDesignSection === 'name' ? 'rotate-180' : ''}`} />
+                          </button>
+                          {activeDesignSection === 'name' && (
+                            <div className="p-8 animate-in slide-in-from-top-2 duration-300">
+                              <input type="text" placeholder="E.g. My Business QR" value={wizard.name} onChange={(e) => setWizard({ ...wizard, name: e.target.value })} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 font-bold text-slate-800" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {wizard.type === 'whatsapp' && (
                       <div className="space-y-8">
                         <div className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
@@ -1849,6 +2299,55 @@ const App: React.FC = () => {
                                 </div>
                                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-300/30 rounded-full" />
                               </div>
+                            ) : wizard.type === 'business' ? (
+                              <div className="flex flex-col h-full w-full relative animate-in fade-in duration-500 overflow-y-auto scrollbar-hide" style={{ backgroundColor: wizard.business?.primaryColor || '#527AC9' }}>
+                                <div className="flex flex-col items-center pt-10 px-6 text-center">
+                                  <div className="w-20 h-20 rounded-full border-4 border-white/30 overflow-hidden mb-4 shadow-xl bg-white flex items-center justify-center">
+                                    {wizard.business?.images[0] ? (
+                                      <img src={wizard.business.images[0]} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+                                        <Briefcase className="w-8 h-8 text-slate-400" />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <h4 className="text-lg font-black text-white mb-1" style={{ fontFamily: wizard.business?.fontTitle }}>{wizard.business?.company || 'Company Name'}</h4>
+                                  <p className="text-xs text-white/80">{wizard.business?.title || 'Your headline here'}</p>
+                                </div>
+
+                                <div className="flex-1 px-4 pt-6 pb-20 space-y-3">
+                                  {(wizard.business?.contact?.phones?.length > 0 || wizard.business?.contact?.emails?.length > 0) && (
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 space-y-2">
+                                      {wizard.business?.contact?.phones?.filter((p: any) => p.value).map((phone: any) => (
+                                        <div key={phone.id} className="flex items-center gap-3 text-white text-xs">
+                                          <Phone className="w-4 h-4" />
+                                          <span className="font-bold">{phone.value}</span>
+                                        </div>
+                                      ))}
+                                      {wizard.business?.contact?.emails?.filter((e: any) => e.value).map((email: any) => (
+                                        <div key={email.id} className="flex items-center gap-3 text-white text-xs">
+                                          <Mail className="w-4 h-4" />
+                                          <span className="font-bold">{email.value}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+
+                                  {wizard.business?.location?.searchAddress && (
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-3 text-white text-xs">
+                                      <MapPin className="w-4 h-4 shrink-0" />
+                                      <span className="font-bold">{wizard.business.location.searchAddress}</span>
+                                    </div>
+                                  )}
+
+                                  {wizard.business?.aboutCompany && (
+                                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                                      <p className="text-xs text-white/80 line-clamp-3">{wizard.business.aboutCompany}</p>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/30 rounded-full" />
+                              </div>
                             ) : wizard.type === 'whatsapp' ? (
                               <div className="flex flex-col h-full w-full bg-[#e5ddd5] relative animate-in fade-in duration-500">
                                 <div className="absolute inset-0 z-0 opacity-[0.07] bg-[url('https://i.pinimg.com/originals/85/70/f6/8570f6339d318933fa581fc0f7980c06.jpg')] bg-repeat" />
@@ -1930,7 +2429,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-md border-t border-slate-100 p-8 fixed bottom-0 left-64 right-0 z-50 flex justify-between items-center shadow-lg rounded-t-[3rem]">
+            <div className="bg-white/80 backdrop-blur-md border-t border-slate-100 p-8 fixed bottom-0 left-64 right-0 z-50 flex justify-between items-center shadow-lg">
               <button onClick={handleBackStep} disabled={wizard.step === 1} className="px-10 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black uppercase text-xs flex items-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                 <ChevronLeft className="w-4 h-4" /> Back
               </button>
@@ -1942,12 +2441,22 @@ const App: React.FC = () => {
         )}
 
         {view === 'pdf_viewer' && currentPdfFileId && (
-          <PdfViewer 
-            fileId={currentPdfFileId} 
+          <PdfViewer
+            fileId={currentPdfFileId}
             onBack={() => {
               setCurrentPdfFileId(null);
               setView('my_codes');
-            }} 
+            }}
+          />
+        )}
+
+        {view === 'business_profile' && currentBusinessProfileId && (
+          <BusinessProfileViewer
+            profileId={currentBusinessProfileId}
+            onBack={() => {
+              setCurrentBusinessProfileId(null);
+              setView('my_codes');
+            }}
           />
         )}
       </main>
