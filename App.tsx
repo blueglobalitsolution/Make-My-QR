@@ -724,7 +724,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex bg-[#f8fafc] overflow-hidden">
-      {view !== 'landing' && view !== 'auth' && !isStandaloneView && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView && (
         <aside className="fixed top-0 left-0 w-64 bg-white border-r border-slate-200 h-screen flex flex-col z-50 shrink-0">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-8 cursor-pointer" onClick={() => setView('landing')}>
@@ -739,15 +739,107 @@ const App: React.FC = () => {
               ))}
             </nav>
           </div>
+          <div className="mt-auto p-4 border-t border-slate-100 flex-shrink-0">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-500 font-medium text-sm hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
+          </div>
         </aside>
       )}
 
-      <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
+      <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
         {view === 'landing' && (
           <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white text-center">
             <div className="bg-[#0ea5e9] p-5 rounded-[2.5rem] shadow-2xl mb-10 transform -rotate-6"><Barcode className="text-white w-16 h-16" /></div>
             <h1 className="text-8xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9]">The Ultimate <br /><span className="text-blue-600">Secure QR</span> <br />Experience</h1>
-            <button onClick={handleAuth} className="px-14 py-6 bg-[#0ea5e9] text-white rounded-[2.5rem] font-black text-2xl shadow-2xl hover:scale-105 transition-all">Launch Studio</button>
+            <button onClick={() => setView('auth')} className="px-14 py-6 bg-[#0ea5e9] text-white rounded-[2.5rem] font-black text-2xl shadow-2xl hover:scale-105 transition-all">Launch Studio</button>
+          </div>
+        )}
+
+        {view === 'auth' && (
+          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
+              <div className="text-center">
+                <div className="bg-[#0ea5e9] p-4 rounded-3xl shadow-lg w-16 h-16 mx-auto flex items-center justify-center mb-6">
+                  <Barcode className="text-white w-8 h-8" />
+                </div>
+                <h2 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">Welcome back</h2>
+                <p className="mt-2 text-sm text-slate-500 font-medium">Please enter your details to sign in.</p>
+              </div>
+              <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 ml-1">Email address</label>
+                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="name@company.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 ml-1">Password</label>
+                    <input type="password" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="••••••••" />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#0ea5e9] focus:ring-blue-500 border-slate-300 rounded" />
+                    <label htmlFor="remember-me" className="ml-2 block text-xs font-bold text-slate-600">
+                      Remember me
+                    </label>
+                  </div>
+
+                  <div className="text-sm">
+                    <button type="button" onClick={() => setView('forgot_password')} className="font-bold text-[#0ea5e9] hover:text-blue-500">
+                      Forgot password?
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <button type="submit" className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-[#0ea5e9] hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 shadow-xl shadow-blue-200 hover:scale-[1.02] transition-all">
+                    Sign in
+                  </button>
+                </div>
+
+                <div className="text-center pt-2">
+                  <button type="button" onClick={() => setView('landing')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                    <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Home
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {view === 'forgot_password' && (
+          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-300">
+              <div className="text-center">
+                <div className="bg-amber-100 p-4 rounded-3xl shadow-sm w-16 h-16 mx-auto flex items-center justify-center mb-6">
+                  <Lock className="text-amber-500 w-8 h-8" />
+                </div>
+                <h2 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">Reset password</h2>
+                <p className="mt-2 text-sm text-slate-500 font-medium">Enter your email and we'll send you an OTP to reset your password.</p>
+              </div>
+              <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); alert('OTP sent to your email.'); setView('auth'); }}>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 ml-1">Email address</label>
+                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="name@company.com" />
+                  </div>
+                </div>
+
+                <div>
+                  <button type="submit" className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-4 focus:ring-amber-100 shadow-xl shadow-amber-200 hover:scale-[1.02] transition-all">
+                    Send OTP
+                  </button>
+                </div>
+
+                <div className="text-center pt-2">
+                  <button type="button" onClick={() => setView('auth')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                    <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 

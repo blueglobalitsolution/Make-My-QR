@@ -1,17 +1,17 @@
 
-export type QRType = 
-  | 'website' | 'pdf' | 'links' | 'vcard' | 'business' | 'video' 
-  | 'images' | 'facebook' | 'instagram' | 'social' | 'whatsapp' | 'mp3' 
+export type QRType =
+  | 'website' | 'pdf' | 'links' | 'vcard' | 'business' | 'video'
+  | 'images' | 'facebook' | 'instagram' | 'social' | 'whatsapp' | 'mp3'
   | 'menu' | 'apps' | 'coupon' | 'wifi' | 'dynamic' | 'barcode';
 
-export type BarcodeFormat = 
+export type BarcodeFormat =
   | 'CODE128' | 'EAN13' | 'EAN8' | 'UPC' | 'CODE39' | 'ITF' | 'MSI' | 'pharmacode';
 
 export type PlanType = 'free' | 'pro' | 'enterprise';
 
-export type FrameType = 
-  | 'none' | 'basic-label' | 'rounded-label' | 'thick-label' | 'clean-label' 
-  | 'bubble' | 'ribbon' | 'cut-corners' | 'arrow-label' | 'hands' 
+export type FrameType =
+  | 'none' | 'basic-label' | 'rounded-label' | 'thick-label' | 'clean-label'
+  | 'bubble' | 'ribbon' | 'cut-corners' | 'arrow-label' | 'hands'
   | 'shopping' | 'gift' | 'banner' | 'mail' | 'delivery' | 'service';
 
 export interface Palette {
@@ -52,22 +52,23 @@ export interface GeneratedCode {
   settings: any;
 }
 
-export type ViewState = 
-  | 'landing' 
-  | 'auth' 
-  | 'wizard' 
-  | 'dashboard' 
-  | 'analytics' 
-  | 'my_codes' 
-  | 'account' 
-  | 'billing' 
-  | 'contact' 
+export type ViewState =
+  | 'landing'
+  | 'auth'
+  | 'wizard'
+  | 'dashboard'
+  | 'analytics'
+  | 'my_codes'
+  | 'account'
+  | 'billing'
+  | 'contact'
   | 'faq'
   | 'admin'
   | 'scan'
   | 'gateway'
   | 'pdf_viewer'
-  | 'business_profile';
+  | 'business_profile'
+  | 'forgot_password';
 
 export interface BusinessButton {
   id: string;
