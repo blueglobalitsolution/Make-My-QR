@@ -208,11 +208,11 @@ const App: React.FC = () => {
     password: '',
     folderId: undefined,
     business: {
-      primaryColor: '#527AC9',
-      secondaryColor: '#7EC09F',
-      pageBackgroundColor: '#527AC9',
+      primaryColor: '#156295',
+      secondaryColor: '#9DB3C2',
+      pageBackgroundColor: '#156295',
       linkBackgroundColor: '#F7F7F7',
-      linkTextColor: '#7EC09F',
+      linkTextColor: '#9DB3C2',
       company: 'My Company',
       title: 'Find me on social networks',
       subtitle: '',
@@ -373,8 +373,8 @@ const App: React.FC = () => {
           address: businessData?.location?.searchAddress || '',
           openingHours: businessData?.openingHours || INITIAL_HOURS,
           socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
-          primaryColor: businessData?.primaryColor || '#527AC9',
-          secondaryColor: businessData?.secondaryColor || '#7EC09F',
+          primaryColor: businessData?.primaryColor || '#156295',
+          secondaryColor: businessData?.secondaryColor || '#9DB3C2',
           fontTitle: businessData?.fontTitle || 'Inter',
           fontText: businessData?.fontText || 'Inter',
         };
@@ -574,7 +574,7 @@ const App: React.FC = () => {
       type: wizard.config.pattern as any,
       gradient: useFgGradient ? {
         type: 'linear',
-        colorStops: [{ offset: 0, color: wizard.config.fgColor }, { offset: 1, color: '#3b82f6' }]
+        colorStops: [{ offset: 0, color: wizard.config.fgColor }, { offset: 1, color: '#156295' }]
       } : undefined
     },
     backgroundOptions: { color: isTransparent ? 'transparent' : wizard.config.bgColor },
@@ -724,7 +724,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex skeu-app-bg overflow-hidden">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView && (
         <aside className="fixed top-0 left-0 w-64 skeu-sidebar h-screen flex flex-col z-50 shrink-0">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-8 cursor-pointer" onClick={() => setView('landing')}>
@@ -732,14 +732,19 @@ const App: React.FC = () => {
               <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
             </div>
             <nav className="space-y-1">
-              {[{ id: 'wizard', name: 'Create QR Code', icon: Plus }, { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 }].map((item) => (
+              {[
+                { id: 'wizard', name: 'Create QR Code', icon: Plus },
+                { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
+                { id: 'account', name: 'My Account', icon: UserCircle },
+                { id: 'billing', name: 'Billing', icon: CreditCard },
+              ].map((item) => (
                 <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`w-full flex items-center gap-3 px-3 py-2.5 font-medium text-sm transition-all ${view === item.id ? 'skeu-sidebar-item-active skeu-text-accent' : 'skeu-sidebar-item skeu-text-secondary'}`}>
                   <item.icon className="w-4 h-4" /> {item.name}
                 </button>
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4 border-t border-black/5 flex-shrink-0">
+          <div className="mt-auto p-4 border-t border-black/5 flex-shrink-0 space-y-3">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 skeu-text-secondary font-medium text-sm hover:text-red-700 skeu-sidebar-item transition-all">
               <LogOut className="w-4 h-4" /> Logout
             </button>
@@ -747,7 +752,7 @@ const App: React.FC = () => {
         </aside>
       )}
 
-      <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
+      <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
         {view === 'landing' && (
           <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
             <div className="skeu-hero-icon p-5 rounded-[2.5rem] mb-10 transform -rotate-6 relative skeu-gloss"><Barcode className="text-white w-16 h-16" /></div>
@@ -758,52 +763,55 @@ const App: React.FC = () => {
 
         {view === 'auth' && (
           <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 skeu-auth-card p-10">
-              <div className="text-center">
-                <div className="skeu-hero-icon p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6 relative skeu-gloss">
-                  <Barcode className="text-white w-8 h-8" />
-                </div>
-                <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">Welcome back</h2>
+            <div className="max-w-md w-full skeu-auth-card p-10">
+              <div className="flex items-center gap-2 mb-12">
+                <div className="skeu-hero-icon p-1.5 rounded-lg relative"><Barcode className="text-white w-5 h-5" /></div>
+                <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
+              </div>
+
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Welcome back</h2>
                 <p className="mt-2 text-sm skeu-text-secondary font-medium">Please enter your details to sign in.</p>
               </div>
-              <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
-                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold skeu-text-secondary ml-1">Password</label>
-                    <input type="password" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="••••••••" />
-                  </div>
+
+              <button type="button" className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm mb-6">
+                <svg className="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                Sign in with Google
+              </button>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex-1 h-px bg-slate-200"></div>
+                <span className="text-xs font-bold text-slate-400">Or, sign in with your email</span>
+                <div className="flex-1 h-px bg-slate-200"></div>
+              </div>
+
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
+                  <input type="email" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                  <input type="password" required className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
+                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#0ea5e9] focus:ring-blue-500 border-slate-300 rounded" />
-                    <label htmlFor="remember-me" className="ml-2 block text-xs font-bold skeu-text-secondary">
-                      Remember me
-                    </label>
+                    <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#156295] focus:ring-[#156295] border-slate-300 rounded" />
+                    <label htmlFor="remember-me" className="ml-2 block text-xs font-bold skeu-text-secondary">Remember me</label>
                   </div>
-
-                  <div className="text-sm">
-                    <button type="button" onClick={() => setView('forgot_password')} className="font-bold skeu-text-accent hover:underline">
-                      Forgot password?
-                    </button>
-                  </div>
+                  <button type="button" onClick={() => setView('forgot_password')} className="text-sm font-bold skeu-text-accent hover:underline">Forgot password?</button>
                 </div>
 
-                <div>
-                  <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
-                    Sign in
-                  </button>
-                </div>
+                <button type="submit" className="w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">
+                  Sign in
+                </button>
 
-                <div className="text-center pt-2">
-                  <button type="button" onClick={() => setView('landing')} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
-                    <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Home
-                  </button>
-                </div>
+                <p className="text-center text-sm text-slate-500">
+                  Don't have an account? <button type="button" onClick={() => setView('register')} className="font-bold text-[#156295] hover:underline">Sign up</button>
+                </p>
               </form>
             </div>
           </div>
@@ -838,6 +846,59 @@ const App: React.FC = () => {
                     <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
                   </button>
                 </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {view === 'register' && (
+          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full skeu-auth-card p-10">
+              <div className="flex items-center gap-2 mb-12">
+                <div className="skeu-hero-icon p-1.5 rounded-lg relative"><Barcode className="text-white w-5 h-5" /></div>
+                <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
+              </div>
+
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Sign up</h2>
+                <p className="mt-2 text-sm skeu-text-secondary font-medium">Create a free account</p>
+              </div>
+
+              <button type="button" className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm mb-6">
+                <svg className="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                Sign up with Google
+              </button>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex-1 h-px bg-slate-200"></div>
+                <span className="text-xs font-bold text-slate-400">Or, sign up with your email</span>
+                <div className="flex-1 h-px bg-slate-200"></div>
+              </div>
+
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
+                  <input type="email" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
+                </div>
+
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                  <input type="password" required className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
+                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                </div>
+
+                <button type="submit" className="w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">
+                  Sign up
+                </button>
+
+                <p className="text-center text-sm text-slate-500">
+                  Already have an account? <button type="button" onClick={() => setView('auth')} className="font-bold text-[#156295] hover:underline">Log In</button>
+                </p>
+
+                <p className="text-center text-xs text-slate-400 pt-4 leading-relaxed">
+                  By creating an account, you consent that you have read and agree to our<br />
+                  <button type="button" className="font-bold text-[#156295] hover:underline">Terms & Conditions</button> and the <button type="button" className="font-bold text-[#156295] hover:underline">Privacy Policy.</button>
+                </p>
               </form>
             </div>
           </div>
@@ -1020,8 +1081,8 @@ const App: React.FC = () => {
                     <h2 className="text-2xl font-semibold skeu-text-primary">{editingId ? '1. Update the code type' : '1. Select a type of QR code'}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {QR_TYPES_CONFIG.map(type => (
-                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-8 rounded-2xl flex flex-col items-center border-2 transition-all text-center ${wizard.type === type.id ? 'skeu-option-btn-active' : 'skeu-option-btn'}`}>
-                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors ${wizard.type === type.id ? 'skeu-step-active' : 'skeu-icon-raised text-[var(--skeu-accent)]'}`}>
+                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-8 rounded-2xl flex flex-col items-center transition-all text-center ${wizard.type === type.id ? 'skeu-option-btn-active' : 'skeu-option-btn'}`}>
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors shrink-0 ${wizard.type === type.id ? 'skeu-step-active' : 'border border-[#9DB3C2] text-[#156295]'}`}>
                             <type.icon className="w-6 h-6" />
                           </div>
                           <div className="font-bold skeu-text-primary text-sm mb-1">{type.name}</div>
@@ -2270,13 +2331,13 @@ const App: React.FC = () => {
               </div>
 
               <div className="lg:col-span-4 relative">
-                <div className="sticky top-10 flex flex-col items-center gap-8">
-                  <div className="bg-white p-1 rounded-[2rem] border-2 border-blue-400 shadow-sm flex items-center gap-1 self-center">
-                    <button onClick={() => setPhonePreviewMode('ui')} className={`px-6 py-2 rounded-full text-[11px] font-black uppercase transition-all ${phonePreviewMode === 'ui' ? 'bg-[#0ea5e9] text-white shadow-md' : 'text-blue-400 hover:bg-blue-50'}`}>Preview</button>
-                    <button onClick={() => setPhonePreviewMode('qr')} className={`px-6 py-2 rounded-full text-[11px] font-black uppercase transition-all ${phonePreviewMode === 'qr' ? 'bg-[#0ea5e9] text-white shadow-md' : 'text-blue-400 hover:bg-blue-50'}`}>QR code</button>
+                <div className="fixed top-24 z-40 flex flex-col items-center gap-3" style={{ left: 'calc(16rem + (100% - 16rem) * 8 / 12 + (100% - 16rem) * 4 / 12 / 2 - 140px)', width: '280px' }}>
+                  <div className="bg-[#156295] p-[3px] rounded-full shadow-sm flex items-center self-center overflow-hidden">
+                    <button onClick={() => setPhonePreviewMode('ui')} className={`px-5 py-1.5 rounded-full text-[10px] font-black uppercase transition-all ${phonePreviewMode === 'ui' ? 'bg-white text-[#156295] shadow-md' : 'text-white/80 hover:text-white'}`}>Preview</button>
+                    <button onClick={() => setPhonePreviewMode('qr')} className={`px-5 py-1.5 rounded-full text-[10px] font-black uppercase transition-all ${phonePreviewMode === 'qr' ? 'bg-white text-[#156295] shadow-md' : 'text-white/80 hover:text-white'}`}>QR code</button>
                   </div>
 
-                  <div className="relative w-[340px] h-[680px] bg-slate-900 rounded-[4.5rem] border-[12px] border-slate-800 shadow-2xl overflow-hidden ring-1 ring-slate-700 transition-all duration-500">
+                  <div className="relative w-[280px] h-[560px] bg-slate-900 rounded-[3.5rem] border-[10px] border-slate-800 shadow-2xl overflow-hidden ring-1 ring-slate-700 transition-all duration-500">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-slate-800 rounded-b-3xl z-[60]" />
                     <div className="w-full h-full bg-white relative flex flex-col">
                       <div className="px-8 pt-6 pb-2 flex justify-between items-center text-[10px] font-black text-white bg-slate-900 z-40">
@@ -2392,7 +2453,7 @@ const App: React.FC = () => {
                                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-300/30 rounded-full" />
                               </div>
                             ) : wizard.type === 'business' ? (
-                              <div className="flex flex-col h-full w-full relative animate-in fade-in duration-500 overflow-y-auto scrollbar-hide" style={{ backgroundColor: wizard.business?.primaryColor || '#527AC9' }}>
+                              <div className="flex flex-col h-full w-full relative animate-in fade-in duration-500 overflow-y-auto scrollbar-hide" style={{ backgroundColor: wizard.business?.primaryColor || '#156295' }}>
                                 <div className="flex flex-col items-center pt-10 px-6 text-center">
                                   <div className="w-20 h-20 rounded-full border-4 border-white/30 overflow-hidden mb-4 shadow-xl bg-white flex items-center justify-center">
                                     {wizard.business?.images[0] ? (
@@ -2521,13 +2582,159 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-md border-t border-slate-100 p-8 fixed bottom-0 left-64 right-0 z-50 flex justify-between items-center shadow-lg">
-              <button onClick={handleBackStep} disabled={wizard.step === 1} className="px-10 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black uppercase text-xs flex items-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                <ChevronLeft className="w-4 h-4" /> Back
+            <div className="bg-white/80 backdrop-blur-md border-t border-black/5 p-4 fixed bottom-0 left-64 right-0 z-50 flex justify-between items-center">
+              <button onClick={handleBackStep} disabled={wizard.step === 1} className="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-lg font-black uppercase text-[10px] flex items-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                <ChevronLeft className="w-3 h-3" /> Back
               </button>
-              <button onClick={handleNextStep} className="px-12 py-5 bg-[#0ea5e9] text-white rounded-2xl font-black uppercase text-xs flex items-center gap-2 hover:bg-blue-500 shadow-xl transition-all">
-                {wizard.step === 3 ? (editingId ? 'Update & Save' : 'Save & Finish') : 'Next Step'} <ChevronRight className="w-4 h-4" />
+              <button onClick={handleNextStep} className="px-6 py-2.5 bg-[#156295] text-white rounded-lg font-black uppercase text-[10px] flex items-center gap-2 hover:bg-[#0E4677] shadow-md transition-all">
+                {wizard.step === 3 ? (editingId ? 'Update & Save' : 'Save & Finish') : 'Next Step'} <ChevronRight className="w-3 h-3" />
               </button>
+            </div>
+          </div>
+        )}
+
+        {view === 'account' && (
+          <div className="p-10 max-w-5xl mx-auto w-full space-y-6 animate-in fade-in duration-500 pb-20">
+            <h1 className="text-3xl font-black skeu-text-primary tracking-tight">My Account</h1>
+
+            <div className="flex gap-1 border-b border-slate-200">
+              <button className="px-5 py-3 text-sm font-bold text-[#156295] border-b-2 border-[#156295] transition-all">General Information</button>
+              <button onClick={() => setView('billing')} className="px-5 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 border-b-2 border-transparent transition-all">Billing Information</button>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+              <h3 className="text-lg font-black skeu-text-primary">Personal Information</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-bold text-red-500 mb-2">First Name</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
+                    <input type="text" defaultValue={currentUser?.name?.split(' ')[0] || 'Blue'} className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-red-500 mb-2">Last Name & Surname</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
+                    <input type="text" defaultValue="Designer" className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-red-500 mb-2">Email</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white"><Mail className="w-5 h-5" /></div>
+                    <input type="email" defaultValue={currentUser?.email || 'bluedesigner001@gmail.com'} className="w-full pl-12 pr-5 py-3 bg-[#156295] text-white border border-[#156295] rounded-xl text-sm font-medium placeholder-white/60 focus:ring-2 focus:ring-[#156295]/30 outline-none transition-all" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-2">Telephone</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Phone className="w-5 h-5" /></div>
+                    <input type="tel" placeholder="E.g. 6565123" className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                  </div>
+                </div>
+              </div>
+
+              <button className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
+                Update
+              </button>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6">
+              <h3 className="text-lg font-black skeu-text-primary">Change password</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-bold text-red-500 mb-2">Password</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                    <input type="password" placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-red-500 mb-2">Confirm password</label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                    <input type="password" placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                  </div>
+                </div>
+              </div>
+
+              <button className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
+                Update
+              </button>
+            </div>
+          </div>
+        )}
+
+        {view === 'billing' && (
+          <div className="p-10 max-w-6xl mx-auto w-full space-y-8 animate-in fade-in duration-500 pb-20">
+            <div className="text-center">
+              <h1 className="text-4xl font-black skeu-text-primary tracking-tight">Plans <span className="skeu-text-accent">&</span> Pricing</h1>
+              <p className="mt-2 text-sm skeu-text-secondary font-medium">Select the most convenient plan for you.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+              {/* Monthly */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 hover:shadow-lg transition-shadow">
+                <div className="text-center space-y-3">
+                  <h3 className="text-xl font-bold text-[#4A9FF5]">Monthly</h3>
+                  <div className="text-3xl font-black skeu-text-primary">₹ 1,799 <span className="text-base font-medium text-slate-400">/mo</span></div>
+                  <p className="text-xs text-slate-400 italic">Invoiced every month</p>
+                </div>
+                <button className="w-full py-3 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">Buy Now</button>
+                <div className="space-y-3 pt-2">
+                  {['Create unlimited dynamic QR codes', 'Access a variety of QR types', 'Unlimited modifications of QR codes', 'Unlimited scans', 'Multiple QR code download formats', 'Unlimited users', 'Premium customer support', 'Cancel at anytime'].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-slate-600">
+                      <CheckCircle2 className="w-4 h-4 text-[#4A9FF5] shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Annually - Most Popular */}
+              <div className="relative bg-white rounded-2xl border-2 border-[#4A9FF5] p-8 space-y-6 shadow-xl">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#4A9FF5] text-white text-xs font-bold px-5 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                  <Star className="w-3.5 h-3.5" /> Most Popular
+                </div>
+                <div className="absolute -top-3 -right-3 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-black text-white shadow-lg border-2 border-white transform rotate-12">60%</div>
+                <div className="text-center space-y-3 pt-2">
+                  <h3 className="text-xl font-bold text-[#4A9FF5]">Annually</h3>
+                  <div className="text-3xl font-black skeu-text-primary">₹ 699 <span className="text-base font-medium text-slate-400">/mo</span></div>
+                  <p className="text-xs text-slate-400 italic">Invoiced every year</p>
+                </div>
+                <button className="w-full py-3 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">Buy Now</button>
+                <div className="space-y-3 pt-2">
+                  {['Create unlimited dynamic QR codes', 'Access a variety of QR types', 'Unlimited modifications of QR codes', 'Unlimited scans', 'Multiple QR code download formats', 'Unlimited users', 'Premium customer support', 'Cancel at anytime'].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-slate-600">
+                      <CheckCircle2 className="w-4 h-4 text-[#4A9FF5] shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quarterly */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 hover:shadow-lg transition-shadow">
+                <div className="text-center space-y-3">
+                  <h3 className="text-xl font-bold text-[#4A9FF5]">Quarterly</h3>
+                  <div className="text-3xl font-black skeu-text-primary">₹ 999 <span className="text-base font-medium text-slate-400">/mo</span></div>
+                  <p className="text-xs text-slate-400 italic">Invoiced each quarter</p>
+                </div>
+                <button className="w-full py-3 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">Buy Now</button>
+                <div className="space-y-3 pt-2">
+                  {['Create unlimited dynamic QR codes', 'Access a variety of QR types', 'Unlimited modifications of QR codes', 'Unlimited scans', 'Multiple QR code download formats', 'Unlimited users', 'Premium customer support', 'Cancel at anytime'].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-slate-600">
+                      <CheckCircle2 className="w-4 h-4 text-[#4A9FF5] shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}

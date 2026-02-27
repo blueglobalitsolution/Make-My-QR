@@ -77,20 +77,20 @@ export const INITIAL_CONTACT: ContactInfo = {
 };
 
 export const DEFAULT_BUSINESS_PRESETS: Palette[] = [
-  { primary: '#527AC9', secondary: '#7EC09F' },
+  { primary: '#156295', secondary: '#9DB3C2' },
   { primary: '#E5E7EB', secondary: '#1F2937' },
-  { primary: '#DBF1F8', secondary: '#3B82F6' },
+  { primary: '#DBF1F8', secondary: '#156295' },
   { primary: '#B19CD9', secondary: '#1F2937' },
-  { primary: '#7EC09F', secondary: '#1F2937' },
+  { primary: '#9DB3C2', secondary: '#1F2937' },
   { primary: '#F5D17E', secondary: '#1F2937' },
 ];
 
 export const LINKS_DESIGN_PRESETS = [
-  { pageBg: '#527AC9', linkBg: '#F7F7F7', linkText: '#7EC09F' },
+  { pageBg: '#156295', linkBg: '#F7F7F7', linkText: '#9DB3C2' },
   { pageBg: '#E5E7EB', linkBg: '#FFFFFF', linkText: '#1F2937' },
-  { pageBg: '#DBF1F8', linkBg: '#FFFFFF', linkText: '#3B82F6' },
+  { pageBg: '#DBF1F8', linkBg: '#FFFFFF', linkText: '#156295' },
   { pageBg: '#B19CD9', linkBg: '#FFFFFF', linkText: '#1F2937' },
-  { pageBg: '#7EC09F', linkBg: '#FFFFFF', linkText: '#1F2937' },
+  { pageBg: '#9DB3C2', linkBg: '#FFFFFF', linkText: '#1F2937' },
   { pageBg: '#F5D17E', linkBg: '#FFFFFF', linkText: '#1F2937' },
 ];
 

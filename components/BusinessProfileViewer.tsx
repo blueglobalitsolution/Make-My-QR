@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Phone, Mail, MapPin, Clock, Globe, Facebook, Instagram, 
+import {
+  Phone, Mail, MapPin, Clock, Globe, Facebook, Instagram,
   Twitter, Linkedin, Youtube, MessageCircle, ChevronLeft, ExternalLink,
   ArrowUpRight
 } from 'lucide-react';
@@ -48,7 +48,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
       try {
         const params = new URLSearchParams(window.location.search);
         const profileId = params.get('id');
-        
+
         if (profileId) {
           const storedData = localStorage.getItem('business_' + profileId);
           if (storedData) {
@@ -92,7 +92,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: profile?.primaryColor || '#527AC9' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: profile?.primaryColor || '#156295' }}>
         <div className="text-white text-xl font-bold">Loading...</div>
       </div>
     );
@@ -105,7 +105,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
           <div className="text-red-500 text-xl font-bold mb-2">Error</div>
           <p className="text-slate-600">{error || 'Profile not found'}</p>
           {onBack && (
-            <button onClick={onBack} className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg">
+            <button onClick={onBack} className="mt-4 px-6 py-2 bg-[#156295] text-white rounded-lg">
               Go Back
             </button>
           )}
@@ -118,19 +118,19 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
     <div className="min-h-screen" style={{ backgroundColor: profile.primaryColor, fontFamily: profile.fontText }}>
       <div className="max-w-md mx-auto min-h-screen bg-white shadow-2xl">
         {/* Header */}
-        <div 
+        <div
           className="relative px-6 pt-12 pb-16 text-center"
           style={{ backgroundColor: profile.primaryColor }}
         >
           {onBack && (
-            <button 
+            <button
               onClick={onBack}
               className="absolute top-4 left-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
           )}
-          
+
           {/* Logo */}
           <div className="w-24 h-24 mx-auto mb-4 rounded-full border-4 border-white/30 overflow-hidden bg-white shadow-lg flex items-center justify-center">
             {profile.logo ? (
@@ -171,7 +171,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
         {(profile.phones.length > 0 || profile.emails.length > 0) && (
           <div className="px-6 py-6 border-b border-slate-100">
             <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Contact</h2>
-            
+
             {/* Phones */}
             {profile.phones.filter(p => p.value).map((phone) => (
               <button
@@ -239,12 +239,12 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
             {DAYS_ORDER.map((day) => {
               const dayConfig = profile.openingHours[day];
               if (!dayConfig) return null;
-              
+
               return (
                 <div key={day} className="flex items-center justify-between py-2">
                   <span className="text-slate-700 font-medium capitalize">{formatDay(day)}</span>
                   <span className={`text-sm font-bold ${dayConfig.isOpen ? 'text-green-600' : 'text-slate-400'}`}>
-                    {dayConfig.isOpen 
+                    {dayConfig.isOpen
                       ? dayConfig.slots.map(slot => `${slot.start} - ${slot.end}`).join(', ')
                       : 'Closed'
                     }
@@ -264,7 +264,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
                 if (!social.url) return null;
                 const icon = SOCIAL_ICONS[social.platform] || <Globe className="w-5 h-5" />;
                 const color = SOCIAL_COLORS[social.platform] || '#333333';
-                
+
                 return (
                   <button
                     key={social.id}

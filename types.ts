@@ -68,7 +68,8 @@ export type ViewState =
   | 'gateway'
   | 'pdf_viewer'
   | 'business_profile'
-  | 'forgot_password';
+  | 'forgot_password'
+  | 'register';
 
 export interface BusinessButton {
   id: string;
