@@ -755,7 +755,7 @@ const App: React.FC = () => {
                 { id: 'account', name: 'My Account', icon: UserCircle },
                 { id: 'billing', name: 'Billing', icon: CreditCard },
               ].map((item) => (
-                <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`w-full flex items-center gap-3 px-3 py-2.5 font-medium text-sm transition-all ${view === item.id ? 'skeu-sidebar-item-active skeu-text-accent' : 'skeu-sidebar-item skeu-text-secondary'}`}>
+                <button key={item.id} onClick={() => { if (item.id === 'wizard') { setEditingId(null); setWizard({ step: 1, mode: 'qr', type: 'website', value: '', name: '', isPasswordActive: false, password: '', folderId: undefined, business: { primaryColor: '#156295', secondaryColor: '#9DB3C2', pageBackgroundColor: '#156295', linkBackgroundColor: '#F7F7F7', linkTextColor: '#9DB3C2', company: 'My Company', title: 'Find me on social networks', subtitle: '', description: 'New content every week in the links below', buttons: [{ id: '1', text: 'My Website', url: '#', icon: 'globe' }], openingHours: INITIAL_HOURS, images: [], location: INITIAL_LOCATION, contact: INITIAL_CONTACT, socialNetworks: [], aboutCompany: '', facilities: [], fontTitle: 'Inter', fontText: 'Inter', fontTitleColor: '#ffffff', fontTextColor: '#ffffff', welcomeScreenImage: undefined }, config: { fgColor: '#000000', bgColor: '#ffffff', level: 'H', borderRadius: 0, pattern: 'square', cornerType: 'square', cornersSquareType: 'square', cornersSquareColor: '#000000', cornersDotType: 'square', cornersDotColor: '#000000', frame: 'none' } }); setPhonePreviewMode('ui'); } setView(item.id as ViewState); }} className={`w-full flex items-center gap-3 px-3 py-2.5 font-medium text-sm transition-all ${view === item.id ? 'skeu-sidebar-item-active skeu-text-accent' : 'skeu-sidebar-item skeu-text-secondary'}`}>
                   <item.icon className="w-4 h-4" /> {item.name}
                 </button>
               ))}
@@ -1955,7 +1955,7 @@ const App: React.FC = () => {
                                           updateBusinessField('socialNetworks', newSocials);
                                         }}
                                         className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 text-sm font-bold"
-                                        placeholder={platform === 'website' ? 'https://...' : 'username'}
+                                        placeholder={platform === 'website' ? 'https://...' : 'Enter Your Link'}
                                       />
                                     </div>
                                   );
