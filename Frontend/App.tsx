@@ -124,6 +124,7 @@ import {
   Copy,
   ExternalLink as LinkExternal,
   Eye,
+  EyeOff,
   Settings2,
   Globe2,
   FileUp,
@@ -197,6 +198,13 @@ const App: React.FC = () => {
   const [isStandaloneView, setIsStandaloneView] = useState(false);
 
   const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('ui');
+
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState('');
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
 
   const [wizard, setWizard] = useState<WizardState>({
     step: 1,
@@ -354,6 +362,15 @@ const App: React.FC = () => {
     localStorage.removeItem('barqr_user');
     setCurrentUser(null);
     setView('landing');
+  };
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (regPassword !== regConfirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    handleAuth();
   };
 
   const handleNextStep = async () => {
@@ -853,7 +870,7 @@ const App: React.FC = () => {
                 <p className="mt-2 text-sm skeu-text-secondary font-medium">Create a free account</p>
               </div>
 
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+              <form className="space-y-4" onSubmit={handleRegister}>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
                   <input type="text" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your full name" />
@@ -861,24 +878,28 @@ const App: React.FC = () => {
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
-                  <input type="email" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
+                  <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
                 </div>
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Phone className="w-5 h-5" /></div>
-                  <input type="tel" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your phone number" />
+                  <input type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your phone number" />
                 </div>
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-                  <input type="password" required className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password" />
-                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                  <input type={showRegPassword ? "text" : "password"} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
+                  <button type="button" onClick={() => setShowRegPassword(!showRegPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showRegPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-                  <input type="password" required className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Confirm your password" />
-                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                  <input type={showRegConfirmPassword ? "text" : "password"} required value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Confirm your password" />
+                  <button type="button" onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showRegConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
 
                 <button type="submit" className="w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">
