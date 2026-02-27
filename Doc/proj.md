@@ -1,6 +1,6 @@
+qrmaker
+X0QKcA%%P%P1ni
 
-
-           'NAME': 'qrmaker',
-           'USER': 'qrmaker',
-           'PASSWORD': 'qrmaker1@#2',
-           'HOST': 'localhost',
+qradmin
+blueglobalcloud@gmail.com
+Root@123
