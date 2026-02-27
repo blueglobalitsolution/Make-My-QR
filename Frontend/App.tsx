@@ -761,7 +761,7 @@ const App: React.FC = () => {
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4 border-t border-black/5 flex-shrink-0 space-y-3">
+          <div className="mt-auto p-4 border-t border-black/5 flex-shrink-0">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 skeu-text-secondary font-medium text-sm hover:text-red-700 skeu-sidebar-item transition-all">
               <LogOut className="w-4 h-4" /> Logout
             </button>
@@ -943,7 +943,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide border-b border-slate-100">
+            <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide">
               <button
                 onClick={() => setActiveFolderId('all')}
                 className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag skeu-text-muted'}`}
@@ -1050,7 +1050,7 @@ const App: React.FC = () => {
                                 className="skeu-btn-secondary p-2.5 rounded-xl"
                                 title="Edit Style & Content"
                               >
-                                <Settings2 className="w-4.5 h-4.5" />
+                                <Pencil className="w-4.5 h-4.5" />
                               </button>
                               <button
                                 onClick={() => downloadCode(item, 'png')}
