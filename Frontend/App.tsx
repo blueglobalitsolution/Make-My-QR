@@ -164,6 +164,9 @@ import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
 import { PdfViewer } from './components/PdfViewer';
 import BusinessProfileViewer from './components/BusinessProfileViewer';
+import { login, register, logout, requestPasswordReset, verifyOTP, confirmPasswordReset } from './src/api/auth';
+import { getCodes, saveCode, updateCode, deleteCode as apiDeleteCode } from './src/api/qrcodes';
+import { getFolders, createFolder as apiCreateFolder, deleteFolder as apiDeleteFolder } from './src/api/folders';
 import {
   DAYS, SOCIAL_ICONS_MAP, SOCIAL_ICONS_LIST, QR_TYPES_CONFIG, INITIAL_HOURS,
   INITIAL_LOCATION, INITIAL_CONTACT, DEFAULT_BUSINESS_PRESETS, LINKS_DESIGN_PRESETS,
@@ -196,9 +199,19 @@ const App: React.FC = () => {
   const [currentPdfFileId, setCurrentPdfFileId] = useState<string | null>(null);
 
   const [isStandaloneView, setIsStandaloneView] = useState(false);
-
   const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('ui');
 
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+
+  const [resetStep, setResetStep] = useState<1 | 2 | 3>(1);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetOTP, setResetOTP] = useState('');
+  const [resetTimer, setResetTimer] = useState(0);
+  const [newPasswordReset, setNewPasswordReset] = useState('');
+
+  const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -302,11 +315,20 @@ const App: React.FC = () => {
       setCurrentUser(user);
       if (user.savedPalettes) setSavedPalettes([...DEFAULT_BUSINESS_PRESETS, ...user.savedPalettes]);
 
-      const savedHistory = localStorage.getItem('barqr_history');
-      if (savedHistory) setHistory(JSON.parse(savedHistory));
-
-      const savedFolders = localStorage.getItem('barqr_folders');
-      if (savedFolders) setFolders(JSON.parse(savedFolders));
+      // Fetch history and folders from backend
+      const fetchData = async () => {
+        try {
+          const [historyData, foldersData] = await Promise.all([
+            getCodes(),
+            getFolders()
+          ]);
+          setHistory(historyData);
+          setFolders(foldersData);
+        } catch (err) {
+          console.error("Failed to fetch user data from backend", err);
+        }
+      };
+      fetchData();
     }
   }, []);
 
@@ -342,36 +364,109 @@ const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
-  const handleAuth = () => {
-    const mockUser: User = {
-      id: 'usr_' + Date.now(),
-      email: 'demo@barqr.studio',
-      name: 'Demo User',
-      plan: 'free',
-      isAdmin: false,
-      createdAt: new Date().toISOString(),
-      daysRemaining: 9,
-      savedPalettes: []
-    };
-    setCurrentUser(mockUser);
-    localStorage.setItem('barqr_user', JSON.stringify(mockUser));
-    setView('my_codes');
+  const handleAuth = async () => {
+    try {
+      const data = await login(loginEmail, loginPassword);
+      const user: User = {
+        id: data.user_id.toString(),
+        email: data.email,
+        name: data.email.split('@')[0], // Fallback name
+        plan: 'free',
+        isAdmin: false,
+        createdAt: new Date().toISOString(),
+        daysRemaining: 14,
+        savedPalettes: []
+      };
+      setCurrentUser(user);
+      localStorage.setItem('barqr_user', JSON.stringify(user));
+      setView('my_codes');
+    } catch (err) {
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('barqr_user');
+    logout();
     setCurrentUser(null);
     setView('landing');
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (regPassword !== regConfirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    handleAuth();
+    try {
+      // Using email as username for simplicity on the backend
+      const data = await register(regEmail, regEmail, regPassword);
+      const user: User = {
+        id: data.user_id.toString(),
+        email: data.email,
+        name: regName || data.email.split('@')[0],
+        plan: 'free',
+        isAdmin: false,
+        createdAt: new Date().toISOString(),
+        daysRemaining: 14,
+        savedPalettes: []
+      };
+      setCurrentUser(user);
+      localStorage.setItem('barqr_user', JSON.stringify(user));
+      setView('my_codes');
+    } catch (err) {
+      alert("Registration failed. Please try again.");
+    }
   };
+
+  const handleResetRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await requestPasswordReset(resetEmail);
+      setResetStep(2);
+      setResetTimer(180); // 3 minutes
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to request password reset.");
+    }
+  };
+
+  const handleResetVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await verifyOTP(resetEmail, resetOTP);
+      setResetStep(3);
+      setResetTimer(0);
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Invalid or expired OTP.");
+    }
+  };
+
+  const handleResetConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await confirmPasswordReset(resetEmail, newPasswordReset);
+      alert("Password reset successfully! Please login with your new password.");
+      setView('auth');
+      setResetStep(1);
+      setResetEmail('');
+      setResetOTP('');
+      setNewPasswordReset('');
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to reset password.");
+    }
+  };
+
+  useEffect(() => {
+    let interval: any;
+    if (resetTimer > 0) {
+      interval = setInterval(() => {
+        setResetTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resetTimer === 0 && resetStep === 2) {
+      alert("OTP expired. Please request a new one.");
+      setResetStep(1);
+    }
+    return () => clearInterval(interval);
+  }, [resetTimer, resetStep]);
 
   const handleNextStep = async () => {
     if (wizard.step === 3) {
@@ -422,44 +517,53 @@ const App: React.FC = () => {
           localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
         }
 
-        const updatedHistory = history.map(h => h.id === editingId ? {
-          ...h,
-          folderId: wizard.folderId,
-          category: wizard.type,
-          name: wizard.name || `My ${selectedTypeConfig.name}`,
-          value: finalValue,
-          settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
-        } : h);
+        try {
+          const updatedCode = await updateCode(editingId, {
+            folder: wizard.folderId,
+            category: wizard.type,
+            name: wizard.name || `My ${selectedTypeConfig.name}`,
+            value: finalValue,
+            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
+          });
 
-        setHistory(updatedHistory);
-        localStorage.setItem('barqr_history', JSON.stringify(updatedHistory));
-        setEditingId(null);
+          const updatedHistory = history.map(h => h.id === editingId ? {
+            ...h,
+            ...updatedCode,
+            id: updatedCode.id.toString() // Ensure string ID for frontend consistency
+          } : h);
+
+          setHistory(updatedHistory);
+          setEditingId(null);
+        } catch (err) {
+          alert("Failed to update QR code.");
+        }
       } else {
-        const newCode: GeneratedCode = {
-          id: 'qr_' + Date.now(),
-          userId: currentUser?.id || 'guest',
-          folderId: wizard.folderId,
-          type: wizard.mode,
-          category: wizard.type,
-          name: wizard.name || `My ${selectedTypeConfig.name}`,
-          value: finalValue,
-          isDynamic: false,
-          scans: 0,
-          status: 'active',
-          createdAt: new Date().toISOString(),
-          settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
-        };
+        try {
+          const savedData = await saveCode({
+            folder: wizard.folderId,
+            type: wizard.mode,
+            category: wizard.type,
+            name: wizard.name || `My ${selectedTypeConfig.name}`,
+            value: finalValue,
+            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
+          });
 
-        const updatedHistory = [newCode, ...history];
-        setHistory(updatedHistory);
-        localStorage.setItem('barqr_history', JSON.stringify(updatedHistory));
+          const newCode: GeneratedCode = {
+            ...savedData,
+            id: savedData.id.toString()
+          };
 
-        if (wizard.folderId) {
-          const updatedFolders = folders.map(f =>
-            f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f
-          );
-          setFolders(updatedFolders);
-          localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
+          const updatedHistory = [newCode, ...history];
+          setHistory(updatedHistory);
+
+          if (wizard.folderId) {
+            const updatedFolders = folders.map(f =>
+              f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f
+            );
+            setFolders(updatedFolders);
+          }
+        } catch (err) {
+          alert("Failed to save QR code.");
         }
       }
 
@@ -494,34 +598,40 @@ const App: React.FC = () => {
     }
   };
 
-  const createNewFolder = () => {
+  const createNewFolder = async () => {
     if (!newFolderName.trim()) return;
-    const newFolder: Folder = {
-      id: 'f_' + Date.now(),
-      name: newFolderName.trim(),
-      count: 0,
-      createdAt: new Date().toISOString()
-    };
-    const updatedFolders = [...folders, newFolder];
-    setFolders(updatedFolders);
-    localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
-    setWizard({ ...wizard, folderId: newFolder.id });
-    setNewFolderName('');
-    setIsCreatingFolder(false);
+    try {
+      const folderData = await apiCreateFolder(newFolderName.trim());
+      const newFolder: Folder = {
+        ...folderData,
+        id: folderData.id.toString(),
+        count: 0
+      };
+      const updatedFolders = [...folders, newFolder];
+      setFolders(updatedFolders);
+      setWizard({ ...wizard, folderId: newFolder.id });
+      setNewFolderName('');
+      setIsCreatingFolder(false);
+    } catch (err) {
+      alert("Failed to create folder.");
+    }
   };
 
-  const deleteCode = (id: string) => {
-    const codeToDelete = history.find(h => h.id === id);
-    const updatedHistory = history.filter(h => h.id !== id);
-    setHistory(updatedHistory);
-    localStorage.setItem('barqr_history', JSON.stringify(updatedHistory));
+  const deleteCode = async (id: string) => {
+    try {
+      await apiDeleteCode(id);
+      const codeToDelete = history.find(h => h.id === id);
+      const updatedHistory = history.filter(h => h.id !== id);
+      setHistory(updatedHistory);
 
-    if (codeToDelete?.folderId) {
-      const updatedFolders = folders.map(f =>
-        f.id === codeToDelete.folderId ? { ...f, count: Math.max(0, f.count - 1) } : f
-      );
-      setFolders(updatedFolders);
-      localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
+      if (codeToDelete?.folderId) {
+        const updatedFolders = folders.map(f =>
+          f.id === codeToDelete.folderId ? { ...f, count: Math.max(0, f.count - 1) } : f
+        );
+        setFolders(updatedFolders);
+      }
+    } catch (err) {
+      alert("Failed to delete QR code.");
     }
   };
 
@@ -794,13 +904,15 @@ const App: React.FC = () => {
               <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
-                  <input type="email" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
+                  <input type="email" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
                 </div>
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-                  <input type="password" required className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
-                  <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
+                  <input type={showLoginPassword ? "text" : "password"} required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
+                  <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showLoginPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
@@ -830,29 +942,79 @@ const App: React.FC = () => {
                 <div className="skeu-icon-raised p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6">
                   <Lock className="text-amber-500 w-8 h-8" />
                 </div>
-                <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">Reset password</h2>
-                <p className="mt-2 text-sm skeu-text-secondary font-medium">Enter your email and we'll send you an OTP to reset your password.</p>
+                <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">
+                  {resetStep === 1 ? "Reset password" : resetStep === 2 ? "Verify OTP" : "New Password"}
+                </h2>
+                <p className="mt-2 text-sm skeu-text-secondary font-medium">
+                  {resetStep === 1
+                    ? "Enter your email and we'll send you an OTP."
+                    : resetStep === 2
+                      ? "Enter the 6rdigit code sent to your email."
+                      : "Create a new strong password for your account."}
+                </p>
               </div>
-              <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); alert('OTP sent to your email.'); setView('auth'); }}>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
-                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
+
+              {resetStep === 1 && (
+                <form className="mt-8 space-y-6" onSubmit={handleResetRequest}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
+                      <input type="email" required value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
+                    </div>
                   </div>
-                </div>
+                  <div>
+                    <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                      Send OTP
+                    </button>
+                  </div>
+                </form>
+              )}
 
-                <div>
-                  <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
-                    Send OTP
-                  </button>
-                </div>
+              {resetStep === 2 && (
+                <form className="mt-8 space-y-6" onSubmit={handleResetVerify}>
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-amber-500 mb-2">
+                        {Math.floor(resetTimer / 60)}:{(resetTimer % 60).toString().padStart(2, '0')}
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold skeu-text-secondary ml-1">6rdigit OTP</label>
+                      <input type="text" maxLength={6} required value={resetOTP} onChange={(e) => setResetOTP(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm text-center tracking-[1em] font-bold" placeholder="000000" />
+                    </div>
+                  </div>
+                  <div>
+                    <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                      Verify OTP
+                    </button>
+                    <button type="button" onClick={() => setResetStep(1)} className="w-full mt-4 text-xs font-bold skeu-text-muted hover:skeu-text-primary">
+                      Resend OTP
+                    </button>
+                  </div>
+                </form>
+              )}
 
-                <div className="text-center pt-2">
-                  <button type="button" onClick={() => setView('auth')} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
-                    <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
-                  </button>
-                </div>
-              </form>
+              {resetStep === 3 && (
+                <form className="mt-8 space-y-6" onSubmit={handleResetConfirm}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold skeu-text-secondary ml-1">New Password</label>
+                      <input type="password" required value={newPasswordReset} onChange={(e) => setNewPasswordReset(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="••••••••" />
+                    </div>
+                  </div>
+                  <div>
+                    <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                      Update Password
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              <div className="text-center pt-2">
+                <button type="button" onClick={() => { setView('auth'); setResetStep(1); }} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
+                  <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -873,7 +1035,7 @@ const App: React.FC = () => {
               <form className="space-y-4" onSubmit={handleRegister}>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
-                  <input type="text" required className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your full name" />
+                  <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your full name" />
                 </div>
 
                 <div className="relative">

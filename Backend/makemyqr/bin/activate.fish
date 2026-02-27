@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/bhavan/Project/Bgt/Make-My-QR/Beckend/makemyqr
+set -gx VIRTUAL_ENV /home/bhavan/Project/Bgt/Make-My-QR/Backend/makemyqr
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
