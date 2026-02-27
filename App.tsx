@@ -382,7 +382,7 @@ const App: React.FC = () => {
         const profileId = 'b' + Date.now().toString(36);
         localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
 
-        finalValue = `https://stage.makemyqrcode.com/view/business?id=${profileId}&standalone=true`;
+        finalValue = `https://stage.makemyqrcode.com//view/business?id=${profileId}&standalone=true`;
       } else if (wizard.type === 'pdf' || wizard.type === 'links') {
         finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
       } else if (wizard.type === 'whatsapp') {
@@ -613,7 +613,7 @@ const App: React.FC = () => {
       const fileRecord = await saveFile(file);
       setPdfFileRecord(fileRecord);
       setCurrentPdfFileId(fileRecord.id);
-      setWizard(prev => ({ ...prev, value: `https://stage.makemyqrcode.com/view/file/${fileRecord.id}?standalone=true` }));
+      setWizard(prev => ({ ...prev, value: `https://stage.makemyqrcode.com//view/file/${fileRecord.id}?standalone=true` }));
     }
   };
 
@@ -723,24 +723,24 @@ const App: React.FC = () => {
   console.log('Rendering - view:', view, 'isStandaloneView:', isStandaloneView);
 
   return (
-    <div className="min-h-screen flex bg-[#f8fafc] overflow-hidden">
+    <div className="min-h-screen flex skeu-app-bg overflow-hidden">
       {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView && (
-        <aside className="fixed top-0 left-0 w-64 bg-white border-r border-slate-200 h-screen flex flex-col z-50 shrink-0">
+        <aside className="fixed top-0 left-0 w-64 skeu-sidebar h-screen flex flex-col z-50 shrink-0">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-8 cursor-pointer" onClick={() => setView('landing')}>
-              <div className="bg-[#0ea5e9] p-1.5 rounded-lg shadow-sm"><Barcode className="text-white w-5 h-5" /></div>
-              <h1 className="text-xl font-black text-slate-800 tracking-tight">QR <span className="text-[#0ea5e9]">code.io</span></h1>
+              <div className="skeu-hero-icon p-1.5 rounded-lg relative"><Barcode className="text-white w-5 h-5" /></div>
+              <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
             </div>
             <nav className="space-y-1">
               {[{ id: 'wizard', name: 'Create QR Code', icon: Plus }, { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 }].map((item) => (
-                <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all ${view === item.id ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50'}`}>
+                <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`w-full flex items-center gap-3 px-3 py-2.5 font-medium text-sm transition-all ${view === item.id ? 'skeu-sidebar-item-active skeu-text-accent' : 'skeu-sidebar-item skeu-text-secondary'}`}>
                   <item.icon className="w-4 h-4" /> {item.name}
                 </button>
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4 border-t border-slate-100 flex-shrink-0">
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-500 font-medium text-sm hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+          <div className="mt-auto p-4 border-t border-black/5 flex-shrink-0">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 skeu-text-secondary font-medium text-sm hover:text-red-700 skeu-sidebar-item transition-all">
               <LogOut className="w-4 h-4" /> Logout
             </button>
           </div>
@@ -749,58 +749,58 @@ const App: React.FC = () => {
 
       <main className={`flex-1 overflow-y-auto scrollbar-hide ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && !isStandaloneView ? 'ml-64 w-[calc(100%-16rem)]' : 'w-full'}`}>
         {view === 'landing' && (
-          <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white text-center">
-            <div className="bg-[#0ea5e9] p-5 rounded-[2.5rem] shadow-2xl mb-10 transform -rotate-6"><Barcode className="text-white w-16 h-16" /></div>
-            <h1 className="text-8xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9]">The Ultimate <br /><span className="text-blue-600">Secure QR</span> <br />Experience</h1>
-            <button onClick={() => setView('auth')} className="px-14 py-6 bg-[#0ea5e9] text-white rounded-[2.5rem] font-black text-2xl shadow-2xl hover:scale-105 transition-all">Launch Studio</button>
+          <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
+            <div className="skeu-hero-icon p-5 rounded-[2.5rem] mb-10 transform -rotate-6 relative skeu-gloss"><Barcode className="text-white w-16 h-16" /></div>
+            <h1 className="text-8xl font-black skeu-text-primary tracking-tighter mb-8 leading-[0.9]">The Ultimate <br /><span className="skeu-text-accent">Secure QR</span> <br />Experience</h1>
+            <button onClick={() => setView('auth')} className="skeu-btn px-14 py-6 rounded-[2rem] text-2xl">Launch Studio</button>
           </div>
         )}
 
         {view === 'auth' && (
-          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100">
+          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 skeu-auth-card p-10">
               <div className="text-center">
-                <div className="bg-[#0ea5e9] p-4 rounded-3xl shadow-lg w-16 h-16 mx-auto flex items-center justify-center mb-6">
+                <div className="skeu-hero-icon p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6 relative skeu-gloss">
                   <Barcode className="text-white w-8 h-8" />
                 </div>
-                <h2 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">Welcome back</h2>
-                <p className="mt-2 text-sm text-slate-500 font-medium">Please enter your details to sign in.</p>
+                <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">Welcome back</h2>
+                <p className="mt-2 text-sm skeu-text-secondary font-medium">Please enter your details to sign in.</p>
               </div>
               <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 ml-1">Email address</label>
-                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="name@company.com" />
+                    <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
+                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 ml-1">Password</label>
-                    <input type="password" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="••••••••" />
+                    <label className="text-xs font-bold skeu-text-secondary ml-1">Password</label>
+                    <input type="password" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="••••••••" />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#0ea5e9] focus:ring-blue-500 border-slate-300 rounded" />
-                    <label htmlFor="remember-me" className="ml-2 block text-xs font-bold text-slate-600">
+                    <label htmlFor="remember-me" className="ml-2 block text-xs font-bold skeu-text-secondary">
                       Remember me
                     </label>
                   </div>
 
                   <div className="text-sm">
-                    <button type="button" onClick={() => setView('forgot_password')} className="font-bold text-[#0ea5e9] hover:text-blue-500">
+                    <button type="button" onClick={() => setView('forgot_password')} className="font-bold skeu-text-accent hover:underline">
                       Forgot password?
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <button type="submit" className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-[#0ea5e9] hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100 shadow-xl shadow-blue-200 hover:scale-[1.02] transition-all">
+                  <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
                     Sign in
                   </button>
                 </div>
 
                 <div className="text-center pt-2">
-                  <button type="button" onClick={() => setView('landing')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                  <button type="button" onClick={() => setView('landing')} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
                     <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Home
                   </button>
                 </div>
@@ -810,31 +810,31 @@ const App: React.FC = () => {
         )}
 
         {view === 'forgot_password' && (
-          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 skeu-auth-card p-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div className="text-center">
-                <div className="bg-amber-100 p-4 rounded-3xl shadow-sm w-16 h-16 mx-auto flex items-center justify-center mb-6">
+                <div className="skeu-icon-raised p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6">
                   <Lock className="text-amber-500 w-8 h-8" />
                 </div>
-                <h2 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">Reset password</h2>
-                <p className="mt-2 text-sm text-slate-500 font-medium">Enter your email and we'll send you an OTP to reset your password.</p>
+                <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">Reset password</h2>
+                <p className="mt-2 text-sm skeu-text-secondary font-medium">Enter your email and we'll send you an OTP to reset your password.</p>
               </div>
               <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); alert('OTP sent to your email.'); setView('auth'); }}>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 ml-1">Email address</label>
-                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-400 font-bold focus:bg-white transition-all sm:text-sm" placeholder="name@company.com" />
+                    <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
+                    <input type="email" required className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
                   </div>
                 </div>
 
                 <div>
-                  <button type="submit" className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-4 focus:ring-amber-100 shadow-xl shadow-amber-200 hover:scale-[1.02] transition-all">
+                  <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
                     Send OTP
                   </button>
                 </div>
 
                 <div className="text-center pt-2">
-                  <button type="button" onClick={() => setView('auth')} className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                  <button type="button" onClick={() => setView('auth')} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
                     <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
                   </button>
                 </div>
@@ -847,21 +847,21 @@ const App: React.FC = () => {
           <div className="p-10 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-500 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">My QR Library</h1>
-                <p className="text-slate-500 font-medium">Quickly access and manage all your generated codes.</p>
+                <h1 className="text-4xl font-black skeu-text-primary tracking-tight">My QR Library</h1>
+                <p className="skeu-text-secondary font-medium">Quickly access and manage all your generated codes.</p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                <div className="relative group skeu-search flex items-center">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 skeu-text-muted" />
                   <input
                     type="text"
                     placeholder="Search by name or URL..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-11 pr-6 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 font-bold text-sm w-72 transition-all"
+                    className="pl-11 pr-6 py-3 bg-transparent outline-none font-bold text-sm w-72 skeu-text-primary"
                   />
                 </div>
-                <button onClick={() => { setEditingId(null); setView('wizard'); }} className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs shadow-xl shadow-blue-200 hover:scale-105 transition-all flex items-center gap-2">
+                <button onClick={() => { setEditingId(null); setView('wizard'); }} className="skeu-btn px-6 py-3 rounded-xl text-xs uppercase flex items-center gap-2">
                   <Plus className="w-4 h-4" /> Create New
                 </button>
               </div>
@@ -870,7 +870,7 @@ const App: React.FC = () => {
             <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide border-b border-slate-100">
               <button
                 onClick={() => setActiveFolderId('all')}
-                className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeFolderId === 'all' ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'bg-white border border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag skeu-text-muted'}`}
               >
                 <Grid3X3 className="w-3.5 h-3.5" /> All ({history.length})
               </button>
@@ -878,33 +878,33 @@ const App: React.FC = () => {
                 <button
                   key={folder.id}
                   onClick={() => setActiveFolderId(folder.id)}
-                  className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeFolderId === folder.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border border-slate-100 text-slate-400 hover:border-slate-200'}`}
+                  className={`px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag skeu-text-muted'}`}
                 >
                   <FolderIcon className="w-3.5 h-3.5" /> {folder.name} ({folder.count})
                 </button>
               ))}
             </div>
 
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="skeu-card-deep overflow-hidden">
               {filteredHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32">
                   <div className="w-20 h-20 bg-slate-50 text-slate-200 rounded-full flex items-center justify-center mb-6">
                     <Search className="w-10 h-10" />
                   </div>
-                  <h3 className="text-xl font-black text-slate-800">No results found</h3>
-                  <p className="text-slate-400 font-medium mb-8">Try adjusting your filters or search query.</p>
-                  <button onClick={() => setSearchQuery('')} className="px-6 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all">Clear Search</button>
+                  <h3 className="text-xl font-black skeu-text-primary">No results found</h3>
+                  <p className="skeu-text-muted font-medium mb-8">Try adjusting your filters or search query.</p>
+                  <button onClick={() => setSearchQuery('')} className="skeu-btn-secondary px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest">Clear Search</button>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-left border-collapse skeu-table">
                     <thead>
-                      <tr className="bg-slate-50/50 border-b border-slate-100">
-                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">QR Code</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Details</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Folder</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Activity</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                      <tr>
+                        <th className="px-8 py-5 text-[10px] font-black skeu-text-muted uppercase tracking-widest">QR Code</th>
+                        <th className="px-8 py-5 text-[10px] font-black skeu-text-muted uppercase tracking-widest">Details</th>
+                        <th className="px-8 py-5 text-[10px] font-black skeu-text-muted uppercase tracking-widest text-center">Folder</th>
+                        <th className="px-8 py-5 text-[10px] font-black skeu-text-muted uppercase tracking-widest text-center">Activity</th>
+                        <th className="px-8 py-5 text-[10px] font-black skeu-text-muted uppercase tracking-widest text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -971,21 +971,21 @@ const App: React.FC = () => {
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => startEditing(item)}
-                                className="p-2.5 bg-white text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-xl border border-slate-100 transition-all shadow-sm"
+                                className="skeu-btn-secondary p-2.5 rounded-xl"
                                 title="Edit Style & Content"
                               >
                                 <Settings2 className="w-4.5 h-4.5" />
                               </button>
                               <button
                                 onClick={() => downloadCode(item, 'png')}
-                                className="p-2.5 bg-white text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl border border-slate-100 transition-all shadow-sm"
+                                className="skeu-btn-secondary p-2.5 rounded-xl"
                                 title="Download as PNG"
                               >
                                 <Download className="w-4.5 h-4.5" />
                               </button>
                               <button
                                 onClick={() => deleteCode(item.id)}
-                                className="p-2.5 bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl border border-slate-100 transition-all shadow-sm"
+                                className="skeu-btn-danger p-2.5 rounded-xl"
                                 title="Delete Permanently"
                               >
                                 <Trash2 className="w-4.5 h-4.5" />
@@ -1004,11 +1004,11 @@ const App: React.FC = () => {
 
         {view === 'wizard' && (
           <div className="min-h-screen flex flex-col pb-32">
-            <div className="flex items-center justify-center gap-12 py-6 border-b border-slate-100 bg-white sticky top-0 z-50">
+            <div className="flex items-center justify-center gap-12 py-6 border-b border-black/5 skeu-toolbar sticky top-0 z-50">
               {[1, 2, 3].map(s => (
                 <button key={s} onClick={() => goToStep(s)} className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${wizard.step >= s ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'}`}>{s}</div>
-                  <span className={`text-sm font-black uppercase tracking-widest ${wizard.step >= s ? 'text-slate-800' : 'text-slate-400'}`}>{s === 1 ? 'Type' : s === 2 ? 'Content' : 'Style'}</span>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all ${wizard.step >= s ? 'skeu-step-active' : 'skeu-step'}`}>{s}</div>
+                  <span className={`text-sm font-black uppercase tracking-widest ${wizard.step >= s ? 'skeu-text-primary' : 'skeu-text-muted'}`}>{s === 1 ? 'Type' : s === 2 ? 'Content' : 'Style'}</span>
                 </button>
               ))}
             </div>
@@ -1017,15 +1017,15 @@ const App: React.FC = () => {
               <div className="lg:col-span-8 space-y-8">
                 {wizard.step === 1 && (
                   <div className="space-y-8">
-                    <h2 className="text-2xl font-semibold text-slate-800">{editingId ? '1. Update the code type' : '1. Select a type of QR code'}</h2>
+                    <h2 className="text-2xl font-semibold skeu-text-primary">{editingId ? '1. Update the code type' : '1. Select a type of QR code'}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {QR_TYPES_CONFIG.map(type => (
-                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-8 rounded-2xl shadow-sm flex flex-col items-center border-2 transition-all text-center ${wizard.type === type.id ? 'border-blue-500 bg-blue-50/50' : 'bg-white border-transparent hover:border-slate-100 hover:shadow-lg'}`}>
-                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors ${wizard.type === type.id ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'}`}>
+                        <button key={type.id} onClick={() => setWizard({ ...wizard, type: type.id as QRType, step: 2 })} className={`group p-8 rounded-2xl flex flex-col items-center border-2 transition-all text-center ${wizard.type === type.id ? 'skeu-option-btn-active' : 'skeu-option-btn'}`}>
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors ${wizard.type === type.id ? 'skeu-step-active' : 'skeu-icon-raised text-[var(--skeu-accent)]'}`}>
                             <type.icon className="w-6 h-6" />
                           </div>
-                          <div className="font-bold text-slate-900 text-sm mb-1">{type.name}</div>
-                          <div className="text-[10px] text-slate-400 leading-tight">{type.desc}</div>
+                          <div className="font-bold skeu-text-primary text-sm mb-1">{type.name}</div>
+                          <div className="text-[10px] skeu-text-muted leading-tight">{type.desc}</div>
                         </button>
                       ))}
                     </div>
