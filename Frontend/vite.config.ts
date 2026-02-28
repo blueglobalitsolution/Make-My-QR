@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3010,
       host: '0.0.0.0',
+      allowedHosts: ['stage.makemyqrcode.com'],
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8010',
+          changeOrigin: true,
+        },
+      },
     },
     plugins: [react()],
     resolve: {
