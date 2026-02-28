@@ -10,7 +10,9 @@ import random
 from .email_utils import send_welcome_email, send_otp_email
 
 class CustomObtainAuthToken(ObtainAuthToken):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
+        print(f"DEBUG: Login request data: {request.data}")
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
