@@ -260,8 +260,217 @@ export const Wizard: React.FC<WizardProps> = ({
           </div>
         )}
 
-        {/* Business, Links, PDF Types */}
-        {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'pdf') && (
+        {/* PDF Type */}
+        {wizard.type === 'pdf' && (
+          <div className="space-y-6">
+            {/* PDF Upload */}
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <FileText className="w-7 h-7" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">PDF Upload</h3>
+                    <p className="text-sm font-medium text-slate-400">Select and upload your PDF document.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'upload' ? 'rotate-180 text-red-600' : 'group-hover:text-slate-400'}`} />
+              </button>
+              {activeDesignSection === 'upload' && (
+                <div className="p-10 border-t border-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="relative group">
+                    <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/upload">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />
+                      {pdfUrl ? (
+                        <div className="text-center animate-in zoom-in duration-500">
+                          <div className="w-24 h-24 bg-red-50 text-red-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-500/10 border-2 border-white">
+                            <FileText className="w-12 h-12" />
+                          </div>
+                          <h4 className="font-black text-[#0F172A] text-xl tracking-tight">{pdfFileName}</h4>
+                          <p className="text-sm font-medium text-slate-400 mt-1">File uploaded successfully</p>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center group-hover/upload:bg-[#156295] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl group-hover/upload:shadow-blue-500/20 border-2 border-white/50">
+                            <Upload className="w-12 h-12" />
+                          </div>
+                          <div className="text-center space-y-2">
+                            <p className="font-black text-[#0F172A] text-xl tracking-tight">Drop your PDF or browse</p>
+                            <p className="text-sm font-medium text-slate-400">Maximum file size: 20MB</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Design */}
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center shadow-sm">
+                    <PaletteIcon className="w-7 h-7" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Design</h3>
+                    <p className="text-sm font-medium text-slate-400">Choose a color theme for your page.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 text-[#156295]' : 'group-hover:text-slate-400'}`} />
+              </button>
+              {activeDesignSection === 'design' && (
+                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-6">
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Color Palette</p>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      {DEFAULT_BUSINESS_PRESETS.map((preset, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            updateBusinessField('primaryColor', preset.primary);
+                            updateBusinessField('secondaryColor', preset.secondary);
+                          }}
+                          className={`w-16 h-10 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
+                        >
+                          <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.primary }} />
+                          <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.secondary }} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-8">
+                    <div className="flex-1 space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Primary Color</label>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.primaryColor}</span>
+                      </div>
+                    </div>
+                    <button type="button" onClick={swapColors} className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#156295] hover:bg-blue-50 transition-colors mt-8">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                    </button>
+                    <div className="flex-1 space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Secondary Color</label>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.secondaryColor}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* PDF Information */}
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+              <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <Info className="w-7 h-7" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">PDF Information</h3>
+                    <p className="text-sm font-medium text-slate-400">Details about the PDF content.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'pdf_info' ? 'rotate-180 text-amber-600' : 'group-hover:text-slate-400'}`} />
+              </button>
+              {activeDesignSection === 'pdf_info' && (
+                <div className="p-10 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Company Name</label>
+                      <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">PDF Title</label>
+                      <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Description</label>
+                    <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Website</label>
+                      <input type="text" placeholder="https://..." value={wizard.business?.buttons?.[0]?.url || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'url', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Button Name</label>
+                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateBusinessField('welcomeScreenImage', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Fonts */}
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i className="font-serif text-2xl font-black">T</i>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Fonts</h3>
+                    <p className="text-sm font-medium text-slate-400">Customize fonts and colors.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'fonts' ? 'rotate-180 text-purple-600' : 'group-hover:text-slate-400'}`} />
+              </button>
+              {activeDesignSection === 'fonts' && (
+                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Title Font</label>
+                      <select value={wizard.business?.fontTitle} onChange={(e) => updateBusinessField('fontTitle', e.target.value)} className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all">
+                        {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Text Font</label>
+                      <select value={wizard.business?.fontText} onChange={(e) => updateBusinessField('fontText', e.target.value)} className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all">
+                        {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Title Color</label>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTitleColor || '#ffffff' }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTitleColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTitleColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.fontTitleColor || '#ffffff'}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Text Color</label>
+                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTextColor || '#ffffff' }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTextColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTextColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.fontTextColor || '#ffffff'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Business, Links Types */}
+        {(wizard.type === 'business' || wizard.type === 'links') && (
           <div className="space-y-6">
             {/* Design Settings Accordion */}
             <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -299,7 +508,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
-                    {wizard.type !== 'pdf' && (
+                    {true && (
                       <div className="space-y-5">
                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Typography</label>
                         <div className="relative group/select">
@@ -344,105 +553,76 @@ export const Wizard: React.FC<WizardProps> = ({
 
               {activeDesignSection === 'content' && (
                 <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
-                  {wizard.type === 'pdf' ? (
-                    <div className="space-y-6">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">PDF File Selection</label>
-                      <div className="relative group">
-                        <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/upload">
-                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="application/pdf" onChange={handlePdfUpload} />
-                          {pdfUrl ? (
-                            <div className="text-center animate-in zoom-in duration-500">
-                              <div className="w-24 h-24 bg-green-50 text-green-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/10 border-2 border-white">
-                                <FileText className="w-12 h-12" />
-                              </div>
-                              <h4 className="font-black text-[#0F172A] text-xl tracking-tight">{pdfFileName}</h4>
-                              <p className="text-sm font-medium text-slate-400 mt-1">File uploaded successfully</p>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center group-hover/upload:bg-[#156295] group-hover/upload:text-white group-hover/upload:scale-110 group-hover/upload:rotate-3 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl group-hover/upload:shadow-blue-500/20 border-2 border-white/50">
-                                <Upload className="w-12 h-12" />
-                              </div>
-                              <div className="text-center space-y-2">
-                                <p className="font-black text-[#0F172A] text-xl tracking-tight">Drop your PDF or browse</p>
-                                <p className="text-sm font-medium text-slate-400">Maximum file size: 20MB</p>
-                              </div>
-                            </>
-                          )}
-                        </div>
+
+                  <div className="space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-4">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Display Title *</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. My Website"
+                          value={wizard.business?.title || ''}
+                          onChange={(e) => updateBusinessField('title', e.target.value)}
+                          className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Company / Sub-headline</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Tech Solutions"
+                          value={wizard.business?.company || ''}
+                          onChange={(e) => updateBusinessField('company', e.target.value)}
+                          className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
+                        />
                       </div>
                     </div>
-                  ) : (
-                    <div className="space-y-12">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className="space-y-4">
-                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Display Title *</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. My Website"
-                            value={wizard.business?.title || ''}
-                            onChange={(e) => updateBusinessField('title', e.target.value)}
-                            className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
-                          />
-                        </div>
-                        <div className="space-y-4">
-                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Company / Sub-headline</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Tech Solutions"
-                            value={wizard.business?.company || ''}
-                            onChange={(e) => updateBusinessField('company', e.target.value)}
-                            className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
-                          />
-                        </div>
-                      </div>
 
-                      <div className="space-y-8">
-                        <div className="flex items-center justify-between px-1">
-                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Action Buttons / Links</label>
-                          <button
-                            type="button"
-                            onClick={addLink}
-                            className="bg-blue-50 text-[#156295] px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#156295] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
-                          >
-                            <Plus className="w-4 h-4" /> Add Link
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-1 gap-6">
-                          {wizard.business?.buttons.map((link) => (
-                            <div key={link.id} className="group/item flex items-center gap-6 p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
-                              <div className="flex-1 space-y-5">
+                    <div className="space-y-8">
+                      <div className="flex items-center justify-between px-1">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Action Buttons / Links</label>
+                        <button
+                          type="button"
+                          onClick={addLink}
+                          className="bg-blue-50 text-[#156295] px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#156295] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
+                        >
+                          <Plus className="w-4 h-4" /> Add Link
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 gap-6">
+                        {wizard.business?.buttons.map((link) => (
+                          <div key={link.id} className="group/item flex items-center gap-6 p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
+                            <div className="flex-1 space-y-5">
+                              <input
+                                type="text"
+                                value={link.text}
+                                onChange={(e) => updateLink(link.id, 'text', e.target.value)}
+                                placeholder="Button Name"
+                                className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-xl p-0 focus:ring-0 placeholder:text-slate-200"
+                              />
+                              <div className="flex items-center gap-4 group/input bg-white/50 p-4 rounded-xl border border-slate-100/50 focus-within:border-[#156295]/30 focus-within:bg-white transition-all shadow-inner">
+                                <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#156295] transition-colors" />
                                 <input
                                   type="text"
-                                  value={link.text}
-                                  onChange={(e) => updateLink(link.id, 'text', e.target.value)}
-                                  placeholder="Button Name"
-                                  className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-xl p-0 focus:ring-0 placeholder:text-slate-200"
+                                  value={link.url}
+                                  onChange={(e) => updateLink(link.id, 'url', e.target.value)}
+                                  placeholder="https://..."
+                                  className="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-500 p-0 focus:ring-0 placeholder:text-slate-200"
                                 />
-                                <div className="flex items-center gap-4 group/input bg-white/50 p-4 rounded-xl border border-slate-100/50 focus-within:border-[#156295]/30 focus-within:bg-white transition-all shadow-inner">
-                                  <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#156295] transition-colors" />
-                                  <input
-                                    type="text"
-                                    value={link.url}
-                                    onChange={(e) => updateLink(link.id, 'url', e.target.value)}
-                                    placeholder="https://..."
-                                    className="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-500 p-0 focus:ring-0 placeholder:text-slate-200"
-                                  />
-                                </div>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => removeLink(link.id)}
-                                className="w-14 h-14 flex items-center justify-center rounded-[1.25rem] bg-white border border-slate-100 text-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-100/50 transition-all shadow-sm hover:shadow-xl hover:shadow-red-500/10 active:scale-90"
-                              >
-                                <Trash2 className="w-6 h-6" />
-                              </button>
                             </div>
-                          ))}
-                        </div>
+                            <button
+                              type="button"
+                              onClick={() => removeLink(link.id)}
+                              className="w-14 h-14 flex items-center justify-center rounded-[1.25rem] bg-white border border-slate-100 text-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-100/50 transition-all shadow-sm hover:shadow-xl hover:shadow-red-500/10 active:scale-90"
+                            >
+                              <Trash2 className="w-6 h-6" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
@@ -998,29 +1178,31 @@ export const Wizard: React.FC<WizardProps> = ({
                           )}
 
                           {wizard.type === 'pdf' && (
-                            <div className="h-full flex flex-col pt-10 px-6">
-                              <div className="flex-1 bg-slate-50/80 rounded-[3rem] border-2 border-slate-100 flex flex-col items-center justify-center p-12 text-center space-y-10 relative overflow-hidden group">
-                                <div className="absolute top-0 left-0 w-full h-24 bg-red-500 opacity-[0.03] rotate-[-4deg] scale-125" />
-                                <div className="relative">
-                                  <div className="w-24 h-24 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-red-200 border-4 border-white transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                                    <FileText className="w-12 h-12" />
+                            <div className="h-full flex flex-col bg-white">
+                              <div className="px-6 py-12 text-center space-y-4" style={{ backgroundColor: wizard.business?.primaryColor || '#156295' }}>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: wizard.business?.fontTitleColor || '#ffffff', opacity: 0.8 }}>
+                                  {wizard.business?.company || 'MY COMPANY'}
+                                </p>
+                                <h2 className="text-2xl font-black leading-tight px-4" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
+                                  {wizard.business?.title || 'Find me on social networks'}
+                                </h2>
+                                <p className="text-xs font-medium px-6" style={{ color: wizard.business?.fontTextColor || '#ffffff', opacity: 0.9, fontFamily: wizard.business?.fontText || 'Inter' }}>
+                                  {wizard.business?.description || 'New content every week in the links below'}
+                                </p>
+                              </div>
+
+                              <div className="flex-1 bg-white rounded-t-[2.5rem] -mt-6 p-6 flex flex-col z-10">
+                                <div className="flex-1 bg-slate-50 rounded-[2rem] border-2 border-slate-100 flex flex-col items-center justify-center p-8 text-center space-y-6">
+                                  <div className="w-20 h-20 bg-slate-100 text-slate-300 rounded-[1.5rem] flex items-center justify-center shadow-inner">
+                                    <FileText className="w-10 h-10" />
                                   </div>
-                                  <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                      <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="space-y-4">
-                                  <p className="text-[11px] font-black text-red-500 uppercase tracking-[0.3em]">Ready to View</p>
-                                  <h4 className="font-black text-slate-800 text-xl leading-tight line-clamp-3">
-                                    {pdfFileName || 'your-document.pdf'}
-                                  </h4>
-                                  <div className="h-1.5 w-12 bg-red-200 rounded-full mx-auto" />
-                                </div>
-                                <div className="w-full pt-8">
-                                  <div className="w-full py-5 bg-red-500 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-red-500/30 active:scale-95 transition-all">
-                                    DOWNLOAD PDF
+                                  <div className="space-y-2">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                      {pdfFileName ? 'PDF UPLOADED' : 'NO PDF UPLOADED'}
+                                    </p>
+                                    <h4 className="font-black text-slate-700 text-base line-clamp-2">
+                                      {pdfFileName || ''}
+                                    </h4>
                                   </div>
                                 </div>
                               </div>
