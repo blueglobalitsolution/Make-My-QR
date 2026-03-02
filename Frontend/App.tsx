@@ -17,6 +17,7 @@ import { MyCodes } from './src/components/app/MyCodes';
 import { Wizard } from './src/components/app/Wizard';
 import { Account } from './src/components/app/Account';
 import { Billing } from './src/components/app/Billing';
+import { MyFiles } from './src/components/app/MyFiles';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
@@ -45,7 +46,7 @@ const App: React.FC = () => {
   const [newFolderName, setNewFolderName] = useState('');
 
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView);
-  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue } = wizardProps;
+  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset } = wizardProps;
 
   const filteredHistory = history.filter(item => {
     const matchesFolder = activeFolderId === 'all' || item.folderId === activeFolderId;
@@ -66,9 +67,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const init = async () => {
-      const { initDatabase } = await import('./src/utils/database');
-      await initDatabase();
-
       const { initBusinessProfilesDB, getAllBusinessProfiles } = await import('./src/services/businessProfile');
       await initBusinessProfilesDB();
 
@@ -121,7 +119,7 @@ const App: React.FC = () => {
       }
 
       const validViews: ViewState[] = [
-        'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
+        'landing', 'auth', 'wizard', 'my_codes', 'my_files', 'account', 'billing',
         'register', 'forgot_password', 'dashboard', 'analytics'
       ];
 
@@ -264,6 +262,22 @@ const App: React.FC = () => {
             setNewFolderName={setNewFolderName}
             setView={setView}
             viewPdf={viewPdf}
+          />
+        )}
+
+        {view === 'my_files' && (
+          <MyFiles
+            folders={folders}
+            activeFolderId={activeFolderId}
+            setActiveFolderId={setActiveFolderId}
+            createNewFolder={createNewFolder}
+            isCreatingFolder={isCreatingFolder}
+            setIsCreatingFolder={setIsCreatingFolder}
+            newFolderName={newFolderName}
+            setNewFolderName={setNewFolderName}
+            setView={setView}
+            viewPdf={viewPdf}
+            startQrFromAsset={startQrFromAsset}
           />
         )}
 

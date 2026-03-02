@@ -61,6 +61,7 @@ export type ViewState =
   | 'dashboard'
   | 'analytics'
   | 'my_codes'
+  | 'my_files'
   | 'account'
   | 'billing'
   | 'contact'
@@ -192,6 +193,7 @@ export interface FileRecord {
   filePath: string;
   createdAt: string;
   qrCodeId?: string;
+  folderId?: string;
 }
 
 export interface Database {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WizardState, BusinessConfig, BusinessButton, GeneratedCode, Folder, OpeningHours, LocationConfig, ContactInfo } from '../../types';
+import { FileRecord, WizardState, BusinessConfig, BusinessButton, GeneratedCode, Folder, OpeningHours, LocationConfig, ContactInfo } from '../../types';
 import { QR_TYPES_CONFIG } from '../../components/constants';
 import { saveCode, updateCode } from '../api/qrcodes';
 import { saveFile } from '../services/fileStorage';
@@ -65,6 +65,7 @@ export interface UseWizardReturn {
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  startQrFromAsset: (file: FileRecord) => void;
   getQRValue: () => string;
   qrStylingOptions: any;
   selectedTypeConfig: any;
@@ -410,9 +411,20 @@ export const useWizard = (
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(file));
 
-      const fileRecord = await saveFile(file);
-      setPdfFileRecord(fileRecord);
-      setWizard(prev => ({ ...prev, value: `https://stage.makemyqrcode.com//view/file/${fileRecord.id}?standalone=true` }));
+      try {
+        const folderIdStr = wizard.folderId;
+        const folderId = folderIdStr ? parseInt(folderIdStr) : undefined;
+        const fileRecord = await saveFile(file, folderId);
+        setPdfFileRecord(fileRecord);
+        // Direct users to our internal PDF viewer
+        setWizard(prev => ({
+          ...prev,
+          value: `${window.location.origin}/view/file/${fileRecord.id}?standalone=true`
+        }));
+      } catch (err) {
+        console.error("PDF upload failed", err);
+        alert("Failed to upload PDF. Please try again.");
+      }
     }
   };
 
@@ -428,6 +440,23 @@ export const useWizard = (
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const startQrFromAsset = (file: FileRecord) => {
+    setWizard(prev => ({
+      ...prev,
+      type: file.type === 'pdf' ? 'pdf' : 'website',
+      value: `${window.location.origin}/view/file/${file.id}?standalone=true`,
+      name: file.name,
+      step: 2,
+      folderId: file.folderId // Assuming FileRecord might have this or use active folder
+    }));
+    if (file.type === 'pdf') {
+      setPdfFileName(file.name);
+      setPdfFileRecord(file);
+      setPdfUrl(file.filePath);
+    }
+    setView('wizard');
   };
 
   return {
@@ -466,6 +495,7 @@ export const useWizard = (
     handleLogoUpload,
     handlePdfUpload,
     handleCoverImageUpload,
+    startQrFromAsset,
     getQRValue,
     qrStylingOptions,
     selectedTypeConfig,

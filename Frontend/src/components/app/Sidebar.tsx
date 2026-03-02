@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode } from 'lucide-react';
+import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText } from 'lucide-react';
 import { INITIAL_HOURS, INITIAL_LOCATION } from '../../../components/constants';
 
 interface SidebarProps {
@@ -107,6 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <nav className="space-y-1 flex-1">
           {[
             { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
+            { id: 'my_files', name: 'Assets Library', icon: FileText },
             { id: 'account', name: 'My Account', icon: UserCircle },
             { id: 'billing', name: 'Billing', icon: CreditCard },
           ].map((item) => (

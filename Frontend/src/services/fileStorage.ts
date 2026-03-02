@@ -1,52 +1,60 @@
-import { FileRecord, initDatabase, addFileRecord, getAllFileRecords, getFileRecord, deleteFileRecord, saveFileBlob, getFileBlob } from '../utils/database';
+import { uploadFile, listFiles, deleteFile as apiDeleteFile, getFile as apiGetFile, FileResponse } from '../api/files';
 
-export const saveFile = async (file: File, qrCodeId?: string): Promise<FileRecord> => {
-  await initDatabase();
-  
-  const id = 'file_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-  const extension = file.name.split('.').pop()?.toLowerCase() || '';
-  const type = extension === 'pdf' ? 'pdf' : 'image';
-  
-  const record: FileRecord = {
-    id,
-    name: file.name,
-    type,
-    mimeType: file.type,
-    size: file.size,
-    filePath: `/Assets/${id}.${extension}`,
-    createdAt: new Date().toISOString(),
-    qrCodeId
-  };
+export interface FileRecord {
+  id: string;
+  name: string;
+  type: 'pdf' | 'image';
+  mimeType: string;
+  size: number;
+  filePath: string;
+  createdAt: string;
+  qrCodeId?: string;
+  folderId?: string;
+}
 
-  await addFileRecord(record);
-  await saveFileBlob(id, file);
+const transformApiResponse = (file: FileResponse): FileRecord => ({
+  id: file.id.toString(),
+  name: file.name,
+  type: file.file_type === 'pdf' ? 'pdf' : 'image',
+  mimeType: file.file_type === 'pdf' ? 'application/pdf' : 'image/jpeg',
+  size: file.size,
+  filePath: file.file_url,
+  createdAt: file.created_at,
+  folderId: file.folder?.toString(),
+});
 
-  return record;
+export const saveFile = async (file: File, folderId?: number): Promise<FileRecord> => {
+  const response = await uploadFile(file, folderId);
+  return transformApiResponse(response);
 };
 
 export const getFile = async (id: string): Promise<{ record: FileRecord; blob: Blob } | null> => {
-  await initDatabase();
-  
-  const record = await getFileRecord(id);
-  if (!record) return null;
+  try {
+    const file = await apiGetFile(parseInt(id));
+    const record = transformApiResponse(file);
+    // Fetching blob from URL if needed.
+    // In production, you might want to serve this differently, but fetching via browser/fetch is valid.
+    const response = await fetch(file.file_url);
+    const blob = await response.blob();
 
-  const blob = await getFileBlob(id);
-  if (!blob) return null;
-
-  return { record, blob };
+    return { record, blob };
+  } catch (err) {
+    console.error("Failed to fetch file from API", err);
+    return null;
+  }
 };
 
 export const getAllFiles = async (): Promise<FileRecord[]> => {
-  await initDatabase();
-  return getAllFileRecords();
+  const files = await listFiles();
+  return files.map(transformApiResponse);
 };
 
 export const deleteFile = async (id: string): Promise<void> => {
-  await initDatabase();
-  await deleteFileRecord(id);
+  await apiDeleteFile(parseInt(id));
 };
 
 export const getFileUrl = (id: string): string => {
+  // This might need refinement depending on how the frontend handles viewing files
   return `/view/file/${id}`;
 };
 
