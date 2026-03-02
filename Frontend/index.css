@@ -49,231 +49,182 @@
 
 /* --- Root Variables --- */
 :root {
-  --skeu-light: #E8F0F8;
-  --skeu-mid: #C5D8E8;
-  --skeu-dark: #9DB3C2;
-  --skeu-warm: #6C97AD;
-  --skeu-accent: #156295;
-  --skeu-accent-dark: #0E4677;
-  --skeu-surface: #F5F8FB;
-  --skeu-surface-dark: #E8F0F8;
-  --skeu-inset: #E0EAF2;
-  --skeu-highlight: rgba(255, 255, 255, 0.6);
-  --skeu-shadow: rgba(0, 0, 0, 0.15);
-  --skeu-shadow-soft: rgba(0, 0, 0, 0.08);
-  --skeu-border-top: rgba(255, 255, 255, 0.5);
-  --skeu-border-bottom: rgba(7, 46, 92, 0.1);
-  --skeu-red: #DC3545;
-  --skeu-green: #28A745;
-  --skeu-amber: #FFC107;
+  --primary-blue: #156295;
+  --primary-blue-dark: #0E4677;
+  --accent-soft: #E0EAF2;
+  --slate-900: #0F172A;
+  --slate-800: #1E293B;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-400: #94A3B8;
+  --slate-200: #E2E8F0;
+  --slate-100: #F1F5F9;
+  --slate-50: #F8FAFC;
+  --white: #FFFFFF;
 }
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background: linear-gradient(145deg, #F0F5FA 0%, #E4ECF4 50%, #D8E4EE 100%);
+  background-color: var(--slate-50);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(21, 98, 149, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(21, 98, 149, 0.03) 0px, transparent 50%);
   min-height: 100vh;
+  position: relative;
 }
 
-/* --- Raised Surface (Cards, Panels) --- */
+.skeu-app-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Premium Card Styling --- */
 .skeu-card {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  border-bottom-color: rgba(7, 46, 92, 0.08);
+  background: var(--white);
+  border: 1px solid var(--slate-100);
   box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.03) inset,
-    0 4px 12px rgba(7, 46, 92, 0.08),
-    0 1px 3px rgba(7, 46, 92, 0.05);
-  border-radius: 1.25rem;
+    0 1px 3px 0 rgba(0, 0, 0, 0.01),
+    0 20px 40px -12px rgba(15, 23, 42, 0.06);
+  border-radius: 2rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skeu-card:hover {
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.01),
+    0 30px 60px -12px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
 }
 
 .skeu-card-deep {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  border-bottom-color: rgba(7, 46, 92, 0.1);
+  background: var(--white);
+  border: 1px solid var(--slate-100);
   box-shadow:
-    0 2px 0 0 rgba(255, 255, 255, 0.7) inset,
-    0 -2px 0 0 rgba(0, 0, 0, 0.03) inset,
-    0 8px 24px rgba(7, 46, 92, 0.1),
-    0 2px 6px rgba(7, 46, 92, 0.06);
+    0 40px 80px -10px rgba(15, 23, 42, 0.1),
+    0 10px 20px -5px rgba(0, 0, 0, 0.02);
+  border-radius: 2.5rem;
+}
+
+/* --- Inset / Recessed Styling --- */
+.skeu-inset {
+  background: var(--slate-50);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--slate-100);
   border-radius: 1.5rem;
 }
 
-/* --- Inset / Recessed (Inputs, Wells) --- */
-.skeu-inset {
-  background: linear-gradient(180deg, #E8F0F8 0%, #F0F5FA 100%);
-  border: 1px solid rgba(7, 46, 92, 0.1);
-  border-top-color: rgba(7, 46, 92, 0.14);
-  box-shadow:
-    0 2px 4px rgba(7, 46, 92, 0.06) inset,
-    0 1px 2px rgba(7, 46, 92, 0.04) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.5) inset;
-  border-radius: 0.75rem;
-}
-
 .skeu-input {
-  background: linear-gradient(180deg, #EDF2F8 0%, #F5F8FB 100%);
-  border: 1px solid rgba(7, 46, 92, 0.12);
-  border-top-color: rgba(7, 46, 92, 0.16);
-  box-shadow:
-    0 2px 6px rgba(7, 46, 92, 0.06) inset,
-    0 1px 2px rgba(7, 46, 92, 0.04) inset;
-  border-radius: 0.75rem;
-  color: #072E5C;
-  font-weight: 700;
+  background: var(--slate-50);
+  border: 2px solid var(--slate-50);
+  border-radius: 1.25rem;
+  color: var(--slate-800);
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .skeu-input:focus {
-  background: linear-gradient(180deg, #F0F5FA 0%, #F8FAFC 100%);
-  border-color: var(--skeu-accent);
-  box-shadow:
-    0 2px 6px rgba(7, 46, 92, 0.06) inset,
-    0 0 0 3px rgba(21, 98, 149, 0.15);
+  background: var(--white);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 4px rgba(21, 98, 149, 0.08);
+  outline: none;
 }
 
-.skeu-input::placeholder {
-  color: #6C97AD;
-}
-
-/* --- Raised Button (Primary) --- */
+/* --- Premium Buttons --- */
 .skeu-btn {
-  background: linear-gradient(180deg, #1A75B0 0%, #156295 50%, #0E4677 100%);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-top-color: rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.08) inset,
-    0 4px 8px rgba(7, 46, 92, 0.2),
-    0 1px 3px rgba(7, 46, 92, 0.12);
-  color: #ffffff;
-  font-weight: 800;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  position: relative;
+  background: var(--primary-blue);
+  color: var(--white);
+  box-shadow: 0 10px 15px -3px rgba(21, 98, 149, 0.15);
+  border-radius: 1.25rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  border: 1px solid var(--primary-blue-dark);
 }
 
 .skeu-btn:hover {
-  background: linear-gradient(180deg, #1E82C0 0%, #1A75B0 50%, #156295 100%);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.08) inset,
-    0 6px 12px rgba(7, 46, 92, 0.22),
-    0 2px 4px rgba(7, 46, 92, 0.12);
+  background: var(--primary-blue-dark);
+  box-shadow: 0 20px 25px -5px rgba(21, 98, 149, 0.25);
   transform: translateY(-1px);
 }
 
-.skeu-btn:active {
-  background: linear-gradient(180deg, #0E4677 0%, #0A3A60 50%, #072E5C 100%);
-  box-shadow:
-    0 2px 4px rgba(7, 46, 92, 0.2) inset,
-    0 0px 1px rgba(0, 0, 0, 0.1);
-  transform: translateY(1px);
-  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
-}
-
-/* --- Secondary Button --- */
 .skeu-btn-secondary {
-  background: #FFFFFF;
-  border: 2px solid #0E4677;
-  box-shadow:
-    0 3px 6px rgba(7, 46, 92, 0.06),
-    0 1px 2px rgba(7, 46, 92, 0.04);
-  color: #0E4677;
-  font-weight: 800;
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  background: var(--white);
+  border: 2px solid var(--slate-100);
+  color: var(--slate-700);
+  border-radius: 1.25rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .skeu-btn-secondary:hover {
-  background: #156295;
-  color: #FFFFFF;
-  border-color: #156295;
-  box-shadow:
-    0 4px 8px rgba(21, 98, 149, 0.2),
-    0 2px 3px rgba(7, 46, 92, 0.08);
-  transform: translateY(-1px);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+  background: var(--slate-50);
 }
 
-.skeu-btn-secondary:active {
-  background: #0E4677;
-  color: #FFFFFF;
-  border-color: #0E4677;
+/* --- Phone Mockup Styling --- */
+.skeu-phone {
+  background: #0F172A;
+  border: 10px solid #1E293B;
+  border-radius: 3.5rem;
   box-shadow:
-    0 2px 3px rgba(7, 46, 92, 0.12) inset;
-  transform: translateY(1px);
+    0 50px 100px -20px rgba(15, 23, 42, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
 }
 
-/* --- Danger Button --- */
-.skeu-btn-danger {
-  background: linear-gradient(180deg, #E8545F 0%, #DC3545 50%, #C82333 100%);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.1) inset,
-    0 3px 8px rgba(220, 53, 69, 0.3);
-  color: #fff;
-  font-weight: 800;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
+.skeu-phone-notch {
+  background: #1E293B;
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
 }
 
-.skeu-btn-danger:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
-    0 5px 12px rgba(220, 53, 69, 0.35);
-}
-
-.skeu-btn-danger:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) inset;
+.skeu-phone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
+  pointer-events: none;
 }
 
 /* --- Sidebar --- */
 .skeu-sidebar {
-  background: #FFFFFF;
-  border-right: 1px solid rgba(7, 46, 92, 0.08);
-  box-shadow:
-    1px 0 0 rgba(255, 255, 255, 0.3) inset,
-    4px 0 16px rgba(7, 46, 92, 0.05);
+  background: var(--white);
+  border-right: 1px solid var(--slate-100);
+  box-shadow: 20px 0 60px -20px rgba(15, 23, 42, 0.04);
 }
 
 .skeu-sidebar-item {
-  border-radius: 0.75rem;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
+  border-radius: 1rem;
+  transition: all 0.2s ease;
+  margin: 0.25rem 1rem;
 }
 
 .skeu-sidebar-item:hover {
-  background: rgba(21, 98, 149, 0.05);
-  border: 1px solid rgba(21, 98, 149, 0.08);
+  background: var(--slate-50);
+  color: var(--primary-blue);
 }
 
 .skeu-sidebar-item-active {
-  background: rgba(21, 98, 149, 0.08);
-  border: 1px solid rgba(21, 98, 149, 0.12);
-  border-bottom-color: rgba(0, 0, 0, 0.03);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 2px 4px rgba(7, 46, 92, 0.04);
+  background: #EBF5FF;
+  color: var(--primary-blue);
+  font-weight: 800;
 }
 
-/* --- Accordion / Collapsible Section --- */
+/* --- Accordion / Sections --- */
 .skeu-accordion {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  border-bottom-color: rgba(7, 46, 92, 0.08);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 3px 8px rgba(7, 46, 92, 0.06);
-  border-radius: 1.25rem;
+  background: var(--white);
+  border: 1px solid var(--slate-100);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  border-radius: 1.5rem;
   overflow: hidden;
 }
 
