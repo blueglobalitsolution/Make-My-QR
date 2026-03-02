@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Grid3X3, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type } from 'lucide-react';
 import { WizardState, Folder, BusinessConfig, BusinessButton } from '../../../../types';
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
@@ -132,10 +132,8 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-lg shadow-[#156295]/20' : 'bg-white border border-slate-100 text-[#156295] shadow-sm'}`}>
               {type.id === 'website' && <Globe className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'pdf' && <FileText className="w-8 h-8" strokeWidth={1.5} />}
-              {type.id === 'links' && <LinkIcon className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'business' && <Briefcase className="w-8 h-8" strokeWidth={1.5} />}
-              {type.id === 'vcard' && <Grid3X3 className="w-8 h-8" strokeWidth={1.5} />}
             </div>
             <div className="space-y-1">
               <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
@@ -193,7 +191,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     placeholder="https://www.yourwebsite.com"
                     value={wizard.value}
                     onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
-                    className="w-full pl-22 pr-8 py-7 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 text-[#0F172A] font-black text-2xl transition-all placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] group-focus-within:shadow-blue-500/10"
+                    className="w-full pl-24 pr-8 py-7 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 text-[#0F172A] font-black text-2xl transition-all placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] group-focus-within:shadow-blue-500/10"
                   />
                 </div>
 
@@ -217,8 +215,8 @@ export const Wizard: React.FC<WizardProps> = ({
                   <MessageCircle className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight">WhatsApp Messenger</h3>
-                  <p className="text-sm font-medium text-slate-400">Direct link to a WhatsApp chat</p>
+                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight text-left">WhatsApp Messenger</h3>
+                  <p className="text-sm font-medium text-slate-400 text-left">Direct link to a WhatsApp chat</p>
                 </div>
               </div>
 
@@ -454,7 +452,7 @@ export const Wizard: React.FC<WizardProps> = ({
           >
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Grid3X3 className="w-7 h-7" />
+                <Type className="w-7 h-7" />
               </div>
               <div className="text-left">
                 <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Name of the QR Code</h3>
@@ -575,7 +573,7 @@ export const Wizard: React.FC<WizardProps> = ({
   const renderStep3Style = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left mb-10">
-        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">3. Customizing styling</h2>
+        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">3. Design the QR</h2>
       </div>
 
       <div className="space-y-6">
@@ -615,7 +613,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Grid3X3 className="w-7 h-7" />
+                <Maximize className="w-7 h-7" />
               </div>
               <div className="text-left">
                 <h3 className="text-xl font-black text-[#0F172A] tracking-tight">QR Pattern & Colors</h3>
@@ -890,7 +888,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                           {wizard.type === 'whatsapp' && (
                             <div className="h-full flex flex-col pt-0">
-                              <div className="bg-[#075E54] p-5 pt-6 text-white flex items-center gap-4 shrink-0 shadow-lg relative">
+                              <div className="bg-[#075E54] p-5 pt-6 text-white flex items-center gap-4 shrink-0 shadow-lg relative text-left">
                                 <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-black text-lg border-2 border-white/10">W</div>
                                 <div className="flex-1">
                                   <h4 className="text-sm font-black tracking-tight">WhatsApp Chat</h4>
@@ -904,7 +902,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               <div className="flex-1 bg-[#E5DDD5] p-6 flex flex-col justify-end relative">
                                 <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
                                 <div className="bg-[#DCF8C6] p-4.5 rounded-[1.5rem] rounded-tr-none self-end max-w-[90%] shadow-xl border border-green-200 animate-in slide-in-from-right-8 duration-700">
-                                  <p className="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-wrap">{whatsappMessage || 'Hello! I would like more information about your QR code services.'}</p>
+                                  <p className="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-wrap">{whatsappMessage || "Hello! I'm interested in your QR services."}</p>
                                   <div className="flex items-center justify-end gap-1 mt-3">
                                     <span className="text-[9px] font-bold text-green-700/60 uppercase">12:34 PM</span>
                                     <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
@@ -914,7 +912,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             </div>
                           )}
 
-                          {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'vcard') && (
+                          {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'pdf') && (
                             <div className="space-y-10 pt-10 px-6">
                               <div className="text-center space-y-6">
                                 <div className="w-28 h-28 mx-auto rounded-[2.5rem] bg-white skeu-card flex items-center justify-center overflow-hidden border-4 border-white shadow-2xl relative group/avatar transition-transform duration-500 hover:scale-105">
@@ -1026,10 +1024,17 @@ export const Wizard: React.FC<WizardProps> = ({
                             </div>
                           </div>
 
-                          <div className="text-center space-y-4 px-6">
+                          <div className="text-center space-y-6 px-6">
                             <h4 className="text-2xl font-black text-slate-800 leading-tight tracking-tight">
-                              Select a type of QR code on the left
+                              {wizard.name || 'Select a type of QR code on the left'}
                             </h4>
+                            <div className="flex flex-col items-center gap-6">
+                              <div className="bg-blue-50 text-[#156295] px-5 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-blue-100/50">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#156295] animate-pulse" />
+                                <span className="text-[10px] font-black uppercase tracking-wider">LIVE PREVIEW</span>
+                              </div>
+                              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">GENERATED BY QRCODE.IO</p>
+                            </div>
                           </div>
                         </div>
                       )}

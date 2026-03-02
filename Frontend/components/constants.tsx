@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Dribbble, Facebook, Circle, Github, Search, MessageCircle, Linkedin, Phone, Camera, Type, Twitter, Video, Share2, Youtube, Instagram, Music, Send, Utensils, ShoppingBag, Palette as PaletteIcon, Lock, CircleOff, Hand, Mail as MailIcon, FileText, Link as LinkIcon, UserCircle, Briefcase, ImageIcon, Smartphone, Tag, Wifi, Gift, Bike, Mic } from 'lucide-react';
+import { Globe, Dribbble, Facebook, Circle, Github, Search, MessageCircle, Linkedin, Phone, Camera, Type, Twitter, Video, Share2, Youtube, Instagram, Music, Send, Utensils, ShoppingBag, Palette as PaletteIcon, Lock, CircleOff, Hand, Mail as MailIcon, FileText, Link as LinkIcon, UserCircle, Briefcase, ImageIcon, Smartphone, Tag, Gift, Bike, Mic } from 'lucide-react';
 import { WizardState, OpeningHours, LocationConfig, ContactInfo, Palette, FrameType, QRType } from '../types';
 
 export const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
@@ -49,7 +49,7 @@ export const SOCIAL_ICONS_LIST = Object.keys(SOCIAL_ICONS_MAP);
 export const QR_TYPES_CONFIG = [
   { id: 'website', name: 'Website', desc: 'Link to any website URL', icon: Globe },
   { id: 'pdf', name: 'PDF', desc: 'Show a PDF', icon: FileText },
-  { id: 'business', name: 'Business', desc: 'Share information about your business', icon: Briefcase },
+  { id: 'business', name: 'Business Page', desc: 'Link to a business landing page', icon: Briefcase },
   { id: 'whatsapp', name: 'WhatsApp', desc: 'Get WhatsApp messages', icon: MessageCircle },
 ];
 
@@ -70,10 +70,10 @@ export const INITIAL_LOCATION: LocationConfig = {
 };
 
 export const INITIAL_CONTACT: ContactInfo = {
-  name: 'John Doe',
-  phones: [{ id: 'p1', label: 'Work', value: '123-456-7890', type: 'work' }],
-  emails: [{ id: 'e1', label: 'Email', value: 'john@example.com', type: 'work' }],
-  websites: [{ id: 'w1', label: 'Website', value: 'www.example.com', type: 'other' }]
+  name: '',
+  phones: [],
+  emails: [],
+  websites: []
 };
 
 export const DEFAULT_BUSINESS_PRESETS: Palette[] = [
