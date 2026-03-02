@@ -8,11 +8,23 @@ export const login = async (username, password) => {
     return response.data;
 };
 
-export const register = async (username, email, password) => {
-    const response = await apiClient.post('/users/register/', { username, email, password });
+export const register = async (username, email, password, first_name = '', last_name = '') => {
+    const response = await apiClient.post('/users/register/', {
+        username, email, password, first_name, last_name
+    });
     if (response.data.token) {
         localStorage.setItem('barqr_token', response.data.token);
     }
+    return response.data;
+};
+
+export const updateProfile = async (data: { first_name?: string, last_name?: string, email?: string }) => {
+    const response = await apiClient.put('/users/profile/', data);
+    return response.data;
+};
+
+export const changePassword = async (new_password: string) => {
+    const response = await apiClient.post('/users/change-password/', { new_password });
     return response.data;
 };
 

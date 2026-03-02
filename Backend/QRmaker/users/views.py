@@ -8,6 +8,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.core.cache import cache
 import random
 from .email_utils import send_welcome_email, send_otp_email
+from rest_framework.permissions import IsAuthenticated
+
 
 class CustomObtainAuthToken(ObtainAuthToken):
     permission_classes = [AllowAny]
@@ -21,7 +23,9 @@ class CustomObtainAuthToken(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name
         })
 
 class RegisterView(APIView):
@@ -31,6 +35,8 @@ class RegisterView(APIView):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
+        first_name = request.data.get('first_name', '')
+        last_name = request.data.get('last_name', '')
         
         if not username or not password or not email:
             return Response({'error': 'Please provide all fields'}, status=status.HTTP_400_BAD_REQUEST)
@@ -38,7 +44,14 @@ class RegisterView(APIView):
         if User.objects.filter(username=username).exists():
             return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
             
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User.objects.create_user(
+            username=username, 
+            email=email, 
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+
         token, _ = Token.objects.get_or_create(user=user)
         
         # Send welcome email
@@ -47,8 +60,52 @@ class RegisterView(APIView):
         return Response({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name
         })
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        })
+
+    def put(self, request):
+        user = request.user
+        user.first_name = request.data.get('first_name', user.first_name)
+        user.last_name = request.data.get('last_name', user.last_name)
+        user.email = request.data.get('email', user.email)
+        user.save()
+        return Response({
+            'message': 'Profile updated successfully',
+            'user': {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+        })
+
+class UserPasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        new_password = request.data.get('new_password')
+        if not new_password:
+            return Response({'error': 'New password is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user = request.user
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'})
+
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]

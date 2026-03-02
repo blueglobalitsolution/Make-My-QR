@@ -164,7 +164,7 @@ import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
 import { PdfViewer } from './components/PdfViewer';
 import BusinessProfileViewer from './components/BusinessProfileViewer';
-import { login, register, logout, requestPasswordReset, verifyOTP, confirmPasswordReset } from './src/api/auth';
+import { login, register, logout, requestPasswordReset, verifyOTP, confirmPasswordReset, updateProfile, changePassword } from './src/api/auth';
 import { getCodes, saveCode, updateCode, deleteCode as apiDeleteCode } from './src/api/qrcodes';
 import { getFolders, createFolder as apiCreateFolder, deleteFolder as apiDeleteFolder } from './src/api/folders';
 import {
@@ -212,12 +212,21 @@ const App: React.FC = () => {
   const [newPasswordReset, setNewPasswordReset] = useState('');
 
   const [regName, setRegName] = useState('');
+  const [regLastName, setRegLastName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
+
+  // Account management states
+  const [accFirstName, setAccFirstName] = useState('');
+  const [accLastName, setAccLastName] = useState('');
+  const [accEmail, setAccEmail] = useState('');
+  const [accPhone, setAccPhone] = useState('');
+  const [accPassword, setAccPassword] = useState('');
+  const [accConfirmPassword, setAccConfirmPassword] = useState('');
 
   const [wizard, setWizard] = useState<WizardState>({
     step: 1,
@@ -333,6 +342,14 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (currentUser) {
+      setAccFirstName(currentUser.firstName || currentUser.name?.split(' ')[0] || '');
+      setAccLastName(currentUser.lastName || currentUser.name?.split(' ').slice(1).join(' ') || '');
+      setAccEmail(currentUser.email || '');
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
@@ -370,7 +387,9 @@ const App: React.FC = () => {
       const user: User = {
         id: data.user_id.toString(),
         email: data.email,
-        name: data.email.split('@')[0], // Fallback name
+        name: `${data.first_name} ${data.last_name}`.trim() || data.email.split('@')[0],
+        firstName: data.first_name,
+        lastName: data.last_name,
         plan: 'free',
         isAdmin: false,
         createdAt: new Date().toISOString(),
@@ -399,11 +418,13 @@ const App: React.FC = () => {
     }
     try {
       // Using email as username for simplicity on the backend
-      const data = await register(regEmail, regEmail, regPassword);
+      const data = await register(regEmail, regEmail, regPassword, regName, regLastName);
       const user: User = {
         id: data.user_id.toString(),
         email: data.email,
-        name: regName || data.email.split('@')[0],
+        name: `${regName} ${regLastName}`.trim() || data.email.split('@')[0],
+        firstName: regName,
+        lastName: regLastName,
         plan: 'free',
         isAdmin: false,
         createdAt: new Date().toISOString(),
@@ -415,6 +436,47 @@ const App: React.FC = () => {
       setView('my_codes');
     } catch (err) {
       alert("Registration failed. Please try again.");
+    }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await updateProfile({
+        first_name: accFirstName,
+        last_name: accLastName,
+        email: accEmail
+      });
+      if (currentUser) {
+        const updatedUser = {
+          ...currentUser,
+          firstName: accFirstName,
+          lastName: accLastName,
+          email: accEmail,
+          name: `${accFirstName} ${accLastName}`.trim()
+        };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('barqr_user', JSON.stringify(updatedUser));
+      }
+      alert("Profile updated successfully!");
+    } catch (err) {
+      alert("Failed to update profile. Please try again.");
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (accPassword !== accConfirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    try {
+      await changePassword(accPassword);
+      setAccPassword('');
+      setAccConfirmPassword('');
+      alert("Password changed successfully!");
+    } catch (err) {
+      alert("Failed to change password. Please try again.");
     }
   };
 
@@ -1035,7 +1097,12 @@ const App: React.FC = () => {
               <form className="space-y-4" onSubmit={handleRegister}>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
-                  <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your full name" />
+                  <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="First Name" />
+                </div>
+
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
+                  <input type="text" required value={regLastName} onChange={(e) => setRegLastName(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Last Name" />
                 </div>
 
                 <div className="relative">
@@ -2787,33 +2854,33 @@ const App: React.FC = () => {
                   <label className="block text-xs font-bold text-red-500 mb-2">First Name</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
-                    <input type="text" defaultValue={currentUser?.name?.split(' ')[0] || 'Blue'} className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <input type="text" value={accFirstName} onChange={(e) => setAccFirstName(e.target.value)} className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-red-500 mb-2">Last Name & Surname</label>
+                  <label className="block text-xs font-bold text-red-500 mb-2">Last Name</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
-                    <input type="text" defaultValue="Designer" className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <input type="text" value={accLastName} onChange={(e) => setAccLastName(e.target.value)} className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-red-500 mb-2">Email</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white"><Mail className="w-5 h-5" /></div>
-                    <input type="email" defaultValue={currentUser?.email || 'bluedesigner001@gmail.com'} className="w-full pl-12 pr-5 py-3 bg-[#156295] text-white border border-[#156295] rounded-xl text-sm font-medium placeholder-white/60 focus:ring-2 focus:ring-[#156295]/30 outline-none transition-all" />
+                    <input type="email" value={accEmail} onChange={(e) => setAccEmail(e.target.value)} className="w-full pl-12 pr-5 py-3 bg-[#156295] text-white border border-[#156295] rounded-xl text-sm font-medium placeholder-white/60 focus:ring-2 focus:ring-[#156295]/30 outline-none transition-all" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 mb-2">Telephone</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Phone className="w-5 h-5" /></div>
-                    <input type="tel" placeholder="E.g. 6565123" className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="E.g. 6565123" className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
                   </div>
                 </div>
               </div>
 
-              <button className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
+              <button onClick={handleUpdateProfile} className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
                 Update
               </button>
             </div>
@@ -2826,7 +2893,7 @@ const App: React.FC = () => {
                   <label className="block text-xs font-bold text-red-500 mb-2">Password</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-                    <input type="password" placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <input type="password" value={accPassword} onChange={(e) => setAccPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
                     <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
                   </div>
                 </div>
@@ -2834,13 +2901,13 @@ const App: React.FC = () => {
                   <label className="block text-xs font-bold text-red-500 mb-2">Confirm password</label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-                    <input type="password" placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
+                    <input type="password" value={accConfirmPassword} onChange={(e) => setAccConfirmPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" />
                     <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"><Eye className="w-5 h-5" /></button>
                   </div>
                 </div>
               </div>
 
-              <button className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
+              <button onClick={handleUpdatePassword} className="px-8 py-2.5 bg-[#156295] text-white text-sm font-bold rounded-xl hover:bg-[#0E4677] transition-all shadow-md">
                 Update
               </button>
             </div>
