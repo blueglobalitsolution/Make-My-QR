@@ -1,0 +1,293 @@
+import React from 'react';
+import { Barcode, ChevronLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+
+interface AuthViewsProps {
+  view: string;
+  setView: (view: any) => void;
+  loginEmail: string;
+  setLoginEmail: (email: string) => void;
+  loginPassword: string;
+  setLoginPassword: (password: string) => void;
+  showLoginPassword: boolean;
+  setShowLoginPassword: (show: boolean) => void;
+  handleAuth: () => Promise<void>;
+  regName: string;
+  setRegName: (name: string) => void;
+  regLastName: string;
+  setRegLastName: (lastName: string) => void;
+  regEmail: string;
+  setRegEmail: (email: string) => void;
+  regPhone: string;
+  setRegPhone: (phone: string) => void;
+  regPassword: string;
+  setRegPassword: (password: string) => void;
+  regConfirmPassword: string;
+  setRegConfirmPassword: (confirmPassword: string) => void;
+  showRegPassword: boolean;
+  setShowRegPassword: (show: boolean) => void;
+  showRegConfirmPassword: boolean;
+  setShowRegConfirmPassword: (show: boolean) => void;
+  handleRegister: (e: React.FormEvent) => Promise<void>;
+  resetStep: 1 | 2 | 3;
+  setResetStep: (step: 1 | 2 | 3) => void;
+  resetEmail: string;
+  setResetEmail: (email: string) => void;
+  resetOTP: string;
+  setResetOTP: (otp: string) => void;
+  resetTimer: number;
+  newPasswordReset: string;
+  setNewPasswordReset: (password: string) => void;
+  handleResetRequest: (e: React.FormEvent) => Promise<void>;
+  handleResetVerify: (e: React.FormEvent) => Promise<void>;
+  handleResetConfirm: (e: React.FormEvent) => Promise<void>;
+}
+
+export const AuthViews: React.FC<AuthViewsProps> = ({
+  view,
+  setView,
+  loginEmail,
+  setLoginEmail,
+  loginPassword,
+  setLoginPassword,
+  showLoginPassword,
+  setShowLoginPassword,
+  handleAuth,
+  regName,
+  setRegName,
+  regLastName,
+  setRegLastName,
+  regEmail,
+  setRegEmail,
+  regPhone,
+  setRegPhone,
+  regPassword,
+  setRegPassword,
+  regConfirmPassword,
+  setRegConfirmPassword,
+  showRegPassword,
+  setShowRegPassword,
+  showRegConfirmPassword,
+  setShowRegConfirmPassword,
+  handleRegister,
+  resetStep,
+  setResetStep,
+  resetEmail,
+  setResetEmail,
+  resetOTP,
+  setResetOTP,
+  resetTimer,
+  newPasswordReset,
+  setNewPasswordReset,
+  handleResetRequest,
+  handleResetVerify,
+  handleResetConfirm,
+}) => {
+  if (view === 'auth') {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full skeu-auth-card p-10">
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-2">
+              <div className="skeu-hero-icon p-1.5 rounded-lg relative"><Barcode className="text-white w-5 h-5" /></div>
+              <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
+            </div>
+            <button type="button" onClick={() => setView('landing')} className="flex items-center gap-1.5 text-sm font-bold skeu-text-secondary hover:skeu-text-primary transition-colors">
+              <ChevronLeft className="w-4 h-4" /> Back to Home
+            </button>
+          </div>
+
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Welcome back</h2>
+            <p className="mt-2 text-sm skeu-text-secondary font-medium">Please enter your details to sign in.</p>
+          </div>
+
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
+              <input type="email" required value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your email here" />
+            </div>
+
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+              <input type={showLoginPassword ? "text" : "password"} required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Enter your password here" />
+              <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                {showLoginPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center">
+                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#156295] focus:ring-[#156295] border-slate-300 rounded" />
+                <label htmlFor="remember-me" className="ml-2 block text-xs font-bold skeu-text-secondary">Remember me</label>
+              </div>
+              <button type="button" onClick={() => setView('forgot_password')} className="text-sm font-bold skeu-text-accent hover:underline">Forgot password?</button>
+            </div>
+
+            <button type="submit" className="w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">
+              Sign in
+            </button>
+
+            <p className="text-center text-sm text-slate-500">
+              Don't have an account? <button type="button" onClick={() => setView('register')} className="font-bold text-[#156295] hover:underline">Sign up</button>
+            </p>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'register') {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full skeu-auth-card p-10">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+              <div className="skeu-hero-icon p-1.5 rounded-lg relative"><Barcode className="text-white w-5 h-5" /></div>
+              <h1 className="text-xl font-black skeu-text-primary tracking-tight">QR <span className="skeu-text-accent">code.io</span></h1>
+            </div>
+            <button type="button" onClick={() => setView('landing')} className="flex items-center gap-1.5 text-sm font-bold skeu-text-secondary hover:skeu-text-primary transition-colors">
+              <ChevronLeft className="w-4 h-4" /> Back to Home
+            </button>
+          </div>
+
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Create Account</h2>
+            <p className="mt-2 text-sm skeu-text-secondary font-medium">Start creating amazing QR codes today.</p>
+          </div>
+
+          <form className="space-y-4" onSubmit={handleRegister}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative">
+                <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="First name" />
+              </div>
+              <div className="relative">
+                <input type="text" required value={regLastName} onChange={(e) => setRegLastName(e.target.value)} className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Last name" />
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
+              <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Email address" />
+            </div>
+
+            <div className="relative">
+              <input type="tel" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Phone number (optional)" />
+            </div>
+
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+              <input type={showRegPassword ? "text" : "password"} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Password" />
+              <button type="button" onClick={() => setShowRegPassword(!showRegPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                {showRegPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+              <input type={showRegConfirmPassword ? "text" : "password"} required value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all" placeholder="Confirm password" />
+              <button type="button" onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                {showRegConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
+            <button type="submit" className="w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all">
+              Create Account
+            </button>
+
+            <p className="text-center text-sm text-slate-500">
+              Already have an account? <button type="button" onClick={() => setView('auth')} className="font-bold text-[#156295] hover:underline">Sign in</button>
+            </p>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'forgot_password') {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 skeu-auth-card p-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="text-center">
+            <div className="skeu-icon-raised p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6">
+              <Lock className="text-amber-500 w-8 h-8" />
+            </div>
+            <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">
+              {resetStep === 1 ? "Reset password" : resetStep === 2 ? "Verify OTP" : "New Password"}
+            </h2>
+            <p className="mt-2 text-sm skeu-text-secondary font-medium">
+              {resetStep === 1
+                ? "Enter your email and we'll send you an OTP."
+                : resetStep === 2
+                  ? "Enter the 6rdigit code sent to your email."
+                  : "Create a new strong password for your account."}
+            </p>
+          </div>
+
+          {resetStep === 1 && (
+            <form className="mt-8 space-y-6" onSubmit={handleResetRequest}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold skeu-text-secondary ml-1">Email address</label>
+                  <input type="email" required value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
+                </div>
+              </div>
+              <div>
+                <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                  Send OTP
+                </button>
+              </div>
+            </form>
+          )}
+
+          {resetStep === 2 && (
+            <form className="mt-8 space-y-6" onSubmit={handleResetVerify}>
+              <div className="space-y-4">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-amber-500 mb-2">
+                    {Math.floor(resetTimer / 60)}:{(resetTimer % 60).toString().padStart(2, '0')}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold skeu-text-secondary ml-1">6rdigit OTP</label>
+                  <input type="text" maxLength={6} required value={resetOTP} onChange={(e) => setResetOTP(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm text-center tracking-[1em] font-bold" placeholder="000000" />
+                </div>
+              </div>
+              <div>
+                <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                  Verify OTP
+                </button>
+                <button type="button" onClick={() => setResetStep(1)} className="w-full mt-4 text-xs font-bold skeu-text-muted hover:skeu-text-primary">
+                  Resend OTP
+                </button>
+              </div>
+            </form>
+          )}
+
+          {resetStep === 3 && (
+            <form className="mt-8 space-y-6" onSubmit={handleResetConfirm}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold skeu-text-secondary ml-1">New Password</label>
+                  <input type="password" required value={newPasswordReset} onChange={(e) => setNewPasswordReset(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="••••••••" />
+                </div>
+              </div>
+              <div>
+                <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">
+                  Update Password
+                </button>
+              </div>
+            </form>
+          )}
+
+          <div className="text-center">
+            <button onClick={() => { setView('auth'); setResetStep(1); }} className="text-sm font-bold skeu-text-secondary hover:skeu-text-primary">
+              Back to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};

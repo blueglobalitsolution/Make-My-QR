@@ -1,0 +1,32 @@
+# App.tsx Refactoring Plan - COMPLETED
+
+## Goal
+Break down the monolithic 3010-line App.tsx into function-like files for better maintainability and team collaboration.
+
+## Directory Structure (IMPLEMENTED)
+
+```
+src/
+├── components/
+│   └── app/
+│       ├── Icons.ts                    # All lucide-react icon imports/exports
+│       ├── Sidebar.tsx                 # Sidebar navigation
+│       ├── Landing.tsx                 # Landing page
+│       ├── AuthViews.tsx               # Login, Register, ForgotPassword
+│       ├── MyCodes.tsx                 # My QR Codes library
+│       ├── Wizard/
+│       │   ├── index.ts                # Main wizard container (includes all steps)
+│       │   ├── Step1_TypeSelection.tsx # (integrated in index.ts)
+│       │   ├── Step2_Content.tsx       # (integrated in index.ts)
+│       │   ├── Step3_Style.tsx         # (integrated in index.ts)
+│       │   └── PhonePreview.tsx        # (integrated in index.ts)
+│       ├── Account.tsx                 # Account settings
+│       └── Billing.tsx                 # Pricing plans
+├── hooks/
+│   ├── useAuth.ts                      # Login, register, logout, password reset
+│   ├── useWizard.ts                    # Wizard state + all handlers
+│   └── useCodes.ts                     # QR codes CRUD + folders
+└── App.tsx                             # Main orchestrator (to be updated)
+```
+
+## Implementation Status - ALL COMPLETED
