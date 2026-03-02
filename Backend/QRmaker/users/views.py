@@ -52,6 +52,9 @@ class RegisterView(APIView):
             last_name=last_name
         )
 
+        from folders.models import Folder
+        Folder.objects.create(user=user, name=username, is_root=True)
+
         token, _ = Token.objects.get_or_create(user=user)
         
         # Send welcome email

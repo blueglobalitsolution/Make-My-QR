@@ -22,4 +22,11 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/qrcodes/', include('qrcodes.urls')),
     path('api/folders/', include('folders.urls')),
+    path('api/files/', include('files.urls')),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
