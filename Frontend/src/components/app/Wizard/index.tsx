@@ -99,15 +99,15 @@ export const Wizard: React.FC<WizardProps> = ({
         {steps.map((s, idx) => (
           <React.Fragment key={s.n}>
             <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-black transition-all ${step >= s.n ? 'bg-[#156295] text-white shadow-xl shadow-[#156295]/20' : 'bg-slate-200 text-slate-400'}`}>
+              <div className={`w-9 h-9 flex items-center justify-center text-[14px] font-black transition-all ${step >= s.n ? 'skeu-tag-active' : 'skeu-inset skeu-text-muted'}`}>
                 {s.n}
               </div>
-              <span className={`text-[11px] font-black tracking-widest transition-colors ${step >= s.n ? 'text-slate-800' : 'text-slate-400'}`}>
+              <span className={`text-[11px] font-black tracking-widest transition-colors ${step >= s.n ? 'skeu-text-primary' : 'skeu-text-muted'}`}>
                 {s.label}
               </span>
             </div>
             {idx < steps.length - 1 && (
-              <div className="w-16 h-[2px] bg-slate-100" />
+              <div className="w-16 h-[2px] skeu-inset" />
             )}
           </React.Fragment>
         ))}
@@ -118,7 +118,7 @@ export const Wizard: React.FC<WizardProps> = ({
   const renderStep1TypeSelection = () => (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left">
-        <h2 className="text-[32px] font-black text-[#0F172A] tracking-tight">1. Select a type of QR code</h2>
+        <h2 className="text-[32px] font-black skeu-text-primary tracking-tight">1. Select a type of QR code</h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -127,17 +127,17 @@ export const Wizard: React.FC<WizardProps> = ({
             key={type.id}
             onClick={() => setWizard({ ...wizard, type: type.id as any })}
             type="button"
-            className={`group p-8 aspect-square rounded-[2.5rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-6 ${wizard.type === type.id ? 'border-[#156295] bg-white shadow-2xl shadow-blue-500/20' : 'border-transparent bg-white shadow-sm hover:shadow-md hover:shadow-slate-200/50'}`}
+            className={`group p-8 aspect-square rounded-[2.5rem] transition-all flex flex-col items-center justify-center text-center gap-6 ${wizard.type === type.id ? 'skeu-card shadow-2xl scale-105' : 'skeu-card hover:translate-y-[-4px]'}`}
           >
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-lg shadow-[#156295]/20' : 'bg-white border border-slate-100 text-[#156295] shadow-sm'}`}>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 relative skeu-gloss ${wizard.type === type.id ? 'skeu-hero-icon text-white' : 'skeu-inset skeu-text-accent'}`}>
               {type.id === 'website' && <Globe className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'pdf' && <FileText className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" strokeWidth={1.5} />}
               {type.id === 'business' && <Briefcase className="w-8 h-8" strokeWidth={1.5} />}
             </div>
             <div className="space-y-1">
-              <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
-              <p className="text-[11px] font-normal text-slate-400 leading-relaxed px-1">
+              <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
+              <p className="text-[11px] font-normal skeu-text-muted leading-relaxed px-1">
                 {type.desc}
               </p>
             </div>
@@ -150,48 +150,48 @@ export const Wizard: React.FC<WizardProps> = ({
   const renderStep2Content = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left mb-10">
-        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">2. Add content to your QR code</h2>
+        <h2 className="text-[26px] font-black skeu-text-primary tracking-tight ml-1">2. Add content to your QR code</h2>
       </div>
 
       <div className="space-y-6">
         {/* Website Content Section */}
         {wizard.type === 'website' && (
-          <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             <button
               onClick={() => toggleSection('content')}
-              className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
+              className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group"
               type="button"
             >
               <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md">
+                <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
                   <Globe className="w-7 h-7" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight uppercase">Website URL</h3>
-                  <p className="text-sm font-medium text-slate-400">Link your QR code to any website.</p>
+                  <h3 className="text-xl font-black skeu-text-primary tracking-tight uppercase">Website URL</h3>
+                  <p className="text-sm font-medium skeu-text-muted">Link your QR code to any website.</p>
                 </div>
               </div>
-              <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+              <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
             </button>
 
             {activeDesignSection === 'content' && (
-              <div className="p-10 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="p-10 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                 <div className="flex items-center justify-between px-1">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Destination URL *</label>
-                  <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Supports http:// and https://</span>
+                  <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest">Destination URL *</label>
+                  <span className="text-[9px] font-black skeu-text-muted uppercase tracking-widest italic opacity-60">Supports http:// and https://</span>
                 </div>
 
                 <div className="relative group">
                   <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-5">
-                    <Globe className="w-6 h-6 text-blue-500 group-focus-within:text-blue-600 transition-colors" />
-                    <div className="h-8 w-[1.5px] bg-slate-100" />
+                    <Globe className="w-6 h-6 skeu-text-accent transition-colors" />
+                    <div className="h-8 w-[1.5px] skeu-dark opacity-30" />
                   </div>
                   <input
                     type="text"
                     placeholder="https://www.yourwebsite.com"
                     value={wizard.value}
                     onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
-                    className="w-full pl-24 pr-8 py-7 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 text-[#0F172A] font-black text-2xl transition-all placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] group-focus-within:shadow-blue-500/10"
+                    className="w-full pl-24 pr-8 py-7 skeu-input text-2xl placeholder:opacity-20 translate-y-0"
                   />
                 </div>
 
@@ -208,51 +208,50 @@ export const Wizard: React.FC<WizardProps> = ({
 
         {/* WhatsApp Type */}
         {wizard.type === 'whatsapp' && (
-          <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="p-8 space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-50 text-green-500 rounded-xl flex items-center justify-center shadow-sm">
+                  <div className="w-12 h-12 skeu-hero-icon text-white rounded-xl flex items-center justify-center relative skeu-gloss">
                     <MessageCircle className="w-6 h-6" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg font-black text-[#0F172A] tracking-tight">WhatsApp Information</h3>
-                    <p className="text-[11px] font-medium text-slate-400">Direct link to start a WhatsApp chat</p>
+                    <h3 className="text-lg font-black skeu-text-primary tracking-tight">WhatsApp Information</h3>
+                    <p className="text-[11px] font-medium skeu-text-muted">Direct link to start a WhatsApp chat</p>
                   </div>
                 </div>
-                <ChevronDown className="w-5 h-5 text-slate-300" />
+                <ChevronDown className="w-5 h-5 skeu-text-muted" />
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-3 text-left">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Phone number *</label>
-                  <div className="flex items-center border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/5 transition-all bg-[#F8FAFC]">
-                    <div className="px-5 py-4 flex items-center gap-2 border-r border-slate-200/50 bg-white">
+                  <label className="text-[11px] font-bold skeu-text-muted uppercase tracking-widest pl-1">Phone number *</label>
+                  <div className="flex items-center skeu-input overflow-hidden">
+                    <div className="px-5 py-4 flex items-center gap-2 border-r border-black/5 skeu-mid">
                       <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover" alt="IN" />
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                      <ChevronDown className="w-4 h-4 skeu-text-muted" />
                     </div>
                     <div className="flex-1 px-5 py-4 flex items-center gap-2">
-                      <span className="font-bold text-slate-700">+91</span>
+                      <span className="font-bold skeu-text-secondary">+91</span>
                       <input
                         type="text"
                         placeholder="84606 87490"
                         value={whatsappPhone}
                         onChange={(e) => setWhatsappPhone(e.target.value.replace(/[^0-9 ]/g, ''))}
-                        className="flex-1 bg-transparent outline-none font-bold text-[#0F172A] text-lg placeholder:text-slate-300"
+                        className="flex-1 bg-transparent outline-none font-bold skeu-text-primary text-lg"
                       />
                     </div>
                   </div>
-                  <p className="text-[10px] text-red-500 font-bold pl-1">Invalid number</p>
                 </div>
 
                 <div className="space-y-3 text-left">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Message</label>
+                  <label className="text-[11px] font-bold skeu-text-muted uppercase tracking-widest pl-1">Message</label>
                   <textarea
                     rows={4}
                     placeholder="Write your message"
                     value={whatsappMessage}
                     onChange={(e) => setWhatsappMessage(e.target.value)}
-                    className="w-full px-6 py-5 bg-white border-2 border-slate-100 rounded-[1.5rem] outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all font-bold text-[#0F172A] resize-none placeholder:text-slate-300 shadow-sm"
+                    className="w-full px-6 py-5 skeu-input resize-none"
                   />
                 </div>
               </div>
@@ -264,40 +263,40 @@ export const Wizard: React.FC<WizardProps> = ({
         {wizard.type === 'pdf' && (
           <div className="space-y-6">
             {/* PDF Upload */}
-            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center shadow-sm">
+                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
                     <FileText className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">PDF Upload</h3>
-                    <p className="text-sm font-medium text-slate-400">Select and upload your PDF document.</p>
+                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">PDF Upload</h3>
+                    <p className="text-sm font-medium skeu-text-muted">Select and upload your PDF document.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'upload' ? 'rotate-180 text-red-600' : 'group-hover:text-slate-400'}`} />
+                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'upload' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'upload' && (
-                <div className="p-10 border-t border-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="p-10 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="relative group">
-                    <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/upload">
+                    <div className="border-4 border-dashed skeu-dark rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] skeu-mid hover:shadow-2xl transition-all duration-500 cursor-pointer group/upload">
                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />
                       {pdfUrl ? (
                         <div className="text-center animate-in zoom-in duration-500">
-                          <div className="w-24 h-24 bg-red-50 text-red-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-500/10 border-2 border-white">
+                          <div className="w-24 h-24 skeu-hero-icon text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 relative skeu-gloss">
                             <FileText className="w-12 h-12" />
                           </div>
-                          <h4 className="font-black text-[#0F172A] text-xl tracking-tight">{pdfFileName}</h4>
-                          <p className="text-sm font-medium text-slate-400 mt-1">File uploaded successfully</p>
+                          <h4 className="font-black skeu-text-primary text-xl tracking-tight">{pdfFileName}</h4>
+                          <p className="text-sm font-medium skeu-text-muted mt-1">File uploaded successfully</p>
                         </div>
                       ) : (
                         <>
-                          <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center group-hover/upload:bg-[#156295] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl group-hover/upload:shadow-blue-500/20 border-2 border-white/50">
+                          <div className="w-24 h-24 skeu-inset skeu-text-muted rounded-[2.5rem] flex items-center justify-center group-hover/upload:skeu-hero-icon group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl">
                             <Upload className="w-12 h-12" />
                           </div>
                           <div className="text-center space-y-2">
-                            <p className="font-black text-[#0F172A] text-xl tracking-tight">Drop your PDF or browse</p>
-                            <p className="text-sm font-medium text-slate-400">Maximum file size: 20MB</p>
+                            <p className="font-black skeu-text-primary text-xl tracking-tight">Drop your PDF or browse</p>
+                            <p className="text-sm font-medium skeu-text-muted">Maximum file size: 20MB</p>
                           </div>
                         </>
                       )}
@@ -308,18 +307,18 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* Design */}
-            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center shadow-sm">
+                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
                     <PaletteIcon className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Design</h3>
-                    <p className="text-sm font-medium text-slate-400">Choose a color theme for your page.</p>
+                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">Design</h3>
+                    <p className="text-sm font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 text-[#156295]' : 'group-hover:text-slate-400'}`} />
+                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'design' && (
                 <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
@@ -370,18 +369,18 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* PDF Information */}
-            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-              <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+              <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm">
+                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
                     <Info className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">PDF Information</h3>
-                    <p className="text-sm font-medium text-slate-400">Details about the PDF content.</p>
+                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">PDF Information</h3>
+                    <p className="text-sm font-medium skeu-text-muted">Details about the PDF content.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'pdf_info' ? 'rotate-180 text-amber-600' : 'group-hover:text-slate-400'}`} />
+                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pdf_info' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'pdf_info' && (
                 <div className="p-10 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
@@ -414,31 +413,31 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* Fonts */}
-            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-              <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm">
+                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
                     <i className="font-serif text-2xl font-black">T</i>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Fonts</h3>
-                    <p className="text-sm font-medium text-slate-400">Customize fonts and colors.</p>
+                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">Fonts</h3>
+                    <p className="text-sm font-medium skeu-text-muted">Customize fonts and colors.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'fonts' ? 'rotate-180 text-purple-600' : 'group-hover:text-slate-400'}`} />
+                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'fonts' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'fonts' && (
                 <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Title Font</label>
-                      <select value={wizard.business?.fontTitle} onChange={(e) => updateBusinessField('fontTitle', e.target.value)} className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all">
+                      <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest pl-1">Title Font</label>
+                      <select value={wizard.business?.fontTitle} onChange={(e) => updateBusinessField('fontTitle', e.target.value)} className="w-full pl-8 pr-12 py-5 skeu-input appearance-none">
                         {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Text Font</label>
-                      <select value={wizard.business?.fontText} onChange={(e) => updateBusinessField('fontText', e.target.value)} className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all">
+                      <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest pl-1">Text Font</label>
+                      <select value={wizard.business?.fontText} onChange={(e) => updateBusinessField('fontText', e.target.value)} className="w-full pl-8 pr-12 py-5 skeu-input appearance-none">
                         {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                       </select>
                     </div>
@@ -759,35 +758,35 @@ export const Wizard: React.FC<WizardProps> = ({
   const renderStep3Style = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left mb-10">
-        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">3. Design the QR</h2>
+        <h2 className="text-[26px] font-black skeu-text-primary tracking-tight ml-1">3. Design the QR</h2>
       </div>
 
       <div className="space-y-6">
         {/* Frame Selection */}
-        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Layout className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Frame Layout</h3>
-                <p className="text-sm font-medium text-slate-400">Add a call-to-action frame</p>
+                <h3 className="text-xl font-black skeu-text-primary tracking-tight">Frame Layout</h3>
+                <p className="text-sm font-medium skeu-text-muted">Add a call-to-action frame</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'frame' ? 'rotate-180 text-[#156295]' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'frame' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
           {activeDesignSection === 'frame' && (
-            <div className="p-10 border-t border-slate-50/50 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-10 border-t border-black/5 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 animate-in slide-in-from-top-4 duration-500 origin-top">
               {FRAME_STYLES.map((style: any) => (
                 <button
                   key={style.id}
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, frame: style.id } })}
-                  className={`aspect-square flex flex-col items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.frame === style.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-400 hover:shadow-lg hover:shadow-slate-200/50 shadow-sm'}`}
+                  className={`aspect-square flex flex-col items-center justify-center rounded-2xl transition-all group/item ${wizard.config.frame === style.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl' : 'skeu-card skeu-text-muted translate-y-0'}`}
                 >
-                  <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125 group-hover/item:scale-135'}`}>{style.icon}</div>
-                  <span className={`text-[9px] font-black uppercase mt-4 tracking-widest ${wizard.config.frame === style.id ? 'text-[#156295]' : 'text-slate-300'}`}>{style.label}</span>
+                  <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125'}`}>{style.icon}</div>
+                  <span className={`text-[9px] font-black uppercase mt-4 tracking-widest ${wizard.config.frame === style.id ? 'skeu-text-accent' : 'skeu-text-muted opacity-50'}`}>{style.label}</span>
                 </button>
               ))}
             </div>
@@ -795,29 +794,29 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Color & Pattern */}
-        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Maximize className="w-7 h-7" />
+              <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                <PaletteIcon className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">QR Pattern & Colors</h3>
-                <p className="text-sm font-medium text-slate-400">Dots, squares and custom colors</p>
+                <h3 className="text-xl font-black skeu-text-primary tracking-tight">QR Pattern & Colors</h3>
+                <p className="text-sm font-medium skeu-text-muted">Dots, squares and custom colors</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'pattern' ? 'rotate-180 text-purple-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pattern' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
 
           {activeDesignSection === 'pattern' && (
-            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-10 border-t border-black/5 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
                 {PATTERN_OPTIONS.map((opt: any) => (
                   <button
                     key={opt.id}
                     type="button"
                     onClick={() => setWizard({ ...wizard, config: { ...wizard.config, pattern: opt.id } })}
-                    className={`aspect-square flex items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.pattern === opt.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300 shadow-sm'}`}
+                    className={`aspect-square flex items-center justify-center rounded-2xl transition-all group/item ${wizard.config.pattern === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl' : 'skeu-card skeu-text-muted translate-y-0'}`}
                   >
                     <div className={`p-1 transition-transform duration-500 ${wizard.config.pattern === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                   </button>
@@ -825,22 +824,22 @@ export const Wizard: React.FC<WizardProps> = ({
               </div>
 
               <div className="grid md:grid-cols-2 gap-10">
-                <div className="space-y-5">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Foreground Color</label>
-                  <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/20 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 group/color">
-                    <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.config.fgColor }}>
+                <div className="space-y-4 px-1">
+                  <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest pl-1">Foreground Color</label>
+                  <div className="flex items-center gap-6 p-3 skeu-input group/color">
+                    <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.fgColor }}>
                       <input type="color" value={wizard.config.fgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, fgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.config.fgColor}</span>
+                    <span className="font-bold skeu-text-primary uppercase tracking-widest text-sm">{wizard.config.fgColor}</span>
                   </div>
                 </div>
-                <div className="space-y-5">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Background Color</label>
-                  <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/20 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 group/color">
-                    <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.config.bgColor }}>
+                <div className="space-y-4 px-1">
+                  <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest pl-1">Background Color</label>
+                  <div className="flex items-center gap-6 p-3 skeu-input group/color">
+                    <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.bgColor }}>
                       <input type="color" value={wizard.config.bgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, bgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.config.bgColor}</span>
+                    <span className="font-bold skeu-text-primary uppercase tracking-widest text-sm">{wizard.config.bgColor}</span>
                   </div>
                 </div>
               </div>
@@ -1130,81 +1129,64 @@ export const Wizard: React.FC<WizardProps> = ({
                           )}
 
                           {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'pdf') && (
-                            <div className="space-y-10 pt-10 px-6">
-                              <div className="text-center space-y-6">
-                                <div className="w-28 h-28 mx-auto rounded-[2.5rem] bg-white skeu-card flex items-center justify-center overflow-hidden border-4 border-white shadow-2xl relative group/avatar transition-transform duration-500 hover:scale-105">
-                                  {wizard.config.logoUrl ? (
-                                    <img src={wizard.config.logoUrl} className="w-full h-full object-contain p-2" alt="Avatar" />
-                                  ) : (
-                                    <Barcode className="w-12 h-12 text-[#156295] opacity-20" />
-                                  )}
-                                </div>
-                                <div className="space-y-2">
-                                  <h4 className="font-black text-slate-800 text-2xl tracking-tighter leading-tight" style={{ fontFamily: wizard.business?.fontTitle }}>
-                                    {wizard.business?.title || 'Your Brand Name'}
-                                  </h4>
-                                  <div className="flex items-center justify-center gap-2">
-                                    <div className="h-[1px] w-4 bg-slate-200" />
-                                    <p className="text-[10px] font-black text-[#156295] uppercase tracking-[0.25em]">{wizard.business?.company || 'Organization'}</p>
-                                    <div className="h-[1px] w-4 bg-slate-200" />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="space-y-4">
-                                {wizard.business?.buttons.map((btn: any) => (
-                                  <div
-                                    key={btn.id}
-                                    className="w-full p-5 rounded-[1.5rem] flex items-center gap-4 border border-white/40 shadow-xl shadow-blue-500/5 transition-all hover:translate-y-[-2px] active:scale-[0.97] cursor-pointer"
-                                    style={{ backgroundColor: wizard.business?.primaryColor, color: '#fff' }}
-                                  >
-                                    <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                                      <LinkIcon className="w-5 h-5" />
-                                    </div>
-                                    <span className="text-sm font-black truncate tracking-tight">{btn.text || 'Action Link'}</span>
-                                    <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
-                                  </div>
-                                ))}
-                                {(!wizard.business?.buttons || wizard.business?.buttons.length === 0) && (
-                                  <div className="py-12 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 bg-slate-50/50">
-                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                      <Plus className="w-6 h-6 text-slate-200" />
-                                    </div>
-                                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Add your first link</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {wizard.type === 'pdf' && (
                             <div className="h-full flex flex-col bg-white">
-                              <div className="px-6 py-12 text-center space-y-4" style={{ backgroundColor: wizard.business?.primaryColor || '#156295' }}>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: wizard.business?.fontTitleColor || '#ffffff', opacity: 0.8 }}>
+                              {/* Brand Header Section */}
+                              <div className="px-6 py-12 text-center space-y-4 shrink-0 transition-all duration-700 relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor || '#156295' }}>
+                                {/* Subtle Pattern Overlay */}
+                                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] relative z-10" style={{ color: wizard.business?.fontTitleColor || '#ffffff', opacity: 0.8 }}>
                                   {wizard.business?.company || 'MY COMPANY'}
                                 </p>
-                                <h2 className="text-2xl font-black leading-tight px-4" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
+                                <h2 className="text-2xl font-black leading-tight px-4 relative z-10" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
                                   {wizard.business?.title || 'Find me on social networks'}
                                 </h2>
-                                <p className="text-xs font-medium px-6" style={{ color: wizard.business?.fontTextColor || '#ffffff', opacity: 0.9, fontFamily: wizard.business?.fontText || 'Inter' }}>
+                                <p className="text-xs font-medium px-6 relative z-10" style={{ color: wizard.business?.fontTextColor || '#ffffff', opacity: 0.9, fontFamily: wizard.business?.fontText || 'Inter' }}>
                                   {wizard.business?.description || 'New content every week in the links below'}
                                 </p>
                               </div>
 
-                              <div className="flex-1 bg-white rounded-t-[2.5rem] -mt-6 p-6 flex flex-col z-10">
-                                <div className="flex-1 bg-slate-50 rounded-[2rem] border-2 border-slate-100 flex flex-col items-center justify-center p-8 text-center space-y-6">
-                                  <div className="w-20 h-20 bg-slate-100 text-slate-300 rounded-[1.5rem] flex items-center justify-center shadow-inner">
-                                    <FileText className="w-10 h-10" />
+                              {/* Content Section */}
+                              <div className="flex-1 bg-white rounded-t-[2.5rem] -mt-6 p-6 flex flex-col z-10 overflow-y-auto scrollbar-hide">
+                                {wizard.type === 'pdf' ? (
+                                  <div className="flex-1 bg-slate-50 rounded-[2rem] border-2 border-slate-100 flex flex-col items-center justify-center p-8 text-center space-y-6">
+                                    <div className="w-20 h-20 bg-slate-100 text-slate-300 rounded-[1.5rem] flex items-center justify-center shadow-inner">
+                                      <FileText className="w-10 h-10" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                        {pdfFileName ? 'PDF UPLOADED' : 'NO PDF UPLOADED'}
+                                      </p>
+                                      <h4 className="font-black text-slate-700 text-base line-clamp-2">
+                                        {pdfFileName || ''}
+                                      </h4>
+                                    </div>
                                   </div>
-                                  <div className="space-y-2">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                      {pdfFileName ? 'PDF UPLOADED' : 'NO PDF UPLOADED'}
-                                    </p>
-                                    <h4 className="font-black text-slate-700 text-base line-clamp-2">
-                                      {pdfFileName || ''}
-                                    </h4>
+                                ) : (
+                                  <div className="space-y-4">
+                                    {wizard.business?.buttons.map((btn: any) => (
+                                      <div
+                                        key={btn.id}
+                                        className="w-full p-5 rounded-[1.5rem] flex items-center gap-4 border border-white/10 shadow-xl shadow-blue-500/5 transition-all hover:translate-y-[-2px] active:scale-[0.97] cursor-pointer"
+                                        style={{ backgroundColor: wizard.business?.primaryColor || '#156295', color: '#fff' }}
+                                      >
+                                        <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                          <LinkIcon className="w-5 h-5" />
+                                        </div>
+                                        <span className="text-sm font-black truncate tracking-tight">{btn.text || 'Action Link'}</span>
+                                        <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
+                                      </div>
+                                    ))}
+                                    {(!wizard.business?.buttons || wizard.business?.buttons.length === 0) && (
+                                      <div className="py-12 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 bg-slate-50/50">
+                                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                          <Plus className="w-6 h-6 text-slate-200" />
+                                        </div>
+                                        <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Add your first link</p>
+                                      </div>
+                                    )}
                                   </div>
-                                </div>
+                                )}
                               </div>
                             </div>
                           )}
@@ -1267,23 +1249,21 @@ export const Wizard: React.FC<WizardProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <footer className="bg-white border-t border-slate-100 px-10 py-6 shadow-[0_-10px_40px_rgba(0,0,0,0.04)] z-30 shrink-0">
+      <footer className="skeu-toolbar px-10 py-6 z-30 shrink-0">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <button
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="px-8 py-3 bg-white border border-slate-200 text-slate-400 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed group active:scale-95 shadow-sm"
+            className="px-8 py-3 skeu-btn-secondary text-[11px] uppercase tracking-widest flex items-center gap-2 group active:scale-95 disabled:opacity-30 disabled:grayscale transition-all"
           >
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> BACK
           </button>
 
-
-
           <button
             onClick={handleNextStep}
             type="button"
-            className="px-10 py-3 bg-[#156295] text-white rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#0E4677] shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 group"
+            className="px-10 py-3 skeu-btn text-[11px] uppercase tracking-widest flex items-center gap-2 active:scale-95 group transition-all"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

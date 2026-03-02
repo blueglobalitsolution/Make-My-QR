@@ -1,8 +1,8 @@
 /* ============================================
-   BARQR Studio — Modern Blue Design System
+   BARQR Studio — Professional Blue Skeuomorphic UI
    ============================================ */
 
-/* --- Noise Texture Overlay (subtle grain) --- */
+/* --- Noise Texture Overlay --- */
 @keyframes grain {
 
   0%,
@@ -47,28 +47,28 @@
   }
 }
 
-/* --- Root Variables --- */
+/* --- Root Variables (Blue Skeu Palette) --- */
 :root {
-  --primary-blue: #156295;
-  --primary-blue-dark: #0E4677;
-  --accent-soft: #E0EAF2;
-  --slate-900: #0F172A;
-  --slate-800: #1E293B;
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-400: #94A3B8;
-  --slate-200: #E2E8F0;
-  --slate-100: #F1F5F9;
-  --slate-50: #F8FAFC;
-  --white: #FFFFFF;
+  --skeu-light: #f8fafc;
+  /* slate-50 */
+  --skeu-mid: #f1f5f9;
+  /* slate-100 */
+  --skeu-dark: #e2e8f0;
+  /* slate-200 */
+  --skeu-accent-blue: #156295;
+  --skeu-accent-blue-dark: #0e4677;
+  --skeu-surface: #ffffff;
+  --skeu-inset: #f1f5f9;
+  --skeu-highlight: rgba(255, 255, 255, 0.9);
+  --skeu-shadow: rgba(15, 23, 42, 0.08);
+  --skeu-shadow-deep: rgba(15, 23, 42, 0.12);
+  --skeu-border-top: rgba(255, 255, 255, 0.8);
+  --skeu-border-bottom: rgba(15, 23, 42, 0.1);
 }
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background-color: var(--slate-50);
-  background-image:
-    radial-gradient(at 0% 0%, rgba(21, 98, 149, 0.03) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(21, 98, 149, 0.03) 0px, transparent 50%);
+  background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
   min-height: 100vh;
   position: relative;
 }
@@ -77,102 +77,175 @@
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   opacity: 0.015;
   pointer-events: none;
   z-index: 0;
 }
 
-/* --- Premium Card Styling --- */
+/* --- Raised Surface (Cards, Panels) --- */
 .skeu-card {
-  background: var(--white);
-  border: 1px solid var(--slate-100);
+  background: linear-gradient(180deg, #ffffff 0%, #fefefe 100%);
+  border: 1px solid #e2e8f0;
   box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.01),
-    0 20px 40px -12px rgba(15, 23, 42, 0.06);
+    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+    0 8px 16px var(--skeu-shadow),
+    0 1px 3px rgba(0, 0, 0, 0.02);
   border-radius: 2rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.skeu-card:hover {
-  box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.01),
-    0 30px 60px -12px rgba(15, 23, 42, 0.1);
-  transform: translateY(-1px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .skeu-card-deep {
-  background: var(--white);
-  border: 1px solid var(--slate-100);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+  border: 1px solid #cbd5e1;
   box-shadow:
-    0 40px 80px -10px rgba(15, 23, 42, 0.1),
-    0 10px 20px -5px rgba(0, 0, 0, 0.02);
+    0 2px 0 0 rgba(255, 255, 255, 1) inset,
+    0 20px 40px rgba(15, 30, 60, 0.06),
+    0 8px 16px rgba(0, 0, 0, 0.02);
   border-radius: 2.5rem;
 }
 
-/* --- Inset / Recessed Styling --- */
+/* --- Inset / Recessed (Inputs, Wells) --- */
 .skeu-inset {
-  background: var(--slate-50);
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
-  border: 1px solid var(--slate-100);
+  background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-top: 2px solid rgba(15, 23, 42, 0.12);
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.04) inset,
+    0 1px 1px rgba(255, 255, 255, 0.8);
   border-radius: 1.5rem;
 }
 
 .skeu-input {
-  background: var(--slate-50);
-  border: 2px solid var(--slate-50);
+  background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.05) inset;
   border-radius: 1.25rem;
-  color: var(--slate-800);
-  font-weight: 600;
+  color: #1e293b;
+  font-weight: 700;
   transition: all 0.2s ease;
 }
 
 .skeu-input:focus {
-  background: var(--white);
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 4px rgba(21, 98, 149, 0.08);
+  background: #fff;
+  border-color: var(--skeu-accent-blue);
+  box-shadow: 0 4px 12px rgba(21, 98, 149, 0.05) inset, 0 0 0 4px rgba(21, 98, 149, 0.04);
   outline: none;
 }
 
-/* --- Premium Buttons --- */
-.skeu-btn {
-  background: var(--primary-blue);
-  color: var(--white);
-  box-shadow: 0 10px 15px -3px rgba(21, 98, 149, 0.15);
-  border-radius: 1.25rem;
-  font-weight: 700;
+/* --- Auth Card --- */
+.skeu-auth-card {
+  background: white;
+  border: 1.5px solid rgba(15, 23, 42, 0.05);
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.08),
+    0 10px 25px rgba(15, 23, 42, 0.04);
+  border-radius: 3rem;
   transition: all 0.3s ease;
-  border: 1px solid var(--primary-blue-dark);
+}
+
+.skeu-auth-card .skeu-input {
+  background: white;
+}
+
+/* --- Buttons --- */
+.skeu-btn {
+  background: linear-gradient(180deg, #4A9FF5 0%, #156295 100%);
+  border: 1px solid #0E4677;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
+    0 4px 8px rgba(21, 98, 149, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 1.25rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
 
 .skeu-btn:hover {
-  background: var(--primary-blue-dark);
-  box-shadow: 0 20px 25px -5px rgba(21, 98, 149, 0.25);
   transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset,
+    0 6px 12px rgba(21, 98, 149, 0.3);
+}
+
+.skeu-btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(180deg, #156295 0%, #0E4677 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) inset;
 }
 
 .skeu-btn-secondary {
-  background: var(--white);
-  border: 2px solid var(--slate-100);
-  color: var(--slate-700);
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-top: 1px solid #fff;
+  box-shadow:
+    0 1px 0 0 #fff inset,
+    0 2px 4px rgba(15, 23, 42, 0.06);
+  color: #475569;
+  font-weight: 800;
   border-radius: 1.25rem;
-  font-weight: 700;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .skeu-btn-secondary:hover {
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
-  background: var(--slate-50);
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1);
+  border-color: #cbd5e1;
 }
 
-/* --- Phone Mockup Styling --- */
+.skeu-btn-danger {
+  background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+  border: 1px solid #991b1b;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
+    0 4px 8px rgba(220, 38, 38, 0.2);
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 1.25rem;
+}
+
+/* --- Sidebar --- */
+.skeu-sidebar {
+  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+  border-right: 1px solid #e2e8f0;
+}
+
+.skeu-sidebar-item {
+  color: #64748b;
+  font-weight: 700;
+  border-radius: 1rem;
+  transition: all 0.2s ease;
+  margin: 0.25rem 1rem;
+}
+
+.skeu-sidebar-item:hover {
+  background: rgba(15, 98, 149, 0.05);
+  color: var(--skeu-accent-blue);
+}
+
+.skeu-sidebar-item-active {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-shadow:
+    0 1px 0 0 #fff inset,
+    0 4px 12px rgba(15, 23, 42, 0.06);
+  color: var(--skeu-accent-blue);
+  font-weight: 800;
+}
+
+/* --- Phone Preview --- */
 .skeu-phone {
   background: #0F172A;
-  border: 15px solid #0F172A;
-  border-radius: 3.5rem;
+  border: 12px solid #1E293B;
+  border-radius: 4rem;
   box-shadow:
-    0 50px 100px -20px rgba(15, 23, 42, 0.3),
+    0 40px 100px -20px rgba(15, 23, 42, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   position: relative;
   overflow: hidden;
@@ -180,324 +253,110 @@
 
 .skeu-phone-notch {
   background: #0F172A;
-  border-bottom-left-radius: 1.75rem;
-  border-bottom-right-radius: 1.75rem;
-  height: 30px;
-  width: 160px;
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  width: 140px;
+  height: 28px;
 }
 
-.skeu-phone::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
-  pointer-events: none;
-}
-
-/* --- Sidebar --- */
-.skeu-sidebar {
-  background: var(--white);
-  border-right: 1px solid var(--slate-100);
-  box-shadow: 20px 0 60px -20px rgba(15, 23, 42, 0.04);
-}
-
-.skeu-sidebar-item {
-  border-radius: 1rem;
-  transition: all 0.2s ease;
-  margin: 0.25rem 1rem;
-}
-
-.skeu-sidebar-item:hover {
-  background: var(--slate-50);
-  color: var(--primary-blue);
-}
-
-.skeu-sidebar-item-active {
-  background: #EBF5FF;
-  color: var(--primary-blue);
-  font-weight: 800;
-}
-
-/* --- Accordion / Sections --- */
+/* --- Accordion --- */
 .skeu-accordion {
-  background: var(--white);
-  border: 1px solid var(--slate-100);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdfe 100%);
+  border: 1px solid var(--skeu-border-top);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
   border-radius: 1.5rem;
   overflow: hidden;
 }
 
-.skeu-accordion-header {
-  transition: all 0.15s ease;
-}
-
 .skeu-accordion-header:hover {
-  background: rgba(21, 98, 149, 0.04);
+  background: rgba(21, 98, 149, 0.03);
 }
 
-/* --- Toggle / Checkbox --- */
-.skeu-toggle {
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  background: linear-gradient(180deg, #E0EAF2 0%, #EDF2F8 100%);
-  border: 1px solid rgba(7, 46, 92, 0.15);
-  border-top-color: rgba(7, 46, 92, 0.2);
-  box-shadow:
-    0 1px 3px rgba(7, 46, 92, 0.08) inset;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.skeu-toggle:checked {
-  background: linear-gradient(180deg, #1A75B0 0%, #156295 100%);
-  border-color: rgba(0, 0, 0, 0.15);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 2px 4px rgba(21, 98, 149, 0.3);
-}
-
-/* --- Table --- */
-.skeu-table {
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.skeu-table thead tr {
-  background: linear-gradient(180deg, #F0F5FA 0%, #E8F0F8 100%);
-}
-
-.skeu-table thead th {
-  border-bottom: 1px solid rgba(7, 46, 92, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.skeu-table tbody tr {
-  transition: background 0.15s ease;
-}
-
-.skeu-table tbody tr:hover {
-  background: rgba(21, 98, 149, 0.04);
-}
-
-/* --- Stepper Indicator (Wizard) --- */
-.skeu-step {
-  background: linear-gradient(180deg, #E8F0F8 0%, #D8E4EE 100%);
-  border: 1px solid rgba(7, 46, 92, 0.1);
-  box-shadow:
-    0 1px 3px rgba(7, 46, 92, 0.06) inset;
-  color: #6C97AD;
-}
-
-.skeu-step-active {
-  background: linear-gradient(180deg, #1A75B0 0%, #156295 100%);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 2px 6px rgba(21, 98, 149, 0.3);
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Phone Frame (Preview) is now consolidated above under .skeu-phone --- */
-
-/* --- Tab / Pill Toggle --- */
+/* --- Tabs --- */
 .skeu-tab-group {
-  background: linear-gradient(180deg, #E0EAF2 0%, #D8E4EE 100%);
-  border: 1px solid rgba(7, 46, 92, 0.1);
-  box-shadow:
-    0 2px 4px rgba(7, 46, 92, 0.06) inset;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04) inset;
   border-radius: 1.5rem;
-  padding: 3px;
+  padding: 4px;
 }
 
 .skeu-tab {
   border-radius: 1.25rem;
   font-weight: 800;
+  color: #64748b;
   transition: all 0.2s ease;
-  color: #6C97AD;
 }
 
 .skeu-tab-active {
-  background: #FFFFFF;
-  border: 1px solid rgba(21, 98, 149, 0.12);
-  border-bottom-color: rgba(0, 0, 0, 0.05);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 3px 6px rgba(7, 46, 92, 0.08);
-  color: #072E5C;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
 }
 
-/* --- Folder Tag --- */
+/* --- Tags --- */
 .skeu-tag {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 2px 4px rgba(7, 46, 92, 0.04);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03);
   border-radius: 0.75rem;
-  transition: all 0.15s ease;
-}
-
-.skeu-tag:hover {
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 3px 6px rgba(7, 46, 92, 0.08);
-  transform: translateY(-1px);
+  color: #475569;
 }
 
 .skeu-tag-active {
-  background: linear-gradient(180deg, #1A75B0 0%, #156295 100%);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.15) inset,
-    0 2px 6px rgba(21, 98, 149, 0.25);
+  background: linear-gradient(180deg, #156295 0%, #0e4677 100%);
   color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-color: #072e5c;
+  box-shadow: 0 4px 12px rgba(21, 98, 149, 0.2);
 }
 
-/* --- Icon Container (Raised Circle) --- */
-.skeu-icon-raised {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  border-bottom-color: rgba(7, 46, 92, 0.08);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.5) inset,
-    0 3px 6px rgba(7, 46, 92, 0.06);
-}
-
-.skeu-icon-inset {
-  background: linear-gradient(180deg, #E0EAF2 0%, #EDF2F8 100%);
-  border: 1px solid rgba(7, 46, 92, 0.08);
-  box-shadow:
-    0 2px 4px rgba(7, 46, 92, 0.06) inset;
-}
-
-/* --- Bottom Toolbar (Fixed) --- */
-.skeu-toolbar {
-  background: #FFFFFF;
-  border-top: 1px solid rgba(7, 46, 92, 0.08);
-  box-shadow:
-    0 -4px 16px rgba(7, 46, 92, 0.06),
-    0 1px 0 rgba(255, 255, 255, 0.4) inset;
-}
-
-/* --- Landing Page Hero --- */
-.skeu-hero-icon {
-  background: linear-gradient(145deg, #1A75B0 0%, #0E4677 100%);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 2px 0 rgba(255, 255, 255, 0.2) inset,
-    0 8px 24px rgba(21, 98, 149, 0.35),
-    0 4px 8px rgba(7, 46, 92, 0.15);
-}
-
-/* --- Scrollbar Override --- */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* --- Color swatch in selector --- */
-.skeu-color-picker {
-  background: linear-gradient(180deg, #EDF2F8 0%, #F5F8FB 100%);
-  border: 1px solid rgba(7, 46, 92, 0.1);
-  box-shadow: 0 2px 4px rgba(7, 46, 92, 0.06) inset;
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-/* --- Pattern/Option grid buttons --- */
-.skeu-option-btn {
-  background: #FFFFFF;
-  border: 1px solid rgba(157, 179, 194, 0.4);
-  box-shadow:
-    0 2px 4px rgba(7, 46, 92, 0.04);
-  border-radius: 0.75rem;
-  transition: all 0.15s ease;
-}
-
-.skeu-option-btn:hover {
-  border-color: rgba(21, 98, 149, 0.3);
-  box-shadow:
-    0 3px 8px rgba(7, 46, 92, 0.08);
-  transform: translateY(-1px);
-}
-
-.skeu-option-btn-active {
-  background: #FFFFFF;
-  border: 2px solid #156295;
-  box-shadow:
-    0 2px 8px rgba(21, 98, 149, 0.15);
-}
-
-/* --- Upload dropzone --- */
-.skeu-dropzone {
-  background: linear-gradient(180deg, #F0F5FA 0%, #E8F0F8 100%);
-  border: 2px dashed rgba(7, 46, 92, 0.15);
-  box-shadow: 0 2px 6px rgba(7, 46, 92, 0.04) inset;
-  border-radius: 1.25rem;
-  transition: all 0.2s ease;
-}
-
-.skeu-dropzone:hover {
-  border-color: var(--skeu-accent);
-  background: linear-gradient(180deg, #F5F8FB 0%, #EDF2F8 100%);
-}
-
-/* --- Auth form container --- */
-.skeu-auth-card {
-  background: #FFFFFF;
-  border: 1px solid #9DB3C2;
-  border-bottom-color: rgba(7, 46, 92, 0.08);
-  box-shadow:
-    0 2px 0 rgba(255, 255, 255, 0.6) inset,
-    0 -2px 0 rgba(0, 0, 0, 0.02) inset,
-    0 20px 60px rgba(7, 46, 92, 0.1),
-    0 8px 20px rgba(7, 46, 92, 0.07);
-  border-radius: 2rem;
-}
-
-/* --- Search bar --- */
-.skeu-search {
-  background: linear-gradient(180deg, #EDF2F8 0%, #F5F8FB 100%);
-  border: 1px solid rgba(7, 46, 92, 0.12);
-  border-top-color: rgba(7, 46, 92, 0.16);
-  box-shadow:
-    0 2px 6px rgba(7, 46, 92, 0.06) inset;
-  border-radius: 1rem;
-  transition: all 0.2s ease;
-}
-
-.skeu-search:focus-within {
-  border-color: var(--skeu-accent);
-  box-shadow:
-    0 2px 6px rgba(7, 46, 92, 0.06) inset,
-    0 0 0 3px rgba(21, 98, 149, 0.12);
-}
-
-/* --- Metal Screw / Rivet Decoration --- */
+/* --- Metallic Elements --- */
 .skeu-rivet {
   width: 8px;
   height: 8px;
-  background: radial-gradient(circle at 35% 35%, #E8F0F8 0%, #9DB3C2 60%, #6C97AD 100%);
+  background: radial-gradient(circle at 35% 35%, #fff 0%, #94a3b8 60%, #64748b 100%);
   border-radius: 50%;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 0.5px 0 rgba(255, 255, 255, 0.4) inset;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
 }
 
-/* --- Glass Gloss (for landing hero) --- */
+/* --- Search --- */
+.skeu-search {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) inset;
+  border-radius: 1.25rem;
+}
+
+/* --- Toolbar --- */
+.skeu-toolbar {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-top: 2px solid rgba(15, 23, 42, 0.05);
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.03);
+}
+
+/* --- Utilities --- */
+.skeu-text-primary {
+  color: #0f172a;
+}
+
+.skeu-text-secondary {
+  color: #334155;
+}
+
+.skeu-text-muted {
+  color: #94a3b8;
+}
+
+.skeu-text-accent {
+  color: var(--skeu-accent-blue);
+}
+
+.skeu-hero-icon {
+  background: linear-gradient(145deg, #156295 0%, #0e4677 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 24px rgba(21, 98, 149, 0.25);
+}
+
 .skeu-gloss::after {
   content: '';
   position: absolute;
@@ -506,23 +365,5 @@
   right: 0;
   height: 50%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-  border-radius: inherit;
   pointer-events: none;
-}
-
-/* --- Utility: text colors for theme --- */
-.skeu-text-primary {
-  color: #072E5C;
-}
-
-.skeu-text-secondary {
-  color: #0E4677;
-}
-
-.skeu-text-muted {
-  color: #6C97AD;
-}
-
-.skeu-text-accent {
-  color: var(--skeu-accent);
 }

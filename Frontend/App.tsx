@@ -15,9 +15,8 @@ import { Landing } from './src/components/app/Landing';
 import { AuthViews } from './src/components/app/AuthViews';
 import { MyCodes } from './src/components/app/MyCodes';
 import { Wizard } from './src/components/app/Wizard';
-import { Account } from './src/components/app/Account';
 import { Billing } from './src/components/app/Billing';
-import { MyFiles } from './src/components/app/MyFiles';
+import { Account } from './src/components/app/Account';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
@@ -46,7 +45,7 @@ const App: React.FC = () => {
   const [newFolderName, setNewFolderName] = useState('');
 
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView);
-  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset } = wizardProps;
+  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
   const filteredHistory = history.filter(item => {
     const matchesFolder = activeFolderId === 'all' || item.folderId === activeFolderId;
@@ -119,7 +118,7 @@ const App: React.FC = () => {
       }
 
       const validViews: ViewState[] = [
-        'landing', 'auth', 'wizard', 'my_codes', 'my_files', 'account', 'billing',
+        'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
         'register', 'forgot_password', 'dashboard', 'analytics'
       ];
 
@@ -178,11 +177,12 @@ const App: React.FC = () => {
 
   const viewPdf = (fileId: string) => { setCurrentPdfFileId(fileId); setView('pdf_viewer'); };
 
-  const resetWizard = () => ({
-    step: 1, mode: 'qr', type: 'website', value: '', name: '', isPasswordActive: false, password: '', folderId: undefined,
-    business: { primaryColor: '#156295', secondaryColor: '#9DB3C2', pageBackgroundColor: '#156295', linkBackgroundColor: '#F7F7F7', linkTextColor: '#9DB3C2', company: 'My Company', title: 'Find me on social networks', subtitle: '', description: 'New content every week in the links below', buttons: [{ id: '1', text: 'My Website', url: '#', icon: 'globe' }], openingHours: wizard.business?.openingHours || {}, images: [], location: wizard.business?.location || { searchAddress: '', streetNumberFirst: false, street: '', number: '', postalCode: '', city: '', state: '', country: '' }, contact: wizard.business?.contact || { name: '', phones: [], emails: [], websites: [] }, socialNetworks: [], aboutCompany: '', facilities: [], fontTitle: 'Inter', fontText: 'Inter', fontTitleColor: '#ffffff', fontTextColor: '#ffffff', welcomeScreenImage: undefined },
-    config: { fgColor: '#000000', bgColor: '#ffffff', level: 'H', borderRadius: 0, pattern: 'square', cornerType: 'square', cornersSquareType: 'square', cornersSquareColor: '#000000', cornersDotType: 'square', cornersDotColor: '#000000', frame: 'none' }
-  });
+  const onNewQR = () => {
+    setEditingId(null);
+    resetWizard();
+    setPhonePreviewMode('ui');
+    setView('wizard');
+  };
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
@@ -191,7 +191,7 @@ const App: React.FC = () => {
           view={view}
           setView={setView}
           setEditingId={setEditingId}
-          setWizard={setWizard}
+          resetWizard={resetWizard}
           setPhonePreviewMode={setPhonePreviewMode}
           handleLogout={auth.handleLogout}
         />
@@ -262,22 +262,7 @@ const App: React.FC = () => {
             setNewFolderName={setNewFolderName}
             setView={setView}
             viewPdf={viewPdf}
-          />
-        )}
-
-        {view === 'my_files' && (
-          <MyFiles
-            folders={folders}
-            activeFolderId={activeFolderId}
-            setActiveFolderId={setActiveFolderId}
-            createNewFolder={createNewFolder}
-            isCreatingFolder={isCreatingFolder}
-            setIsCreatingFolder={setIsCreatingFolder}
-            newFolderName={newFolderName}
-            setNewFolderName={setNewFolderName}
-            setView={setView}
-            viewPdf={viewPdf}
-            startQrFromAsset={startQrFromAsset}
+            onNewQR={onNewQR}
           />
         )}
 

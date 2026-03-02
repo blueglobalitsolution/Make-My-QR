@@ -66,6 +66,7 @@ export interface UseWizardReturn {
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   startQrFromAsset: (file: FileRecord) => void;
+  resetWizard: () => void;
   getQRValue: () => string;
   qrStylingOptions: any;
   selectedTypeConfig: any;
@@ -459,6 +460,16 @@ export const useWizard = (
     setView('wizard');
   };
 
+  const resetWizard = () => {
+    setWizard(getInitialWizardState());
+    setWhatsappPhone('84606 87490');
+    setWhatsappMessage('Hello! I scanned your QR code.');
+    setPdfFileName(null);
+    setPdfUrl(null);
+    setPdfFileRecord(null);
+    setActiveDesignSection(null);
+  };
+
   return {
     wizard,
     setWizard,
@@ -496,6 +507,7 @@ export const useWizard = (
     handlePdfUpload,
     handleCoverImageUpload,
     startQrFromAsset,
+    resetWizard,
     getQRValue,
     qrStylingOptions,
     selectedTypeConfig,

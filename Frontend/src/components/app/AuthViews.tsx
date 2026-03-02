@@ -42,9 +42,9 @@ interface AuthViewsProps {
   handleResetConfirm: (e: React.FormEvent) => Promise<void>;
 }
 
-const inputClass = "w-full pl-12 pr-5 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all";
-const inputPasswordClass = "w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 placeholder-slate-400 focus:border-[#156295] focus:ring-2 focus:ring-[#156295]/10 outline-none transition-all";
-const btnPrimary = "w-full py-3.5 bg-[#4A9FF5] hover:bg-[#3B8FE5] text-white text-sm font-bold rounded-full shadow-md transition-all";
+const inputClass = "w-full pl-12 pr-6 py-4 skeu-input transition-all";
+const inputPasswordClass = "w-full pl-12 pr-12 py-4 skeu-input transition-all";
+const btnPrimary = "w-full py-4 skeu-btn text-xs font-black uppercase tracking-widest active:scale-95 transition-all";
 
 export const AuthViews: React.FC<AuthViewsProps> = ({
   view,
