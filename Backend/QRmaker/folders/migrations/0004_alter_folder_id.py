@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('folders', '0003_folder_is_root_folder_parent'),
+        ("folders", "0003_folder_is_root_folder_parent"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='folder',
-            name='id',
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="folder",
+            name="id",
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
     ]
