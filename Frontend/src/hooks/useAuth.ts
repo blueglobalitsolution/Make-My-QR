@@ -61,7 +61,7 @@ export interface UseAuthReturn {
 
 export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): UseAuthReturn => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  
+
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -87,14 +87,6 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
   const [accPhone, setAccPhone] = useState('');
   const [accPassword, setAccPassword] = useState('');
   const [accConfirmPassword, setAccConfirmPassword] = useState('');
-
-  useEffect(() => {
-    const savedUserStr = localStorage.getItem('barqr_user');
-    if (savedUserStr) {
-      const user = JSON.parse(savedUserStr);
-      setCurrentUser(user);
-    }
-  }, []);
 
   useEffect(() => {
     if (currentUser) {

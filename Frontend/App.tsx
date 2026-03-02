@@ -53,6 +53,17 @@ const App: React.FC = () => {
     return matchesFolder && matchesSearch;
   });
 
+  // Sync view changes to URL history
+  useEffect(() => {
+    const currentPath = window.location.pathname.slice(1) || 'landing';
+    const isSpecialView = ['pdf_viewer', 'business_profile'].includes(view);
+
+    if (view !== currentPath && !isSpecialView) {
+      const newPath = view === 'landing' ? '/' : `/${view}`;
+      window.history.pushState({ view }, '', newPath);
+    }
+  }, [view]);
+
   useEffect(() => {
     const init = async () => {
       const { initDatabase } = await import('./src/utils/database');
@@ -63,52 +74,65 @@ const App: React.FC = () => {
 
       const profiles = await getAllBusinessProfiles();
       setBusinessProfiles(profiles);
-    };
-    init();
 
-    const savedUserStr = localStorage.getItem('barqr_user');
-    if (savedUserStr) {
-      const user = JSON.parse(savedUserStr);
-      auth.setCurrentUser(user);
-      if (user.savedPalettes) setSavedPalettes([...user.savedPalettes]);
-
-      const fetchData = async () => {
+      // Restore user state from local storage and fetch associated data
+      const savedUserStr = localStorage.getItem('barqr_user');
+      if (savedUserStr) {
         try {
+          const user = JSON.parse(savedUserStr);
+          auth.setCurrentUser(user);
+          if (user.savedPalettes) setSavedPalettes([...user.savedPalettes]);
+
+          // Auto-redirect to dashboard if logged in and at root or landing/auth
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/landing' || currentPath === '/auth') {
+            setView('my_codes');
+          }
+
           const [historyData, foldersData] = await Promise.all([getCodes(), getFolders()]);
           setHistory(historyData);
           setFolders(foldersData);
         } catch (err) {
-          console.error("Failed to fetch user data from backend", err);
+          console.error("Session restoration error", err);
+          localStorage.removeItem('barqr_user'); // Clean up corrupted session
         }
-      };
-      fetchData();
-    }
+      }
+    };
+    init();
   }, []);
 
   useEffect(() => {
     const handleRouteChange = () => {
-      const path = window.location.pathname;
+      const rawPath = window.location.pathname;
+      const path = rawPath.slice(1) || 'landing';
       const searchParams = new URLSearchParams(window.location.search);
-      const isStandalone = searchParams.get('standalone') === 'true';
-      setIsStandaloneView(isStandalone);
+      setIsStandaloneView(searchParams.get('standalone') === 'true');
 
-      const pdfMatch = path.match(/^\/view\/file\/(.+)$/);
-      if (pdfMatch) {
-        setCurrentPdfFileId(pdfMatch[1]);
+      if (rawPath.startsWith('/view/file/')) {
+        setCurrentPdfFileId(rawPath.replace('/view/file/', ''));
         setView('pdf_viewer');
         return;
       }
 
-      const businessMatch = path.match(/^\/view\/business/);
-      if (businessMatch) {
+      if (rawPath.startsWith('/view/business')) {
         setCurrentBusinessProfileId('url-data');
         setView('business_profile');
         return;
       }
+
+      const validViews: ViewState[] = [
+        'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
+        'register', 'forgot_password', 'dashboard', 'analytics'
+      ];
+
+      if (validViews.includes(path as any)) {
+        setView(path as any);
+      }
     };
 
-    handleRouteChange();
     window.addEventListener('popstate', handleRouteChange);
+    handleRouteChange();
+
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
