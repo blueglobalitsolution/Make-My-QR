@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera } from 'lucide-react';
 import { WizardState, Folder, BusinessConfig, BusinessButton } from '../../../../types';
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
@@ -209,44 +209,50 @@ export const Wizard: React.FC<WizardProps> = ({
         {/* WhatsApp Type */}
         {wizard.type === 'whatsapp' && (
           <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="p-10 space-y-10">
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shadow-sm">
-                  <MessageCircle className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight text-left">WhatsApp Messenger</h3>
-                  <p className="text-sm font-medium text-slate-400 text-left">Direct link to a WhatsApp chat</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Phone number *</label>
-                  <div className="flex items-center border-[2.5px] border-green-200 rounded-[2rem] overflow-hidden focus-within:border-green-500 focus-within:ring-[12px] focus-within:ring-green-500/5 focus-within:shadow-lg focus-within:shadow-green-500/10 focus-within:bg-white transition-all bg-white group shadow-[0_10px_30px_-10px_rgba(34,197,94,0.1)]">
-                    <div className="px-6 py-6 bg-white border-r border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors">
-                      <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover shadow-sm" alt="IN" />
-                      <span className="font-bold text-slate-700">+91</span>
-                      <ChevronDown className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="84606 87490"
-                      value={whatsappPhone}
-                      onChange={(e) => setWhatsappPhone(e.target.value)}
-                      className="flex-1 px-8 py-5 bg-transparent outline-none font-bold text-[#0F172A] text-xl transition-all placeholder:text-slate-200"
-                    />
+            <div className="p-8 space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-50 text-green-500 rounded-xl flex items-center justify-center shadow-sm">
+                    <MessageCircle className="w-6 h-6" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-black text-[#0F172A] tracking-tight">WhatsApp Information</h3>
+                    <p className="text-[11px] font-medium text-slate-400">Direct link to start a WhatsApp chat</p>
                   </div>
                 </div>
+                <ChevronDown className="w-5 h-5 text-slate-300" />
+              </div>
 
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Pre-filled Message</label>
+              <div className="space-y-6">
+                <div className="space-y-3 text-left">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Phone number *</label>
+                  <div className="flex items-center border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-500/5 transition-all bg-[#F8FAFC]">
+                    <div className="px-5 py-4 flex items-center gap-2 border-r border-slate-200/50 bg-white">
+                      <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover" alt="IN" />
+                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <div className="flex-1 px-5 py-4 flex items-center gap-2">
+                      <span className="font-bold text-slate-700">+91</span>
+                      <input
+                        type="text"
+                        placeholder="84606 87490"
+                        value={whatsappPhone}
+                        onChange={(e) => setWhatsappPhone(e.target.value.replace(/[^0-9 ]/g, ''))}
+                        className="flex-1 bg-transparent outline-none font-bold text-[#0F172A] text-lg placeholder:text-slate-300"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-red-500 font-bold pl-1">Invalid number</p>
+                </div>
+
+                <div className="space-y-3 text-left">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Message</label>
                   <textarea
                     rows={4}
-                    placeholder="Hello, I'm reaching out from your QR code..."
+                    placeholder="Write your message"
                     value={whatsappMessage}
                     onChange={(e) => setWhatsappMessage(e.target.value)}
-                    className="w-full px-8 py-6 bg-white border-[2.5px] border-green-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-green-500/5 focus:border-green-500 focus:shadow-lg focus:shadow-green-500/10 transition-all font-bold text-[#0F172A] resize-none placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(34,197,94,0.1)]"
+                    className="w-full px-6 py-5 bg-white border-2 border-slate-100 rounded-[1.5rem] outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all font-bold text-[#0F172A] resize-none placeholder:text-slate-300 shadow-sm"
                   />
                 </div>
               </div>
@@ -887,26 +893,57 @@ export const Wizard: React.FC<WizardProps> = ({
                           )}
 
                           {wizard.type === 'whatsapp' && (
-                            <div className="h-full flex flex-col pt-0">
-                              <div className="bg-[#075E54] p-5 pt-6 text-white flex items-center gap-4 shrink-0 shadow-lg relative text-left">
-                                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-black text-lg border-2 border-white/10">W</div>
-                                <div className="flex-1">
-                                  <h4 className="text-sm font-black tracking-tight">WhatsApp Chat</h4>
-                                  <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">Online Now</p>
+                            <div className="h-full flex flex-col pt-0 bg-[#efe7de] relative">
+                              {/* Custom Doodle Background Overlay */}
+                              <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
+
+                              {/* WhatsApp Header (Matches Screenshot 10) */}
+                              <div className="bg-[#075E54] p-4 pt-10 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10">
+                                    <UserCircle className="w-full h-full" />
+                                  </div>
+                                  <div className="text-left">
+                                    <h4 className="text-[15px] font-black tracking-tight leading-tight">{whatsappPhone || '84606 87490'}</h4>
+                                    <p className="text-[10px] font-bold opacity-60">Online</p>
+                                  </div>
                                 </div>
-                                <div className="flex gap-3 pr-2">
-                                  <div className="w-2 h-2 rounded-full bg-white/40" />
-                                  <div className="w-2 h-2 rounded-full bg-white/40" />
+                                <div className="flex items-center gap-5 pr-2">
+                                  <Video className="w-5 h-5 text-white/90" />
+                                  <Phone className="w-4 h-4 text-white/90" />
+                                  <MoreVertical className="w-5 h-5 text-white/90" />
                                 </div>
                               </div>
-                              <div className="flex-1 bg-[#E5DDD5] p-6 flex flex-col justify-end relative">
-                                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
-                                <div className="bg-[#DCF8C6] p-4.5 rounded-[1.5rem] rounded-tr-none self-end max-w-[90%] shadow-xl border border-green-200 animate-in slide-in-from-right-8 duration-700">
-                                  <p className="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-wrap">{whatsappMessage || "Hello! I'm interested in your QR services."}</p>
-                                  <div className="flex items-center justify-end gap-1 mt-3">
-                                    <span className="text-[9px] font-bold text-green-700/60 uppercase">12:34 PM</span>
-                                    <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
+
+                              {/* Chat Area */}
+                              <div className="flex-1 p-4 flex flex-col justify-start relative z-10 pt-8">
+                                <div className="self-end max-w-[85%] relative mb-4 animate-in slide-in-from-right-4 duration-500">
+                                  <div className="bg-[#DCF8C6] p-3 rounded-2xl rounded-tr-none shadow-sm relative border border-green-200/50">
+                                    <p className="text-[13px] font-medium text-slate-800 text-left leading-relaxed">
+                                      {whatsappMessage || "Type a message."}
+                                    </p>
+                                    <div className="flex items-center justify-end gap-1 mt-1">
+                                      <span className="text-[9px] font-bold text-slate-400">9:41</span>
+                                      <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
+                                    </div>
+                                    {/* Bubble Tail */}
+                                    <div className="absolute -right-2 top-0 w-3 h-3 bg-[#DCF8C6] clip-bubble-tail" />
                                   </div>
+                                </div>
+                              </div>
+
+                              {/* WhatsApp Input Bar */}
+                              <div className="p-3 bg-transparent relative z-10 flex items-center gap-2 mb-4 px-4">
+                                <div className="flex-1 bg-white rounded-full h-12 flex items-center px-4 gap-3 shadow-sm border border-slate-200/50">
+                                  <Smile className="w-6 h-6 text-slate-400" />
+                                  <span className="text-sm font-medium text-slate-300">Message</span>
+                                  <div className="ml-auto flex items-center gap-4">
+                                    <Paperclip className="w-5 h-5 text-slate-400 -rotate-45" />
+                                    <Camera className="w-6 h-6 text-slate-400" />
+                                  </div>
+                                </div>
+                                <div className="w-12 h-12 bg-[#00A884] rounded-full flex items-center justify-center shadow-md">
+                                  <Mic className="w-6 h-6 text-white" />
                                 </div>
                               </div>
                             </div>
