@@ -1,0 +1,10 @@
+makemyqr/
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+db.sqlite3
+media/
+static/
+start_backend.bat
+start_frontend.bat
