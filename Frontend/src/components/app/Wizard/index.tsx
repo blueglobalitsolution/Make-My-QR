@@ -88,26 +88,26 @@ export const Wizard: React.FC<WizardProps> = ({
   createNewFolder,
   getQRValue,
 }) => {
-  const Stepper = ({ step }: { step: number }) => {
+  const renderStepper = ({ step }: { step: number }) => {
     const steps = [
       { n: 1, label: 'TYPE' },
       { n: 2, label: 'CONTENT' },
       { n: 3, label: 'STYLE' },
     ];
     return (
-      <div className="flex items-center justify-center gap-14 mb-14">
+      <div className="flex items-center justify-center gap-12">
         {steps.map((s, idx) => (
           <React.Fragment key={s.n}>
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step === s.n ? 'bg-[#156295] text-white shadow-lg' : 'bg-slate-50 text-slate-400'}`}>
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-black transition-all ${step >= s.n ? 'bg-[#156295] text-white shadow-xl shadow-[#156295]/20' : 'bg-slate-200 text-slate-400'}`}>
                 {s.n}
               </div>
-              <span className={`text-[11px] font-bold tracking-widest ${step === s.n ? 'text-slate-800' : 'text-slate-400'}`}>
+              <span className={`text-[11px] font-black tracking-widest transition-colors ${step >= s.n ? 'text-slate-800' : 'text-slate-400'}`}>
                 {s.label}
               </span>
             </div>
             {idx < steps.length - 1 && (
-              <div className="w-20 h-[1.5px] bg-slate-100" />
+              <div className="w-16 h-[2px] bg-slate-100" />
             )}
           </React.Fragment>
         ))}
@@ -115,10 +115,10 @@ export const Wizard: React.FC<WizardProps> = ({
     );
   };
 
-  const Step1TypeSelection = () => (
+  const renderStep1TypeSelection = () => (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left">
-        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">1. Select a type of QR code</h2>
+        <h2 className="text-[32px] font-black text-[#0F172A] tracking-tight">1. Select a type of QR code</h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -127,19 +127,21 @@ export const Wizard: React.FC<WizardProps> = ({
             key={type.id}
             onClick={() => setWizard({ ...wizard, type: type.id as any })}
             type="button"
-            className={`group py-12 px-8 aspect-[4/5] rounded-[2.5rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-8 ${wizard.type === type.id ? 'border-[#156295] bg-white skeu-card scale-[1.02]' : 'border-slate-50 hover:border-slate-100 bg-white/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50'}`}
+            className={`group p-8 aspect-square rounded-[2.5rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-6 ${wizard.type === type.id ? 'border-[#156295] bg-white shadow-2xl shadow-blue-500/20' : 'border-transparent bg-white shadow-sm hover:shadow-md hover:shadow-slate-200/50'}`}
           >
-            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-xl shadow-[#156295]/30' : 'bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-[#156295]'}`}>
-              {type.id === 'website' && <Globe className="w-8 h-8" />}
-              {type.id === 'pdf' && <FileText className="w-8 h-8" />}
-              {type.id === 'links' && <LinkIcon className="w-8 h-8" />}
-              {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" />}
-              {type.id === 'business' && <Briefcase className="w-8 h-8" />}
-              {type.id === 'vcard' && <Grid3X3 className="w-8 h-8" />}
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-lg shadow-[#156295]/20' : 'bg-white border border-slate-100 text-[#156295] shadow-sm'}`}>
+              {type.id === 'website' && <Globe className="w-8 h-8" strokeWidth={1.5} />}
+              {type.id === 'pdf' && <FileText className="w-8 h-8" strokeWidth={1.5} />}
+              {type.id === 'links' && <LinkIcon className="w-8 h-8" strokeWidth={1.5} />}
+              {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" strokeWidth={1.5} />}
+              {type.id === 'business' && <Briefcase className="w-8 h-8" strokeWidth={1.5} />}
+              {type.id === 'vcard' && <Grid3X3 className="w-8 h-8" strokeWidth={1.5} />}
             </div>
-            <div className="space-y-2">
-              <h3 className={`font-black text-xl tracking-tight transition-colors ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
-              <p className="text-xs font-medium text-slate-400 leading-relaxed px-2">{type.desc}</p>
+            <div className="space-y-1">
+              <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
+              <p className="text-[11px] font-normal text-slate-400 leading-relaxed px-1">
+                {type.desc}
+              </p>
             </div>
           </button>
         ))}
@@ -147,63 +149,85 @@ export const Wizard: React.FC<WizardProps> = ({
     </div>
   );
 
-  const Step2Content = () => (
+  const renderStep2Content = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left mb-10">
-        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">2. Add Content</h2>
+        <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">2. Add content to your QR code</h2>
       </div>
 
       <div className="space-y-6">
-        {/* Website Type */}
+        {/* Website Content Section */}
         {wizard.type === 'website' && (
-          <div className="skeu-card overflow-hidden">
-            <div className="p-10 space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center">
-                  <Globe className="w-6 h-6" />
+          <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <button
+              onClick={() => toggleSection('content')}
+              className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
+              type="button"
+            >
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-md">
+                  <Globe className="w-7 h-7" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Website URL</h3>
-                  <p className="text-sm text-slate-400">Where should your QR code link to?</p>
+                <div className="text-left">
+                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight uppercase">Website URL</h3>
+                  <p className="text-sm font-medium text-slate-400">Link your QR code to any website.</p>
                 </div>
               </div>
-              <div className="relative group">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-4">
-                  <Globe className="w-6 h-6 text-slate-300 group-focus-within:text-[#156295] transition-colors" />
-                  <div className="h-8 w-[1.5px] bg-slate-100" />
+              <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+            </button>
+
+            {activeDesignSection === 'content' && (
+              <div className="p-10 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="flex items-center justify-between px-1">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Destination URL *</label>
+                  <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">Supports http:// and https://</span>
                 </div>
-                <input
-                  type="text"
-                  placeholder="https://www.yourwebsite.com"
-                  value={wizard.value}
-                  onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
-                  className="w-full pl-22 pr-8 py-6 bg-slate-50 border-2 border-slate-50 rounded-3xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-[#156295] focus:bg-white text-slate-900 font-bold text-2xl transition-all placeholder:text-slate-200"
-                />
+
+                <div className="relative group">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-5">
+                    <Globe className="w-6 h-6 text-blue-500 group-focus-within:text-blue-600 transition-colors" />
+                    <div className="h-8 w-[1.5px] bg-slate-100" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="https://www.yourwebsite.com"
+                    value={wizard.value}
+                    onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
+                    className="w-full pl-22 pr-8 py-7 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 text-[#0F172A] font-black text-2xl transition-all placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] group-focus-within:shadow-blue-500/10"
+                  />
+                </div>
+
+                <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50 flex gap-4 animate-in fade-in duration-700">
+                  <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                  <p className="text-[13px] font-medium text-blue-600/80 leading-relaxed">
+                    Make sure to include <span className="font-black">https://</span> for a secure connection. Your QR code will redirect users instantly when scanned.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
         {/* WhatsApp Type */}
         {wizard.type === 'whatsapp' && (
-          <div className="skeu-card overflow-hidden">
+          <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="p-10 space-y-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shadow-sm">
                   <MessageCircle className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800">WhatsApp Messenger</h3>
-                  <p className="text-sm text-slate-400">Direct link to a WhatsApp chat</p>
+                  <h3 className="text-xl font-black text-[#0F172A] tracking-tight">WhatsApp Messenger</h3>
+                  <p className="text-sm font-medium text-slate-400">Direct link to a WhatsApp chat</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Phone number *</label>
-                  <div className="flex items-center border-2 border-slate-50 rounded-2xl overflow-hidden focus-within:border-green-400 focus-within:ring-4 focus-within:ring-green-50 transition-all bg-slate-50">
-                    <div className="px-6 py-5 bg-white border-r border-slate-100 flex items-center gap-2 cursor-pointer">
-                      <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover" alt="IN" />
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Phone number *</label>
+                  <div className="flex items-center border-[2.5px] border-green-200 rounded-[2rem] overflow-hidden focus-within:border-green-500 focus-within:ring-[12px] focus-within:ring-green-500/5 focus-within:shadow-lg focus-within:shadow-green-500/10 focus-within:bg-white transition-all bg-white group shadow-[0_10px_30px_-10px_rgba(34,197,94,0.1)]">
+                    <div className="px-6 py-6 bg-white border-r border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors">
+                      <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover shadow-sm" alt="IN" />
                       <span className="font-bold text-slate-700">+91</span>
                       <ChevronDown className="w-4 h-4 text-slate-400" />
                     </div>
@@ -212,19 +236,19 @@ export const Wizard: React.FC<WizardProps> = ({
                       placeholder="84606 87490"
                       value={whatsappPhone}
                       onChange={(e) => setWhatsappPhone(e.target.value)}
-                      className="flex-1 px-8 py-5 bg-transparent outline-none font-bold text-slate-800 text-xl"
+                      className="flex-1 px-8 py-5 bg-transparent outline-none font-bold text-[#0F172A] text-xl transition-all placeholder:text-slate-200"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Pre-filled Message</label>
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Pre-filled Message</label>
                   <textarea
                     rows={4}
                     placeholder="Hello, I'm reaching out from your QR code..."
                     value={whatsappMessage}
                     onChange={(e) => setWhatsappMessage(e.target.value)}
-                    className="w-full px-8 py-5 bg-slate-50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-green-50 focus:border-green-400 transition-all font-bold text-slate-800 resize-none"
+                    className="w-full px-8 py-6 bg-white border-[2.5px] border-green-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-green-500/5 focus:border-green-500 focus:shadow-lg focus:shadow-green-500/10 transition-all font-bold text-[#0F172A] resize-none placeholder:text-slate-200 shadow-[0_10px_30px_-10px_rgba(34,197,94,0.1)]"
                   />
                 </div>
               </div>
@@ -236,31 +260,31 @@ export const Wizard: React.FC<WizardProps> = ({
         {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'pdf') && (
           <div className="space-y-6">
             {/* Design Settings Accordion */}
-            <div className="skeu-card overflow-hidden">
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
               <button
                 onClick={() => toggleSection('design')}
-                className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
                 type="button"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center">
-                    <PaletteIcon className="w-6 h-6" />
+                  <div className="w-14 h-14 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <PaletteIcon className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold text-slate-800">Design Settings</h3>
-                    <p className="text-sm text-slate-400">Visual style, fonts and brand colors</p>
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Design Settings</h3>
+                    <p className="text-sm font-medium text-slate-400">Visual style, fonts and brand colors</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'design' ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 text-[#156295]' : 'group-hover:text-slate-400'}`} />
               </button>
 
               {activeDesignSection === 'design' && (
-                <div className="p-10 border-t border-slate-50 space-y-10 animate-in slide-in-from-top-4 duration-300">
+                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="space-y-5">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Primary Brand Color</label>
-                      <div className="flex items-center gap-6 p-1.5 bg-slate-50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/30">
-                        <div className="w-16 h-12 rounded-xl border border-white/20 relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Primary Brand Color</label>
+                      <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/20 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 group">
+                        <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input
                             type="color"
                             className="absolute inset-0 opacity-0 cursor-pointer w-full h-full scale-[2]"
@@ -268,21 +292,21 @@ export const Wizard: React.FC<WizardProps> = ({
                             onChange={(e) => updateBusinessField('primaryColor', e.target.value)}
                           />
                         </div>
-                        <span className="font-bold text-slate-700 uppercase tracking-wider">{wizard.business?.primaryColor}</span>
+                        <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
                     {wizard.type !== 'pdf' && (
                       <div className="space-y-5">
-                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Typography</label>
-                        <div className="relative group">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Typography</label>
+                        <div className="relative group/select">
                           <select
                             value={wizard.business?.fontTitle}
                             onChange={(e) => updateBusinessField('fontTitle', e.target.value)}
-                            className="w-full pl-8 pr-12 py-5 bg-slate-50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-[#156295] font-bold text-slate-800 appearance-none transition-all"
+                            className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5"
                           >
                             {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                           </select>
-                          <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none group-hover:text-[#156295] transition-colors" />
+                          <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none group-hover/select:text-[#156295] transition-colors" />
                         </div>
                       </div>
                     )}
@@ -292,52 +316,52 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* Main Content Accordion */}
-            <div className="skeu-card overflow-hidden">
+            <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <button
                 onClick={() => toggleSection('content')}
-                className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
                 type="button"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
-                    <Info className="w-6 h-6" />
+                  <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <Info className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold text-slate-800">
+                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">
                       {wizard.type === 'pdf' ? 'PDF Document' : 'Page Content'}
                     </h3>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm font-medium text-slate-400">
                       {wizard.type === 'pdf' ? 'Upload assets and files' : 'Modify names, headlines and links'}
                     </p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'content' ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 text-green-600' : 'group-hover:text-slate-400'}`} />
               </button>
 
               {activeDesignSection === 'content' && (
-                <div className="p-10 border-t border-slate-50 space-y-10 animate-in slide-in-from-top-4 duration-300">
+                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   {wizard.type === 'pdf' ? (
                     <div className="space-y-6">
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">PDF File Selection</label>
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">PDF File Selection</label>
                       <div className="relative group">
-                        <div className="border-4 border-dashed border-slate-100 rounded-[2.5rem] p-16 flex flex-col items-center justify-center gap-6 hover:border-[#156295] hover:bg-blue-50/30 transition-all cursor-pointer">
+                        <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/upload">
                           <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="application/pdf" onChange={handlePdfUpload} />
                           {pdfUrl ? (
-                            <div className="text-center">
-                              <div className="w-20 h-20 bg-green-50 text-green-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-100">
-                                <FileText className="w-10 h-10" />
+                            <div className="text-center animate-in zoom-in duration-500">
+                              <div className="w-24 h-24 bg-green-50 text-green-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/10 border-2 border-white">
+                                <FileText className="w-12 h-12" />
                               </div>
-                              <h4 className="font-bold text-slate-800 text-lg">{pdfFileName}</h4>
-                              <p className="text-xs text-slate-400 mt-1">Ready for QR encoding</p>
+                              <h4 className="font-black text-[#0F172A] text-xl tracking-tight">{pdfFileName}</h4>
+                              <p className="text-sm font-medium text-slate-400 mt-1">File uploaded successfully</p>
                             </div>
                           ) : (
                             <>
-                              <div className="w-20 h-20 bg-slate-50 text-slate-300 rounded-[2rem] flex items-center justify-center group-hover:bg-[#156295] group-hover:text-white transition-all duration-500">
-                                <Upload className="w-10 h-10" />
+                              <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center group-hover/upload:bg-[#156295] group-hover/upload:text-white group-hover/upload:scale-110 group-hover/upload:rotate-3 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl group-hover/upload:shadow-blue-500/20 border-2 border-white/50">
+                                <Upload className="w-12 h-12" />
                               </div>
-                              <div className="text-center space-y-1">
-                                <p className="font-bold text-slate-800 text-lg">Drop your PDF or browse</p>
-                                <p className="text-sm text-slate-400">Max size 20MB</p>
+                              <div className="text-center space-y-2">
+                                <p className="font-black text-[#0F172A] text-xl tracking-tight">Drop your PDF or browse</p>
+                                <p className="text-sm font-medium text-slate-400">Maximum file size: 20MB</p>
                               </div>
                             </>
                           )}
@@ -345,69 +369,69 @@ export const Wizard: React.FC<WizardProps> = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-10">
+                    <div className="space-y-12">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="space-y-4">
-                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Display Title *</label>
+                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Display Title *</label>
                           <input
                             type="text"
                             placeholder="e.g. My Website"
                             value={wizard.business?.title || ''}
                             onChange={(e) => updateBusinessField('title', e.target.value)}
-                            className="w-full px-8 py-5 bg-slate-50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-[#156295] font-bold text-slate-800 transition-all"
+                            className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
                           />
                         </div>
                         <div className="space-y-4">
-                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Company / Sub-headline</label>
+                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Company / Sub-headline</label>
                           <input
                             type="text"
                             placeholder="e.g. Tech Solutions"
                             value={wizard.business?.company || ''}
                             onChange={(e) => updateBusinessField('company', e.target.value)}
-                            className="w-full px-8 py-5 bg-slate-50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-[#156295] font-bold text-slate-800 transition-all"
+                            className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-blue-500/5 focus:border-[#156295] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-200"
                           />
                         </div>
                       </div>
 
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         <div className="flex items-center justify-between px-1">
-                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Action Buttons / Links</label>
+                          <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Action Buttons / Links</label>
                           <button
                             type="button"
                             onClick={addLink}
-                            className="bg-blue-50 text-[#156295] px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-[#156295] hover:text-white transition-all flex items-center gap-2"
+                            className="bg-blue-50 text-[#156295] px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#156295] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
                           >
-                            <Plus className="w-3.5 h-3.5" /> Add Link
+                            <Plus className="w-4 h-4" /> Add Link
                           </button>
                         </div>
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 gap-6">
                           {wizard.business?.buttons.map((link) => (
-                            <div key={link.id} className="flex items-center gap-6 p-6 bg-slate-50/50 border border-slate-100 rounded-[2rem] hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all">
-                              <div className="flex-1 space-y-4">
+                            <div key={link.id} className="group/item flex items-center gap-6 p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
+                              <div className="flex-1 space-y-5">
                                 <input
                                   type="text"
                                   value={link.text}
                                   onChange={(e) => updateLink(link.id, 'text', e.target.value)}
                                   placeholder="Button Name"
-                                  className="w-full bg-transparent border-none outline-none font-bold text-slate-800 text-lg p-0 focus:ring-0"
+                                  className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-xl p-0 focus:ring-0 placeholder:text-slate-200"
                                 />
-                                <div className="flex items-center gap-3">
-                                  <LinkIcon className="w-3.5 h-3.5 text-slate-300" />
+                                <div className="flex items-center gap-4 group/input bg-white/50 p-4 rounded-xl border border-slate-100/50 focus-within:border-[#156295]/30 focus-within:bg-white transition-all shadow-inner">
+                                  <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#156295] transition-colors" />
                                   <input
                                     type="text"
                                     value={link.url}
                                     onChange={(e) => updateLink(link.id, 'url', e.target.value)}
                                     placeholder="https://..."
-                                    className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-slate-500 p-0 focus:ring-0"
+                                    className="flex-1 bg-transparent border-none outline-none text-sm font-bold text-slate-500 p-0 focus:ring-0 placeholder:text-slate-200"
                                   />
                                 </div>
                               </div>
                               <button
                                 type="button"
                                 onClick={() => removeLink(link.id)}
-                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-300 hover:bg-red-50 hover:text-red-500 transition-all"
+                                className="w-14 h-14 flex items-center justify-center rounded-[1.25rem] bg-white border border-slate-100 text-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-100/50 transition-all shadow-sm hover:shadow-xl hover:shadow-red-500/10 active:scale-90"
                               >
-                                <Trash2 className="w-5 h-5" />
+                                <Trash2 className="w-6 h-6" />
                               </button>
                             </div>
                           ))}
@@ -421,38 +445,62 @@ export const Wizard: React.FC<WizardProps> = ({
           </div>
         )}
 
-        {/* Name and Folder Section (Always shown at bottom of Step 2) */}
-        <div className="skeu-card overflow-hidden">
+        {/* Name Section */}
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
           <button
-            onClick={() => toggleSection('name_folder')}
-            className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors"
+            onClick={() => toggleSection('name')}
+            className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
             type="button"
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center">
-                <FolderIcon className="w-6 h-6" />
+              <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Grid3X3 className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-slate-800">Finalize & Organize</h3>
-                <p className="text-sm text-slate-400">Name your code and pick a save location</p>
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Name of the QR Code</h3>
+                <p className="text-sm font-medium text-slate-400">Give your QR code a name.</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'name_folder' ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
-          {activeDesignSection === 'name_folder' && (
-            <div className="p-10 border-t border-slate-50 space-y-12 animate-in slide-in-from-top-4 duration-300">
+          {activeDesignSection === 'name' && (
+            <div className="p-10 border-t border-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-4">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Internal Reference Name</label>
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">QR Code Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Website Launch Campaign"
                   value={wizard.name}
                   onChange={(e) => setWizard({ ...wizard, name: e.target.value })}
-                  className="w-full px-8 py-5 bg-slate-50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-[#156295] font-bold text-slate-800 transition-all"
+                  className="w-full px-8 py-6 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 bg-white font-black text-[#0F172A] transition-all shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] focus:shadow-blue-500/10 placeholder:text-slate-200"
                 />
               </div>
+            </div>
+          )}
+        </div>
 
+        {/* Save to Folder Section */}
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+          <button
+            onClick={() => toggleSection('folder')}
+            className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
+            type="button"
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <FolderIcon className="w-7 h-7" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight uppercase">SAVE TO FOLDER</h3>
+                <p className="text-sm font-medium text-slate-400">Organize your codes by category.</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'folder' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+          </button>
+
+          {activeDesignSection === 'folder' && (
+            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-5">
                 <div className="flex items-center justify-between pl-1">
                   <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Choose Folder</label>
@@ -471,18 +519,20 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={folder.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, folderId: folder.id })}
-                      className={`p-6 rounded-[1.5rem] border-2 text-left transition-all relative ${wizard.folderId === folder.id ? 'border-[#156295] bg-blue-50 shadow-blue-500/5' : 'bg-white border-slate-50 hover:border-slate-200'}`}
+                      className={`p-6 rounded-[2rem] border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#156295] bg-white shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/50 shadow-sm'}`}
                     >
-                      <div className="flex flex-col gap-2">
-                        <FolderIcon className={`w-6 h-6 ${wizard.folderId === folder.id ? 'text-[#156295]' : 'text-slate-300'}`} />
+                      <div className="flex flex-col gap-3">
+                        <div className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#156295] text-white shadow-lg shadow-[#156295]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#156295] border border-transparent group-hover/folder:border-slate-100'}`}>
+                          <FolderIcon className="w-6 h-6" />
+                        </div>
                         <div>
-                          <p className={`font-bold truncate ${wizard.folderId === folder.id ? 'text-[#156295]' : 'text-slate-700'}`}>{folder.name}</p>
-                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{folder.count} codes</p>
+                          <p className={`font-black tracking-tight truncate ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{folder.count} codes</p>
                         </div>
                       </div>
                       {wizard.folderId === folder.id && (
-                        <div className="absolute top-4 right-4 bg-[#156295] text-white p-1 rounded-full">
-                          <Check className="w-3 h-3" />
+                        <div className="absolute top-6 right-6 bg-[#156295] text-white p-1 rounded-full shadow-lg animate-in zoom-in duration-300">
+                          <Check className="w-3.5 h-3.5" strokeWidth={3} />
                         </div>
                       )}
                     </button>
@@ -522,7 +572,7 @@ export const Wizard: React.FC<WizardProps> = ({
     </div>
   );
 
-  const Step3Style = () => (
+  const renderStep3Style = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-left mb-10">
         <h2 className="text-[26px] font-black text-[#0F172A] tracking-tight ml-1">3. Customizing styling</h2>
@@ -530,30 +580,30 @@ export const Wizard: React.FC<WizardProps> = ({
 
       <div className="space-y-6">
         {/* Frame Selection */}
-        <div className="skeu-card overflow-hidden">
-          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors" type="button">
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center">
-                <Layout className="w-6 h-6" />
+              <div className="w-14 h-14 bg-blue-50 text-[#156295] rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Layout className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-slate-800">Frame Layout</h3>
-                <p className="text-sm text-slate-400">Add a call-to-action frame</p>
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Frame Layout</h3>
+                <p className="text-sm font-medium text-slate-400">Add a call-to-action frame</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'frame' ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'frame' ? 'rotate-180 text-[#156295]' : 'group-hover:text-slate-400'}`} />
           </button>
           {activeDesignSection === 'frame' && (
-            <div className="p-10 border-t border-slate-50 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 animate-in slide-in-from-top-4 duration-300">
+            <div className="p-10 border-t border-slate-50/50 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 animate-in slide-in-from-top-4 duration-500 origin-top">
               {FRAME_STYLES.map((style: any) => (
                 <button
                   key={style.id}
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, frame: style.id } })}
-                  className={`aspect-square flex flex-col items-center justify-center rounded-2xl border-2 transition-all ${wizard.config.frame === style.id ? 'border-[#156295] bg-blue-50 text-[#156295] shadow-lg shadow-blue-500/5' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-400'}`}
+                  className={`aspect-square flex flex-col items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.frame === style.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-400 hover:shadow-lg hover:shadow-slate-200/50 shadow-sm'}`}
                 >
-                  <div className="scale-125">{style.icon}</div>
-                  <span className="text-[9px] font-bold uppercase mt-3 tracking-widest">{style.label}</span>
+                  <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125 group-hover/item:scale-135'}`}>{style.icon}</div>
+                  <span className={`text-[9px] font-black uppercase mt-4 tracking-widest ${wizard.config.frame === style.id ? 'text-[#156295]' : 'text-slate-300'}`}>{style.label}</span>
                 </button>
               ))}
             </div>
@@ -561,67 +611,67 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Color & Pattern */}
-        <div className="skeu-card overflow-hidden">
-          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors" type="button">
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
-                <Grid3X3 className="w-6 h-6" />
+              <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Grid3X3 className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-slate-800">QR Pattern & Colors</h3>
-                <p className="text-sm text-slate-400">Dots, squares and custom colors</p>
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">QR Pattern & Colors</h3>
+                <p className="text-sm font-medium text-slate-400">Dots, squares and custom colors</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'pattern' ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'pattern' ? 'rotate-180 text-purple-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'pattern' && (
-            <div className="p-10 border-t border-slate-50 space-y-12 animate-in slide-in-from-top-4 duration-300">
+            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
                 {PATTERN_OPTIONS.map((opt: any) => (
                   <button
                     key={opt.id}
                     type="button"
                     onClick={() => setWizard({ ...wizard, config: { ...wizard.config, pattern: opt.id } })}
-                    className={`aspect-square flex items-center justify-center rounded-xl border-2 transition-all ${wizard.config.pattern === opt.id ? 'border-[#156295] bg-blue-50 text-[#156295] shadow-lg shadow-blue-500/5' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300'}`}
+                    className={`aspect-square flex items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.pattern === opt.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300 shadow-sm'}`}
                   >
-                    <div className="p-1">{opt.icon}</div>
+                    <div className={`p-1 transition-transform duration-500 ${wizard.config.pattern === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                   </button>
                 ))}
               </div>
 
               <div className="grid md:grid-cols-2 gap-10">
-                <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Foreground Color</label>
-                  <div className="flex items-center gap-6 p-1.5 bg-slate-50 rounded-2xl border-2 border-slate-50">
-                    <div className="w-16 h-12 rounded-xl border border-white/20 relative overflow-hidden" style={{ backgroundColor: wizard.config.fgColor }}>
-                      <input type="color" value={wizard.config.fgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, fgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-150" />
+                <div className="space-y-5">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Foreground Color</label>
+                  <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/20 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 group/color">
+                    <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.config.fgColor }}>
+                      <input type="color" value={wizard.config.fgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, fgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold text-slate-700 uppercase tracking-widest">{wizard.config.fgColor}</span>
+                    <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.config.fgColor}</span>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Background Color</label>
-                  <div className="flex items-center gap-6 p-1.5 bg-slate-50 rounded-2xl border-2 border-slate-50">
-                    <div className="w-16 h-12 rounded-xl border border-white/20 relative overflow-hidden" style={{ backgroundColor: wizard.config.bgColor }}>
-                      <input type="color" value={wizard.config.bgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, bgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-150" />
+                <div className="space-y-5">
+                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Background Color</label>
+                  <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#156295]/20 hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 group/color">
+                    <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.config.bgColor }}>
+                      <input type="color" value={wizard.config.bgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, bgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold text-slate-700 uppercase tracking-widest">{wizard.config.bgColor}</span>
+                    <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">{wizard.config.bgColor}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+              <div className="flex items-center gap-6 bg-slate-50/30 p-8 rounded-[2.5rem] border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 group/trans">
                 <button
                   type="button"
                   onClick={() => setIsTransparent(!isTransparent)}
-                  className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${isTransparent ? 'bg-[#156295] border-[#156295]' : 'bg-white border-slate-200'}`}
+                  className={`w-7 h-7 rounded-[10px] border-2 flex items-center justify-center transition-all shadow-sm ${isTransparent ? 'bg-[#156295] border-[#156295] shadow-lg shadow-blue-500/20' : 'bg-white border-slate-200 group-hover/trans:border-slate-300'}`}
                 >
-                  {isTransparent && <Check className="w-4 h-4 text-white" />}
+                  {isTransparent && <Check className="w-4 h-4 text-white" strokeWidth={4} />}
                 </button>
-                <div>
-                  <p className="font-bold text-slate-800">Transparent Background</p>
-                  <p className="text-xs text-slate-400 font-medium">Remove background for transparency</p>
+                <div className="cursor-pointer" onClick={() => setIsTransparent(!isTransparent)}>
+                  <p className="font-black text-[#0F172A] tracking-tight">Transparent Background</p>
+                  <p className="text-sm font-medium text-slate-400">Remove background for transparency</p>
                 </div>
               </div>
             </div>
@@ -629,49 +679,49 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Eyes Style */}
-        <div className="skeu-card overflow-hidden">
-          <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors" type="button">
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
-                <Maximize className="w-6 h-6" />
+              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Maximize className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-slate-800">Eye Styles</h3>
-                <p className="text-sm text-slate-400">Shape of the corner indicators</p>
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Eye Styles</h3>
+                <p className="text-sm font-medium text-slate-400">Shape of the corner indicators</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'corners' ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'corners' ? 'rotate-180 text-amber-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'corners' && (
-            <div className="p-10 border-t border-slate-50 space-y-12 animate-in slide-in-from-top-4 duration-300">
+            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-6">
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Eye Frame Shape</p>
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Eye Frame Shape</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
                   {CORNER_SQUARE_OPTIONS.map((opt: any) => (
                     <button
                       key={opt.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, config: { ...wizard.config, cornersSquareType: opt.id } })}
-                      className={`aspect-square flex items-center justify-center rounded-xl border-2 transition-all ${wizard.config.cornersSquareType === opt.id ? 'border-[#156295] bg-blue-50 text-[#156295]' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300'}`}
+                      className={`aspect-square flex items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.cornersSquareType === opt.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300 shadow-sm'}`}
                     >
-                      {opt.icon}
+                      <div className={`transition-transform duration-500 ${wizard.config.cornersSquareType === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-6">
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Eye Dot Shape</p>
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Eye Dot Shape</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
                   {CORNER_DOT_OPTIONS.map((opt: any) => (
                     <button
                       key={opt.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, config: { ...wizard.config, cornersDotType: opt.id } })}
-                      className={`aspect-square flex items-center justify-center rounded-xl border-2 transition-all ${wizard.config.cornersDotType === opt.id ? 'border-[#156295] bg-blue-50 text-[#156295]' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300'}`}
+                      className={`aspect-square flex items-center justify-center rounded-2xl border-2 transition-all group/item ${wizard.config.cornersDotType === opt.id ? 'border-[#156295] bg-white text-[#156295] shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'border-slate-50 bg-white hover:border-slate-200 text-slate-300 shadow-sm'}`}
                     >
-                      {opt.icon}
+                      <div className={`transition-transform duration-500 ${wizard.config.cornersDotType === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                     </button>
                   ))}
                 </div>
@@ -681,40 +731,42 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Logo Upload */}
-        <div className="skeu-card overflow-hidden">
-          <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors" type="button">
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+          <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center">
-                <ImageIcon className="w-6 h-6" />
+              <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <ImageIcon className="w-7 h-7" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-bold text-slate-800">Add Center Logo</h3>
-                <p className="text-sm text-slate-400">Place your brand in the center</p>
+                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Add Center Logo</h3>
+                <p className="text-sm font-medium text-slate-400">Place your brand in the center</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-transform ${activeDesignSection === 'logo' ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'logo' ? 'rotate-180 text-red-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'logo' && (
-            <div className="p-10 border-t border-slate-50 space-y-8 animate-in slide-in-from-top-4 duration-300">
-              <div className="relative group">
-                <div className="border-4 border-dashed border-slate-100 rounded-[2.5rem] p-16 flex flex-col items-center justify-center gap-6 hover:border-[#156295] hover:bg-blue-50/30 transition-all cursor-pointer">
-                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleLogoUpload} />
+            <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="relative group/logo-zone">
+                <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/item">
+                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleLogoUpload} />
                   {wizard.config.logoUrl ? (
-                    <div className="relative group/logo">
-                      <img src={wizard.config.logoUrl} className="w-32 h-32 object-contain shadow-2xl rounded-2xl border-4 border-white" alt="Logo" />
-                      <div className="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center">
-                        <Upload className="w-8 h-8 text-white" />
+                    <div className="relative group/logo-preview animate-in zoom-in duration-500">
+                      <img src={wizard.config.logoUrl} className="w-36 h-36 object-contain shadow-2xl rounded-3xl border-4 border-white transition-transform duration-500 group-hover/logo-preview:scale-105" alt="Logo" />
+                      <div className="absolute inset-0 bg-[#156295]/20 rounded-3xl opacity-0 group-hover/logo-preview:opacity-100 transition-opacity flex items-center justify-center z-10 backdrop-blur-[2px]">
+                        <Upload className="w-10 h-10 text-white drop-shadow-lg" />
                       </div>
                     </div>
                   ) : (
                     <>
-                      <div className="w-20 h-20 bg-slate-50 text-slate-300 rounded-[2rem] flex items-center justify-center group-hover:bg-[#156295] group-hover:text-white transition-all duration-500">
-                        <Upload className="w-10 h-10" />
+                      <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-50/50 group-hover/item:scale-110 group-hover/item:rotate-3 transition-all duration-500">
+                        <div className="w-16 h-16 bg-blue-50/60 rounded-full flex items-center justify-center border border-blue-100/30">
+                          <span className="text-[11px] font-black text-[#156295]/50 uppercase tracking-widest">LOGO</span>
+                        </div>
                       </div>
-                      <div className="text-center space-y-1">
-                        <p className="font-bold text-slate-800 text-lg">Click or drag logo</p>
-                        <p className="text-sm text-slate-400">PNG or JPG, max 5MB</p>
+                      <div className="text-center space-y-2">
+                        <p className="font-black text-[#0F172A] text-xl tracking-tight">Click or drag logo</p>
+                        <p className="text-sm font-medium text-slate-400">PNG or JPG, maximum 5MB</p>
                       </div>
                     </>
                   )}
@@ -724,9 +776,9 @@ export const Wizard: React.FC<WizardProps> = ({
                 <button
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, logoUrl: undefined } })}
-                  className="w-full py-4 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 uppercase text-xs tracking-widest active:scale-95"
                 >
-                  <Trash2 className="w-4 h-4" /> Remove current logo
+                  <Trash2 className="w-5 h-5" /> Remove current logo
                 </button>
               )}
             </div>
@@ -741,7 +793,7 @@ export const Wizard: React.FC<WizardProps> = ({
       {/* Header with Stepper */}
       <header className="bg-white border-b border-slate-100 px-10 py-6 sticky top-0 z-30 shadow-sm shrink-0">
         <div className="max-w-[1600px] mx-auto flex items-center justify-center">
-          <Stepper step={wizard.step} />
+          {renderStepper({ step: wizard.step })}
         </div>
       </header>
 
@@ -752,58 +804,28 @@ export const Wizard: React.FC<WizardProps> = ({
             {/* Left Side: Content */}
             <div className="lg:col-span-8 space-y-12 pb-24">
               {wizard.step === 1 ? (
-                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="text-left">
-                    <h2 className="text-[32px] font-black text-[#0F172A] tracking-tight">1. Select a type of QR code</h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {QR_TYPES_CONFIG.map((type) => (
-                      <button
-                        key={type.id}
-                        onClick={() => setWizard({ ...wizard, type: type.id as any })}
-                        type="button"
-                        className={`group p-8 aspect-[4/5] rounded-[2rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-8 ${wizard.type === type.id ? 'border-[#156295] bg-white shadow-xl shadow-blue-500/5' : 'border-slate-50 bg-white/40 hover:bg-white hover:border-slate-100 hover:shadow-lg'}`}
-                      >
-                        <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-lg' : 'bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-[#156295]'}`}>
-                          {type.id === 'website' && <Globe className="w-7 h-7" />}
-                          {type.id === 'pdf' && <FileText className="w-7 h-7" />}
-                          {type.id === 'links' && <LinkIcon className="w-7 h-7" />}
-                          {type.id === 'whatsapp' && <MessageCircle className="w-7 h-7" />}
-                          {type.id === 'business' && <Briefcase className="w-7 h-7" />}
-                          {type.id === 'vcard' && <Grid3X3 className="w-7 h-7" />}
-                        </div>
-                        <div className="space-y-2">
-                          <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
-                          <p className="text-[11px] font-medium text-slate-400 leading-relaxed px-2">
-                            {type.desc}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                renderStep1TypeSelection()
               ) : wizard.step === 2 ? (
-                <Step2Content />
+                renderStep2Content()
               ) : (
-                <Step3Style />
+                renderStep3Style()
               )}
             </div>
 
             {/* Right Side: Phone Preview (Sticky) */}
             <div className="lg:col-span-4 sticky top-0 flex flex-col items-center gap-8">
               {/* Preview Toggle Pill (Matches Screenshot 1 position) */}
-              <div className="w-full flex justify-end mb-4">
-                <div className="bg-slate-200/50 p-1 rounded-full flex items-center gap-1 border border-slate-200 shadow-inner">
+              <div className="w-full flex justify-center mb-6">
+                <div className="bg-[#156295] p-1 rounded-full flex items-center gap-1 shadow-md">
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
-                    className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${phonePreviewMode === 'ui' ? 'bg-[#156295] text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 font-bold'}`}
+                    className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all focus:outline-none ${phonePreviewMode === 'ui' ? 'bg-white text-[#156295] border-2 border-[#156295] shadow-sm' : 'text-white'}`}
                   >
                     PREVIEW
                   </button>
                   <button
                     onClick={() => setPhonePreviewMode('qr')}
-                    className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${phonePreviewMode === 'qr' ? 'bg-[#156295] text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 font-bold'}`}
+                    className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all focus:outline-none ${phonePreviewMode === 'qr' ? 'bg-white text-[#156295] border-2 border-[#156295] shadow-sm' : 'text-white'}`}
                   >
                     QR CODE
                   </button>
@@ -815,190 +837,206 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="absolute -inset-20 bg-blue-500/5 blur-[120px] rounded-full -z-10 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
                 <div className="skeu-phone w-[320px] h-[650px] relative shrink-0">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 skeu-phone-notch z-20" />
-                  <div className="absolute inset-2.5 bg-white rounded-[3.25rem] overflow-hidden overflow-y-auto scrollbar-hide">
-                    {phonePreviewMode === 'ui' ? (
-                      <div className="h-full flex flex-col animate-in fade-in duration-500">
-                        {/* High Fidelity UI Previews */}
-                        {wizard.type === 'website' && (
-                          <div className="h-full flex flex-col pt-12 px-6 space-y-8">
-                            <div className="bg-slate-50 p-3.5 rounded-2xl flex items-center gap-3 border border-slate-100 shadow-sm">
-                              <div className="flex gap-1.5 flex-none">
-                                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                                <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                                <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                              </div>
-                              <div className="h-7 flex-1 bg-white rounded-xl border border-slate-200/50 px-3 flex items-center overflow-hidden">
-                                <span className="text-[10px] font-bold text-slate-300 truncate">
-                                  {wizard.value || 'https://yourwebsite.com'}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex-1 rounded-[2.5rem] bg-slate-50/50 border border-slate-100 flex flex-col items-center justify-center p-12 text-center space-y-8">
-                              <div className="w-24 h-24 bg-white rounded-[2rem] skeu-card flex items-center justify-center shadow-blue-500/5">
-                                <Globe className="w-12 h-12 text-[#156295] opacity-20" />
-                              </div>
-                              <div className="space-y-4 w-full">
-                                <div className="h-4 w-3/4 bg-slate-100 rounded-full mx-auto" />
-                                <div className="h-4 w-1/2 bg-slate-100 rounded-full mx-auto" />
-                                <div className="h-4 w-2/3 bg-slate-100 rounded-full mx-auto opacity-50" />
-                              </div>
-                              <div className="pt-8 w-full">
-                                <div className="h-12 w-full bg-[#156295]/10 rounded-2xl border border-[#156295]/5" />
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 skeu-phone-notch z-50 overflow-hidden">
+                    <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full" />
+                  </div>
 
-                        {wizard.type === 'whatsapp' && (
-                          <div className="h-full flex flex-col pt-0">
-                            <div className="bg-[#075E54] p-5 pt-12 text-white flex items-center gap-4 shrink-0 shadow-lg relative">
-                              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/20 rounded-full md:hidden" />
-                              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-black text-lg border-2 border-white/10">W</div>
-                              <div className="flex-1">
-                                <h4 className="text-sm font-black tracking-tight">WhatsApp Chat</h4>
-                                <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">Online Now</p>
+                  <div className="absolute inset-0 bg-white rounded-[2.8rem] overflow-hidden flex flex-col">
+                    {/* Phone Status Bar (Matches Screenshot 10) */}
+                    <div className="bg-[#0F172A] h-11 px-8 flex items-end pb-1.5 justify-between shrink-0 z-30">
+                      <span className="text-white text-[11px] font-black tracking-tight">9:41</span>
+                      <div className="flex items-center gap-1.5 text-white">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
+                        <div className="w-5 h-2.5 border-2 border-white/40 rounded-sm relative">
+                          <div className="absolute inset-0.5 bg-white rounded-px w-3" />
+                          <div className="absolute -right-1 top-0.5 w-0.5 h-1 bg-white/40 rounded-full" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto scrollbar-hide relative">
+                      {phonePreviewMode === 'ui' ? (
+                        <div className="h-full flex flex-col animate-in fade-in duration-500">
+                          {/* High Fidelity UI Previews */}
+                          {wizard.type === 'website' && (
+                            <div className="h-full flex flex-col pt-8 px-6 space-y-8">
+                              <div className="h-28 bg-[#4FD1C5] relative flex flex-col justify-end p-6 gap-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/10">
+                                    <Globe className="w-5 h-5 text-white" />
+                                  </div>
+                                  <div className="flex-1 h-8 bg-white/20 rounded-xl backdrop-blur-md border border-white/10 flex items-center px-4">
+                                    <span className="text-[9px] font-black text-white/50 truncate">
+                                      {wizard.value || 'https://yourwebsite.com'}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex gap-3 pr-2">
-                                <div className="w-2 h-2 rounded-full bg-white/40" />
-                                <div className="w-2 h-2 rounded-full bg-white/40" />
-                              </div>
-                            </div>
-                            <div className="flex-1 bg-[#E5DDD5] p-6 flex flex-col justify-end relative">
-                              <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
-                              <div className="bg-[#DCF8C6] p-4.5 rounded-[1.5rem] rounded-tr-none self-end max-w-[90%] shadow-xl border border-green-200 animate-in slide-in-from-right-8 duration-700">
-                                <p className="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-wrap">{whatsappMessage || 'Hello! I would like more information about your QR code services.'}</p>
-                                <div className="flex items-center justify-end gap-1 mt-3">
-                                  <span className="text-[9px] font-bold text-green-700/60 uppercase">12:34 PM</span>
-                                  <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
+                              <div className="flex-1 bg-white p-6 space-y-6">
+                                <div className="w-full aspect-[4/3] rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-8 group-hover:bg-blue-50/30 transition-colors duration-500">
+                                  <Globe className="w-16 h-16 text-[#156295] opacity-10" />
+                                </div>
+                                <div className="space-y-3 px-2">
+                                  <div className="h-2.5 w-3/4 bg-slate-100 rounded-full" />
+                                  <div className="h-2.5 w-1/2 bg-slate-100 rounded-full opacity-60" />
+                                </div>
+                                <div className="pt-2">
+                                  <div className="h-12 w-full bg-[#156295]/10 rounded-2xl border border-[#156295]/5" />
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'vcard') && (
-                          <div className="space-y-10 pt-10 px-6">
-                            <div className="text-center space-y-6">
-                              <div className="w-28 h-28 mx-auto rounded-[2.5rem] bg-white skeu-card flex items-center justify-center overflow-hidden border-4 border-white shadow-2xl relative group/avatar transition-transform duration-500 hover:scale-105">
-                                {wizard.config.logoUrl ? (
-                                  <img src={wizard.config.logoUrl} className="w-full h-full object-contain p-2" alt="Avatar" />
-                                ) : (
-                                  <Barcode className="w-12 h-12 text-[#156295] opacity-20" />
+                          {wizard.type === 'whatsapp' && (
+                            <div className="h-full flex flex-col pt-0">
+                              <div className="bg-[#075E54] p-5 pt-6 text-white flex items-center gap-4 shrink-0 shadow-lg relative">
+                                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-black text-lg border-2 border-white/10">W</div>
+                                <div className="flex-1">
+                                  <h4 className="text-sm font-black tracking-tight">WhatsApp Chat</h4>
+                                  <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">Online Now</p>
+                                </div>
+                                <div className="flex gap-3 pr-2">
+                                  <div className="w-2 h-2 rounded-full bg-white/40" />
+                                  <div className="w-2 h-2 rounded-full bg-white/40" />
+                                </div>
+                              </div>
+                              <div className="flex-1 bg-[#E5DDD5] p-6 flex flex-col justify-end relative">
+                                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
+                                <div className="bg-[#DCF8C6] p-4.5 rounded-[1.5rem] rounded-tr-none self-end max-w-[90%] shadow-xl border border-green-200 animate-in slide-in-from-right-8 duration-700">
+                                  <p className="text-sm font-medium text-slate-800 leading-relaxed whitespace-pre-wrap">{whatsappMessage || 'Hello! I would like more information about your QR code services.'}</p>
+                                  <div className="flex items-center justify-end gap-1 mt-3">
+                                    <span className="text-[9px] font-bold text-green-700/60 uppercase">12:34 PM</span>
+                                    <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {(wizard.type === 'business' || wizard.type === 'links' || wizard.type === 'vcard') && (
+                            <div className="space-y-10 pt-10 px-6">
+                              <div className="text-center space-y-6">
+                                <div className="w-28 h-28 mx-auto rounded-[2.5rem] bg-white skeu-card flex items-center justify-center overflow-hidden border-4 border-white shadow-2xl relative group/avatar transition-transform duration-500 hover:scale-105">
+                                  {wizard.config.logoUrl ? (
+                                    <img src={wizard.config.logoUrl} className="w-full h-full object-contain p-2" alt="Avatar" />
+                                  ) : (
+                                    <Barcode className="w-12 h-12 text-[#156295] opacity-20" />
+                                  )}
+                                </div>
+                                <div className="space-y-2">
+                                  <h4 className="font-black text-slate-800 text-2xl tracking-tighter leading-tight" style={{ fontFamily: wizard.business?.fontTitle }}>
+                                    {wizard.business?.title || 'Your Brand Name'}
+                                  </h4>
+                                  <div className="flex items-center justify-center gap-2">
+                                    <div className="h-[1px] w-4 bg-slate-200" />
+                                    <p className="text-[10px] font-black text-[#156295] uppercase tracking-[0.25em]">{wizard.business?.company || 'Organization'}</p>
+                                    <div className="h-[1px] w-4 bg-slate-200" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                {wizard.business?.buttons.map((btn: any) => (
+                                  <div
+                                    key={btn.id}
+                                    className="w-full p-5 rounded-[1.5rem] flex items-center gap-4 border border-white/40 shadow-xl shadow-blue-500/5 transition-all hover:translate-y-[-2px] active:scale-[0.97] cursor-pointer"
+                                    style={{ backgroundColor: wizard.business?.primaryColor, color: '#fff' }}
+                                  >
+                                    <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                      <LinkIcon className="w-5 h-5" />
+                                    </div>
+                                    <span className="text-sm font-black truncate tracking-tight">{btn.text || 'Action Link'}</span>
+                                    <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
+                                  </div>
+                                ))}
+                                {(!wizard.business?.buttons || wizard.business?.buttons.length === 0) && (
+                                  <div className="py-12 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 bg-slate-50/50">
+                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                      <Plus className="w-6 h-6 text-slate-200" />
+                                    </div>
+                                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Add your first link</p>
+                                  </div>
                                 )}
                               </div>
-                              <div className="space-y-2">
-                                <h4 className="font-black text-slate-800 text-2xl tracking-tighter leading-tight" style={{ fontFamily: wizard.business?.fontTitle }}>
-                                  {wizard.business?.title || 'Your Brand Name'}
-                                </h4>
-                                <div className="flex items-center justify-center gap-2">
-                                  <div className="h-[1px] w-4 bg-slate-200" />
-                                  <p className="text-[10px] font-black text-[#156295] uppercase tracking-[0.25em]">{wizard.business?.company || 'Organization'}</p>
-                                  <div className="h-[1px] w-4 bg-slate-200" />
-                                </div>
-                              </div>
                             </div>
+                          )}
 
-                            <div className="space-y-4">
-                              {wizard.business?.buttons.map((btn: any) => (
-                                <div
-                                  key={btn.id}
-                                  className="w-full p-5 rounded-[1.5rem] flex items-center gap-4 border border-white/40 shadow-xl shadow-blue-500/5 transition-all hover:translate-y-[-2px] active:scale-[0.97] cursor-pointer"
-                                  style={{ backgroundColor: wizard.business?.primaryColor, color: '#fff' }}
-                                >
-                                  <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                                    <LinkIcon className="w-5 h-5" />
+                          {wizard.type === 'pdf' && (
+                            <div className="h-full flex flex-col pt-10 px-6">
+                              <div className="flex-1 bg-slate-50/80 rounded-[3rem] border-2 border-slate-100 flex flex-col items-center justify-center p-12 text-center space-y-10 relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-full h-24 bg-red-500 opacity-[0.03] rotate-[-4deg] scale-125" />
+                                <div className="relative">
+                                  <div className="w-24 h-24 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-red-200 border-4 border-white transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                    <FileText className="w-12 h-12" />
                                   </div>
-                                  <span className="text-sm font-black truncate tracking-tight">{btn.text || 'Action Link'}</span>
-                                  <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
-                                </div>
-                              ))}
-                              {(!wizard.business?.buttons || wizard.business?.buttons.length === 0) && (
-                                <div className="py-12 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 bg-slate-50/50">
-                                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                    <Plus className="w-6 h-6 text-slate-200" />
+                                  <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                      <Check className="w-3.5 h-3.5 text-white" />
+                                    </div>
                                   </div>
-                                  <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Add your first link</p>
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {wizard.type === 'pdf' && (
-                          <div className="h-full flex flex-col pt-10 px-6">
-                            <div className="flex-1 bg-slate-50/80 rounded-[3rem] border-2 border-slate-100 flex flex-col items-center justify-center p-12 text-center space-y-10 relative overflow-hidden group">
-                              <div className="absolute top-0 left-0 w-full h-24 bg-red-500 opacity-[0.03] rotate-[-4deg] scale-125" />
-                              <div className="relative">
-                                <div className="w-24 h-24 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-red-200 border-4 border-white transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                                  <FileText className="w-12 h-12" />
+                                <div className="space-y-4">
+                                  <p className="text-[11px] font-black text-red-500 uppercase tracking-[0.3em]">Ready to View</p>
+                                  <h4 className="font-black text-slate-800 text-xl leading-tight line-clamp-3">
+                                    {pdfFileName || 'your-document.pdf'}
+                                  </h4>
+                                  <div className="h-1.5 w-12 bg-red-200 rounded-full mx-auto" />
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                    <Check className="w-3.5 h-3.5 text-white" />
+                                <div className="w-full pt-8">
+                                  <div className="w-full py-5 bg-red-500 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-red-500/30 active:scale-95 transition-all">
+                                    DOWNLOAD PDF
                                   </div>
                                 </div>
                               </div>
-                              <div className="space-y-4">
-                                <p className="text-[11px] font-black text-red-500 uppercase tracking-[0.3em]">Ready to View</p>
-                                <h4 className="font-black text-slate-800 text-xl leading-tight line-clamp-3">
-                                  {pdfFileName || 'your-document.pdf'}
-                                </h4>
-                                <div className="h-1.5 w-12 bg-red-200 rounded-full mx-auto" />
-                              </div>
-                              <div className="w-full pt-8">
-                                <div className="w-full py-5 bg-red-500 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-red-500/30 active:scale-95 transition-all">
-                                  DOWNLOAD PDF
-                                </div>
-                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {!['website', 'pdf', 'business', 'links', 'whatsapp', 'vcard'].includes(wizard.type) && (
-                          <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-8">
-                            <div className="w-28 h-28 bg-blue-50 text-[#156295] rounded-[3rem] flex items-center justify-center skeu-card shadow-blue-500/10">
-                              <Barcode className="w-14 h-14" />
+                          {!['website', 'pdf', 'business', 'links', 'whatsapp', 'vcard'].includes(wizard.type) && (
+                            <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-8">
+                              <div className="w-28 h-28 bg-blue-50 text-[#156295] rounded-[3rem] flex items-center justify-center skeu-card shadow-blue-500/10">
+                                <Barcode className="w-14 h-14" />
+                              </div>
+                              <div className="space-y-3">
+                                <h4 className="font-black text-slate-800 text-2xl tracking-tight">QR Preview</h4>
+                                <p className="text-[12px] font-bold text-slate-400 leading-relaxed px-4">Select a QR type on the left to start building your custom experience.</p>
+                              </div>
                             </div>
-                            <div className="space-y-3">
-                              <h4 className="font-black text-slate-800 text-2xl tracking-tight">QR Preview</h4>
-                              <p className="text-[12px] font-bold text-slate-400 leading-relaxed px-4">Select a QR type on the left to start building your custom experience.</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center bg-white space-y-10 p-10 animate-in zoom-in-95 duration-700">
-                        <div className="relative group p-6 border-4 border-slate-50 rounded-[2.5rem] bg-white shadow-sm transition-transform duration-500 hover:scale-[1.02]">
-                          <QRFrameWrapper frameType={wizard.config.frame}>
-                            <StyledQRCode
-                              value={getQRValue()}
-                              fgColor={wizard.config.fgColor}
-                              bgColor={isTransparent ? 'transparent' : wizard.config.bgColor}
-                              pattern={wizard.config.pattern}
-                              cornersSquareType={wizard.config.cornersSquareType}
-                              cornersSquareColor={wizard.config.cornersSquareColor}
-                              cornersDotType={wizard.config.cornersDotType}
-                              cornersDotColor={wizard.config.cornersDotColor}
-                              logoUrl={wizard.config.logoUrl}
-                            />
-                          </QRFrameWrapper>
+                          )}
                         </div>
+                      ) : (
+                        <div className="h-full flex flex-col items-center justify-center bg-white space-y-20 p-10 animate-in zoom-in-95 duration-700">
+                          <div className="relative group p-6 border border-[#E0EAF2] rounded-[3.5rem] bg-[#F8FAFC] shadow-2xl shadow-blue-500/10 transition-transform duration-500 hover:scale-[1.02]">
+                            <div className="bg-white p-4 rounded-[3rem] shadow-inner border border-white">
+                              <QRFrameWrapper frameType={wizard.config.frame}>
+                                <div className="relative">
+                                  <StyledQRCode
+                                    options={qrStylingOptions}
+                                    size={240}
+                                  />
+                                  {!wizard.config.logoUrl && (
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-50/50">
+                                      <div className="w-11 h-11 bg-blue-50/60 rounded-full flex items-center justify-center border border-blue-100/30">
+                                        <span className="text-[10px] font-black text-[#156295]/50 uppercase tracking-widest">LOGO</span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </QRFrameWrapper>
+                            </div>
+                          </div>
 
-                        <div className="text-center space-y-2 px-4">
-                          <h4 className="text-2xl font-black text-[#0F172A] leading-tight tracking-tight">
-                            Select a type of QR code on the left
-                          </h4>
+                          <div className="text-center space-y-4 px-6">
+                            <h4 className="text-2xl font-black text-slate-800 leading-tight tracking-tight">
+                              Select a type of QR code on the left
+                            </h4>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <p className="text-[11px] font-black text-slate-300 uppercase tracking-[0.25em] flex items-center gap-3 mt-4">
-                <Star className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" /> Live Preview Active
-              </p>
             </div>
           </div>
         </div>
