@@ -25,7 +25,7 @@ import { useCodes } from './src/hooks/useCodes';
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
   const [isStandaloneView, setIsStandaloneView] = useState(false);
-  const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('ui');
+  const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('qr');
   const [savedPalettes, setSavedPalettes] = useState<Palette[]>([]);
   const [currentPdfFileId, setCurrentPdfFileId] = useState<string | null>(null);
   const [currentBusinessProfileId, setCurrentBusinessProfileId] = useState<string | null>(null);
@@ -175,7 +175,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView ? 'ml-64' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (

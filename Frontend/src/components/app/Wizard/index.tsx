@@ -740,23 +740,8 @@ export const Wizard: React.FC<WizardProps> = ({
     <div className="flex flex-col h-full bg-slate-50/50 overflow-hidden">
       {/* Header with Stepper */}
       <header className="bg-white border-b border-slate-100 px-10 py-6 sticky top-0 z-30 shadow-sm shrink-0">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          <div className="w-1/4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
-                <Plus className="w-4 h-4 text-[#156295]" />
-              </div>
-              <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                {wizard.step === 1 ? 'Step 1: Type' : wizard.step === 2 ? 'Step 2: Content' : 'Step 3: Style'}
-              </h2>
-            </div>
-          </div>
-          <div className="flex-1">
-            <Stepper step={wizard.step} />
-          </div>
-          <div className="w-1/4 flex justify-end">
-            {/* Space reserved for any right-aligned header items */}
-          </div>
+        <div className="max-w-[1600px] mx-auto flex items-center justify-center">
+          <Stepper step={wizard.step} />
         </div>
       </header>
 
@@ -778,24 +763,20 @@ export const Wizard: React.FC<WizardProps> = ({
                         key={type.id}
                         onClick={() => setWizard({ ...wizard, type: type.id as any })}
                         type="button"
-                        className={`group p-8 aspect-[4/5] rounded-[2.5rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-8 ${wizard.type === type.id ? 'border-[#156295] bg-white skeu-card scale-[1.02]' : 'border-slate-50 bg-white/40 hover:bg-white hover:border-slate-100'}`}
+                        className={`group p-8 aspect-[4/5] rounded-[2rem] border-2 transition-all flex flex-col items-center justify-center text-center gap-8 ${wizard.type === type.id ? 'border-[#156295] bg-white shadow-xl shadow-blue-500/5' : 'border-slate-50 bg-white/40 hover:bg-white hover:border-slate-100 hover:shadow-lg'}`}
                       >
-                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-xl shadow-blue-500/20' : 'bg-slate-50 text-slate-300 group-hover:bg-blue-50 group-hover:text-[#156295]'}`}>
-                          {type.id === 'website' && <Globe className="w-9 h-9" />}
-                          {type.id === 'pdf' && <FileText className="w-9 h-9" />}
-                          {type.id === 'links' && <LinkIcon className="w-9 h-9" />}
-                          {type.id === 'whatsapp' && <MessageCircle className="w-9 h-9" />}
-                          {type.id === 'business' && <Briefcase className="w-9 h-9" />}
-                          {type.id === 'vcard' && <Grid3X3 className="w-9 h-9" />}
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${wizard.type === type.id ? 'bg-[#156295] text-white shadow-lg' : 'bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-[#156295]'}`}>
+                          {type.id === 'website' && <Globe className="w-7 h-7" />}
+                          {type.id === 'pdf' && <FileText className="w-7 h-7" />}
+                          {type.id === 'links' && <LinkIcon className="w-7 h-7" />}
+                          {type.id === 'whatsapp' && <MessageCircle className="w-7 h-7" />}
+                          {type.id === 'business' && <Briefcase className="w-7 h-7" />}
+                          {type.id === 'vcard' && <Grid3X3 className="w-7 h-7" />}
                         </div>
                         <div className="space-y-2">
-                          <h3 className={`font-black text-xl tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
-                          <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[0.1em] leading-relaxed">
-                            {type.id === 'website' ? 'Link to any website URL' :
-                              type.id === 'pdf' ? 'Show a PDF' :
-                                type.id === 'business' ? 'Share brand info' :
-                                  type.id === 'whatsapp' ? 'Get WhatsApp messages' :
-                                    type.desc.length > 25 ? type.desc.substring(0, 25) + '...' : type.desc}
+                          <h3 className={`font-bold text-lg tracking-tight ${wizard.type === type.id ? 'text-[#156295]' : 'text-slate-800'}`}>{type.name}</h3>
+                          <p className="text-[11px] font-medium text-slate-400 leading-relaxed px-2">
+                            {type.desc}
                           </p>
                         </div>
                       </button>
@@ -987,14 +968,8 @@ export const Wizard: React.FC<WizardProps> = ({
                         )}
                       </div>
                     ) : (
-                      <div className="h-full flex flex-col items-center justify-center bg-white space-y-14 p-12 animate-in zoom-in-95 duration-700">
-                        <div className="text-center space-y-4">
-                          <div className="w-14 h-1.5 bg-slate-100 rounded-full mx-auto" />
-                          <h4 className="text-2xl font-black text-slate-800 tracking-tight">QR Styling</h4>
-                          <p className="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em]">Dynamic Generation</p>
-                        </div>
-
-                        <div className="relative group p-8 border-8 border-slate-50/50 rounded-[4rem] bg-white skeu-card shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] transition-transform duration-500 hover:scale-[1.02]">
+                      <div className="h-full flex flex-col items-center justify-center bg-white space-y-10 p-10 animate-in zoom-in-95 duration-700">
+                        <div className="relative group p-6 border-4 border-slate-50 rounded-[2.5rem] bg-white shadow-sm transition-transform duration-500 hover:scale-[1.02]">
                           <QRFrameWrapper frameType={wizard.config.frame}>
                             <StyledQRCode
                               value={getQRValue()}
@@ -1010,11 +985,10 @@ export const Wizard: React.FC<WizardProps> = ({
                           </QRFrameWrapper>
                         </div>
 
-                        <div className="bg-[#156295]/5 py-6 px-8 rounded-[2rem] border border-[#156295]/10 flex items-center gap-5 max-w-[280px]">
-                          <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-md border border-[#156295]/10">
-                            <CheckCheck className="w-6 h-6 text-[#156295]" />
-                          </div>
-                          <p className="text-[11px] font-black text-[#156295]/70 leading-snug uppercase tracking-wider">High Resolution Output Ready</p>
+                        <div className="text-center space-y-2 px-4">
+                          <h4 className="text-2xl font-black text-[#0F172A] leading-tight tracking-tight">
+                            Select a type of QR code on the left
+                          </h4>
                         </div>
                       </div>
                     )}
@@ -1037,35 +1011,20 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="px-10 py-4 bg-white border border-slate-200 text-slate-500 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed group active:scale-95 shadow-sm"
+            className="px-8 py-3 bg-white border border-slate-200 text-slate-400 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed group active:scale-95 shadow-sm"
           >
-            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> BACK
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> BACK
           </button>
 
-          <div className="hidden lg:flex items-center gap-10 text-[11px] font-black tracking-[0.3em] uppercase">
-            <div className="flex items-center gap-4 group">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${wizard.step === 1 ? 'bg-[#156295] border-[#156295] text-white shadow-lg shadow-blue-500/30' : 'border-slate-100 text-slate-200'}`}>1</div>
-              <span className={wizard.step === 1 ? 'text-[#156295]' : 'text-slate-200'}>TYPE</span>
-            </div>
-            <div className="w-12 h-[2px] bg-slate-50" />
-            <div className="flex items-center gap-4 group">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${wizard.step === 2 ? 'bg-[#156295] border-[#156295] text-white shadow-lg shadow-blue-500/30' : 'border-slate-100 text-slate-200'}`}>2</div>
-              <span className={wizard.step === 2 ? 'text-[#156295]' : 'text-slate-200'}>CONTENT</span>
-            </div>
-            <div className="w-12 h-[2px] bg-slate-50" />
-            <div className="flex items-center gap-4 group">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${wizard.step === 3 ? 'bg-[#156295] border-[#156295] text-white shadow-lg shadow-blue-500/30' : 'border-slate-100 text-slate-200'}`}>3</div>
-              <span className={wizard.step === 3 ? 'text-[#156295]' : 'text-slate-200'}>STYLE</span>
-            </div>
-          </div>
+
 
           <button
             onClick={handleNextStep}
             type="button"
-            className="px-12 py-4 bg-[#156295] text-white rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 hover:bg-[#0E4677] shadow-[0_20px_35px_-10px_rgba(21,98,149,0.35)] transition-all transform hover:-translate-y-1 active:scale-95 group"
+            className="px-10 py-3 bg-[#156295] text-white rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#0E4677] shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 active:scale-95 group"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
-            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </footer>
