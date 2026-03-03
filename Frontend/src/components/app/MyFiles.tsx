@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Plus, Trash2, Download, Eye, FileText, Loader2, Grid3X3, Upload, QrCode } from 'lucide-react';
+import { Search, Plus, Trash2, Download, Eye, FileText, Loader2, Grid3X3, Upload, QrCode, Folder as FolderIcon } from 'lucide-react';
 import { getAllFiles, deleteFile, saveFile } from '../../services/fileStorage';
 import { FileRecord, Folder } from '../../../types';
 
@@ -142,7 +142,7 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                                 className={`w-full px-5 py-3.5 rounded-2xl text-left font-bold text-sm flex items-center justify-between transition-all ${activeFolderId === folder.id ? 'bg-[#156295] text-white shadow-lg shadow-blue-500/20' : 'text-slate-600 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-2 h-2 rounded-full ${activeFolderId === folder.id ? 'bg-white' : 'bg-blue-400/30'}`} />
+                                    <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
                                     <span>{folder.name}</span>
                                 </div>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'bg-slate-100 text-slate-400'}`}>{folder.count}</span>

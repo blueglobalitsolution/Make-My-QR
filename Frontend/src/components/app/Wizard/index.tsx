@@ -4,6 +4,8 @@ import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } fro
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
+// @ts-ignore
+import phoneFrame from './Phone.png';
 
 interface WizardProps {
   wizard: WizardState;
@@ -136,7 +138,7 @@ export const Wizard: React.FC<WizardProps> = ({
         <h2 className="text-[11px] font-black skeu-text-muted uppercase tracking-[0.3em]">1. Select a type of QR code</h2>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
         {QR_TYPES_CONFIG.map((type) => (
           <button
             key={type.id}
@@ -144,19 +146,19 @@ export const Wizard: React.FC<WizardProps> = ({
             onMouseEnter={() => setHoveredType(type.id as any)}
             onMouseLeave={() => setHoveredType(null)}
             type="button"
-            className={`group p-8 aspect-square rounded-[2.5rem] transition-all duration-500 flex flex-col items-center justify-center text-center gap-6 ${wizard.type === type.id ? 'skeu-card shadow-2xl scale-105 bg-white' : 'skeu-card hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1'}`}
+            className={`group p-4 aspect-square max-w-[180px] w-full mx-auto rounded-3xl transition-all duration-500 flex flex-col items-center justify-center text-center gap-4 ${wizard.type === type.id ? 'skeu-card shadow-2xl scale-105 bg-white' : 'skeu-card hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1'}`}
           >
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 relative skeu-gloss ${wizard.type === type.id ? 'skeu-hero-icon text-white' : 'skeu-inset skeu-text-accent'}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 relative skeu-gloss shrink-0 ${wizard.type === type.id ? 'skeu-hero-icon text-white' : 'skeu-inset skeu-text-accent'}`}>
               <div className="flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                {type.id === 'website' && <Globe className="w-8 h-8" strokeWidth={1.5} />}
-                {type.id === 'pdf' && <FileText className="w-8 h-8" strokeWidth={1.5} />}
-                {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" strokeWidth={1.5} />}
-                {type.id === 'business' && <Briefcase className="w-8 h-8" strokeWidth={1.5} />}
+                {type.id === 'website' && <Globe className="w-6 h-6" strokeWidth={1.5} />}
+                {type.id === 'pdf' && <FileText className="w-6 h-6" strokeWidth={1.5} />}
+                {type.id === 'whatsapp' && <MessageCircle className="w-6 h-6" strokeWidth={1.5} />}
+                {type.id === 'business' && <Briefcase className="w-6 h-6" strokeWidth={1.5} />}
               </div>
             </div>
             <div className="space-y-1">
-              <h3 className={`font-black text-lg tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary group-hover:skeu-text-accent'}`}>{type.name}</h3>
-              <p className="text-[11px] font-normal skeu-text-muted leading-relaxed px-1">
+              <h3 className={`font-black text-sm tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary group-hover:skeu-text-accent'}`}>{type.name}</h3>
+              <p className="text-[9px] font-medium skeu-text-muted leading-tight px-1 line-clamp-2">
                 {type.desc}
               </p>
             </div>
@@ -335,20 +337,20 @@ export const Wizard: React.FC<WizardProps> = ({
 
             {/* Design */}
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
-                    <PaletteIcon className="w-7 h-7" />
+              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">Design</h3>
-                    <p className="text-sm font-medium skeu-text-muted">Choose a color theme for your page.</p>
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Design</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'design' && (
-                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="p-6 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-6">
                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Color Palette</p>
                     <div className="flex items-center gap-4 flex-wrap">
@@ -397,20 +399,20 @@ export const Wizard: React.FC<WizardProps> = ({
 
             {/* PDF Information */}
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-              <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
-                    <Info className="w-7 h-7" />
+              <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">PDF Information</h3>
-                    <p className="text-sm font-medium skeu-text-muted">Details about the PDF content.</p>
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">PDF Information</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Details about the PDF content.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pdf_info' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pdf_info' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'pdf_info' && (
-                <div className="p-10 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="p-6 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Company Name</label>
@@ -441,20 +443,20 @@ export const Wizard: React.FC<WizardProps> = ({
 
             {/* Fonts */}
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-              <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
-                    <i className="font-serif text-2xl font-black">T</i>
+              <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <i className="font-serif text-lg font-black">T</i>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">Fonts</h3>
-                    <p className="text-sm font-medium skeu-text-muted">Customize fonts and colors.</p>
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Fonts</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Customize fonts and colors.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'fonts' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'fonts' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'fonts' && (
-                <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="p-6 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest pl-1">Title Font</label>
@@ -1206,26 +1208,26 @@ export const Wizard: React.FC<WizardProps> = ({
         )}
 
         {/* Name Section */}
-        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
           <button
             onClick={() => toggleSection('name')}
-            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Type className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Name of the QR Code</h3>
-                <p className="text-[10px] font-medium text-slate-400">Give your QR code a name.</p>
+                <h3 className="text-base font-black skeu-text-primary tracking-tight">Name of the QR Code</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Give your QR code a name.</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
 
           {activeDesignSection === 'name' && (
-            <div className="p-6 border-t border-slate-50/50 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-black/5 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-3">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">QR Code Name</label>
                 <input
@@ -1233,7 +1235,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   placeholder="e.g. Website Launch Campaign"
                   value={wizard.name}
                   onChange={(e) => setWizard({ ...wizard, name: e.target.value })}
-                  className="w-full px-5 py-4 skeu-input outline-none focus:ring-[10px] focus:ring-blue-500/5 focus:border-blue-500 bg-white font-bold text-sm text-[#0F172A] transition-all placeholder:text-slate-200"
+                  className="w-full px-5 py-4 skeu-input outline-none text-sm font-bold placeholder:opacity-40"
                 />
               </div>
             </div>
@@ -1241,26 +1243,26 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Save to Folder Section */}
-        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
           <button
             onClick={() => toggleSection('folder')}
-            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <FolderIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] tracking-tight uppercase">SAVE TO FOLDER</h3>
-                <p className="text-[10px] font-medium text-slate-400">Organize your codes by category.</p>
+                <h3 className="text-base font-black skeu-text-primary tracking-tight">Save To Folder</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Organize your codes by category.</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'folder' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'folder' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
 
           {activeDesignSection === 'folder' && (
-            <div className="p-6 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-5">
                 <div className="flex items-center justify-between pl-1">
                   <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Choose Folder</label>
@@ -1557,12 +1559,12 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide relative">
-        <div className="max-w-[1600px] mx-auto px-10 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 relative items-start">
-            {/* Left Side: Content */}
-            <div className="lg:col-span-8 space-y-12 pb-24">
+      {/* Main Content Area - Split Pane Layout */}
+      <div className="flex-1 overflow-hidden relative">
+        <div className="max-w-[1600px] mx-auto h-full px-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 h-full items-stretch">
+            {/* Left Side: Scrollable Content */}
+            <div className="lg:col-span-8 space-y-12 overflow-y-auto scrollbar-hide py-16 pb-48">
               {wizard.step === 1 ? (
                 renderStep1TypeSelection()
               ) : wizard.step === 2 ? (
@@ -1572,45 +1574,52 @@ export const Wizard: React.FC<WizardProps> = ({
               )}
             </div>
 
-            {/* Right Side: Phone Preview (Sticky) */}
-            <div className="lg:col-span-4 sticky top-10 self-start flex flex-col items-center gap-6">
-              {/* Preview Toggle Pill (Matches Screenshot 1 position) */}
-              <div className="w-full flex justify-center mb-6">
-                <div className="bg-[#f8fafc] border border-slate-200 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[260px]">
+            {/* Right Side: Fixed Phone Preview */}
+            <div className="lg:col-span-4 flex flex-col items-center justify-start py-6 min-h-0 shrink-0 overflow-hidden">
+              {/* Preview Toggle Pill */}
+              <div className="w-full flex justify-center mb-4 shrink-0">
+                <div className="bg-[#f8fafc] border border-slate-200 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[220px]">
                   {/* Sliding active background */}
                   <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#156295] rounded-lg shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1' : 'left-[calc(50%+2px)]'}`} />
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
-                    className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1 text-[11px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     UI Preview
                   </button>
                   <button
                     onClick={() => setPhonePreviewMode('qr')}
-                    className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1 text-[11px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     QR Code
                   </button>
                 </div>
               </div>
 
-              <div className="relative group scale-90 origin-top">
+              <div className="relative group scale-[0.65] xl:scale-[0.70] transition-transform duration-500 flex flex-col items-center justify-center shrink-0 origin-top">
                 {/* Decorative Elements */}
                 <div className="absolute -inset-20 bg-blue-500/5 blur-[120px] rounded-full -z-10 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
-                <div className="skeu-phone w-[280px] h-[580px] relative shrink-0">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 skeu-phone-notch z-50 overflow-hidden" />
-
-                  <div className="absolute inset-0 bg-white rounded-[2.8rem] overflow-hidden flex flex-col">
-                    {/* Phone Status Bar (Matches Screenshot 10) */}
-                    <div className="bg-[#000000] h-10 px-6 flex items-end pb-1.5 justify-between shrink-0 z-30">
-                      <span className="text-white text-[10px] font-black tracking-tight">9:41</span>
-                      <div className="flex items-center gap-1.5 text-white">
+                <div className="w-[320px] h-[650px] relative shrink-0 flex items-center justify-center">
+                  {/* Phone Screen Content Area - Positioned and rounded to fit inside the phone bezel */}
+                  <div className="absolute top-[12px] bottom-[12px] left-[15px] right-[15px] bg-white rounded-[3rem] overflow-hidden flex flex-col z-40 shadow-inner">
+                    {/* Step 1 & 2 Blur Overlay - Only shown when in Step 1 (no hover) or Step 2 in QR mode */}
+                    {(wizard.step === 2 || (wizard.step === 1 && !hoveredType)) && phonePreviewMode === 'qr' && (
+                      <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-white/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
+                        <p className="text-sm font-black text-slate-600/80 leading-relaxed uppercase tracking-widest">
+                          {wizard.step === 1 ? "Select a type to start making your qr code" : "make the qr code to preview it"}
+                        </p>
+                      </div>
+                    )}
+                    {/* Status Bar */}
+                    <div className="bg-transparent absolute top-0 left-0 right-0 h-10 px-5 flex items-end pb-1.5 justify-between shrink-0 z-50 pointer-events-none">
+                      <span className="text-black text-[10px] font-black tracking-tight" style={{ color: ((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links') ? 'white' : 'black' }}>9:41</span>
+                      <div className="flex items-center gap-1.5" style={{ color: ((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links') ? 'white' : 'black' }}>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
-                        <div className="w-4 h-2 border-2 border-white/40 rounded-sm relative">
-                          <div className="absolute inset-0.5 bg-white rounded-px w-2" />
+                        <div className="w-4 h-2 border-2 border-current rounded-sm relative opacity-80">
+                          <div className="absolute inset-[1px] bg-current rounded-[1px] w-2" />
                         </div>
                       </div>
                     </div>
@@ -1650,10 +1659,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                           {(hoveredType || wizard.type) === 'whatsapp' && (
                             <div className="h-full flex flex-col pt-0 bg-[#efe7de] relative">
-                              {/* Custom Doodle Background Overlay */}
                               <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
-
-                              {/* WhatsApp Header (Matches Screenshot 10) */}
                               <div className="bg-[#075E54] p-3 pt-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
                                 <div className="flex items-center gap-2 min-w-0">
                                   <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10 shrink-0">
@@ -1670,8 +1676,6 @@ export const Wizard: React.FC<WizardProps> = ({
                                   <MoreVertical className="w-4 h-4 text-white/90" />
                                 </div>
                               </div>
-
-                              {/* Chat Area */}
                               <div className="flex-1 p-4 flex flex-col justify-start relative z-10 pt-8">
                                 <div className="self-end max-w-[85%] relative mb-3 animate-in slide-in-from-right-4 duration-500">
                                   <div className="bg-[#DCF8C6] p-2 rounded-xl rounded-tr-none shadow-sm relative border border-green-200/50">
@@ -1682,13 +1686,10 @@ export const Wizard: React.FC<WizardProps> = ({
                                       <span className="text-[8px] font-bold text-slate-400">9:41</span>
                                       <CheckCheck className="w-3 h-3 text-blue-400" />
                                     </div>
-                                    {/* Bubble Tail */}
                                     <div className="absolute -right-1.5 top-0 w-2.5 h-2.5 bg-[#DCF8C6] clip-bubble-tail" />
                                   </div>
                                 </div>
                               </div>
-
-                              {/* WhatsApp Input Bar */}
                               <div className="p-3 bg-transparent relative z-10 flex items-center gap-2 mb-4 px-4">
                                 <div className="flex-1 bg-white rounded-full h-12 flex items-center px-4 gap-3 shadow-sm border border-slate-200/50">
                                   <Smile className="w-6 h-6 text-slate-400" />
@@ -1706,65 +1707,65 @@ export const Wizard: React.FC<WizardProps> = ({
                           )}
 
                           {((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links' || (hoveredType || wizard.type) === 'pdf') && (
-                            <div className="h-full flex flex-col bg-white">
-                              {/* Brand Header Section */}
-                              <div className="px-6 py-12 text-center space-y-4 shrink-0 transition-all duration-700 relative overflow-hidden" style={{ backgroundColor: ((hoveredType || wizard.type) === wizard.type ? wizard.business?.primaryColor : '#156295') || '#156295' }}>
-                                {/* Subtle Pattern Overlay */}
+                            <div className="h-full flex flex-col bg-white relative">
+                              <div className="px-6 pt-12 pb-24 text-center space-y-4 shrink-0 transition-all duration-700 relative overflow-hidden" style={{ backgroundColor: ((hoveredType || wizard.type) === wizard.type ? (wizard.business?.primaryColor || '#8D4638') : '#156295') }}>
                                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] relative z-10" style={{ color: wizard.business?.fontTitleColor || '#ffffff', opacity: 0.8 }}>
-                                  {wizard.business?.company || 'MY COMPANY'}
-                                </p>
-                                <h2 className="text-2xl font-black leading-tight px-4 relative z-10" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
-                                  {wizard.business?.title || 'Find me on social networks'}
+                                <h2 className="text-[17px] font-black leading-tight px-4 relative z-10 break-words mt-2" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
+                                  {wizard.business?.title || 'Find New and Used Toys!'}
                                 </h2>
-                                <p className="text-xs font-medium px-6 relative z-10" style={{ color: wizard.business?.fontTextColor || '#ffffff', opacity: 0.9, fontFamily: wizard.business?.fontText || 'Inter' }}>
-                                  {wizard.business?.description || 'New content every week in the links below'}
-                                </p>
                               </div>
-
-                              {/* Content Section */}
-                              <div className="flex-1 bg-white rounded-t-[2.5rem] -mt-6 p-6 flex flex-col z-10 overflow-y-auto scrollbar-hide">
-                                {(hoveredType || wizard.type) === 'pdf' ? (
-                                  <div className="flex-1 bg-slate-50 rounded-[2rem] border-2 border-slate-100 flex flex-col items-center justify-center p-8 text-center space-y-6">
-                                    <div className="w-20 h-20 bg-slate-100 text-slate-300 rounded-[1.5rem] flex items-center justify-center shadow-inner">
-                                      <FileText className="w-10 h-10" />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                        {pdfFileName ? 'PDF UPLOADED' : 'NO PDF UPLOADED'}
-                                      </p>
-                                      <h4 className="font-black text-slate-700 text-base line-clamp-2">
-                                        {pdfFileName || ''}
-                                      </h4>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="space-y-4">
-                                    {wizard.business?.buttons.map((btn: any) => (
-                                      <div
-                                        key={btn.id}
-                                        className="w-full p-5 rounded-[1.5rem] flex items-center gap-4 border border-white/10 shadow-xl shadow-blue-500/5 transition-all hover:translate-y-[-2px] active:scale-[0.97] cursor-pointer"
-                                        style={{ backgroundColor: wizard.business?.primaryColor || '#156295', color: '#fff' }}
-                                      >
-                                        <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                                          <LinkIcon className="w-5 h-5" />
-                                        </div>
-                                        <span className="text-sm font-black truncate tracking-tight">{btn.text || 'Action Link'}</span>
-                                        <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
-                                      </div>
-                                    ))}
-                                    {(!wizard.business?.buttons || wizard.business?.buttons.length === 0) && (
-                                      <div className="py-12 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center gap-4 bg-slate-50/50">
-                                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                          <Plus className="w-6 h-6 text-slate-200" />
-                                        </div>
-                                        <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Add your first link</p>
+                              <div className="flex-1 -mt-16 px-4 z-10 flex flex-col overflow-y-auto scrollbar-hide pb-6">
+                                <div className="bg-white rounded-[1.5rem] shadow-xl shadow-black/10 overflow-hidden flex flex-col relative w-full border border-slate-100">
+                                  <div className="w-full aspect-video bg-slate-100 relative overflow-hidden shrink-0 mt-3 mx-3 w-[calc(100%-24px)] rounded-xl">
+                                    {wizard.business?.coverImage ? (
+                                      <img src={wizard.business?.coverImage} className="w-full h-full object-cover" alt="Cover" />
+                                    ) : (
+                                      <div className="absolute inset-0 flex items-center justify-center flex-col text-slate-300">
+                                        <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
                                       </div>
                                     )}
                                   </div>
-                                )}
+                                  <div className="p-5 flex flex-col flex-1 text-center bg-white items-center">
+                                    <h3 className="text-lg font-black text-slate-900 tracking-tight" style={{ fontFamily: wizard.business?.fontTitle || 'Inter' }}>
+                                      {wizard.business?.company || 'Holiday Toy Shop'}
+                                    </h3>
+                                    <p className="text-xs text-slate-500 mt-2 font-medium px-2 leading-relaxed" style={{ fontFamily: wizard.business?.fontText || 'Inter' }}>
+                                      {wizard.business?.subtitle || wizard.business?.description || 'Discover the perfect gifts for every child and every occasion!'}
+                                    </p>
+                                    <button
+                                      type="button"
+                                      className="w-full mt-4 py-3 rounded-xl font-bold text-sm shadow-md transition-transform hover:scale-105 active:scale-95"
+                                      style={{ backgroundColor: wizard.business?.secondaryColor || '#db8b00', color: '#fff' }}
+                                    >
+                                      {wizard.business?.buttons?.[0]?.text || 'View Our Inventory'}
+                                    </button>
+                                    <div className="w-full mt-5 bg-slate-50/80 rounded-xl p-3 flex flex-col text-left border border-slate-100/50">
+                                      <div className="flex items-center gap-3 border-b border-slate-200/50 pb-3 mb-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm shrink-0 border border-slate-100">
+                                          <Clock className="w-4 h-4 text-slate-500" />
+                                        </div>
+                                        <div>
+                                          <p className="text-xs font-bold text-slate-800">
+                                            Open hours - <span className="text-green-600 font-bold">Open now</span>
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex justify-between items-center text-[11px]">
+                                        <span className="font-bold text-slate-800">Monday:</span>
+                                        <span className="font-medium text-slate-600">
+                                          {wizard.business?.openingHours?.['monday']?.isOpen && wizard.business?.openingHours?.['monday']?.slots[0]
+                                            ? `${wizard.business.openingHours['monday'].slots[0].start} - ${wizard.business.openingHours['monday'].slots[0].end}`
+                                            : '10:00 am - 04:00 pm'
+                                          }
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
+                              <button className="absolute bottom-6 right-6 w-12 h-12 rounded-xl flex items-center justify-center shadow-xl shadow-black/20 z-50 transition-transform hover:scale-110 active:scale-95 border border-white/10 shrink-0" style={{ backgroundColor: wizard.business?.primaryColor || '#8D4638' }}>
+                                <MoreVertical className="w-6 h-6 text-white" />
+                              </button>
                             </div>
                           )}
 
@@ -1794,7 +1795,6 @@ export const Wizard: React.FC<WizardProps> = ({
                               </QRFrameWrapper>
                             </div>
                           </div>
-
                           <div className="text-center space-y-6 px-4">
                             <h4 className="text-[1.35rem] font-black text-slate-800 leading-tight tracking-tight">
                               {wizard.name || `${selectedTypeConfig.name} QR Code`}
@@ -1810,6 +1810,9 @@ export const Wizard: React.FC<WizardProps> = ({
                       )}
                     </div>
                   </div>
+
+                  {/* Phone Frame Mockup Overlay */}
+                  <img src={phoneFrame} alt="Phone Mockup" className="absolute inset-0 w-full h-full object-cover scale-[1.30] z-50 pointer-events-none drop-shadow-2xl" />
                 </div>
               </div>
             </div>
@@ -1817,25 +1820,25 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
       </div>
 
-      {/* Footer Navigation */}
-      <footer className="skeu-toolbar px-10 py-6 z-30 shrink-0">
+      {/* Footer Navigation - Refactored to be part of flow */}
+      <footer className="skeu-toolbar border-t border-slate-100 px-10 py-6 z-[60] shrink-0 bg-white">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <button
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="px-8 py-3 skeu-btn-secondary text-[11px] uppercase tracking-widest flex items-center gap-2 group active:scale-95 disabled:opacity-30 disabled:grayscale transition-all"
+            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
           >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> BACK
+            <ChevronLeft className="w-4 h-4" /> BACK
           </button>
 
           <button
             onClick={handleNextStep}
             type="button"
-            className="px-10 py-3 skeu-btn text-[11px] uppercase tracking-widest flex items-center gap-2 active:scale-95 group transition-all"
+            className="w-48 py-3.5 skeu-btn text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </footer>
