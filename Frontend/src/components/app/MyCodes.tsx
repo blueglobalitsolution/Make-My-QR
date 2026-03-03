@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Plus, MoreVertical, Pencil, Trash2, Copy, ExternalLink, Download, Eye, Grid3X3, Barcode } from 'lucide-react';
+import { Search, Plus, MoreVertical, Pencil, Trash2, Copy, ExternalLink, Download, Eye, Grid3X3, Barcode, Folder as FolderIcon } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 
 interface MyCodesProps {
@@ -77,7 +77,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                 className={`w-full px-5 py-3.5 rounded-2xl text-left font-bold text-sm flex items-center justify-between transition-all ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${activeFolderId === folder.id ? 'bg-white' : 'bg-blue-400/30'}`} />
+                  <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
                   <span>{folder.name}</span>
                 </div>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'skeu-inset text-slate-400'}`}>{folder.count}</span>
