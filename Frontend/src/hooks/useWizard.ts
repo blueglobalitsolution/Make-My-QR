@@ -170,7 +170,7 @@ export const useWizard = (
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    const val = wizard.value || "https://qr-code.io";
+    const val = wizard.value || "https://makemyqr.com";
     return val.startsWith('/') ? window.location.origin + val : val;
   };
 
@@ -226,13 +226,13 @@ export const useWizard = (
 
         finalValue = `/view/business?id=${profileId}`;
       } else if (wizard.type === 'pdf' || wizard.type === 'links') {
-        finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
+        finalValue = wizard.value || `https://makemyqr.com/p/${Math.random().toString(36).substring(7)}`;
       } else if (wizard.type === 'whatsapp') {
         const cleanPhone = whatsappPhone.replace(/\s+/g, '');
         const cleanCC = whatsappCountryCode.replace(/\+/g, '');
         finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
       } else {
-        finalValue = wizard.value || "https://qr-code.io";
+        finalValue = wizard.value || "https://makemyqr.com";
       }
 
       if (editingId) {
@@ -246,7 +246,7 @@ export const useWizard = (
             updatedFolders = updatedFolders.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f);
           }
           setFolders(updatedFolders);
-          localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
+          localStorage.setItem('makemyqr_folders', JSON.stringify(updatedFolders));
         }
 
         try {
@@ -308,7 +308,7 @@ export const useWizard = (
       if (nextStep === 3 && (wizard.type === 'pdf' || wizard.type === 'business' || wizard.type === 'links')) {
         if (!wizard.value) {
           const mockId = Math.random().toString(36).substring(2, 9);
-          nextWizard.value = `https://qr-code.io/${wizard.type}/${mockId}`;
+          nextWizard.value = `https://makemyqr.com/${wizard.type}/${mockId}`;
         }
       }
 

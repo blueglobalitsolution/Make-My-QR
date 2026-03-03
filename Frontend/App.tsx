@@ -111,8 +111,8 @@ const App: React.FC = () => {
       setBusinessProfiles(profiles);
 
       // Restore user state from local storage
-      const savedUserStr = localStorage.getItem('barqr_user');
-      const savedToken = localStorage.getItem('barqr_token');
+      const savedUserStr = localStorage.getItem('makemyqr_user');
+      const savedToken = localStorage.getItem('makemyqr_token');
 
       if (savedUserStr && savedToken) {
         try {
@@ -131,8 +131,8 @@ const App: React.FC = () => {
           await refreshData();
         } catch (err) {
           console.error("Session restoration error", err);
-          localStorage.removeItem('barqr_user');
-          localStorage.removeItem('barqr_token');
+          localStorage.removeItem('makemyqr_user');
+          localStorage.removeItem('makemyqr_token');
         }
       }
     };

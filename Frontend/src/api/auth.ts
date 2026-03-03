@@ -3,7 +3,7 @@ import apiClient from './client';
 export const login = async (username, password) => {
     const response = await apiClient.post('/users/login/', { username, password });
     if (response.data.token) {
-        localStorage.setItem('barqr_token', response.data.token);
+        localStorage.setItem('makemyqr_token', response.data.token);
     }
     return response.data;
 };
@@ -13,7 +13,7 @@ export const register = async (username, email, password, first_name = '', last_
         username, email, password, first_name, last_name
     });
     if (response.data.token) {
-        localStorage.setItem('barqr_token', response.data.token);
+        localStorage.setItem('makemyqr_token', response.data.token);
     }
     return response.data;
 };
@@ -29,8 +29,8 @@ export const changePassword = async (new_password: string) => {
 };
 
 export const logout = () => {
-    localStorage.removeItem('barqr_token');
-    localStorage.removeItem('barqr_user');
+    localStorage.removeItem('makemyqr_token');
+    localStorage.removeItem('makemyqr_user');
 };
 
 export const requestPasswordReset = async (email: string) => {
