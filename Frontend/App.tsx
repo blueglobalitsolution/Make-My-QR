@@ -19,7 +19,6 @@ import { Account } from './src/components/app/Account';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
-import { useCodes } from './src/hooks/useCodes';
 import { PublicScan } from './src/components/app/PublicScan';
 
 const App: React.FC = () => {
@@ -201,17 +200,25 @@ const App: React.FC = () => {
     setView('wizard');
   };
 
-  const createNewFolder = async () => {
-    if (!newFolderName.trim()) return;
-    const { createFolder: apiCreateFolder } = await import('./src/api/folders');
+  const deleteFolder = async (id: string) => {
+    const folder = folders.find(f => f.id === id);
+    if (!folder) return;
+
+    const codeCount = history.filter(c => (c as any).folder === id || c.folderId === id).length;
+
+    const message = codeCount > 0
+      ? `This folder contains ${codeCount} QR codes. Deleting it will also delete all codes inside. Are you sure?`
+      : "Are you sure you want to delete this folder?";
+
+    if (!window.confirm(message)) return;
+
+    const { deleteFolder: apiDeleteFolder } = await import('./src/api/folders');
     try {
-      const folderData = await apiCreateFolder(newFolderName.trim());
-      const newFolder: Folder = { ...folderData, id: folderData.id.toString(), count: 0 };
-      setFolders([...folders, newFolder]);
-      setWizard({ ...wizard, folderId: newFolder.id });
-      setNewFolderName('');
-      setIsCreatingFolder(false);
-    } catch (err) { alert("Failed to create folder."); }
+      await apiDeleteFolder(id);
+      setFolders(folders.filter(f => f.id !== id));
+      setHistory(history.filter(c => (c as any).folder !== id && c.folderId !== id));
+      if (activeFolderId === id) setActiveFolderId('all');
+    } catch (err) { alert("Failed to delete folder."); }
   };
 
   const viewPdf = (fileId: string) => {
@@ -230,6 +237,19 @@ const App: React.FC = () => {
     resetWizard();
     setPhonePreviewMode('ui');
     setView('wizard');
+  };
+
+  const createNewFolder = async () => {
+    if (!newFolderName.trim()) return;
+    const { createFolder: apiCreateFolder } = await import('./src/api/folders');
+    try {
+      const folderData = await apiCreateFolder(newFolderName.trim());
+      const newFolder: Folder = { ...folderData, id: folderData.id.toString(), count: 0 };
+      setFolders([...folders, newFolder]);
+      setWizard({ ...wizard, folderId: newFolder.id });
+      setNewFolderName('');
+      setIsCreatingFolder(false);
+    } catch (err) { alert("Failed to create folder."); }
   };
 
   return (
@@ -301,6 +321,7 @@ const App: React.FC = () => {
             setSearchQuery={setSearchQuery}
             filteredHistory={filteredHistory}
             deleteCode={deleteCode}
+            deleteFolder={deleteFolder}
             downloadCode={downloadCode}
             startEditing={startEditing}
             createNewFolder={createNewFolder}

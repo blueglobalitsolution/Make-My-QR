@@ -11,6 +11,7 @@ interface MyCodesProps {
   setSearchQuery: (query: string) => void;
   filteredHistory: GeneratedCode[];
   deleteCode: (id: string) => Promise<void>;
+  deleteFolder: (id: string) => Promise<void>;
   downloadCode: (code: GeneratedCode, format?: 'png' | 'svg') => void;
   startEditing: (code: GeneratedCode) => void;
   createNewFolder: () => Promise<void>;
@@ -30,6 +31,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   setSearchQuery,
   filteredHistory,
   deleteCode,
+  deleteFolder,
   downloadCode,
   startEditing,
   createNewFolder,
@@ -71,17 +73,25 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === 'all' ? 'bg-white/20' : 'skeu-inset text-slate-400'}`}>{history.length}</span>
             </button>
             {folders.map(folder => (
-              <button
-                key={folder.id}
-                onClick={() => setActiveFolderId(folder.id)}
-                className={`w-full px-5 py-3.5 rounded-2xl text-left font-bold text-sm flex items-center justify-between transition-all ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
-                  <span>{folder.name}</span>
-                </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'skeu-inset text-slate-400'}`}>{folder.count}</span>
-              </button>
+              <div key={folder.id} className="group relative">
+                <button
+                  onClick={() => setActiveFolderId(folder.id)}
+                  className={`w-full px-5 py-3.5 rounded-2xl text-left font-bold text-sm flex items-center justify-between transition-all ${activeFolderId === folder.name ? 'skeu-tag-active' : (activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag')}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
+                    <span className="truncate max-w-[140px]">{folder.name}</span>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'skeu-inset text-slate-400'}`}>{folder.count}</span>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deleteFolder(folder.id); }}
+                  className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-50 text-red-500 shadow-sm border border-red-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                  title="Delete Folder"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             ))}
 
             <div className="pt-4 mt-4 border-t border-black/5">
