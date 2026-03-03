@@ -216,7 +216,7 @@ export const useWizard = (
         const profileId = 'b' + Date.now().toString(36);
         localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
 
-        finalValue = `https://stage.makemyqrcode.com//view/business?id=${profileId}&standalone=true`;
+        finalValue = `https://stage.makemyqrcode.com//view/business?id=${profileId}`;
       } else if (wizard.type === 'pdf' || wizard.type === 'links') {
         finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
       } else if (wizard.type === 'whatsapp') {
@@ -427,7 +427,7 @@ export const useWizard = (
         // Direct users to our internal PDF viewer
         setWizard(prev => ({
           ...prev,
-          value: `${window.location.origin}/view/file/${fileRecord.id}?standalone=true`
+          value: fileRecord.filePath
         }));
       } catch (err) {
         console.error("PDF upload failed", err);
@@ -454,7 +454,7 @@ export const useWizard = (
     setWizard(prev => ({
       ...prev,
       type: file.type === 'pdf' ? 'pdf' : 'website',
-      value: `${window.location.origin}/view/file/${file.id}?standalone=true`,
+      value: file.type === 'pdf' ? file.filePath : `${window.location.origin}/view/business?id=${file.id}`,
       name: file.name,
       step: 2,
       folderId: file.folderId // Assuming FileRecord might have this or use active folder

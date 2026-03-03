@@ -189,9 +189,16 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     >
                       <Download className="w-3.5 h-3.5" /> SVG
                     </button>
-                    {code.category === 'pdf' && code.value.includes('view/file/') && (
+                    {code.category === 'pdf' && (
                       <button
-                        onClick={() => viewPdf(code.value.split('view/file/')[1].split('?')[0])}
+                        onClick={() => {
+                          const fileIdMatch = code.value.match(/\/view\/file\/([^?]+)/);
+                          if (fileIdMatch) {
+                            viewPdf(fileIdMatch[1]);
+                          } else {
+                            window.open(code.value, '_blank');
+                          }
+                        }}
                         className="col-span-2 py-3 skeu-btn text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10"
                       >
                         <Eye className="w-3.5 h-3.5" /> View PDF Document

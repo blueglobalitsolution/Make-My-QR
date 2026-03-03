@@ -4,7 +4,6 @@ import { Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, M
 import { ViewState, WizardState, GeneratedCode, Folder, Palette } from './types';
 import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
-import { PdfViewer } from './components/PdfViewer';
 import BusinessProfileViewer from './components/BusinessProfileViewer';
 import { getCodes } from './src/api/qrcodes';
 import { getFolders } from './src/api/folders';
@@ -23,12 +22,34 @@ import { useWizard } from './src/hooks/useWizard';
 import { useCodes } from './src/hooks/useCodes';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<ViewState>('landing');
-  const [isStandaloneView, setIsStandaloneView] = useState(false);
+  // Initialize view and IDs directly from URL to avoid mount race conditions and sync loops
+  const getInitialRouteState = () => {
+    const rawPath = window.location.pathname;
+    const searchParams = new URLSearchParams(window.location.search);
+
+    const id = searchParams.get('id');
+    // Handles /view/business or //view/business
+    if (/^\/*view\/business/.test(rawPath.slice(1)) || id) {
+      return { view: 'business_profile' as ViewState, businessId: id || 'url-data' };
+    }
+
+    const path = rawPath.slice(1).split('?')[0] || 'landing';
+    const validViews: ViewState[] = [
+      'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
+      'register', 'forgot_password', 'dashboard', 'analytics'
+    ];
+
+    return {
+      view: (validViews.includes(path as any) ? path : 'landing') as ViewState,
+      businessId: null as string | null,
+    };
+  };
+
+  const initialState = getInitialRouteState();
+  const [view, setView] = useState<ViewState>(initialState.view);
   const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('qr');
   const [savedPalettes, setSavedPalettes] = useState<Palette[]>([]);
-  const [currentPdfFileId, setCurrentPdfFileId] = useState<string | null>(null);
-  const [currentBusinessProfileId, setCurrentBusinessProfileId] = useState<string | null>(null);
+  const [currentBusinessProfileId, setCurrentBusinessProfileId] = useState<string | null>(initialState.businessId);
   const [businessProfiles, setBusinessProfiles] = useState<any[]>([]);
 
   const auth = useAuth(setView);
@@ -55,9 +76,14 @@ const App: React.FC = () => {
 
   // Sync view changes to URL history
   useEffect(() => {
-    const currentPath = window.location.pathname.slice(1) || 'landing';
-    const isSpecialView = ['pdf_viewer', 'business_profile'].includes(view);
+    const rawPath = window.location.pathname;
+    const isSpecialPath = rawPath.startsWith('/view/business');
+    const isSpecialView = view === 'business_profile';
 
+    // Skip if we are on a special view path (deep linking) to avoid overriding with base view
+    if (isSpecialPath && isSpecialView) return;
+
+    const currentPath = rawPath.slice(1).split('?')[0] || 'landing';
     if (view !== currentPath && !isSpecialView) {
       const newPath = view === 'landing' ? '/' : `/${view}`;
       window.history.pushState({ view }, '', newPath);
@@ -82,7 +108,9 @@ const App: React.FC = () => {
 
           // Auto-redirect to dashboard if logged in and at root or landing/auth
           const currentPath = window.location.pathname;
-          if (currentPath === '/' || currentPath === '/landing' || currentPath === '/auth') {
+          const isViewPath = currentPath.startsWith('/view/');
+
+          if (!isViewPath && (currentPath === '/' || currentPath === '/landing' || currentPath === '/auth')) {
             setView('my_codes');
           }
 
@@ -99,37 +127,25 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const handleRouteChange = () => {
+    const handleRouteChange = async () => {
       const rawPath = window.location.pathname;
-      const path = rawPath.slice(1) || 'landing';
-      const searchParams = new URLSearchParams(window.location.search);
-      setIsStandaloneView(searchParams.get('standalone') === 'true');
-
       if (rawPath.startsWith('/view/file/')) {
-        setCurrentPdfFileId(rawPath.replace('/view/file/', ''));
-        setView('pdf_viewer');
-        return;
+        const id = rawPath.replace('/view/file/', '').split('?')[0];
+        const { getFile } = await import('./src/services/fileStorage');
+        const fileData = await getFile(id);
+        if (fileData?.record.filePath) {
+          window.location.href = fileData.record.filePath;
+          return;
+        }
       }
 
-      if (rawPath.startsWith('/view/business')) {
-        setCurrentBusinessProfileId('url-data');
-        setView('business_profile');
-        return;
-      }
-
-      const validViews: ViewState[] = [
-        'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
-        'register', 'forgot_password', 'dashboard', 'analytics'
-      ];
-
-      if (validViews.includes(path as any)) {
-        setView(path as any);
-      }
+      const state = getInitialRouteState();
+      setView(state.view);
+      setCurrentBusinessProfileId(state.businessId);
     };
 
     window.addEventListener('popstate', handleRouteChange);
-    handleRouteChange();
-
+    handleRouteChange(); // Handle initial load redirection if needed
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
@@ -175,7 +191,16 @@ const App: React.FC = () => {
     } catch (err) { alert("Failed to create folder."); }
   };
 
-  const viewPdf = (fileId: string) => { setCurrentPdfFileId(fileId); setView('pdf_viewer'); };
+  const viewPdf = (fileId: string) => {
+    // Redesigned shareable flow: try to find the direct path from history
+    const code = history.find(h => h.value.includes(fileId));
+    if (code && !code.value.includes('/view/file/')) {
+      window.open(code.value, '_blank');
+    } else {
+      // Fallback or old link
+      window.open(`/view/file/${fileId}`, '_blank');
+    }
+  };
 
   const onNewQR = () => {
     setEditingId(null);
@@ -186,7 +211,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && (
         <Sidebar
           view={view}
           setView={setView}
@@ -197,7 +222,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && !isStandaloneView ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' ? 'ml-64' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -301,9 +326,7 @@ const App: React.FC = () => {
 
         {view === 'billing' && <Billing />}
 
-        {view === 'pdf_viewer' && currentPdfFileId && <PdfViewer fileId={currentPdfFileId} onBack={() => { setCurrentPdfFileId(null); setView('my_codes'); }} />}
-
-        {view === 'business_profile' && currentBusinessProfileId && <BusinessProfileViewer profileId={currentBusinessProfileId} onBack={() => { setCurrentBusinessProfileId(null); setView('my_codes'); }} />}
+        {view === 'business_profile' && currentBusinessProfileId && <BusinessProfileViewer profileId={currentBusinessProfileId} />}
       </main>
     </div>
   );
