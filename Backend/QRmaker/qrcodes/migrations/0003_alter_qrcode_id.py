@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('qrcodes', '0002_alter_qrcode_id'),
+        ("qrcodes", "0002_alter_qrcode_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='qrcode',
-            name='id',
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="qrcode",
+            name="id",
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
     ]

@@ -1,0 +1,39 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim-buster
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc default-libmysqlclient-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file and install Python dependencies
+COPY ./Backend/QRmaker/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire Django project
+COPY ./Backend/QRmaker /app
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Create a non-root user and change ownership of the app directory
+RUN useradd -m appuser \
+    && chown -R appuser:appuser /app
+
+# Switch to the non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8010
+
+# Run Gunicorn as the production server
+# Using 0.0.0.0 to bind to all network interfaces
+# Using 4 workers, adjust as needed based on server resources
+CMD ["gunicorn", "--bind", "0.0.0.0:8010", "QRmaker.wsgi:application"]

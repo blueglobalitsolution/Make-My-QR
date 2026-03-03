@@ -1,0 +1,27 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
+COPY ./Frontend/package.json ./Frontend/package-lock.json ./
+RUN npm install
+
+COPY ./Frontend .
+
+RUN npm run build
+
+# Install a simple static file server
+RUN npm install -g serve
+
+# Change ownership of the app directory
+RUN chown -R node:node /app
+
+# Switch to the non-root node user
+USER node
+
+EXPOSE 3010
+
+# Serve the 'dist' directory on port 3010
+CMD ["serve", "-s", "dist", "-l", "3010"]
