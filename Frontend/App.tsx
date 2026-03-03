@@ -93,6 +93,16 @@ const App: React.FC = () => {
     }
   }, [view]);
 
+  const refreshData = async () => {
+    try {
+      const [historyData, foldersData] = await Promise.all([getCodes(), getFolders()]);
+      setHistory(historyData);
+      setFolders(foldersData);
+    } catch (err) {
+      console.error("Failed to fetch library data", err);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       const { initBusinessProfilesDB, getAllBusinessProfiles } = await import('./src/services/businessProfile');
@@ -101,9 +111,11 @@ const App: React.FC = () => {
       const profiles = await getAllBusinessProfiles();
       setBusinessProfiles(profiles);
 
-      // Restore user state from local storage and fetch associated data
+      // Restore user state from local storage
       const savedUserStr = localStorage.getItem('barqr_user');
-      if (savedUserStr) {
+      const savedToken = localStorage.getItem('barqr_token');
+
+      if (savedUserStr && savedToken) {
         try {
           const user = JSON.parse(savedUserStr);
           auth.setCurrentUser(user);
@@ -117,17 +129,23 @@ const App: React.FC = () => {
             setView('my_codes');
           }
 
-          const [historyData, foldersData] = await Promise.all([getCodes(), getFolders()]);
-          setHistory(historyData);
-          setFolders(foldersData);
+          await refreshData();
         } catch (err) {
           console.error("Session restoration error", err);
-          localStorage.removeItem('barqr_user'); // Clean up corrupted session
+          localStorage.removeItem('barqr_user');
+          localStorage.removeItem('barqr_token');
         }
       }
     };
     init();
   }, []);
+
+  // Trigger refresh when user changes (e.g., after login)
+  useEffect(() => {
+    if (auth.currentUser && history.length === 0) {
+      refreshData();
+    }
+  }, [auth.currentUser]);
 
   useEffect(() => {
     const handleRouteChange = async () => {
