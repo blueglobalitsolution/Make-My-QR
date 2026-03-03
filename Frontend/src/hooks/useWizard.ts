@@ -158,12 +158,20 @@ export const useWizard = (
   }, [wizard.step, wizard.type]);
 
   const getQRValue = () => {
+    if (editingId) {
+      const code = history.find(h => h.id === editingId);
+      if (code?.shortSlug) {
+        return `${window.location.origin}/r/${code.shortSlug}`;
+      }
+    }
+
     if (wizard.type === 'whatsapp') {
       const cleanPhone = whatsappPhone.replace(/\s+/g, '');
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    return wizard.value || "https://qr-code.io";
+    const val = wizard.value || "https://qr-code.io";
+    return val.startsWith('/') ? window.location.origin + val : val;
   };
 
   const qrStylingOptions = {
@@ -216,7 +224,7 @@ export const useWizard = (
         const profileId = 'b' + Date.now().toString(36);
         localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
 
-        finalValue = `https://stage.makemyqrcode.com//view/business?id=${profileId}`;
+        finalValue = `/view/business?id=${profileId}`;
       } else if (wizard.type === 'pdf' || wizard.type === 'links') {
         finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
       } else if (wizard.type === 'whatsapp') {

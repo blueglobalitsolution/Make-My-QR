@@ -9,6 +9,7 @@ class QRCode(models.Model):
     category = models.CharField(max_length=50)
     name = models.CharField(max_length=255)
     value = models.TextField()
+    short_slug = models.CharField(max_length=50, unique=True, null=True, blank=True)
     is_dynamic = models.BooleanField(default=False)
     scans = models.IntegerField(default=0)
     status = models.CharField(max_length=20, default='active')

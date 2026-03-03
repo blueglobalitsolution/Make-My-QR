@@ -172,7 +172,11 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     <h3 className="font-black skeu-text-primary text-lg tracking-tight truncate px-1">{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
-                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">{code.value}</span>
+                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
+                        {code.shortSlug
+                          ? `${window.location.origin.replace(/^https?:\/\//, '')}/r/${code.shortSlug}`
+                          : (code.value.startsWith('/') ? window.location.origin.replace(/^https?:\/\//, '') + code.value : code.value)}
+                      </span>
                     </div>
                   </div>
 
@@ -196,7 +200,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                           if (fileIdMatch) {
                             viewPdf(fileIdMatch[1]);
                           } else {
-                            window.open(code.value, '_blank');
+                            const url = code.value.startsWith('/') ? window.location.origin + code.value : code.value;
+                            window.open(url, '_blank');
                           }
                         }}
                         className="col-span-2 py-3 skeu-btn text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10"

@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/qrcodes/', include('qrcodes.urls')),
     path('api/folders/', include('folders.urls')),
     path('api/files/', include('files.urls')),
+    path('r/<str:slug>/', include('scans.urls')),
 ]
 
 from django.conf import settings

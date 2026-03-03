@@ -20,6 +20,7 @@ import { Account } from './src/components/app/Account';
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
 import { useCodes } from './src/hooks/useCodes';
+import { PublicScan } from './src/components/app/PublicScan';
 
 const App: React.FC = () => {
   // Initialize view and IDs directly from URL to avoid mount race conditions and sync loops
@@ -34,9 +35,11 @@ const App: React.FC = () => {
     }
 
     const path = rawPath.slice(1).split('?')[0] || 'landing';
+    if (path === 'public/scan') return { view: 'public_scan' as ViewState, businessId: null };
+
     const validViews: ViewState[] = [
       'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
-      'register', 'forgot_password', 'dashboard', 'analytics'
+      'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan'
     ];
 
     return {
@@ -77,8 +80,8 @@ const App: React.FC = () => {
   // Sync view changes to URL history
   useEffect(() => {
     const rawPath = window.location.pathname;
-    const isSpecialPath = rawPath.startsWith('/view/business');
-    const isSpecialView = view === 'business_profile';
+    const isSpecialPath = rawPath.startsWith('/view/business') || rawPath.startsWith('/public/scan');
+    const isSpecialView = view === 'business_profile' || view === 'public_scan';
 
     // Skip if we are on a special view path (deep linking) to avoid overriding with base view
     if (isSpecialPath && isSpecialView) return;
@@ -160,7 +163,9 @@ const App: React.FC = () => {
   };
 
   const downloadCode = (code: GeneratedCode, format: 'png' | 'svg' = 'png') => {
-    const qr = new QRCodeStyling({ width: 1000, height: 1000, data: code.value, dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern }, backgroundOptions: { color: code.settings.bgColor }, cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor }, cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor }, image: code.settings.logoUrl, imageOptions: { crossOrigin: "anonymous", margin: 5 } });
+    let qrValue = code.shortSlug ? `${window.location.origin}/r/${code.shortSlug}` : code.value;
+    if (qrValue.startsWith('/')) qrValue = window.location.origin + qrValue;
+    const qr = new QRCodeStyling({ width: 1000, height: 1000, data: qrValue, dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern }, backgroundOptions: { color: code.settings.bgColor }, cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor }, cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor }, image: code.settings.logoUrl, imageOptions: { crossOrigin: "anonymous", margin: 5 } });
     qr.download({ name: code.name || 'qr-code', extension: format });
   };
 
@@ -211,7 +216,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && (
         <Sidebar
           view={view}
           setView={setView}
@@ -222,7 +227,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' ? 'ml-64' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -327,6 +332,8 @@ const App: React.FC = () => {
         {view === 'billing' && <Billing />}
 
         {view === 'business_profile' && currentBusinessProfileId && <BusinessProfileViewer profileId={currentBusinessProfileId} />}
+
+        {view === 'public_scan' && <PublicScan setView={setView} />}
       </main>
     </div>
   );

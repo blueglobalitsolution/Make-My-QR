@@ -7,3 +7,5 @@ Pillow==10.4.0
 psycopg2-binary==2.9.11
 sqlparse==0.5.5
 yagmail==0.15.293
+hashids==3.1.2
+django-user-agents==0.4.0

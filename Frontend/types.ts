@@ -47,6 +47,7 @@ export interface GeneratedCode {
   category: QRType | BarcodeFormat;
   name: string;
   value: string;
+  shortSlug?: string;
   isDynamic: boolean;
   scans: number;
   status: 'active' | 'paused';
@@ -71,6 +72,7 @@ export type ViewState =
   | 'gateway'
   | 'pdf_viewer'
   | 'business_profile'
+  | 'public_scan'
   | 'forgot_password'
   | 'register';
 
