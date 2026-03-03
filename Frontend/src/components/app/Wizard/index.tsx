@@ -1676,7 +1676,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                     <UserCircle className="w-full h-full" />
                                   </div>
                                   <div className="text-left min-w-0 flex-1">
-                                    <h4 className="text-[13px] font-black tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
+                                    <h4 className="text-[13px] font-semibold tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
                                     <p className="text-[9px] font-bold opacity-60">Online</p>
                                   </div>
                                 </div>
