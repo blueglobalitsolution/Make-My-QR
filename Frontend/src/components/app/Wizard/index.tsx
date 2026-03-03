@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera } from 'lucide-react';
-import { WizardState, Folder, BusinessConfig, BusinessButton } from '../../../../types';
+import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella } from 'lucide-react';
+import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } from '../../../../types';
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
@@ -496,7 +496,557 @@ export const Wizard: React.FC<WizardProps> = ({
         )}
 
         {/* Business, Links Types */}
-        {(wizard.type === 'business' || wizard.type === 'links') && (
+        {/* Business Type */}
+        {wizard.type === 'business' && (
+          <div className="space-y-6">
+            {/* Design Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <PaletteIcon className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Design</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'design' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'design' && (
+                <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Color Palette</p>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      {DEFAULT_BUSINESS_PRESETS.map((preset, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            updateBusinessField('primaryColor', preset.primary);
+                            updateBusinessField('secondaryColor', preset.secondary);
+                          }}
+                          className={`w-14 h-8 rounded-[10px] overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
+                        >
+                          <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.primary }} />
+                          <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.secondary }} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="flex-1 space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Primary Color</label>
+                      <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
+                        <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-[11px] uppercase">{wizard.business?.primaryColor}</span>
+                      </div>
+                    </div>
+                    <button type="button" onClick={swapColors} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#156295] hover:bg-blue-50 transition-colors mt-6">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                    </button>
+                    <div className="flex-1 space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Secondary Color</label>
+                      <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
+                        <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
+                          <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
+                        </div>
+                        <span className="font-bold text-slate-700 tracking-widest text-[11px] uppercase">{wizard.business?.secondaryColor}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Business Information Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+              <button onClick={() => toggleSection('businessInfo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Info className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Business Information</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Introduce your business or organization.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'businessInfo' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'businessInfo' && (
+                <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
+                    <div className="w-20 h-20 border-2 border-dashed border-[#156295]/30 rounded-xl flex items-center justify-center hover:bg-blue-50/50 transition-colors cursor-pointer relative group/img">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
+                      <ImageIcon className="w-8 h-8 text-[#156295] opacity-50 group-hover/img:opacity-100 transition-opacity" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Company *</label>
+                      <input type="text" placeholder="E.g. My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Title</label>
+                      <input type="text" placeholder="E.g. Clothing store" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Subtitle</label>
+                      <input type="text" placeholder="E.g. Selling clothes for over 15 years" value={wizard.business?.subtitle || ''} onChange={(e) => updateBusinessField('subtitle', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
+                    </div>
+
+                    <div className="pt-2">
+                      {wizard.business?.buttons?.map((btn) => (
+                        <div key={btn.id} className="flex flex-col gap-3 mb-4 p-4 rounded-xl border-2 border-slate-100 bg-slate-50/50 relative group/btnitem">
+                          <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover/btnitem:opacity-100 transition-opacity">
+                            <button type="button" onClick={() => removeLink(btn.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                          <input type="text" placeholder="Button Label" value={btn.text} onChange={(e) => updateLink(btn.id, 'text', e.target.value)} className="w-full bg-transparent border-b border-slate-200 focus:border-[#156295] outline-none font-bold text-sm text-slate-800 pb-2" />
+                          <div className="flex items-center gap-3">
+                            <LinkIcon className="w-4 h-4 text-slate-400" />
+                            <input type="text" placeholder="https://" value={btn.url} onChange={(e) => updateLink(btn.id, 'url', e.target.value)} className="w-full bg-transparent border-none outline-none font-medium text-sm text-slate-600" />
+                          </div>
+                        </div>
+                      ))}
+                      <button type="button" onClick={addLink} className="w-full py-4 border-2 border-[#156295] text-[#156295] font-black text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-[#156295] hover:text-white transition-colors">
+                        <Plus className="w-4 h-4" /> Add Button
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Opening Hours Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+              <button onClick={() => toggleSection('openingHours')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Opening Hours</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Set your business hours.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'openingHours' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'openingHours' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                    const dayData = wizard.business?.openingHours?.[day as keyof OpeningHours] || { isOpen: false, slots: [] };
+                    return (
+                      <div key={day} className="flex flex-col gap-3 p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={dayData.isOpen}
+                              onChange={(e) => {
+                                const newHours = { ...wizard.business?.openingHours } as any;
+                                newHours[day] = { ...dayData, isOpen: e.target.checked };
+                                updateBusinessField('openingHours', newHours);
+                              }}
+                              className="w-5 h-5 rounded border-slate-300 text-[#156295] focus:ring-[#156295]"
+                            />
+                            <span className="text-sm font-bold text-slate-700 capitalize">{day}</span>
+                          </label>
+                          {dayData.isOpen && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newHours = { ...wizard.business?.openingHours } as any;
+                                newHours[day] = { ...dayData, slots: [...dayData.slots, { open: '09:00', close: '17:00' }] };
+                                updateBusinessField('openingHours', newHours);
+                              }}
+                              className="text-xs font-bold text-[#156295] flex items-center gap-1 hover:underline"
+                            >
+                              <Plus className="w-3 h-3" /> Add Schedule
+                            </button>
+                          )}
+                        </div>
+                        {dayData.isOpen && dayData.slots.map((slot: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-3 pl-8">
+                            <input
+                              type="time"
+                              value={slot.open}
+                              onChange={(e) => {
+                                const newHours = { ...wizard.business?.openingHours } as any;
+                                const newSlots = [...dayData.slots];
+                                newSlots[idx] = { ...slot, open: e.target.value };
+                                newHours[day] = { ...dayData, slots: newSlots };
+                                updateBusinessField('openingHours', newHours);
+                              }}
+                              className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 focus:border-[#156295] outline-none"
+                            />
+                            <span className="text-slate-400 font-bold">-</span>
+                            <input
+                              type="time"
+                              value={slot.close}
+                              onChange={(e) => {
+                                const newHours = { ...wizard.business?.openingHours } as any;
+                                const newSlots = [...dayData.slots];
+                                newSlots[idx] = { ...slot, close: e.target.value };
+                                newHours[day] = { ...dayData, slots: newSlots };
+                                updateBusinessField('openingHours', newHours);
+                              }}
+                              className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 focus:border-[#156295] outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newHours = { ...wizard.business?.openingHours } as any;
+                                const newSlots = dayData.slots.filter((_: any, i: number) => i !== idx);
+                                newHours[day] = { ...dayData, slots: newSlots };
+                                updateBusinessField('openingHours', newHours);
+                              }}
+                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Location Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <button onClick={() => toggleSection('location')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Location</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Where is your business located?</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'location' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'location' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Search Address</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input type="text" placeholder="Search a location..." className="w-full pl-11 pr-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3 md:col-span-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Address</label>
+                      <input type="text" value={wizard.business?.location?.address || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, address: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">City</label>
+                      <input type="text" value={wizard.business?.location?.city || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, city: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Postcode / Zip</label>
+                      <input type="text" value={wizard.business?.location?.zipCode || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, zipCode: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">State / Province</label>
+                      <input type="text" value={wizard.business?.location?.state || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, state: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Country</label>
+                      <input type="text" value={wizard.business?.location?.country || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, country: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Contact Information Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+              <button onClick={() => toggleSection('contactInfo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <UserCircle className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Contact Information</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">How people can reach you.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'contactInfo' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'contactInfo' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Contact Name</label>
+                    <input type="text" placeholder="E.g. John Doe" value={wizard.business?.contact?.name || ''} onChange={(e) => updateBusinessField('contact', { ...wizard.business?.contact, name: e.target.value })} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
+                  </div>
+
+                  {/* Repeated blocks for Phone, Email, Website */}
+                  {(['phones', 'emails', 'websites'] as const).map((field) => (
+                    <div key={field} className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 capitalize">{field}</label>
+                      {(wizard.business?.contact?.[field] || []).map((val, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                          <input
+                            type="text"
+                            value={val}
+                            onChange={(e) => {
+                              const newArr = [...(wizard.business?.contact?.[field] || [])];
+                              newArr[idx] = e.target.value;
+                              updateBusinessField('contact', { ...wizard.business?.contact, [field]: newArr });
+                            }}
+                            className="flex-1 px-5 py-3 skeu-input text-sm font-bold"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newArr = wizard.business?.contact?.[field]?.filter((_, i) => i !== idx);
+                              updateBusinessField('contact', { ...wizard.business?.contact, [field]: newArr });
+                            }}
+                            className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newArr = [...(wizard.business?.contact?.[field] || []), ''];
+                          updateBusinessField('contact', { ...wizard.business?.contact, [field]: newArr });
+                        }}
+                        className="text-xs font-bold text-[#156295] flex items-center gap-1 hover:underline pt-1"
+                      >
+                        <Plus className="w-3 h-3" /> Add {field.slice(0, -1)}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Social Networks Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <button onClick={() => toggleSection('social')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Share2 className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Social Networks</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Links to your social profiles.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'social' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'social' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Your Social Links</label>
+                    <div className="space-y-4">
+                      {wizard.business?.socialNetworks?.map((social, idx) => (
+                        <div key={idx} className="flex items-center gap-3 bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                          <span className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#156295] font-black text-xs uppercase shrink-0">
+                            {social.network.slice(0, 2)}
+                          </span>
+                          <input
+                            type="text"
+                            value={social.url}
+                            onChange={(e) => {
+                              const newArr = [...(wizard.business?.socialNetworks || [])];
+                              newArr[idx] = { ...social, url: e.target.value };
+                              updateBusinessField('socialNetworks', newArr);
+                            }}
+                            placeholder="https://"
+                            className="flex-1 px-3 py-2 bg-transparent outline-none text-sm font-bold text-slate-700"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newArr = wizard.business?.socialNetworks?.filter((_, i) => i !== idx);
+                              updateBusinessField('socialNetworks', newArr);
+                            }}
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 pt-4">
+                      {[
+                        { id: 'facebook', icon: <Facebook className="w-5 h-5" /> },
+                        { id: 'instagram', icon: <Instagram className="w-5 h-5" /> },
+                        { id: 'twitter', icon: <Twitter className="w-5 h-5" /> },
+                        { id: 'linkedin', icon: <Linkedin className="w-5 h-5" /> },
+                        { id: 'youtube', icon: <Youtube className="w-5 h-5" /> },
+                        { id: 'whatsapp', icon: <MessageCircle className="w-5 h-5" /> },
+                        {
+                          id: 'pinterest',
+                          icon: (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                              <path d="M12 2C6.5 2 2 6.5 2 12c0 4.3 2.7 7.9 6.5 9.3-.1-.8-.2-2 .04-2.9.2-.8 1.2-5 1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.8 0-4.5 2.1-4.5 4.3 0 .9.3 1.8.7 2.3.1.1.1.2.1.3l-.3 1.1c0 .2-.1.2-.3.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.1l-.6 2.4c-.2.9-.8 1.9-1.2 2.6 1 .3 2.1.5 3.2.5 5.5 0 10-4.5 10-10S17.5 2 12 2z" />
+                            </svg>
+                          )
+                        }
+                      ].map((net) => (
+                        <button
+                          key={net.id}
+                          type="button"
+                          onClick={() => {
+                            const exists = wizard.business?.socialNetworks?.find(s => s.network === net.id);
+                            if (!exists) {
+                              const newArr = [...(wizard.business?.socialNetworks || []), { network: net.id, url: '' }];
+                              updateBusinessField('socialNetworks', newArr);
+                            }
+                          }}
+                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${wizard.business?.socialNetworks?.find(s => s.network === net.id) ? 'border-[#156295] bg-blue-50 text-[#156295] scale-95 opacity-50' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                        >
+                          {net.icon}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* About Company Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <button onClick={() => toggleSection('about')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">About Company</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">A short description of your business.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'about' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'about' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">About Text</label>
+                    <textarea
+                      rows={5}
+                      placeholder="Write something about your company..."
+                      value={wizard.business?.aboutCompany || ''}
+                      onChange={(e) => updateBusinessField('aboutCompany', e.target.value)}
+                      className="w-full px-5 py-4 skeu-input text-sm font-bold resize-none placeholder:opacity-40"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Services Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <button onClick={() => toggleSection('facilities')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Coffee className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Services</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Services and amenities available.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'facilities' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'facilities' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
+                    {[
+                      { id: 'wifi', label: 'Wi-Fi', icon: <Wifi className="w-5 h-5" /> },
+                      { id: 'seating', label: 'Seating', icon: <Armchair className="w-5 h-5" /> },
+                      { id: 'accessible', label: 'Accessible', icon: <Accessibility className="w-5 h-5" /> },
+                      { id: 'restroom', label: 'Restroom', icon: <Bath className="w-5 h-5" /> },
+                      { id: 'child-friendly', label: 'Child-friendly', icon: <Baby className="w-5 h-5" /> },
+                      { id: 'pet-friendly', label: 'Pet-friendly', icon: <PawPrint className="w-5 h-5" /> },
+                      { id: 'parking', label: 'Parking', icon: <ParkingSquare className="w-5 h-5" /> },
+                      { id: 'public-transport', label: 'Public transport', icon: <Bus className="w-5 h-5" /> },
+                      { id: 'taxi', label: 'Taxi', icon: <CarFront className="w-5 h-5" /> },
+                      { id: 'lodging', label: 'Lodging', icon: <Bed className="w-5 h-5" /> },
+                      { id: 'coffee', label: 'Coffee', icon: <Coffee className="w-5 h-5" /> },
+                      { id: 'bar', label: 'Bar', icon: <Martini className="w-5 h-5" /> },
+                      { id: 'restaurant', label: 'Restaurant', icon: <Utensils className="w-5 h-5" /> },
+                      { id: 'gym', label: 'Gym', icon: <Dumbbell className="w-5 h-5" /> },
+                      { id: 'terrace', label: 'Outdoor terrace', icon: <Umbrella className="w-5 h-5" /> }
+                    ].map((fac) => {
+                      const isActive = wizard.business?.facilities?.includes(fac.id);
+                      return (
+                        <button
+                          key={fac.id}
+                          type="button"
+                          onClick={() => {
+                            let newArr = wizard.business?.facilities || [];
+                            if (isActive) {
+                              newArr = newArr.filter(f => f !== fac.id);
+                            } else {
+                              newArr = [...newArr, fac.id];
+                            }
+                            updateBusinessField('facilities', newArr);
+                          }}
+                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item ${isActive ? 'border-[#156295] bg-blue-50 text-[#156295] shadow-inner' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                        >
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#156295] text-white shadow-sm' : 'bg-slate-50 text-slate-400 group-hover/item:bg-slate-100 group-hover/item:text-[#156295]'}`}>
+                            {fac.icon}
+                          </div>
+                          <span className="text-[10px] font-black text-center">{fac.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Welcome Screen Accordion */}
+            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <button onClick={() => toggleSection('welcomeScreen')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                    <Maximize className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Welcome Screen</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Splash screen image shown while loading.</p>
+                  </div>
+                </div>
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'welcomeScreen' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              </button>
+              {activeDesignSection === 'welcomeScreen' && (
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Splash Image</label>
+                    <div className="w-full h-32 border-2 border-dashed border-[#156295]/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-blue-50/50 transition-colors cursor-pointer relative group/img">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const url = URL.createObjectURL(e.target.files[0]);
+                          updateBusinessField('welcomeScreenImage', url);
+                        }
+                      }} />
+                      <ImageIcon className="w-8 h-8 text-[#156295] opacity-50 group-hover/img:opacity-100 transition-opacity" />
+                      <span className="text-xs font-bold text-[#156295] opacity-70 group-hover/img:opacity-100">Click or drag image here</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
+
+        {(wizard.type === 'links') && (
           <div className="space-y-6">
             {/* Design Settings Accordion */}
             <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
