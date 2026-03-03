@@ -17,6 +17,8 @@ interface WizardProps {
   setUseFgGradient: (use: boolean) => void;
   whatsappPhone: string;
   setWhatsappPhone: (phone: string) => void;
+  whatsappCountryCode: string;
+  setWhatsappCountryCode: (cc: string) => void;
   whatsappMessage: string;
   setWhatsappMessage: (message: string) => void;
   pdfFileName: string | null;
@@ -59,6 +61,8 @@ export const Wizard: React.FC<WizardProps> = ({
   setUseFgGradient,
   whatsappPhone,
   setWhatsappPhone,
+  whatsappCountryCode,
+  setWhatsappCountryCode,
   whatsappMessage,
   setWhatsappMessage,
   pdfFileName,
@@ -165,39 +169,39 @@ export const Wizard: React.FC<WizardProps> = ({
           <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             <button
               onClick={() => toggleSection('content')}
-              className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group"
+              className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
               type="button"
             >
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
-                  <Globe className="w-7 h-7" />
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                  <Globe className="w-5 h-5" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-xl font-black skeu-text-primary tracking-tight uppercase">Website URL</h3>
-                  <p className="text-sm font-medium skeu-text-muted">Link your QR code to any website.</p>
+                  <h3 className="text-base font-black skeu-text-primary tracking-tight uppercase">Website URL</h3>
+                  <p className="text-[10px] font-medium skeu-text-muted">Link your QR code to any website.</p>
                 </div>
               </div>
-              <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+              <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'content' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
             </button>
 
             {activeDesignSection === 'content' && (
-              <div className="p-10 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                 <div className="flex items-center justify-between px-1">
-                  <label className="text-[11px] font-black skeu-text-muted uppercase tracking-widest">Destination URL *</label>
+                  <label className="text-[10px] font-black skeu-text-muted uppercase tracking-widest">Destination URL *</label>
                   <span className="text-[9px] font-black skeu-text-muted uppercase tracking-widest italic opacity-60">Supports http:// and https://</span>
                 </div>
 
                 <div className="relative group">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-5">
-                    <Globe className="w-6 h-6 skeu-text-accent transition-colors" />
-                    <div className="h-8 w-[1.5px] skeu-dark opacity-30" />
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center gap-4">
+                    <Globe className="w-5 h-5 skeu-text-accent transition-colors" />
+                    <div className="h-6 w-[1.5px] skeu-dark opacity-30" />
                   </div>
                   <input
                     type="text"
                     placeholder="https://www.yourwebsite.com"
                     value={wizard.value}
                     onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
-                    className="w-full pl-24 pr-8 py-7 skeu-input text-2xl placeholder:opacity-20 translate-y-0"
+                    className="w-full pl-20 pr-6 py-4 skeu-input text-sm font-bold placeholder:opacity-20 translate-y-0"
                   />
                 </div>
 
@@ -215,36 +219,44 @@ export const Wizard: React.FC<WizardProps> = ({
         {/* WhatsApp Type */}
         {wizard.type === 'whatsapp' && (
           <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="p-8 space-y-8">
+            <div className="p-5 space-y-6">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 skeu-hero-icon text-white rounded-xl flex items-center justify-center relative skeu-gloss">
-                    <MessageCircle className="w-6 h-6" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                    <MessageCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg font-black skeu-text-primary tracking-tight">WhatsApp Information</h3>
-                    <p className="text-[11px] font-medium skeu-text-muted">Direct link to start a WhatsApp chat</p>
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">WhatsApp Information</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Direct link to start a WhatsApp chat</p>
                   </div>
                 </div>
-                <ChevronDown className="w-5 h-5 skeu-text-muted" />
+                <ChevronDown className="w-4 h-4 skeu-text-muted" />
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-3 text-left">
                   <label className="text-[11px] font-bold skeu-text-muted uppercase tracking-widest pl-1">Phone number *</label>
                   <div className="flex items-center skeu-input overflow-hidden">
-                    <div className="px-5 py-4 flex items-center gap-2 border-r border-black/5 skeu-mid">
-                      <img src="https://flagcdn.com/in.svg" className="w-6 h-4 rounded-sm object-cover" alt="IN" />
-                      <ChevronDown className="w-4 h-4 skeu-text-muted" />
+                    <div className="px-4 py-3 flex items-center gap-2 border-r border-black/5 skeu-mid">
+                      <img src="https://flagcdn.com/in.svg" className="w-5 h-3 rounded-[2px] object-cover" alt="IN" />
+                      <ChevronDown className="w-3.5 h-3.5 skeu-text-muted" />
                     </div>
-                    <div className="flex-1 px-5 py-4 flex items-center gap-2">
-                      <span className="font-bold skeu-text-secondary">+91</span>
+                    <div className="flex-1 px-4 py-3 flex items-center gap-2">
+                      <div className="flex items-center gap-0.5">
+                        <span className="font-bold skeu-text-secondary text-sm">+</span>
+                        <input
+                          type="text"
+                          value={whatsappCountryCode}
+                          onChange={(e) => setWhatsappCountryCode(e.target.value.replace(/[^0-9]/g, ''))}
+                          className="w-7 bg-transparent outline-none font-bold skeu-text-secondary text-sm"
+                        />
+                      </div>
                       <input
                         type="text"
                         placeholder="84606 87490"
                         value={whatsappPhone}
                         onChange={(e) => setWhatsappPhone(e.target.value.replace(/[^0-9 ]/g, ''))}
-                        className="flex-1 bg-transparent outline-none font-bold skeu-text-primary text-lg"
+                        className="flex-1 bg-transparent outline-none font-bold skeu-text-primary text-sm"
                       />
                     </div>
                   </div>
@@ -253,11 +265,11 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="space-y-3 text-left">
                   <label className="text-[11px] font-bold skeu-text-muted uppercase tracking-widest pl-1">Message</label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     placeholder="Write your message"
                     value={whatsappMessage}
                     onChange={(e) => setWhatsappMessage(e.target.value)}
-                    className="w-full px-6 py-5 skeu-input resize-none"
+                    className="w-full px-5 py-4 skeu-input resize-none text-sm font-bold"
                   />
                 </div>
               </div>
@@ -270,20 +282,20 @@ export const Wizard: React.FC<WizardProps> = ({
           <div className="space-y-6">
             {/* PDF Upload */}
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss">
-                    <FileText className="w-7 h-7" />
+              <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                    <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black skeu-text-primary tracking-tight">PDF Upload</h3>
-                    <p className="text-sm font-medium skeu-text-muted">Select and upload your PDF document.</p>
+                    <h3 className="text-base font-black skeu-text-primary tracking-tight">PDF Upload</h3>
+                    <p className="text-[10px] font-medium skeu-text-muted">Select and upload your PDF document.</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'upload' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'upload' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
               </button>
               {activeDesignSection === 'upload' && (
-                <div className="p-10 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="relative group">
                     <div className="border-4 border-dashed skeu-dark rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] skeu-mid hover:shadow-2xl transition-all duration-500 cursor-pointer group/upload">
                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />
@@ -596,14 +608,14 @@ export const Wizard: React.FC<WizardProps> = ({
                       </div>
                       <div className="grid grid-cols-1 gap-6">
                         {wizard.business?.buttons.map((link) => (
-                          <div key={link.id} className="group/item flex items-center gap-6 p-8 bg-slate-50/30 border-2 border-slate-50 rounded-[2.5rem] hover:bg-white hover:border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
+                          <div key={link.id} className="group/item flex items-center gap-4 p-5 bg-slate-50/30 border-2 border-slate-50 rounded-2xl hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
                             <div className="flex-1 space-y-5">
                               <input
                                 type="text"
                                 value={link.text}
                                 onChange={(e) => updateLink(link.id, 'text', e.target.value)}
                                 placeholder="Button Name"
-                                className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-xl p-0 focus:ring-0 placeholder:text-slate-200"
+                                className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-base p-0 focus:ring-0 placeholder:text-slate-200"
                               />
                               <div className="flex items-center gap-4 group/input bg-white/50 p-4 rounded-xl border border-slate-100/50 focus-within:border-[#156295]/30 focus-within:bg-white transition-all shadow-inner">
                                 <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#156295] transition-colors" />
@@ -638,31 +650,31 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
           <button
             onClick={() => toggleSection('name')}
-            className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
             type="button"
           >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Type className="w-7 h-7" />
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Type className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Name of the QR Code</h3>
-                <p className="text-sm font-medium text-slate-400">Give your QR code a name.</p>
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Name of the QR Code</h3>
+                <p className="text-[10px] font-medium text-slate-400">Give your QR code a name.</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'name' && (
-            <div className="p-10 border-t border-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
-              <div className="space-y-4">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">QR Code Name</label>
+            <div className="p-6 border-t border-slate-50/50 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">QR Code Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Website Launch Campaign"
                   value={wizard.name}
                   onChange={(e) => setWizard({ ...wizard, name: e.target.value })}
-                  className="w-full px-8 py-6 bg-white border-[2.5px] border-blue-200 rounded-[2rem] outline-none focus:ring-[12px] focus:ring-blue-500/5 focus:border-blue-500 bg-white font-black text-[#0F172A] transition-all shadow-[0_10px_30px_-10px_rgba(59,130,246,0.15)] focus:shadow-blue-500/10 placeholder:text-slate-200"
+                  className="w-full px-5 py-4 skeu-input outline-none focus:ring-[10px] focus:ring-blue-500/5 focus:border-blue-500 bg-white font-bold text-sm text-[#0F172A] transition-all placeholder:text-slate-200"
                 />
               </div>
             </div>
@@ -673,23 +685,23 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
           <button
             onClick={() => toggleSection('folder')}
-            className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
             type="button"
           >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <FolderIcon className="w-7 h-7" />
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <FolderIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight uppercase">SAVE TO FOLDER</h3>
-                <p className="text-sm font-medium text-slate-400">Organize your codes by category.</p>
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight uppercase">SAVE TO FOLDER</h3>
+                <p className="text-[10px] font-medium text-slate-400">Organize your codes by category.</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'folder' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'folder' ? 'rotate-180 text-blue-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'folder' && (
-            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-5">
                 <div className="flex items-center justify-between pl-1">
                   <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Choose Folder</label>
@@ -708,20 +720,20 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={folder.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, folderId: folder.id })}
-                      className={`p-6 rounded-[2rem] border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#156295] bg-white shadow-2xl shadow-blue-500/20 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-lg hover:shadow-slate-200/50 shadow-sm'}`}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#156295] bg-white shadow-xl shadow-blue-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
                     >
-                      <div className="flex flex-col gap-3">
-                        <div className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#156295] text-white shadow-lg shadow-[#156295]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#156295] border border-transparent group-hover/folder:border-slate-100'}`}>
-                          <FolderIcon className="w-6 h-6" />
+                      <div className="flex flex-col gap-2">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#156295] text-white shadow-md shadow-[#156295]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#156295] border border-transparent group-hover/folder:border-slate-100'}`}>
+                          <FolderIcon className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className={`font-black tracking-tight truncate ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{folder.count} codes</p>
+                          <p className={`font-black tracking-tight truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{folder.count} codes</p>
                         </div>
                       </div>
                       {wizard.folderId === folder.id && (
-                        <div className="absolute top-6 right-6 bg-[#156295] text-white p-1 rounded-full shadow-lg animate-in zoom-in duration-300">
-                          <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                        <div className="absolute top-4 right-4 bg-[#156295] text-white p-0.5 rounded-full shadow-lg animate-in zoom-in duration-300">
+                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
                         </div>
                       )}
                     </button>
@@ -770,20 +782,20 @@ export const Wizard: React.FC<WizardProps> = ({
       <div className="space-y-6">
         {/* Frame Selection */}
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                <Layout className="w-7 h-7" />
+          <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                <Layout className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black skeu-text-primary tracking-tight">Frame Layout</h3>
-                <p className="text-sm font-medium skeu-text-muted">Add a call-to-action frame</p>
+                <h3 className="text-base font-black skeu-text-primary tracking-tight">Frame Layout</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Add a call-to-action frame</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'frame' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'frame' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
           {activeDesignSection === 'frame' && (
-            <div className="p-10 border-t border-black/5 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-black/5 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 animate-in slide-in-from-top-4 duration-500 origin-top">
               {FRAME_STYLES.map((style: any) => (
                 <button
                   key={style.id}
@@ -801,21 +813,21 @@ export const Wizard: React.FC<WizardProps> = ({
 
         {/* Color & Pattern */}
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-8 skeu-accordion-header transition-colors group" type="button">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                <PaletteIcon className="w-7 h-7" />
+          <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                <PaletteIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black skeu-text-primary tracking-tight">QR Pattern & Colors</h3>
-                <p className="text-sm font-medium skeu-text-muted">Dots, squares and custom colors</p>
+                <h3 className="text-base font-black skeu-text-primary tracking-tight">QR Pattern & Colors</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Dots, squares and custom colors</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pattern' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'pattern' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
 
           {activeDesignSection === 'pattern' && (
-            <div className="p-10 border-t border-black/5 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-black/5 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
                 {PATTERN_OPTIONS.map((opt: any) => (
                   <button
@@ -869,21 +881,21 @@ export const Wizard: React.FC<WizardProps> = ({
 
         {/* Eyes Style */}
         <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-          <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <Maximize className="w-7 h-7" />
+          <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Maximize className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Eye Styles</h3>
-                <p className="text-sm font-medium text-slate-400">Shape of the corner indicators</p>
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Eye Styles</h3>
+                <p className="text-[10px] font-medium text-slate-400">Shape of the corner indicators</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'corners' ? 'rotate-180 text-amber-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'corners' ? 'rotate-180 text-amber-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'corners' && (
-            <div className="p-10 border-t border-slate-50/50 space-y-12 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-6">
                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Eye Frame Shape</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
@@ -921,21 +933,21 @@ export const Wizard: React.FC<WizardProps> = ({
 
         {/* Logo Upload */}
         <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-          <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-8 hover:bg-slate-50 transition-colors group" type="button">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                <ImageIcon className="w-7 h-7" />
+          <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group" type="button">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <ImageIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Add Center Logo</h3>
-                <p className="text-sm font-medium text-slate-400">Place your brand in the center</p>
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Add Center Logo</h3>
+                <p className="text-[10px] font-medium text-slate-400">Place your brand in the center</p>
               </div>
             </div>
-            <ChevronDown className={`w-6 h-6 text-slate-300 transition-all duration-500 ${activeDesignSection === 'logo' ? 'rotate-180 text-red-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'logo' ? 'rotate-180 text-red-600' : 'group-hover:text-slate-400'}`} />
           </button>
 
           {activeDesignSection === 'logo' && (
-            <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
+            <div className="p-6 border-t border-slate-50/50 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="relative group/logo-zone">
                 <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#156295] hover:bg-blue-50/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 cursor-pointer group/item">
                   <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleLogoUpload} />
@@ -1002,47 +1014,44 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* Right Side: Phone Preview (Sticky) */}
-            <div className="lg:col-span-4 sticky top-0 flex flex-col items-center gap-8">
+            <div className="lg:col-span-4 sticky top-10 self-start flex flex-col items-center gap-6">
               {/* Preview Toggle Pill (Matches Screenshot 1 position) */}
-              <div className="w-full flex justify-center mb-10">
-                <div className="bg-[#f8fafc] border border-slate-200 p-1.5 rounded-2xl flex items-center shadow-inner relative w-full max-w-[320px]">
+              <div className="w-full flex justify-center mb-6">
+                <div className="bg-[#f8fafc] border border-slate-200 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[260px]">
                   {/* Sliding active background */}
-                  <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#156295] rounded-xl shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
+                  <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#156295] rounded-lg shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1' : 'left-[calc(50%+2px)]'}`} />
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
-                    className={`flex-1 py-2.5 text-[14px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     UI Preview
                   </button>
                   <button
                     onClick={() => setPhonePreviewMode('qr')}
-                    className={`flex-1 py-2.5 text-[14px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     QR Code
                   </button>
                 </div>
               </div>
 
-              <div className="relative group">
+              <div className="relative group scale-90 origin-top">
                 {/* Decorative Elements */}
                 <div className="absolute -inset-20 bg-blue-500/5 blur-[120px] rounded-full -z-10 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
-                <div className="skeu-phone w-[320px] h-[650px] relative shrink-0">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 skeu-phone-notch z-50 overflow-hidden">
-                    <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full" />
-                  </div>
+                <div className="skeu-phone w-[280px] h-[580px] relative shrink-0">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 skeu-phone-notch z-50 overflow-hidden" />
 
                   <div className="absolute inset-0 bg-white rounded-[2.8rem] overflow-hidden flex flex-col">
                     {/* Phone Status Bar (Matches Screenshot 10) */}
-                    <div className="bg-[#0F172A] h-11 px-8 flex items-end pb-1.5 justify-between shrink-0 z-30">
-                      <span className="text-white text-[11px] font-black tracking-tight">9:41</span>
+                    <div className="bg-[#000000] h-10 px-6 flex items-end pb-1.5 justify-between shrink-0 z-30">
+                      <span className="text-white text-[10px] font-black tracking-tight">9:41</span>
                       <div className="flex items-center gap-1.5 text-white">
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
-                        <div className="w-5 h-2.5 border-2 border-white/40 rounded-sm relative">
-                          <div className="absolute inset-0.5 bg-white rounded-px w-3" />
-                          <div className="absolute -right-1 top-0.5 w-0.5 h-1 bg-white/40 rounded-full" />
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
+                        <div className="w-4 h-2 border-2 border-white/40 rounded-sm relative">
+                          <div className="absolute inset-0.5 bg-white rounded-px w-2" />
                         </div>
                       </div>
                     </div>
@@ -1086,36 +1095,36 @@ export const Wizard: React.FC<WizardProps> = ({
                               <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
 
                               {/* WhatsApp Header (Matches Screenshot 10) */}
-                              <div className="bg-[#075E54] p-4 pt-10 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10">
+                              <div className="bg-[#075E54] p-3 pt-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10 shrink-0">
                                     <UserCircle className="w-full h-full" />
                                   </div>
-                                  <div className="text-left">
-                                    <h4 className="text-[15px] font-black tracking-tight leading-tight">{whatsappPhone || '84606 87490'}</h4>
-                                    <p className="text-[10px] font-bold opacity-60">Online</p>
+                                  <div className="text-left min-w-0 flex-1">
+                                    <h4 className="text-[13px] font-black tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
+                                    <p className="text-[9px] font-bold opacity-60">Online</p>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-5 pr-2">
-                                  <Video className="w-5 h-5 text-white/90" />
-                                  <Phone className="w-4 h-4 text-white/90" />
-                                  <MoreVertical className="w-5 h-5 text-white/90" />
+                                <div className="flex items-center gap-2.5 pr-1 shrink-0">
+                                  <Video className="w-4 h-4 text-white/90" />
+                                  <Phone className="w-3.5 h-3.5 text-white/90" />
+                                  <MoreVertical className="w-4 h-4 text-white/90" />
                                 </div>
                               </div>
 
                               {/* Chat Area */}
                               <div className="flex-1 p-4 flex flex-col justify-start relative z-10 pt-8">
-                                <div className="self-end max-w-[85%] relative mb-4 animate-in slide-in-from-right-4 duration-500">
-                                  <div className="bg-[#DCF8C6] p-3 rounded-2xl rounded-tr-none shadow-sm relative border border-green-200/50">
-                                    <p className="text-[13px] font-medium text-slate-800 text-left leading-relaxed">
+                                <div className="self-end max-w-[85%] relative mb-3 animate-in slide-in-from-right-4 duration-500">
+                                  <div className="bg-[#DCF8C6] p-2 rounded-xl rounded-tr-none shadow-sm relative border border-green-200/50">
+                                    <p className="text-[12px] font-medium text-slate-800 text-left leading-relaxed">
                                       {whatsappMessage || "Type a message."}
                                     </p>
                                     <div className="flex items-center justify-end gap-1 mt-1">
-                                      <span className="text-[9px] font-bold text-slate-400">9:41</span>
-                                      <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
+                                      <span className="text-[8px] font-bold text-slate-400">9:41</span>
+                                      <CheckCheck className="w-3 h-3 text-blue-400" />
                                     </div>
                                     {/* Bubble Tail */}
-                                    <div className="absolute -right-2 top-0 w-3 h-3 bg-[#DCF8C6] clip-bubble-tail" />
+                                    <div className="absolute -right-1.5 top-0 w-2.5 h-2.5 bg-[#DCF8C6] clip-bubble-tail" />
                                   </div>
                                 </div>
                               </div>
