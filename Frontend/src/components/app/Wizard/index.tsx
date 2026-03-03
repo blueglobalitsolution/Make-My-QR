@@ -1606,7 +1606,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                 <div className="w-[320px] h-[650px] relative shrink-0 flex items-center justify-center">
                   {/* Phone Screen Content Area - Perfectly positioned to fit inside the mockup frame */}
-                  <div className={`absolute top-[11px] bottom-[11px] left-[15px] right-[15px] rounded-[2.8rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
+                  <div className={`absolute top-[9px] bottom-[16.5px] left-[15.5px] right-[15.5px] rounded-[2.5rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#156295]' : 'bg-white'
                     }`} style={{
                       backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
