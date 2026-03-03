@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink } from 'lucide-react';
+import { useRef } from 'react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 
 interface MyCodesProps {
@@ -42,9 +42,20 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   newFolderName,
   setNewFolderName,
   setView,
-  viewPdf,
   onNewQR,
 }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollFolders = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="h-full overflow-y-auto scrollbar-hide p-12 max-w-7xl mx-auto w-full space-y-10 animate-in fade-in duration-700 pb-24 skeu-text-primary">
       {/* Header Section */}
@@ -75,53 +86,72 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       </div>
 
       {/* Horizontal Folders Bar */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-2 px-2">
+      <div className="flex items-center gap-2 -mx-2 px-2 relative">
         <button
-          onClick={() => setActiveFolderId('all')}
-          className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === 'all' ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
+          onClick={() => scrollFolders('left')}
+          className="p-3 skeu-btn flex flex-shrink-0 z-10"
+          style={{ padding: '14px' }}
         >
-          <Grid3X3 className="w-4 h-4" />
-          <span>All ({history.length})</span>
+          <ChevronLeft className="w-5 h-5" />
         </button>
-
-        {folders.map(folder => (
+        <div
+          ref={scrollContainerRef}
+          className="flex items-center gap-3 overflow-x-auto scrollbar-hide py-2 flex-1 scroll-smooth"
+        >
           <button
-            key={folder.id}
-            onClick={() => setActiveFolderId(folder.id)}
-            className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === folder.id ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
+            onClick={() => setActiveFolderId('all')}
+            className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === 'all' ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
           >
-            <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
-            <span>{folder.name} ({folder.count})</span>
+            <Grid3X3 className="w-4 h-4" />
+            <span>All ({history.length})</span>
           </button>
-        ))}
 
-        {isCreatingFolder ? (
-          <div className="flex items-center gap-2 animate-in slide-in-from-left-2 flex-shrink-0">
-            <input
-              type="text"
-              autoFocus
-              placeholder="Folder name..."
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              className="px-4 py-2.5 skeu-input text-xs font-bold w-40"
-              onKeyDown={(e) => e.key === 'Enter' && createNewFolder()}
-            />
-            <button onClick={createNewFolder} className="p-2.5 skeu-btn">
+          {folders.map(folder => (
+            <button
+              key={folder.id}
+              onClick={() => setActiveFolderId(folder.id)}
+              className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === folder.id ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
+            >
+              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
+              <span>{folder.name} ({folder.count})</span>
+            </button>
+          ))}
+
+          {isCreatingFolder ? (
+            <div className="flex items-center gap-2 animate-in slide-in-from-left-2 flex-shrink-0">
+              <input
+                type="text"
+                autoFocus
+                placeholder="Folder name..."
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                className="px-4 py-2.5 skeu-input text-xs font-bold w-40"
+                onKeyDown={(e) => e.key === 'Enter' && createNewFolder()}
+              />
+              <button onClick={createNewFolder} className="p-2.5 skeu-btn">
+                <Plus className="w-4 h-4" />
+              </button>
+              <button onClick={() => setIsCreatingFolder(false)} className="p-2.5 skeu-btn-secondary">
+                <ChevronRight className="w-4 h-4 rotate-45" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsCreatingFolder(true)}
+              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-blue-500/60"
+            >
               <Plus className="w-4 h-4" />
+              <span>New Folder</span>
             </button>
-            <button onClick={() => setIsCreatingFolder(false)} className="p-2.5 skeu-btn-secondary">
-              <ChevronRight className="w-4 h-4 rotate-45" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsCreatingFolder(true)}
-            className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-blue-500/60"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Folder</span>
-          </button>
-        )}
+          )}
+        </div>
+        <button
+          onClick={() => scrollFolders('right')}
+          className="p-3 skeu-btn flex flex-shrink-0 z-10"
+          style={{ padding: '14px' }}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Codes Table Header */}
