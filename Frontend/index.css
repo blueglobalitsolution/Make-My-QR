@@ -89,10 +89,23 @@
   border: 1px solid #e2e8f0;
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 1) inset,
-    0 8px 16px var(--skeu-shadow),
-    0 1px 3px rgba(0, 0, 0, 0.02);
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+    0 10px 15px -3px rgba(15, 23, 42, 0.05);
+  /* Softer base shadow */
   border-radius: 2rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skeu-card-active {
+  background: #ffffff;
+  border-color: rgba(21, 98, 149, 0.1);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+    0 20px 25px -5px rgba(15, 23, 42, 0.1),
+    0 10px 10px -5px rgba(15, 23, 42, 0.04),
+    0 0 0 1px rgba(21, 98, 149, 0.05);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .skeu-card-deep {

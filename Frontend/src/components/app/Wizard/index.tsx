@@ -133,12 +133,12 @@ export const Wizard: React.FC<WizardProps> = ({
   };
 
   const renderStep1TypeSelection = () => (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="text-left">
-        <h2 className="text-[11px] font-black skeu-text-muted uppercase tracking-[0.3em]">1. Select a type of QR code</h2>
+    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="text-left px-2">
+        <h2 className="text-[12px] font-black skeu-text-muted uppercase tracking-[0.4em] opacity-80">1. Select a type of QR code</h2>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-2 pb-8 justify-items-center">
         {QR_TYPES_CONFIG.map((type) => (
           <button
             key={type.id}
@@ -146,22 +146,25 @@ export const Wizard: React.FC<WizardProps> = ({
             onMouseEnter={() => setHoveredType(type.id as any)}
             onMouseLeave={() => setHoveredType(null)}
             type="button"
-            className={`group p-4 aspect-square max-w-[180px] w-full mx-auto rounded-3xl transition-all duration-500 flex flex-col items-center justify-center text-center gap-4 ${wizard.type === type.id ? 'skeu-card shadow-2xl scale-105 bg-white' : 'skeu-card hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1'}`}
+            className={`group relative p-8 aspect-square w-full max-w-[240px] rounded-[2.5rem] transition-all duration-500 flex flex-col items-center justify-center text-center gap-6 ${wizard.type === type.id ? 'skeu-card-active' : 'skeu-card hover:-translate-y-2 hover:shadow-xl'}`}
           >
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 relative skeu-gloss shrink-0 ${wizard.type === type.id ? 'skeu-hero-icon text-white' : 'skeu-inset skeu-text-accent'}`}>
-              <div className="flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                {type.id === 'website' && <Globe className="w-6 h-6" strokeWidth={1.5} />}
-                {type.id === 'pdf' && <FileText className="w-6 h-6" strokeWidth={1.5} />}
-                {type.id === 'whatsapp' && <MessageCircle className="w-6 h-6" strokeWidth={1.5} />}
-                {type.id === 'business' && <Briefcase className="w-6 h-6" strokeWidth={1.5} />}
+            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-500 relative skeu-gloss shrink-0 ${wizard.type === type.id ? 'skeu-hero-icon text-white scale-110' : 'skeu-inset skeu-text-accent group-hover:scale-105'}`}>
+              <div className="flex items-center justify-center transition-transform duration-500">
+                {type.id === 'website' && <Globe className="w-8 h-8" strokeWidth={1.5} />}
+                {type.id === 'pdf' && <FileText className="w-8 h-8" strokeWidth={1.5} />}
+                {type.id === 'whatsapp' && <MessageCircle className="w-8 h-8" strokeWidth={1.5} />}
+                {type.id === 'business' && <Briefcase className="w-8 h-8" strokeWidth={1.5} />}
               </div>
             </div>
-            <div className="space-y-1">
-              <h3 className={`font-black text-sm tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary group-hover:skeu-text-accent'}`}>{type.name}</h3>
-              <p className="text-[9px] font-medium skeu-text-muted leading-tight px-1 line-clamp-2">
+
+            <div className="space-y-2">
+              <h3 className={`font-black text-base tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
+              <p className="text-[10px] font-semibold skeu-text-muted leading-relaxed px-2 line-clamp-2 uppercase tracking-wider opacity-70">
                 {type.desc}
               </p>
             </div>
+
+
           </button>
         ))}
       </div>
@@ -1597,13 +1600,19 @@ export const Wizard: React.FC<WizardProps> = ({
                 </div>
               </div>
 
-              <div className="relative group scale-[0.65] xl:scale-[0.70] transition-transform duration-500 flex flex-col items-center justify-center shrink-0 origin-top">
+              <div className="relative group scale-[0.85] xl:scale-[0.85] transition-transform duration-500 flex flex-col items-center justify-center shrink-0 origin-top">
                 {/* Decorative Elements */}
                 <div className="absolute -inset-20 bg-blue-500/5 blur-[120px] rounded-full -z-10 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
                 <div className="w-[320px] h-[650px] relative shrink-0 flex items-center justify-center">
-                  {/* Phone Screen Content Area - Positioned and rounded to fit inside the phone bezel */}
-                  <div className="absolute top-[12px] bottom-[12px] left-[15px] right-[15px] bg-white rounded-[3rem] overflow-hidden flex flex-col z-40 shadow-inner">
+                  {/* Phone Screen Content Area - Perfectly positioned to fit inside the mockup frame */}
+                  <div className={`absolute top-[12px] bottom-[12px] left-[15px] right-[15px] rounded-[3rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
+                      ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#156295]' : 'bg-white'
+                    }`} style={{
+                      backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
+                        ? (wizard.business?.primaryColor || '#156295')
+                        : undefined
+                    }}>
                     {/* Step 1 & 2 Blur Overlay - Only shown when in Step 1 (no hover) or Step 2 in QR mode */}
                     {(wizard.step === 2 || (wizard.step === 1 && !hoveredType)) && phonePreviewMode === 'qr' && (
                       <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-white/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
@@ -1613,9 +1622,9 @@ export const Wizard: React.FC<WizardProps> = ({
                       </div>
                     )}
                     {/* Status Bar */}
-                    <div className="bg-transparent absolute top-0 left-0 right-0 h-10 px-5 flex items-end pb-1.5 justify-between shrink-0 z-50 pointer-events-none">
-                      <span className="text-black text-[10px] font-black tracking-tight" style={{ color: ((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links') ? 'white' : 'black' }}>9:41</span>
-                      <div className="flex items-center gap-1.5" style={{ color: ((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links') ? 'white' : 'black' }}>
+                    <div className="bg-transparent absolute top-0 left-0 right-0 h-10 px-6 flex items-end pb-1.5 justify-between shrink-0 z-50 pointer-events-none">
+                      <span className="text-[10px] font-black tracking-tight" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
+                      <div className="flex items-center gap-1.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
                         <div className="w-4 h-2 border-2 border-current rounded-sm relative opacity-80">
@@ -1657,12 +1666,13 @@ export const Wizard: React.FC<WizardProps> = ({
                             </div>
                           )}
 
+                          {/* WhatsApp High Fidelity Preview */}
                           {(hoveredType || wizard.type) === 'whatsapp' && (
                             <div className="h-full flex flex-col pt-0 bg-[#efe7de] relative">
                               <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
-                              <div className="bg-[#075E54] p-3 pt-6 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
+                              <div className="bg-[#075E54] p-3 pt-12 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
                                 <div className="flex items-center gap-2 min-w-0">
-                                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10 shrink-0">
+                                  <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10 shrink-0">
                                     <UserCircle className="w-full h-full" />
                                   </div>
                                   <div className="text-left min-w-0 flex-1">
