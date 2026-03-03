@@ -70,6 +70,8 @@ export interface UseWizardReturn {
   getQRValue: () => string;
   qrStylingOptions: any;
   selectedTypeConfig: any;
+  whatsappCountryCode: string;
+  setWhatsappCountryCode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const getInitialWizardState = (): WizardState => ({
@@ -137,6 +139,7 @@ export const useWizard = (
   const [useFgGradient, setUseFgGradient] = useState(false);
   const [useBgGradient, setUseBgGradient] = useState(false);
   const [whatsappPhone, setWhatsappPhone] = useState('84606 87490');
+  const [whatsappCountryCode, setWhatsappCountryCode] = useState('91');
   const [whatsappMessage, setWhatsappMessage] = useState('Hello! I scanned your QR code.');
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -156,7 +159,9 @@ export const useWizard = (
 
   const getQRValue = () => {
     if (wizard.type === 'whatsapp') {
-      return `https://wa.me/${whatsappPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
+      const cleanPhone = whatsappPhone.replace(/\s+/g, '');
+      const cleanCC = whatsappCountryCode.replace(/\+/g, '');
+      return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
     return wizard.value || "https://qr-code.io";
   };
@@ -215,7 +220,9 @@ export const useWizard = (
       } else if (wizard.type === 'pdf' || wizard.type === 'links') {
         finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
       } else if (wizard.type === 'whatsapp') {
-        finalValue = `https://wa.me/${whatsappPhone.replace(/\s+/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
+        const cleanPhone = whatsappPhone.replace(/\s+/g, '');
+        const cleanCC = whatsappCountryCode.replace(/\+/g, '');
+        finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
       } else {
         finalValue = wizard.value || "https://qr-code.io";
       }
@@ -463,6 +470,7 @@ export const useWizard = (
   const resetWizard = () => {
     setWizard(getInitialWizardState());
     setWhatsappPhone('84606 87490');
+    setWhatsappCountryCode('91');
     setWhatsappMessage('Hello! I scanned your QR code.');
     setPdfFileName(null);
     setPdfUrl(null);
@@ -511,5 +519,7 @@ export const useWizard = (
     getQRValue,
     qrStylingOptions,
     selectedTypeConfig,
+    whatsappCountryCode,
+    setWhatsappCountryCode,
   };
 };
