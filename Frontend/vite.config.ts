@@ -11,15 +11,15 @@ export default defineConfig(({ mode }) => {
       allowedHosts: ['stage.makemyqrcode.com'],
       proxy: {
         '/api': {
-          target: 'http://192.168.1.208:8010',
+          target: env.VITE_BACKEND_URL || 'http://localhost:8010',
           changeOrigin: true,
         },
         '/r': {
-          target: 'http://192.168.1.208:8010',
+          target: env.VITE_BACKEND_URL || 'http://localhost:8010',
           changeOrigin: true,
         },
         '/media': {
-          target: 'http://192.168.1.208:8010',
+          target: env.VITE_BACKEND_URL || 'http://localhost:8010',
           changeOrigin: true,
         },
       },
