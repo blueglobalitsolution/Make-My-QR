@@ -87,9 +87,9 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
     const brandColor = settings?.fgColor || '#156295';
 
     // Construct URL
-    const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+    const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || window.location.origin;
     let fullValue;
-    
+
     // Use file_url if available (for file-type QR codes)
     if (file_url) {
         fullValue = file_url;
@@ -184,7 +184,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
                                                 <span className="text-[8px] font-black uppercase tracking-widest bg-red-100 text-red-600 px-2 py-1 rounded">PDF</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="space-y-2">
                                             <h2 className="text-2xl font-black text-slate-800 tracking-tight">
                                                 {name || "PDF Document"}

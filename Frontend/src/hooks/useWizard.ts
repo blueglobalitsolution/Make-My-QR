@@ -160,13 +160,15 @@ export const useWizard = (
   }, [wizard.step, wizard.type]);
 
   const getQRValue = () => {
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
 
     if (editingId) {
       const code = history.find(h => h.id === editingId);
-      const slug = code.shortSlug || (code as any).short_slug;
-      if (slug) {
-        return `${backendUrl}/r/${slug}`;
+      if (code) {
+        const slug = code.shortSlug || (code as any).short_slug;
+        if (slug) {
+          return `${backendUrl}/r/${slug}`;
+        }
       }
     }
 
@@ -175,7 +177,7 @@ export const useWizard = (
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    const val = wizard.value || "https://scannerstudio.co/preview";
+    const val = wizard.value || `${window.location.origin}/preview`;
     return val.startsWith('/') ? backendUrl + val : val;
   };
 
@@ -242,13 +244,13 @@ export const useWizard = (
       localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
       finalValue = `/view/business?id=${profileId}`;
     } else if (wizard.type === 'pdf' || wizard.type === 'links') {
-      finalValue = wizard.value || `https://scannerstudio.co/p/${Math.random().toString(36).substring(7)}`;
+      finalValue = wizard.value || `${window.location.origin}/p/${Math.random().toString(36).substring(7)}`;
     } else if (wizard.type === 'whatsapp') {
       const cleanPhone = whatsappPhone.replace(/\s+/g, '');
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     } else {
-      finalValue = wizard.value || "https://scannerstudio.co/preview";
+      finalValue = wizard.value || `${window.location.origin}/preview`;
     }
 
     // 2. Step-specific logic
@@ -257,9 +259,12 @@ export const useWizard = (
       try {
         let savedData;
         if (editingId) {
+          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
           savedData = await updateCode(editingId, {
-            folder: wizard.folderId,
+            folder: sanitizedFolderId,
+            type: wizard.mode,
             category: wizard.type,
+            is_dynamic: true,
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
@@ -269,10 +274,12 @@ export const useWizard = (
 
           setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...savedData, id: savedData.id.toString() } : h));
         } else {
+          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
           savedData = await saveCode({
-            folder: wizard.folderId,
+            folder: sanitizedFolderId,
             type: wizard.mode,
             category: wizard.type,
+            is_dynamic: true,
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
@@ -297,9 +304,12 @@ export const useWizard = (
       console.log("Wizard: Finalizing QR code styling...");
       try {
         if (editingId) {
+          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
           const updatedCode = await updateCode(editingId, {
-            folder: wizard.folderId,
+            folder: sanitizedFolderId,
+            type: wizard.mode,
             category: wizard.type,
+            is_dynamic: true,
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
