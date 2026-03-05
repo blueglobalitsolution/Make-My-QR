@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
+import { StyledQRCode } from '../../../components/StyledQRCode';
+import { QRFrameWrapper } from '../../../components/QRFrameWrapper';
 
 interface MyCodesProps {
   history: GeneratedCode[];
@@ -46,6 +48,42 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const CodeThumbnail = React.memo(({ code }: { code: GeneratedCode }) => {
+    const options = React.useMemo(() => {
+      const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
+      const slug = code.shortSlug || (code as any).short_slug;
+      let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
+      if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
+
+      return {
+        data: qrValue || 'https://makemyqr.com',
+        dotsOptions: {
+          color: code.settings?.fgColor || '#000000',
+          type: code.settings?.pattern || 'square'
+        },
+        backgroundOptions: { color: code.settings?.bgColor || '#ffffff' },
+        cornersSquareOptions: {
+          type: code.settings?.cornersSquareType || 'square',
+          color: code.settings?.cornersSquareColor || code.settings?.fgColor || '#000000',
+        },
+        cornersDotOptions: {
+          type: code.settings?.cornersDotType || 'square',
+          color: code.settings?.cornersDotColor || code.settings?.fgColor || '#000000',
+        },
+        image: code.settings?.logoUrl || undefined,
+        imageOptions: { crossOrigin: "anonymous", margin: 5 }
+      };
+    }, [code]);
+
+    return (
+      <div className="absolute inset-0 flex items-center justify-center scale-[0.8] origin-center pointer-events-none">
+        <QRFrameWrapper frame={code.settings?.frame || 'none'}>
+          <StyledQRCode options={options} size={150} />
+        </QRFrameWrapper>
+      </div>
+    );
+  });
+
   const scrollFolders = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const scrollAmount = 300;
@@ -89,10 +127,9 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       <div className="flex items-center gap-2 -mx-2 px-2 relative">
         <button
           onClick={() => scrollFolders('left')}
-          className="p-3 skeu-btn flex flex-shrink-0 z-10"
-          style={{ padding: '14px' }}
+          className="flex flex-shrink-0 z-10 text-red-500 hover:text-red-700 transition-colors bg-transparent border-0 outline-none pr-4"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-8 h-8" />
         </button>
         <div
           ref={scrollContainerRef}
@@ -147,16 +184,15 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         </div>
         <button
           onClick={() => scrollFolders('right')}
-          className="p-3 skeu-btn flex flex-shrink-0 z-10"
-          style={{ padding: '14px' }}
+          className="flex flex-shrink-0 z-10 text-red-500 hover:text-red-700 transition-colors bg-transparent border-0 outline-none pl-4"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-8 h-8" />
         </button>
       </div>
 
       {/* Codes Table Header */}
       <div className="min-w-[1000px]">
-        <div className="grid grid-cols-[140px_1fr_180px_180px_200px] px-10 py-4 text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-50">
+        <div className="grid grid-cols-[220px_1fr_180px_180px_200px] px-10 py-4 text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-50">
           <div>QR Code</div>
           <div>Details</div>
           <div className="text-center">Folder</div>
@@ -181,16 +217,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[220px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
-                    <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden p-3 bg-white group-hover:shadow-inner transition-all duration-500">
-                      {code.settings?.logoUrl ? (
-                        <img src={code.settings.logoUrl} alt={code.name} className="w-full h-full object-contain relative z-10" />
-                      ) : (
-                        <Barcode className="skeu-text-accent w-10 h-10 opacity-20" />
-                      )}
-                      <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-40 h-40 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500">
+                      <CodeThumbnail code={code} />
+                      <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </div>
                   </div>
 

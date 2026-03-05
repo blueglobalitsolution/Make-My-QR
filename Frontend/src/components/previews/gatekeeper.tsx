@@ -10,6 +10,7 @@ export interface GatekeeperProps {
     name: string;
     brandColor: string;
     fullValue: string;
+    businessData?: any;
     is_lead_capture: boolean;
     isAuthorized: boolean;
     isFileMode: boolean;
@@ -28,6 +29,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     name,
     brandColor,
     fullValue,
+    businessData,
     is_lead_capture,
     isAuthorized,
     isFileMode,
@@ -58,6 +60,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     name={name}
                     brandColor={brandColor}
                     fullValue={fullValue}
+                    businessData={businessData}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
                     isFileMode={isFileMode}

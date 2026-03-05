@@ -1,11 +1,12 @@
 import React from 'react';
-import { FileText, Download, Shield, Info, User, ChevronLeft, Smartphone } from 'lucide-react';
+import { Download, ChevronLeft, Eye, Globe, Clock, BarChart2 } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
 
 interface PdfPreviewProps {
     name: string;
     brandColor: string;
     fullValue: string;
+    businessData?: any;
     is_lead_capture: boolean;
     isAuthorized: boolean;
     isFileMode: boolean;
@@ -23,6 +24,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     name,
     brandColor,
     fullValue,
+    businessData,
     is_lead_capture,
     isAuthorized,
     isFileMode,
@@ -81,74 +83,68 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     };
 
     return (
-        <div className="min-h-screen flex flex-col skeu-app-bg font-inter pb-12">
-            <header className="px-8 py-8 flex items-center justify-center">
-                <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg shadow-sm" style={{ backgroundColor: brandColor }}>
-                        <Smartphone className="text-white w-5 h-5" />
-                    </div>
-                    <h1 className="text-lg font-black text-slate-800 tracking-tight">
-                        Scanner <span style={{ color: brandColor }}>Studio</span>
+        <div className="min-h-screen flex flex-col bg-[#fcfdff] overflow-x-hidden relative font-inter pb-12">
+            {/* Background Curve */}
+            <div
+                className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"
+                style={{ backgroundColor: brandColor || '#9b9cf2' }}
+            />
+            {/* Glow effects */}
+            <div className="absolute top-1/2 left-0 w-64 h-64 bg-pink-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[50px] px-5">
+
+                {/* Header Text */}
+                <div className="text-center space-y-2 mb-6 w-full">
+                    <h3 className="text-[17px] font-medium text-slate-900 tracking-tight">
+                        {businessData?.company || "Give Your Company Name"}
+                    </h3>
+                    <h1 className="text-[26px] font-black text-black leading-[1.1] tracking-tight px-2">
+                        {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
+                    <p className="text-[17px] font-medium text-slate-900 px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap">
+                        {businessData?.description || "Learn about how we can help\nwith all your business needs."}
+                    </p>
                 </div>
-            </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6">
-                <div className="w-full max-w-lg space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                    <div className="skeu-card overflow-hidden">
-                        <div className="h-2 w-full" style={{ backgroundColor: brandColor }} />
+                {/* Card Container */}
+                <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6 mt-1">
 
-                        <div className="p-8 space-y-8">
-                            <div className="text-center space-y-4">
-                                {isFileMode ? (
-                                    <div className="space-y-6">
-                                        <div className="w-32 h-40 bg-white rounded-2xl shadow-lg mx-auto flex items-center justify-center border border-slate-100 relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-slate-100" />
-                                            <FileText className="w-16 h-16 text-red-500 relative z-10" />
-                                            <div className="absolute bottom-2 right-2">
-                                                <span className="text-[8px] font-black uppercase tracking-widest bg-red-100 text-red-600 px-2 py-1 rounded">PDF</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="space-y-2">
-                                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">
-                                                {name || "PDF Document"}
-                                            </h2>
-                                            <p className="text-sm text-slate-500 font-medium">
-                                                Click below to view the PDF file
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        <div className="w-32 h-40 bg-white rounded-2xl shadow-lg mx-auto flex items-center justify-center border border-slate-100 relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-slate-100" />
-                                            <FileText className="w-16 h-16 text-red-500 relative z-10" />
-                                            <div className="absolute bottom-2 right-2">
-                                                <span className="text-[8px] font-black uppercase tracking-widest bg-red-100 text-red-600 px-2 py-1 rounded">PDF</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="space-y-2">
-                                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">
-                                                {name || "Secure Document Access"}
-                                            </h2>
-                                            <p className="text-sm text-slate-500 font-medium">
-                                                Click below to view the PDF file
-                                            </p>
-                                        </div>
-
-                                        <div className="flex items-center justify-center gap-2">
-                                            {is_lead_capture && (
-                                                <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 px-2 py-1 rounded-md border border-blue-100">
-                                                    <User className="w-3 h-3" /> Registration Required
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
+                    {/* Top Image Part */}
+                    <div className="w-full relative bg-slate-100 flex-shrink-0 pt-6 px-6">
+                        {isFileMode && fullValue ? (
+                            <div className="w-full aspect-[1/1.4] relative shadow-2xl shadow-blue-900/20 border border-slate-200 rounded-lg overflow-hidden bg-white mx-auto">
+                                <div className="absolute inset-0 pointer-events-none">
+                                    <iframe
+                                        src={`${fullValue}#view=FitH&toolbar=0&navpanes=0&scrollbar=0`}
+                                        className="w-full h-full border-none object-cover scale-[1.02] origin-top"
+                                        scrolling="no"
+                                        title="PDF Preview Thumbnail"
+                                    />
+                                </div>
                             </div>
+                        ) : (
+                            <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative">
+                                <img
+                                    src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"
+                                    alt="Business meeting"
+                                    className="w-full h-full object-cover"
+                                />
+                                {/* Business Tab (Top Right) */}
+                                <div className="absolute top-0 right-4 bg-[#3b82f6] text-white px-5 py-3 rounded-b-xl flex flex-col items-center shadow-lg">
+                                    <div className="w-[20px] h-[14px] border-[2px] border-white rounded-[2px] mb-[5px]" />
+                                    <span className="text-[7.5px] font-black uppercase tracking-widest leading-none">Business</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
+                    {/* Content Part */}
+                    <div className="p-7 pb-8 flex flex-col items-center justify-center space-y-4">
+
+                        {/* Button / Lead Capture */}
+                        <div className="pt-4">
                             {is_lead_capture && !isAuthorized ? (
                                 <LeadCaptureForm
                                     brandColor={brandColor}
@@ -157,41 +153,26 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                     onSubmit={onLeadSubmit}
                                 />
                             ) : (
-                                <div className="space-y-4">
-                                    <button
-                                        onClick={handleAction}
-                                        style={{ backgroundColor: isFileMode ? '#dc2626' : brandColor }}
-                                        className="w-full py-5 rounded-2xl text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
-                                    >
-                                        <FileText className="w-5 h-5" /> {isFileMode ? "View PDF" : "View Document"}
-                                    </button>
-
-                                    <p className="text-[10px] text-slate-400 font-bold text-center uppercase tracking-widest flex items-center justify-center gap-2">
-                                        <Shield className="w-3 h-3" /> Secure Link Verified
-                                    </p>
-                                </div>
+                                <button
+                                    onClick={handleAction}
+                                    className="w-[180px] mx-auto bg-[#1e3a8a] py-[12px] rounded-xl flex items-center justify-center gap-2 font-medium text-[16px] text-white shadow-lg transition-all active:scale-95 border-none outline-none tracking-wide"
+                                >
+                                    <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
+                                </button>
                             )}
                         </div>
-
-                        <div className="bg-slate-50 p-6 border-t border-slate-100 flex items-center gap-4">
-                            <div className="w-10 h-10 skeu-card flex items-center justify-center shrink-0">
-                                <Info className="w-5 h-5 text-slate-400" />
-                            </div>
-                            <div className="text-[10px] text-slate-500 font-medium leading-relaxed">
-                                {is_lead_capture && !isAuthorized
-                                    ? "Information provided is used to grant access to the requested content."
-                                    : "This landing page ensures the destination is safe and provides a branded experience."}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-center pt-4">
-                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] opacity-40">
-                            Powered by Scanner Studio Pro
-                        </p>
                     </div>
                 </div>
-            </main>
+
+                {/* Footer URL */}
+                <div className="flex items-center justify-center gap-2 text-slate-900 mt-2">
+                    <Globe className="w-[22px] h-[22px]" />
+                    <span className="text-[17px] font-medium tracking-wide">
+                        {businessData?.buttons?.[0]?.url?.replace(/^https?:\/\//, '') || "www.google.com"}
+                    </span>
+                </div>
+
+            </div>
         </div>
     );
 };

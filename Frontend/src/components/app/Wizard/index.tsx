@@ -446,7 +446,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1">Button Name</label>
-                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateBusinessField('welcomeScreenImage', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'text', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
                 </div>
@@ -1704,6 +1704,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             name={wizard.name}
                             brandColor={wizard.business?.primaryColor || '#dc2626'}
                             fullValue={pdfUrl || wizard.value}
+                            businessData={wizard.business}
                             is_lead_capture={wizard.is_lead_capture}
                             isAuthorized={previewIsAuthorized}
                             isFileMode={wizard.type === 'pdf'}
