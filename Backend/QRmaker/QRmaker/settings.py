@@ -170,7 +170,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3010')
-BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8010')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://192.168.1.208:3010')
+BACKEND_URL = os.getenv('BACKEND_URL', 'http://192.168.1.208:8010')
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
