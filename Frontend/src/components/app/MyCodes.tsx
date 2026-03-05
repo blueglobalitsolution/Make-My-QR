@@ -194,35 +194,48 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     </div>
                   </div>
 
-                  {/* Details */}
-                  <div className="space-y-1.5 px-6 truncate">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-black skeu-text-primary text-xl tracking-tight truncate">{code.name}</h3>
-                      <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest flex-shrink-0 transition-transform group-hover:scale-110">{code.category}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <ExternalLink className="w-3.5 h-3.5 skeu-text-muted opacity-40" strokeWidth={3} />
-                      <p className="text-[12px] font-bold skeu-text-accent truncate hover:underline cursor-pointer">
-                        {code.shortSlug
-                          ? `${window.location.host}/r/${code.shortSlug}`
-                          : (code.value.length > 50 ? code.value.substring(0, 50) + '...' : code.value)}
-                      </p>
+                  <div className="space-y-1 mb-6">
+                    <h3 className="font-black skeu-text-primary text-lg tracking-tight truncate px-1">{code.name}</h3>
+                    <div className="flex items-center gap-2 px-1">
+                      <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
+                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
+                        {(code.shortSlug || (code as any).short_slug)
+                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
+                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
+                      </span>
                     </div>
                     <p className="text-[9px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-1">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
 
-                  {/* Folder */}
-                  <div className="flex justify-center">
+                  {/* Folder & Quick Actions */}
+                  <div className="flex flex-col items-center justify-center space-y-3">
                     {folder ? (
                       <span className="text-[10px] font-black uppercase tracking-widest skeu-text-muted skeu-tag px-4 py-2 rounded-xl flex items-center gap-2 max-w-[140px] truncate bg-white/80">
                         <FolderIcon className="w-3.5 h-3.5 opacity-40 shrink-0 text-red-500" />
                         <span className="truncate">{folder.name}</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-20 italic">No Folder</span>
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-20 italic bg-white/50 px-4 py-2 rounded-xl">No Folder</span>
                     )}
+
+                    <div className="flex gap-2 w-full justify-center">
+                      <button
+                        onClick={() => downloadCode(code, 'png')}
+                        className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
+                        title="Download PNG"
+                      >
+                        <Download className="w-3 h-3" /> PNG
+                      </button>
+                      <button
+                        onClick={() => downloadCode(code, 'svg')}
+                        className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
+                        title="Download SVG"
+                      >
+                        <Download className="w-3 h-3" /> SVG
+                      </button>
+                    </div>
                   </div>
 
                   {/* Activity */}

@@ -48,7 +48,10 @@ export interface GeneratedCode {
   name: string;
   value: string;
   shortSlug?: string;
+  short_slug?: string;
   isDynamic: boolean;
+  is_protected?: boolean;
+  is_lead_capture?: boolean;
   scans: number;
   status: 'active' | 'paused';
   createdAt: string;
@@ -73,6 +76,7 @@ export type ViewState =
   | 'pdf_viewer'
   | 'business_profile'
   | 'public_scan'
+  | 'qr_viewer'
   | 'forgot_password'
   | 'register';
 
@@ -168,6 +172,8 @@ export interface WizardState {
   name: string;
   password?: string;
   isPasswordActive: boolean;
+  is_protected: boolean;
+  is_lead_capture: boolean;
   folderId?: string;
   business?: BusinessConfig;
   config: {
