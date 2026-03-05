@@ -586,7 +586,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
                     <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-xl flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
-                      <Image className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
+                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
                     </div>
                   </div>
 
@@ -1040,7 +1040,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           updateBusinessField('welcomeScreenImage', url);
                         }
                       }} />
-                      <Image className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
+                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
                       <span className="text-xs font-bold text-[#dc2626] opacity-70 group-hover/img:opacity-100">Click or drag image here</span>
                     </div>
                   </div>
@@ -1498,7 +1498,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                <Image className="w-5 h-5" />
+                <ImageIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
                 <h3 className="text-base font-black skeu-text-primary tracking-tight">Add Center Logo</h3>
@@ -1785,7 +1785,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                       <img src={wizard.business?.coverImage} className="w-full h-full object-cover" alt="Cover" />
                                     ) : (
                                       <div className="absolute inset-0 flex items-center justify-center flex-col text-slate-300">
-                                        <Image className="w-8 h-8 mb-2 opacity-50" />
+                                        <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
                                       </div>
                                     )}
                                   </div>

@@ -1,6 +1,7 @@
-import { useRef } from 'react';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, Eye } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
+import { StyledQRCode } from '../../../components/StyledQRCode';
 
 interface MyCodesProps {
   history: GeneratedCode[];
@@ -42,6 +43,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   newFolderName,
   setNewFolderName,
   setView,
+  viewPdf,
   onNewQR,
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -112,7 +114,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               onClick={() => setActiveFolderId(folder.id)}
               className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === folder.id ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
             >
-              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
+              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
               <span>{folder.name} ({folder.count})</span>
             </button>
           ))}
@@ -138,7 +140,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-blue-500/60"
+              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-red-500/60"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -184,13 +186,29 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                 <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-black/5">
                   {/* QR Thumbnail */}
                   <div>
-                    <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden p-3 bg-white group-hover:shadow-inner transition-all duration-500">
-                      {code.settings?.logoUrl ? (
-                        <img src={code.settings.logoUrl} alt={code.name} className="w-full h-full object-contain relative z-10" />
-                      ) : (
-                        <Barcode className="skeu-text-accent w-10 h-10 opacity-20" />
-                      )}
-                      <div className="absolute inset-0 bg-blue-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden p-2 bg-white group-hover:shadow-inner transition-all duration-500 rounded-xl">
+                      <StyledQRCode
+                        size={80}
+                        options={{
+                          data: code.shortSlug ? `${window.location.origin}/r/${code.shortSlug}` : code.value,
+                          dotsOptions: {
+                            color: code.settings?.fgColor || '#000000',
+                            type: (code.settings?.pattern as any) || 'square'
+                          },
+                          backgroundOptions: { color: code.settings?.bgColor || '#ffffff' },
+                          cornersSquareOptions: {
+                            type: (code.settings?.cornersSquareType || 'square') as any,
+                            color: code.settings?.cornersSquareColor || code.settings?.fgColor || '#000000'
+                          },
+                          cornersDotOptions: {
+                            type: (code.settings?.cornersDotType || 'square') as any,
+                            color: code.settings?.cornersDotColor || code.settings?.fgColor || '#000000'
+                          },
+                          image: code.settings?.logoUrl,
+                          imageOptions: { crossOrigin: "anonymous", margin: 2 }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
 
@@ -205,7 +223,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       </span>
                     </div>
                     <p className="text-[9px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-1">
-                      Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
+                      Created {code.createdAt ? new Date(code.createdAt).toLocaleDateString('en-GB') : 'Just now'}
                     </p>
                   </div>
 
@@ -246,7 +264,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                             window.open(url, '_blank');
                           }
                         }}
-                        className="col-span-2 py-3 skeu-btn text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10"
+                        className="col-span-2 py-3 skeu-btn text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/10"
                       >
                         <Eye className="w-3.5 h-3.5" /> View PDF Document
                       </button>
@@ -257,7 +275,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="text-center group-hover:scale-110 transition-transform duration-500">
                     <div className="text-3xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
                     <div className="text-[9px] font-black skeu-text-muted uppercase tracking-[0.2em] mt-2 flex items-center justify-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-blue-400/40 animate-pulse" /> Total Scans
+                      <div className="w-2 h-2 rounded-full bg-red-400/40 animate-pulse" /> Total Scans
                     </div>
                   </div>
 
