@@ -95,21 +95,21 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
 
     return (
         <div className="min-h-screen flex flex-col skeu-app-bg">
-            <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-slate-100/50">
+            <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-red-100/50">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('landing')}>
-                    <div className="bg-[#156295] p-1.5 rounded-lg shadow-lg">
+                    <div className="bg-[#dc2626] p-1.5 rounded-lg shadow-lg">
                         <Scan className="text-white w-5 h-5" />
                     </div>
                     <h1 className="text-lg font-black text-[#0F172A] tracking-tight">
-                        Scanner <span className="text-[#156295]">Studio</span>
+                        Scanner <span className="text-[#dc2626]">Studio</span>
                     </h1>
                 </div>
-                <button onClick={() => setView('landing')} className="text-slate-400 hover:text-[#156295] transition-colors">
+                <button onClick={() => setView('landing')} className="text-slate-400 hover:text-[#dc2626] transition-colors">
                     <X className="w-6 h-6" />
                 </button>
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50/50">
+            <main className="flex-1 flex flex-col items-center justify-center p-6 bg-red-50/50">
                 {!scannedData ? (
                     <div className="w-full max-w-md space-y-8 animate-in fade-in zoom-in duration-500">
                         <div className="text-center space-y-2">
@@ -121,9 +121,9 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                             <div id="reader" className="w-full h-full rounded-2xl overflow-hidden shadow-inner bg-black"></div>
                         </div>
 
-                        <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 flex items-start gap-3">
-                            <Smartphone className="w-5 h-5 text-[#156295] shrink-0 mt-0.5" />
-                            <p className="text-xs text-[#156295] font-semibold leading-relaxed">
+                        <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100/50 flex items-start gap-3">
+                            <Smartphone className="w-5 h-5 text-[#dc2626] shrink-0 mt-0.5" />
+                            <p className="text-xs text-[#dc2626] font-semibold leading-relaxed">
                                 This public scanner works without an account. Detected links will be shown in a protected phone preview.
                             </p>
                         </div>
@@ -163,9 +163,9 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
 
                                         <div className="flex-1 overflow-y-auto scrollbar-hide p-6 flex flex-col items-center text-center">
                                             <div className="w-20 h-20 bg-slate-50 rounded-3xl shadow-inner flex items-center justify-center mb-6">
-                                                {scanResult?.type === 'website' && <Globe className="w-10 h-10 text-blue-500" />}
+                                                {scanResult?.type === 'website' && <Globe className="w-10 h-10 text-red-500" />}
                                                 {scanResult?.type === 'pdf' && <FileText className="w-10 h-10 text-red-500" />}
-                                                {scanResult?.type === 'business' && <Smartphone className="w-10 h-10 text-[#156295]" />}
+                                                {scanResult?.type === 'business' && <Smartphone className="w-10 h-10 text-[#dc2626]" />}
                                                 {scanResult?.type === 'whatsapp' && <MessageCircle className="w-10 h-10 text-green-500" />}
                                                 {scanResult?.type === 'text' && <FileText className="w-10 h-10 text-slate-400" />}
                                             </div>
@@ -209,14 +209,14 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                         <div className="w-full max-w-sm flex flex-col gap-4 animate-in fade-in slide-in-from-right-10 duration-700 delay-300">
                             <div className="skeu-card p-8 space-y-6">
                                 <div className="space-y-2">
-                                    <span className="text-[10px] font-black uppercase text-[#156295] bg-blue-50 px-3 py-1 rounded-full">Scan Verified</span>
+                                    <span className="text-[10px] font-black uppercase text-[#dc2626] bg-red-50 px-3 py-1 rounded-full">Scan Verified</span>
                                     <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-tight">Content successfully identified.</h2>
                                 </div>
 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-4 p-4 skeu-inset">
                                         <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center">
-                                            <Globe className="w-5 h-5 text-blue-500" />
+                                            <Globe className="w-5 h-5 text-red-500" />
                                         </div>
                                         <div className="overflow-hidden">
                                             <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Destination</div>
@@ -240,13 +240,13 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                             <div className="p-6 bg-slate-800 rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
                                 <div className="relative z-10">
                                     <h4 className="text-sm font-black mb-2 flex items-center gap-2">
-                                        <Smartphone className="w-4 h-4 text-blue-400" /> Professional Scanner
+                                        <Smartphone className="w-4 h-4 text-red-400" /> Professional Scanner
                                     </h4>
                                     <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
                                         This preview is rendered in a sandboxed environment to protect your device from potentially malicious links.
                                     </p>
                                 </div>
-                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-700" />
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-700" />
                             </div>
                         </div>
                     </div>

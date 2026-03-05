@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 
@@ -112,7 +112,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               onClick={() => setActiveFolderId(folder.id)}
               className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === folder.id ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
             >
-              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
+              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
               <span>{folder.name} ({folder.count})</span>
             </button>
           ))}
@@ -138,7 +138,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-blue-500/60"
+              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-red-500/60"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -181,7 +181,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-black/5">
+                <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
                     <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden p-3 bg-white group-hover:shadow-inner transition-all duration-500">
@@ -190,7 +190,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       ) : (
                         <Barcode className="skeu-text-accent w-10 h-10 opacity-20" />
                       )}
-                      <div className="absolute inset-0 bg-blue-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
 
@@ -217,7 +217,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="flex justify-center">
                     {folder ? (
                       <span className="text-[10px] font-black uppercase tracking-widest skeu-text-muted skeu-tag px-4 py-2 rounded-xl flex items-center gap-2 max-w-[140px] truncate bg-white/80">
-                        <FolderIcon className="w-3.5 h-3.5 opacity-40 shrink-0 text-blue-500" />
+                        <FolderIcon className="w-3.5 h-3.5 opacity-40 shrink-0 text-red-500" />
                         <span className="truncate">{folder.name}</span>
                       </span>
                     ) : (
@@ -229,7 +229,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="text-center group-hover:scale-110 transition-transform duration-500">
                     <div className="text-3xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
                     <div className="text-[9px] font-black skeu-text-muted uppercase tracking-[0.2em] mt-2 flex items-center justify-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-blue-400/40 animate-pulse" /> Total Scans
+                      <div className="w-2 h-2 rounded-full bg-red-400/40 animate-pulse" /> Total Scans
                     </div>
                   </div>
 

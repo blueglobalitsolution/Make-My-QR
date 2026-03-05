@@ -121,7 +121,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
 
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center">
-                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#156295] focus:ring-[#156295] border-slate-300 rounded" />
+                <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-[#dc2626] focus:ring-[#dc2626] border-slate-300 rounded" />
                 <label htmlFor="remember-me" className="ml-2 block text-xs font-bold skeu-text-secondary">Remember me</label>
               </div>
               <button type="button" onClick={() => setView('forgot_password')} className="text-sm font-bold skeu-text-accent hover:underline">Forgot password?</button>
@@ -130,7 +130,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             <button type="submit" className={btnPrimary}>Sign in</button>
 
             <p className="text-center text-sm text-slate-500">
-              Don't have an account? <button type="button" onClick={() => setView('register')} className="font-bold text-[#156295] hover:underline">Sign up</button>
+              Don't have an account? <button type="button" onClick={() => setView('register')} className="font-bold text-[#dc2626] hover:underline">Sign up</button>
             </p>
           </form>
         </div>
@@ -192,12 +192,12 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             <button type="submit" className={btnPrimary}>Sign up</button>
 
             <p className="text-center text-sm text-slate-500">
-              Already have an account? <button type="button" onClick={() => setView('auth')} className="font-bold text-[#156295] hover:underline">Log In</button>
+              Already have an account? <button type="button" onClick={() => setView('auth')} className="font-bold text-[#dc2626] hover:underline">Log In</button>
             </p>
 
             <p className="text-center text-xs text-slate-400 pt-4 leading-relaxed">
               By creating an account, you consent that you have read and agree to our<br />
-              <button type="button" className="font-bold text-[#156295] hover:underline">Terms & Conditions</button> and the <button type="button" className="font-bold text-[#156295] hover:underline">Privacy Policy.</button>
+              <button type="button" className="font-bold text-[#dc2626] hover:underline">Terms & Conditions</button> and the <button type="button" className="font-bold text-[#dc2626] hover:underline">Privacy Policy.</button>
             </p>
           </form>
         </div>

@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="fixed top-0 left-0 w-64 h-screen flex flex-col z-50 skeu-sidebar p-6 border-r border-black/5">
+    <aside className="fixed top-0 left-0 w-64 h-screen flex flex-col z-50 skeu-sidebar p-6 border-r border-[#fee2e2]">
       <div className="flex flex-col h-full space-y-10">
         {/* Logo */}
         <div
@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
 
         {/* Logout */}
-        <div className="pt-6 border-t border-black/5">
+        <div className="pt-6 border-t border-[#fee2e2]">
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-4 px-5 py-4 text-[13px] font-black skeu-text-muted hover:skeu-text-secondary active:scale-95 transition-all"

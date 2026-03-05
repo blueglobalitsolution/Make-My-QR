@@ -176,7 +176,7 @@ export interface WizardState {
     level: 'L' | 'M' | 'Q' | 'H';
     logoUrl?: string;
     borderRadius: number;
-    pattern: 'square' | 'dots' | 'rounded' | 'extra-rounded' | 'classy' | 'classy-rounded';
+    pattern: 'square' | 'dots' | 'rounded' | 'extra-rounded' | 'classy' | 'classy-rounded' | 'diamond' | 'heart';
     cornerType: 'square' | 'dot' | 'extra-rounded';
     cornersSquareType?: string;
     cornersSquareColor?: string;

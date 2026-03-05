@@ -47,30 +47,30 @@
   }
 }
 
-/* --- Root Variables (Blue Skeu Palette) --- */
+/* --- Root Variables (Red Skeu Palette) --- */
 :root {
-  --skeu-light: #f8fafc;
-  /* slate-50 */
-  --skeu-mid: #f1f5f9;
-  /* slate-100 */
-  --skeu-dark: #e2e8f0;
-  /* slate-200 */
-  --skeu-accent: #156295;
-  --skeu-accent-dark: #0E4677;
-  --skeu-accent-blue: #156295;
-  --skeu-accent-blue-dark: #0E4677;
+  --skeu-light: #fff5f5;
+  /* red-50 */
+  --skeu-mid: #fee2e2;
+  /* red-100 */
+  --skeu-dark: #fecaca;
+  /* red-200 */
+  --skeu-accent: #dc2626;
+  --skeu-accent-dark: #991b1b;
+  --skeu-accent-red: #dc2626;
+  --skeu-accent-red-dark: #991b1b;
   --skeu-surface: #ffffff;
-  --skeu-inset: #f1f5f9;
+  --skeu-inset: #fff5f5;
   --skeu-highlight: rgba(255, 255, 255, 0.9);
-  --skeu-shadow: rgba(15, 23, 42, 0.08);
-  --skeu-shadow-deep: rgba(15, 23, 42, 0.12);
+  --skeu-shadow: rgba(153, 27, 27, 0.08);
+  --skeu-shadow-deep: rgba(153, 27, 27, 0.12);
   --skeu-border-top: rgba(255, 255, 255, 0.8);
-  --skeu-border-bottom: rgba(15, 23, 42, 0.1);
+  --skeu-border-bottom: rgba(153, 27, 27, 0.1);
 }
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(145deg, #ffffff 0%, #fff1f2 100%);
   min-height: 100vh;
   position: relative;
 }
@@ -88,7 +88,7 @@
 /* --- Raised Surface (Cards, Panels) --- */
 .skeu-card {
   background: linear-gradient(180deg, #ffffff 0%, #fefefe 100%);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #fee2e2;
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 1) inset,
     0 4px 6px -1px rgba(0, 0, 0, 0.05),
@@ -101,18 +101,18 @@
 
 .skeu-card-active {
   background: #ffffff;
-  border-color: rgba(21, 98, 149, 0.1);
+  border-color: rgba(220, 38, 38, 0.1);
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 1) inset,
     0 20px 25px -5px rgba(15, 23, 42, 0.1),
     0 10px 10px -5px rgba(15, 23, 42, 0.04),
-    0 0 0 1px rgba(21, 98, 149, 0.05);
+    0 0 0 1px rgba(220, 38, 38, 0.05);
   transform: translateY(-4px) scale(1.02);
 }
 
 .skeu-card-deep {
   background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
-  border: 1px solid #cbd5e1;
+  border: 1px solid #fecaca;
   box-shadow:
     0 2px 0 0 rgba(255, 255, 255, 1) inset,
     0 20px 40px rgba(15, 30, 60, 0.06),
@@ -122,19 +122,19 @@
 
 /* --- Inset / Recessed (Inputs, Wells) --- */
 .skeu-inset {
-  background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-top: 2px solid rgba(15, 23, 42, 0.12);
+  background: linear-gradient(180deg, #fff1f2 0%, #fffafa 100%);
+  border: 1px solid rgba(153, 27, 27, 0.08);
+  border-top: 2px solid rgba(153, 27, 27, 0.12);
   box-shadow:
-    0 2px 4px rgba(15, 23, 42, 0.04) inset,
+    0 2px 4px rgba(153, 27, 27, 0.04) inset,
     0 1px 1px rgba(255, 255, 255, 0.8);
   border-radius: 1.5rem;
 }
 
 .skeu-input {
-  background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.05) inset;
+  background: linear-gradient(180deg, #fff1f2 0%, #fffafa 100%);
+  border: 1px solid #fee2e2;
+  box-shadow: 0 4px 8px rgba(153, 27, 27, 0.05) inset;
   border-radius: 1.25rem;
   color: #1e293b;
   font-weight: 700;
@@ -144,7 +144,7 @@
 .skeu-input:focus {
   background: #fff;
   border-color: var(--skeu-accent);
-  box-shadow: 0 4px 12px rgba(21, 98, 149, 0.05) inset, 0 0 0 4px rgba(21, 98, 149, 0.04);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.05) inset, 0 0 0 4px rgba(220, 38, 38, 0.04);
   outline: none;
 }
 
@@ -165,12 +165,12 @@
 
 /* --- Buttons --- */
 .skeu-btn {
-  background: linear-gradient(180deg, #4A9FF5 0%, #156295 100%);
-  border: 1px solid #0E4677;
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  border: 1px solid #991b1b;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
-    0 4px 8px rgba(21, 98, 149, 0.2),
+    0 4px 8px rgba(220, 38, 38, 0.2),
     0 1px 2px rgba(0, 0, 0, 0.1);
   color: #fff;
   font-weight: 800;
@@ -184,12 +184,12 @@
   transform: translateY(-1px);
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.4) inset,
-    0 6px 12px rgba(21, 98, 149, 0.3);
+    0 6px 12px rgba(220, 38, 38, 0.3);
 }
 
 .skeu-btn:active {
   transform: translateY(1px);
-  background: linear-gradient(180deg, #156295 0%, #0E4677 100%);
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) inset;
 }
 
@@ -227,8 +227,8 @@
 
 /* --- Sidebar --- */
 .skeu-sidebar {
-  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
-  border-right: 1px solid #e2e8f0;
+  background: linear-gradient(90deg, #fff5f5 0%, #ffffff 100%);
+  border-right: 1px solid #fee2e2;
 }
 
 .skeu-sidebar-item {
@@ -240,29 +240,29 @@
 }
 
 .skeu-sidebar-item:hover {
-  background: rgba(15, 98, 149, 0.05);
-  color: var(--skeu-accent-blue);
+  background: rgba(220, 38, 38, 0.05);
+  color: var(--skeu-accent-red);
 }
 
 .skeu-sidebar-item-active {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(15, 23, 42, 0.05);
+  background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+  border: 1px solid rgba(153, 27, 27, 0.05);
   box-shadow:
     0 1px 0 0 #fff inset,
-    0 4px 12px rgba(15, 23, 42, 0.06);
-  color: var(--skeu-accent-blue);
+    0 4px 12px rgba(153, 27, 27, 0.06);
+  color: var(--skeu-accent-red);
   font-weight: 800;
 }
 
-/* --- Phone Preview (Premium Purple iPhone Mockup) --- */
+/* --- Phone Preview (Premium Metallic Red iPhone Mockup) --- */
 .skeu-phone {
   background: #000000;
-  border: 10px solid #3c2a4d;
-  /* Deep Metallic Purple Border */
+  border: 10px solid #4d0a0a;
+  /* Deep Metallic Red Border */
   border-radius: 3.5rem;
   box-shadow:
-    0 40px 100px -20px rgba(60, 42, 77, 0.3),
-    /* Purple tinted shadow */
+    0 40px 100px -20px rgba(77, 10, 10, 0.3),
+    /* Red tinted shadow */
     0 0 0 1px rgba(255, 255, 255, 0.05) inset,
     0 0 15px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -275,8 +275,8 @@
   position: absolute;
   inset: -2px;
   border-radius: 3.7rem;
-  border: 4px solid #5a4170;
-  /* Brighter Purple Edge */
+  border: 4px solid #7a1a1a;
+  /* Brighter Red Edge */
   opacity: 0.3;
   pointer-events: none;
 }
@@ -324,9 +324,9 @@
 
 /* --- Tabs --- */
 .skeu-tab-group {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04) inset;
+  background: #fff1f2;
+  border: 1px solid #fee2e2;
+  box-shadow: 0 2px 4px rgba(153, 27, 27, 0.04) inset;
   border-radius: 1.5rem;
   padding: 4px;
 }
@@ -347,17 +347,17 @@
 /* --- Tags --- */
 .skeu-tag {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03);
+  border: 1px solid #fee2e2;
+  box-shadow: 0 2px 4px rgba(153, 27, 27, 0.03);
   border-radius: 0.75rem;
   color: #475569;
 }
 
 .skeu-tag-active {
-  background: linear-gradient(180deg, #156295 0%, #0e4677 100%);
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
   color: #fff;
-  border-color: #072e5c;
-  box-shadow: 0 4px 12px rgba(21, 98, 149, 0.2);
+  border-color: #7f1d1d;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 /* --- Metallic Elements --- */
@@ -371,9 +371,9 @@
 
 /* --- Search --- */
 .skeu-search {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) inset;
+  background: #fdf2f2;
+  border: 1px solid #fee2e2;
+  box-shadow: 0 2px 6px rgba(153, 27, 27, 0.04) inset;
   border-radius: 1.25rem;
 }
 
@@ -398,13 +398,13 @@
 }
 
 .skeu-text-accent {
-  color: var(--skeu-accent-blue);
+  color: var(--skeu-accent-red);
 }
 
 .skeu-hero-icon {
-  background: linear-gradient(145deg, #156295 0%, #0e4677 100%);
+  background: linear-gradient(145deg, #dc2626 0%, #991b1b 100%);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 12px 24px rgba(21, 98, 149, 0.25);
+  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.25);
 }
 
 .skeu-gloss::after {

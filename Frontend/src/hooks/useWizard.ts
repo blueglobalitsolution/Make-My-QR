@@ -84,9 +84,9 @@ const getInitialWizardState = (): WizardState => ({
   password: '',
   folderId: undefined,
   business: {
-    primaryColor: '#156295',
+    primaryColor: '#dc2626',
     secondaryColor: '#9DB3C2',
-    pageBackgroundColor: '#156295',
+    pageBackgroundColor: '#dc2626',
     linkBackgroundColor: '#F7F7F7',
     linkTextColor: '#9DB3C2',
     company: 'My Company',
@@ -181,7 +181,7 @@ export const useWizard = (
       type: wizard.config.pattern as any,
       gradient: useFgGradient ? {
         type: 'linear',
-        colorStops: [{ offset: 0, color: wizard.config.fgColor }, { offset: 1, color: '#156295' }]
+        colorStops: [{ offset: 0, color: wizard.config.fgColor }, { offset: 1, color: '#dc2626' }]
       } : undefined
     },
     backgroundOptions: { color: isTransparent ? 'transparent' : wizard.config.bgColor },
@@ -215,7 +215,7 @@ export const useWizard = (
           address: businessData?.location?.searchAddress || '',
           openingHours: businessData?.openingHours || INITIAL_HOURS,
           socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
-          primaryColor: businessData?.primaryColor || '#156295',
+          primaryColor: businessData?.primaryColor || '#dc2626',
           secondaryColor: businessData?.secondaryColor || '#9DB3C2',
           fontTitle: businessData?.fontTitle || 'Inter',
           fontText: businessData?.fontText || 'Inter',

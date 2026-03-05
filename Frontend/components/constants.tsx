@@ -107,9 +107,9 @@ export const FONT_OPTIONS = [
 
 export const FRAME_STYLES: { id: FrameType; label: string; icon: React.ReactNode }[] = [
   { id: 'none', label: 'None', icon: <CircleOff className="w-6 h-6" /> },
-  { id: 'basic-label', label: 'Classic', icon: <div className="w-6 h-6 border-2 border-black flex flex-col"><div className="flex-1" /><div className="h-1.5 bg-black" /></div> },
-  { id: 'rounded-label', label: 'Modern', icon: <div className="w-6 h-6 border-2 border-black rounded-sm flex flex-col overflow-hidden"><div className="flex-1" /><div className="h-1.5 bg-black" /></div> },
-  { id: 'thick-label', label: 'Bold', icon: <div className="w-6 h-6 border-[3px] border-black flex flex-col"><div className="flex-1" /><div className="h-1.5 bg-black" /></div> },
+  { id: 'basic-label', label: 'Classic', icon: <div className="w-6 h-6 border-2 border-current flex flex-col"><div className="flex-1" /><div className="h-1.5 bg-current" /></div> },
+  { id: 'rounded-label', label: 'Modern', icon: <div className="w-6 h-6 border-2 border-current rounded-sm flex flex-col overflow-hidden"><div className="flex-1" /><div className="h-1.5 bg-current" /></div> },
+  { id: 'thick-label', label: 'Bold', icon: <div className="w-6 h-6 border-[3px] border-current flex flex-col"><div className="flex-1" /><div className="h-1.5 bg-current" /></div> },
   { id: 'bubble', label: 'Bubble', icon: <MessageCircle className="w-6 h-6" /> },
   { id: 'shopping', label: 'Shop', icon: <ShoppingBag className="w-6 h-6" /> },
   { id: 'gift', label: 'Gift', icon: <Gift className="w-6 h-6" /> },
@@ -117,29 +117,25 @@ export const FRAME_STYLES: { id: FrameType; label: string; icon: React.ReactNode
   { id: 'delivery', label: 'Scooter', icon: <Bike className="w-6 h-6" /> },
   { id: 'service', label: 'Tray', icon: <Utensils className="w-6 h-6" /> },
   { id: 'hands', label: 'Hands', icon: <Hand className="w-6 h-6" /> },
-  { id: 'ribbon', label: 'Banner', icon: <div className="w-6 h-4 bg-black relative"><div className="absolute -bottom-1 -left-1 w-2 h-2 bg-black rotate-45" /><div className="absolute -bottom-1 -right-1 w-2 h-2 bg-black rotate-45" /></div> },
+  { id: 'ribbon', label: 'Banner', icon: <div className="w-6 h-4 bg-current relative"><div className="absolute -bottom-1 -left-1 w-2 h-2 bg-current rotate-45" /><div className="absolute -bottom-1 -right-1 w-2 h-2 bg-current rotate-45" /></div> },
 ];
 
 export const PATTERN_OPTIONS: { id: WizardState['config']['pattern']; icon: React.ReactNode; label: string }[] = [
-  { id: 'square', label: 'Square', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-black" /> <div className="bg-black" /> <div className="bg-black" /> <div className="bg-slate-200" /> </div> },
-  { id: 'classy-rounded', label: 'Classy Rounded', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-black rounded-[2px]" /> <div className="bg-black rounded-[2px]" /> <div className="bg-black rounded-[2px]" /> <div className="bg-slate-200" /> </div> },
-  { id: 'classy', label: 'Classy', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-black rounded-full" /> <div className="bg-black rounded-full" /> <div className="bg-black rounded-full" /> <div className="bg-slate-200" /> </div> },
-  { id: 'dots', label: 'Dots', icon: <div className="w-8 h-8 grid grid-cols-3 gap-0.5">{Array(9).fill(0).map((_, i) => <div key={i} className="bg-black rounded-full h-1.5 w-1.5" />)}</div> },
-  { id: 'rounded', label: 'Rounded', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-black rounded-sm" /> <div className="bg-black rounded-sm" /> <div className="bg-black rounded-sm" /> <div className="bg-slate-200" /> </div> },
-  { id: 'extra-rounded', label: 'Extra Rounded', icon: <div className="w-8 h-8 rotate-45 grid grid-cols-2 gap-1"><div className="bg-black" /> <div className="bg-black" /> <div className="bg-black" /> <div className="bg-slate-200" /> </div> },
+  { id: 'square', label: 'Square', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-current" /> <div className="bg-current" /> <div className="bg-current" /> <div className="bg-slate-200" /> </div> },
+  { id: 'classy', label: 'Classy', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-current rounded-full" /> <div className="bg-current rounded-full" /> <div className="bg-current rounded-full" /> <div className="bg-slate-200" /> </div> },
+  { id: 'dots', label: 'Dots', icon: <div className="w-8 h-8 grid grid-cols-3 gap-0.5">{Array(9).fill(0).map((_, i) => <div key={i} className="bg-current rounded-full h-1.5 w-1.5" />)}</div> },
+  { id: 'rounded', label: 'Rounded', icon: <div className="w-8 h-8 grid grid-cols-2 gap-0.5"><div className="bg-current rounded-sm" /> <div className="bg-current rounded-sm" /> <div className="bg-current rounded-sm" /> <div className="bg-slate-200" /> </div> },
 ];
 
 export const CORNER_SQUARE_OPTIONS = [
-  { id: 'square', icon: <div className="w-6 h-6 border-2 border-black" /> },
-  { id: 'dot', icon: <div className="w-6 h-6 border-2 border-black rounded-full" /> },
-  { id: 'extra-rounded', icon: <div className="w-6 h-6 border-2 border-black rounded-md" /> },
-  { id: 'rounded-square', icon: <div className="w-6 h-6 border-[3px] border-black rounded-sm" /> },
-  { id: 'heavy-square', icon: <div className="w-6 h-6 border-4 border-black" /> },
+  { id: 'square', icon: <div className="w-6 h-6 border-2 border-current" /> },
+  { id: 'dot', icon: <div className="w-6 h-6 border-2 border-current rounded-full" /> },
+  { id: 'extra-rounded', icon: <div className="w-6 h-6 border-2 border-current rounded-md" /> },
+  { id: 'rounded-square', icon: <div className="w-6 h-6 border-[3px] border-current rounded-sm" /> },
 ];
 
 export const CORNER_DOT_OPTIONS = [
-  { id: 'square', icon: <div className="w-4 h-4 bg-black" /> },
-  { id: 'dot', icon: <div className="w-4 h-4 bg-black rounded-full" /> },
-  { id: 'rounded-square', icon: <div className="w-4 h-4 bg-black rounded-sm" /> },
-  { id: 'diamond', icon: <div className="w-4 h-4 bg-black rotate-45" /> },
+  { id: 'square', icon: <div className="w-4 h-4 bg-current" /> },
+  { id: 'dot', icon: <div className="w-4 h-4 bg-current rounded-full" /> },
+  { id: 'rounded-square', icon: <div className="w-4 h-4 bg-current rounded-sm" /> },
 ];
