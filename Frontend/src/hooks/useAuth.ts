@@ -167,7 +167,7 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
         savedPalettes: []
       };
       setCurrentUser(user);
-      localStorage.setItem('barqr_user', JSON.stringify(user));
+      localStorage.setItem('makemyqr_user', JSON.stringify(user));
       setView('my_codes');
     } catch (err) {
       alert("Registration failed. Please try again.");
@@ -191,7 +191,7 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
           name: `${accFirstName} ${accLastName}`.trim()
         };
         setCurrentUser(updatedUser);
-        localStorage.setItem('barqr_user', JSON.stringify(updatedUser));
+        localStorage.setItem('makemyqr_user', JSON.stringify(updatedUser));
       }
       alert("Profile updated successfully!");
     } catch (err) {

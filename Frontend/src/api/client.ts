@@ -8,7 +8,7 @@ const apiClient = axios.create({
 
 // Add interceptor to include token in headers
 apiClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem('barqr_token');
+    const token = localStorage.getItem('makemyqr_token');
     if (token) {
         // Use set() for better compatibility with different axios versions
         config.headers.set('Authorization', `Token ${token}`);
@@ -22,8 +22,8 @@ apiClient.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             console.warn("Unauthorized request - logging out");
-            localStorage.removeItem('barqr_token');
-            localStorage.removeItem('barqr_user');
+            localStorage.removeItem('makemyqr_token');
+            localStorage.removeItem('makemyqr_user');
             // Force a reload or redirect if necessary, or let the app state handle it
         }
         return Promise.reject(error);

@@ -1,5 +1,5 @@
 /* ============================================
-   BARQR Studio — Professional Blue Skeuomorphic UI
+   MAKEMYQR — Professional Blue Skeuomorphic UI
    ============================================ */
 
 /* --- Noise Texture Overlay --- */
@@ -55,8 +55,10 @@
   /* slate-100 */
   --skeu-dark: #e2e8f0;
   /* slate-200 */
+  --skeu-accent: #156295;
+  --skeu-accent-dark: #0E4677;
   --skeu-accent-blue: #156295;
-  --skeu-accent-blue-dark: #0e4677;
+  --skeu-accent-blue-dark: #0E4677;
   --skeu-surface: #ffffff;
   --skeu-inset: #f1f5f9;
   --skeu-highlight: rgba(255, 255, 255, 0.9);
@@ -141,7 +143,7 @@
 
 .skeu-input:focus {
   background: #fff;
-  border-color: var(--skeu-accent-blue);
+  border-color: var(--skeu-accent);
   box-shadow: 0 4px 12px rgba(21, 98, 149, 0.05) inset, 0 0 0 4px rgba(21, 98, 149, 0.04);
   outline: none;
 }

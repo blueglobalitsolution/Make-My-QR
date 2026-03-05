@@ -1661,7 +1661,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                 <div className="w-[320px] h-[650px] relative shrink-0 flex items-center justify-center">
                   {/* Phone Screen Content Area - Perfectly positioned to fit inside the mockup frame */}
-                  <div className={`absolute top-[11px] bottom-[11px] left-[15px] right-[15px] rounded-[2.8rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
+                  <div className={`absolute top-[9px] bottom-[16.5px] left-[15.5px] right-[15.5px] rounded-[2.5rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#156295]' : 'bg-white'
                     }`} style={{
                       backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
@@ -1731,7 +1731,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                     <UserCircle className="w-full h-full" />
                                   </div>
                                   <div className="text-left min-w-0 flex-1">
-                                    <h4 className="text-[13px] font-black tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
+                                    <h4 className="text-[13px] font-semibold tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
                                     <p className="text-[9px] font-bold opacity-60">Online</p>
                                   </div>
                                 </div>

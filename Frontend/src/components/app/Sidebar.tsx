@@ -35,12 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="flex items-center gap-3 cursor-pointer group px-2"
           onClick={() => setView('landing')}
         >
-          <div className="skeu-hero-icon text-white p-2.5 rounded-xl relative skeu-gloss group-hover:scale-105 transition-transform">
-            <Barcode className="w-6 h-6" />
-          </div>
-          <h1 className="text-xl font-black skeu-text-primary tracking-tighter">
-            BAR<span className="skeu-text-accent">QR</span>
-          </h1>
+          <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-10 group-hover:scale-105 transition-transform" />
         </div>
 
         {/* Create QR Code Button */}
