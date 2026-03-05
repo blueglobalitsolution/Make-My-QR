@@ -125,7 +125,7 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
         savedPalettes: []
       };
       setCurrentUser(user);
-      localStorage.setItem('barqr_user', JSON.stringify(user));
+      localStorage.setItem('makemyqr_user', JSON.stringify(user));
 
       const searchParams = new URLSearchParams(window.location.search);
       const next = searchParams.get('next');

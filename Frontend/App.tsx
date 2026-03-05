@@ -113,10 +113,27 @@ const App: React.FC = () => {
   const refreshData = async () => {
     try {
       const [historyData, foldersData] = await Promise.all([getCodes(), getFolders()]);
-      setHistory(historyData);
-      setFolders(foldersData);
-    } catch (err) {
+
+      // Map backend data (snake_case) to frontend types (camelCase)
+      const mappedHistory = (Array.isArray(historyData) ? historyData : []).map((code: any) => ({
+        ...code,
+        id: code.id.toString(),
+        folderId: code.folder?.toString(),
+        shortSlug: code.short_slug,
+        isDynamic: code.is_dynamic,
+        isProtected: code.is_protected,
+        isLeadCapture: code.is_lead_capture,
+        createdAt: code.created_at,
+        userId: code.user?.toString()
+      }));
+
+      setHistory(mappedHistory);
+      if (Array.isArray(foldersData)) setFolders(foldersData);
+    } catch (err: any) {
       console.error("Failed to fetch library data", err);
+      if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
+        alert("Backend Connection Refused: Please ensure the Django server is running on port 8010 and accessible.");
+      }
     }
   };
 
@@ -129,7 +146,7 @@ const App: React.FC = () => {
       setBusinessProfiles(profiles);
 
       // Restore user state from local storage
-      const savedUserStr = localStorage.getItem('makemyqr_user');
+      const savedUserStr = localStorage.getItem('makemyqr_user') || localStorage.getItem('barqr_user');
       const savedToken = localStorage.getItem('makemyqr_token');
 
       if (savedUserStr && savedToken) {

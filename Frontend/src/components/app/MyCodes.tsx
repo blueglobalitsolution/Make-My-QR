@@ -216,10 +216,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     <h3 className="font-black skeu-text-primary text-lg tracking-tight truncate px-1">{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
-                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
+                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[200px]">
                         {(code.shortSlug || (code as any).short_slug)
-                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
-                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
+                          ? `${window.location.origin}/r/${code.shortSlug || (code as any).short_slug}`
+                          : (code.value.startsWith('/') ? `${window.location.origin}${code.value}` : code.value)}
                       </span>
                     </div>
                     <p className="text-[9px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-1">

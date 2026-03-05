@@ -92,7 +92,8 @@ def redirect_scan(request, slug):
 
     # For file-type QR codes, redirect to Frontend file viewer page
     if file_obj or file_url or is_file_category or has_file_url:
-        frontend_landing_url = f"{settings.FRONTEND_URL}/view/file/{slug}"
+        redirect_path = f"/view/file/{slug}"
     else:
-        frontend_landing_url = f"{settings.FRONTEND_URL}/view/{slug}"
-    return HttpResponseRedirect(frontend_landing_url)
+        redirect_path = f"/view/{slug}"
+    
+    return HttpResponseRedirect(redirect_path)
