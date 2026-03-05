@@ -4,6 +4,7 @@ import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } fro
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
+import { GatekeeperPreview } from '../../previews/gatekeeper';
 // @ts-ignore
 import phoneFrame from './Phone.png';
 
@@ -95,6 +96,14 @@ export const Wizard: React.FC<WizardProps> = ({
   getQRValue,
 }) => {
   const [hoveredType, setHoveredType] = React.useState<WizardState['type'] | null>(null);
+  const [leadForm, setLeadForm] = React.useState({ name: '', email: '' });
+  const [previewIsAuthorized, setPreviewIsAuthorized] = React.useState(false);
+  const [previewViewMode, setPreviewViewMode] = React.useState<'landing' | 'preview'>('landing');
+
+  const handlePreviewLeadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPreviewIsAuthorized(true);
+  };
 
   React.useEffect(() => {
     if (wizard.step === 3) {
@@ -1690,160 +1699,20 @@ export const Wizard: React.FC<WizardProps> = ({
                     <div className="flex-1 overflow-y-auto scrollbar-hide relative">
                       {phonePreviewMode === 'ui' ? (
                         <div className="h-full flex flex-col animate-in fade-in duration-500">
-                          {/* High Fidelity UI Previews */}
-                          {(hoveredType || wizard.type) === 'website' && (
-                            <div className="h-full flex flex-col bg-slate-50">
-                              <div className="h-32 bg-[#4FD1C5] w-full flex flex-col justify-center px-6 shrink-0 shadow-sm">
-                                <div className="flex items-center gap-3 w-full max-w-[280px] mx-auto">
-                                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-md shrink-0">
-                                    <Globe className="w-5 h-5 text-white" />
-                                  </div>
-                                  <div className="flex-1 h-8 bg-white/20 rounded-xl backdrop-blur-md flex items-center px-4 overflow-hidden">
-                                    <span className="text-[11px] font-black text-white truncate">
-                                      {wizard.value || 'https://yourwebsite.com'}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex-1 bg-white pt-8 px-6 space-y-6 flex flex-col">
-                                <div className="w-full aspect-[4/3] rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-8 transition-colors duration-500 shrink-0">
-                                  <Globe className="w-16 h-16 text-[#dc2626] opacity-10" />
-                                </div>
-                                <div className="space-y-3 px-2 shrink-0">
-                                  <div className="h-2.5 w-3/4 bg-slate-100 rounded-full" />
-                                  <div className="h-2.5 w-1/2 bg-slate-100 rounded-full opacity-60" />
-                                </div>
-                                <div className="pt-2 pb-8 mt-auto shrink-0">
-                                  <div className="h-12 w-full bg-[#dc2626]/10 rounded-2xl border border-[#dc2626]/5" />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* WhatsApp High Fidelity Preview */}
-                          {(hoveredType || wizard.type) === 'whatsapp' && (
-                            <div className="h-full flex flex-col pt-0 bg-[#efe7de] relative">
-                              <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }} />
-                              <div className="bg-[#075E54] p-3 pt-12 text-white flex items-center justify-between shrink-0 shadow-lg relative z-10">
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-400 text-xl overflow-hidden border border-white/10 shrink-0">
-                                    <UserCircle className="w-full h-full" />
-                                  </div>
-                                  <div className="text-left min-w-0 flex-1">
-                                    <h4 className="text-[13px] font-semibold tracking-tight leading-tight truncate">+{whatsappCountryCode} {whatsappPhone || '84606 87490'}</h4>
-                                    <p className="text-[9px] font-bold opacity-60">Online</p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2.5 pr-1 shrink-0">
-                                  <Video className="w-4 h-4 text-white/90" />
-                                  <Phone className="w-3.5 h-3.5 text-white/90" />
-                                  <MoreVertical className="w-4 h-4 text-white/90" />
-                                </div>
-                              </div>
-                              <div className="flex-1 p-4 flex flex-col justify-start relative z-10 pt-8">
-                                <div className="self-end max-w-[85%] relative mb-3 animate-in slide-in-from-right-4 duration-500">
-                                  <div className="bg-[#DCF8C6] p-2 rounded-xl rounded-tr-none shadow-sm relative border border-green-200/50">
-                                    <p className="text-[12px] font-medium text-slate-800 text-left leading-relaxed">
-                                      {whatsappMessage || "Type a message."}
-                                    </p>
-                                    <div className="flex items-center justify-end gap-1 mt-1">
-                                      <span className="text-[8px] font-bold text-slate-400">9:41</span>
-                                      <CheckCheck className="w-3 h-3 text-red-400" />
-                                    </div>
-                                    <div className="absolute -right-1.5 top-0 w-2.5 h-2.5 bg-[#DCF8C6] clip-bubble-tail" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="p-3 bg-transparent relative z-10 flex items-center gap-2 mb-4 px-4">
-                                <div className="flex-1 bg-white rounded-full h-12 flex items-center px-4 gap-3 shadow-sm border border-slate-200/50">
-                                  <Smile className="w-6 h-6 text-slate-400" />
-                                  <span className="text-sm font-medium text-slate-300">Message</span>
-                                  <div className="ml-auto flex items-center gap-4">
-                                    <Paperclip className="w-5 h-5 text-slate-400 -rotate-45" />
-                                    <Camera className="w-6 h-6 text-slate-400" />
-                                  </div>
-                                </div>
-                                <div className="w-12 h-12 bg-[#00A884] rounded-full flex items-center justify-center shadow-md">
-                                  <Mic className="w-6 h-6 text-white" />
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {((hoveredType || wizard.type) === 'business' || (hoveredType || wizard.type) === 'links' || (hoveredType || wizard.type) === 'pdf') && (
-                            <div className="h-full flex flex-col bg-white relative">
-                              <div className="px-6 pt-12 pb-24 text-center space-y-4 shrink-0 transition-all duration-700 relative overflow-hidden" style={{ backgroundColor: ((hoveredType || wizard.type) === wizard.type ? (wizard.business?.primaryColor || '#8D4638') : '#156295') }}>
-                                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-                                <h2 className="text-[17px] font-black leading-tight px-4 relative z-10 break-words mt-2" style={{ color: wizard.business?.fontTitleColor || '#ffffff', fontFamily: wizard.business?.fontTitle || 'Inter' }}>
-                                  {wizard.business?.title || 'Find New and Used Toys!'}
-                                </h2>
-                              </div>
-                              <div className="flex-1 -mt-16 px-4 z-10 flex flex-col overflow-y-auto scrollbar-hide pb-6">
-                                <div className="bg-white rounded-[1.5rem] shadow-xl shadow-black/10 overflow-hidden flex flex-col relative w-full border border-slate-100">
-                                  <div className="w-full aspect-video bg-slate-100 relative overflow-hidden shrink-0 mt-3 mx-3 w-[calc(100%-24px)] rounded-xl">
-                                    {wizard.business?.coverImage ? (
-                                      <img src={wizard.business?.coverImage} className="w-full h-full object-cover" alt="Cover" />
-                                    ) : (
-                                      <div className="absolute inset-0 flex items-center justify-center flex-col text-slate-300">
-                                        <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="p-5 flex flex-col flex-1 text-center bg-white items-center">
-                                    <h3 className="text-lg font-black text-slate-900 tracking-tight" style={{ fontFamily: wizard.business?.fontTitle || 'Inter' }}>
-                                      {wizard.business?.company || 'Holiday Toy Shop'}
-                                    </h3>
-                                    <p className="text-xs text-slate-500 mt-2 font-medium px-2 leading-relaxed" style={{ fontFamily: wizard.business?.fontText || 'Inter' }}>
-                                      {wizard.business?.subtitle || wizard.business?.description || 'Discover the perfect gifts for every child and every occasion!'}
-                                    </p>
-                                    <button
-                                      type="button"
-                                      className="w-full mt-4 py-3 rounded-xl font-bold text-sm shadow-md transition-transform hover:scale-105 active:scale-95"
-                                      style={{ backgroundColor: wizard.business?.secondaryColor || '#db8b00', color: '#fff' }}
-                                    >
-                                      {wizard.business?.buttons?.[0]?.text || 'View Our Inventory'}
-                                    </button>
-                                    <div className="w-full mt-5 bg-slate-50/80 rounded-xl p-3 flex flex-col text-left border border-slate-100/50">
-                                      <div className="flex items-center gap-3 border-b border-slate-200/50 pb-3 mb-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm shrink-0 border border-slate-100">
-                                          <Clock className="w-4 h-4 text-slate-500" />
-                                        </div>
-                                        <div>
-                                          <p className="text-xs font-bold text-slate-800">
-                                            Open hours - <span className="text-green-600 font-bold">Open now</span>
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <div className="flex justify-between items-center text-[11px]">
-                                        <span className="font-bold text-slate-800">Monday:</span>
-                                        <span className="font-medium text-slate-600">
-                                          {wizard.business?.openingHours?.['monday']?.isOpen && wizard.business?.openingHours?.['monday']?.slots[0]
-                                            ? `${wizard.business.openingHours['monday'].slots[0].start} - ${wizard.business.openingHours['monday'].slots[0].end}`
-                                            : '10:00 am - 04:00 pm'
-                                          }
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <button className="absolute bottom-6 right-6 w-12 h-12 rounded-xl flex items-center justify-center shadow-xl shadow-black/20 z-50 transition-transform hover:scale-110 active:scale-95 border border-white/10 shrink-0" style={{ backgroundColor: wizard.business?.primaryColor || '#8D4638' }}>
-                                <MoreVertical className="w-6 h-6 text-white" />
-                              </button>
-                            </div>
-                          )}
-
-                          {!['website', 'pdf', 'business', 'links', 'whatsapp', 'vcard'].includes((hoveredType || wizard.type) as string) && (
-                            <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-8">
-                              <div className="w-28 h-28 bg-blue-50 text-[#156295] rounded-[3rem] flex items-center justify-center skeu-card shadow-blue-500/10">
-                                <Barcode className="w-14 h-14" />
-                              </div>
-                              <div className="space-y-3">
-                                <h4 className="font-black text-slate-800 text-2xl tracking-tight">QR Preview</h4>
-                                <p className="text-[12px] font-bold text-slate-400 leading-relaxed px-4">Select a QR type on the left to start building your custom experience.</p>
-                              </div>
-                            </div>
-                          )}
+                          <GatekeeperPreview
+                            category={hoveredType || wizard.type}
+                            name={wizard.name}
+                            brandColor={wizard.business?.primaryColor || '#dc2626'}
+                            fullValue={pdfUrl || wizard.value}
+                            is_lead_capture={wizard.is_lead_capture}
+                            isAuthorized={previewIsAuthorized}
+                            isFileMode={wizard.type === 'pdf'}
+                            leadForm={leadForm}
+                            setLeadForm={setLeadForm as any}
+                            onLeadSubmit={handlePreviewLeadSubmit}
+                            viewMode={previewViewMode}
+                            setViewMode={setPreviewViewMode as any}
+                          />
                         </div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center bg-white space-y-16 p-10 animate-in zoom-in-95 duration-700">
