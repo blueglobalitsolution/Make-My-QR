@@ -175,7 +175,7 @@ export const useWizard = (
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    const val = wizard.value || "https://scannerstudio.co/preview";
+    const val = wizard.value || "https://makemyqr.com/preview";
     return val.startsWith('/') ? backendUrl + val : val;
   };
 
@@ -242,13 +242,13 @@ export const useWizard = (
       localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
       finalValue = `/view/business?id=${profileId}`;
     } else if (wizard.type === 'pdf' || wizard.type === 'links') {
-      finalValue = wizard.value || `https://scannerstudio.co/p/${Math.random().toString(36).substring(7)}`;
+      finalValue = wizard.value || `https://makemyqr.com/p/${Math.random().toString(36).substring(7)}`;
     } else if (wizard.type === 'whatsapp') {
       const cleanPhone = whatsappPhone.replace(/\s+/g, '');
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     } else {
-      finalValue = wizard.value || "https://scannerstudio.co/preview";
+      finalValue = wizard.value || "https://makemyqr.com/preview";
     }
 
     // 2. Step-specific logic
