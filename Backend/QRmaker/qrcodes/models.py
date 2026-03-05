@@ -11,6 +11,8 @@ class QRCode(models.Model):
     value = models.TextField()
     short_slug = models.CharField(max_length=50, unique=True, null=True, blank=True)
     is_dynamic = models.BooleanField(default=False)
+    is_protected = models.BooleanField(default=False)
+    is_lead_capture = models.BooleanField(default=False)
     scans = models.IntegerField(default=0)
     status = models.CharField(max_length=20, default='active')
     settings = models.JSONField(null=True, blank=True)

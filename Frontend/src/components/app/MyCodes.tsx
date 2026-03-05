@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 
@@ -112,7 +112,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               onClick={() => setActiveFolderId(folder.id)}
               className={`px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 transition-all ${activeFolderId === folder.id ? 'skeu-tag-active scale-105' : 'skeu-tag hover:scale-105'}`}
             >
-              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
+              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
               <span>{folder.name} ({folder.count})</span>
             </button>
           ))}
@@ -138,7 +138,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-red-500/60"
+              className="px-6 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag hover:scale-105 transition-all text-blue-500/60"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -181,7 +181,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[140px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-black/5">
                   {/* QR Thumbnail */}
                   <div>
                     <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden p-3 bg-white group-hover:shadow-inner transition-all duration-500">
@@ -190,38 +190,66 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       ) : (
                         <Barcode className="skeu-text-accent w-10 h-10 opacity-20" />
                       )}
-                      <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-blue-100/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
 
-                  {/* Details */}
-                  <div className="space-y-1.5 px-6 truncate">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-black skeu-text-primary text-xl tracking-tight truncate">{code.name}</h3>
-                      <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest flex-shrink-0 transition-transform group-hover:scale-110">{code.category}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <ExternalLink className="w-3.5 h-3.5 skeu-text-muted opacity-40" strokeWidth={3} />
-                      <p className="text-[12px] font-bold skeu-text-accent truncate hover:underline cursor-pointer">
-                        {code.shortSlug
-                          ? `${window.location.host}/r/${code.shortSlug}`
-                          : (code.value.length > 50 ? code.value.substring(0, 50) + '...' : code.value)}
-                      </p>
+                  <div className="space-y-1 mb-6">
+                    <h3 className="font-black skeu-text-primary text-lg tracking-tight truncate px-1">{code.name}</h3>
+                    <div className="flex items-center gap-2 px-1">
+                      <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
+                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
+                        {(code.shortSlug || (code as any).short_slug)
+                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
+                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
+                      </span>
                     </div>
                     <p className="text-[9px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-1">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
 
-                  {/* Folder */}
-                  <div className="flex justify-center">
-                    {folder ? (
-                      <span className="text-[10px] font-black uppercase tracking-widest skeu-text-muted skeu-tag px-4 py-2 rounded-xl flex items-center gap-2 max-w-[140px] truncate bg-white/80">
-                        <FolderIcon className="w-3.5 h-3.5 opacity-40 shrink-0 text-red-500" />
-                        <span className="truncate">{folder.name}</span>
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-20 italic">No Folder</span>
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-black/5">
+                    <button
+                      onClick={() => downloadCode(code, 'png')}
+                      className="py-3 skeu-btn-secondary text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5" /> PNG
+                    </button>
+                    <button
+                      onClick={() => downloadCode(code, 'svg')}
+                      className="py-3 skeu-btn-secondary text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5" /> SVG
+                    </button>
+                    {code.category === 'pdf' && (
+                      <button
+                        onClick={() => {
+                          const slug = code.shortSlug || (code as any).short_slug;
+                          if (slug) {
+                            // Go to branded landing page
+                            setView('qr_viewer');
+                            // In App.tsx, currentBusinessProfileId is hijacked for slug in qr_viewer
+                            // We need to set it. But wait, I should call a prop function if possible.
+                            // For now, let's assume we can navigate via URL pushState + Dispatch.
+                            const newPath = `/view/${slug}`;
+                            window.history.pushState({ view: 'qr_viewer' }, '', newPath);
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                            return;
+                          }
+
+                          const fileIdMatch = code.value.match(/\/view\/file\/([^?]+)/);
+                          if (fileIdMatch) {
+                            viewPdf(fileIdMatch[1]);
+                          } else {
+                            const url = code.value.startsWith('/') ? window.location.origin + code.value : code.value;
+                            window.open(url, '_blank');
+                          }
+                        }}
+                        className="col-span-2 py-3 skeu-btn text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> View PDF Document
+                      </button>
                     )}
                   </div>
 
@@ -229,7 +257,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="text-center group-hover:scale-110 transition-transform duration-500">
                     <div className="text-3xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
                     <div className="text-[9px] font-black skeu-text-muted uppercase tracking-[0.2em] mt-2 flex items-center justify-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-red-400/40 animate-pulse" /> Total Scans
+                      <div className="w-2 h-2 rounded-full bg-blue-400/40 animate-pulse" /> Total Scans
                     </div>
                   </div>
 

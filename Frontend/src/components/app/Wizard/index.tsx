@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, ScanEye, Image, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella, Lock, ShieldCheck } from 'lucide-react';
 import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } from '../../../../types';
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
@@ -1020,7 +1020,7 @@ export const Wizard: React.FC<WizardProps> = ({
               <button onClick={() => toggleSection('welcomeScreen')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                    <ScanEye className="w-5 h-5" />
+                    <Maximize className="w-5 h-5" />
                   </div>
                   <div className="text-left">
                     <h3 className="text-base font-black skeu-text-primary tracking-tight">Welcome Screen</h3>
@@ -1210,7 +1210,6 @@ export const Wizard: React.FC<WizardProps> = ({
           </div>
         )}
 
-        {/* Name Section */}
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
           <button
             onClick={() => toggleSection('name')}
@@ -1447,7 +1446,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                <ScanEye className="w-5 h-5" />
+                <Maximize className="w-5 h-5" />
               </div>
               <div className="text-left">
                 <h3 className="text-base font-black skeu-text-primary tracking-tight">Eye Styles</h3>
@@ -1545,6 +1544,62 @@ export const Wizard: React.FC<WizardProps> = ({
                   <Trash2 className="w-5 h-5" /> Remove current logo
                 </button>
               )}
+            </div>
+          )}
+        </div>
+
+        {/* Security & Gatekeeper Section */}
+        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+          <button
+            onClick={() => toggleSection('gatekeeper')}
+            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+            type="button"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <Lock className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Gatekeeper & Security</h3>
+                <p className="text-[10px] font-medium text-slate-400">Password protection and lead capture.</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'gatekeeper' ? 'rotate-180 text-indigo-600' : 'group-hover:text-slate-400'}`} />
+          </button>
+
+          {activeDesignSection === 'gatekeeper' && (
+            <div className="p-8 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Login Wall Toggle */}
+                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/gate">
+                  <button
+                    type="button"
+                    onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}
+                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#156295] border-[#156295]' : 'bg-white border-slate-200'}`}
+                  >
+                    {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                  </button>
+                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Login Wall</p>
+                    <p className="text-[10px] font-medium text-slate-400">Require login to view</p>
+                  </div>
+                </div>
+
+                {/* Lead Capture Toggle */}
+                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
+                  <button
+                    type="button"
+                    onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}
+                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#156295] border-[#156295]' : 'bg-white border-slate-200'}`}
+                  >
+                    {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                  </button>
+                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Lead Capture</p>
+                    <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
