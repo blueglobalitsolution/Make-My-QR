@@ -78,7 +78,9 @@ export type ViewState =
   | 'public_scan'
   | 'qr_viewer'
   | 'forgot_password'
-  | 'register';
+  | 'register'
+  | 'admin_login'
+  | 'admin_dashboard';
 
 export interface BusinessButton {
   id: string;

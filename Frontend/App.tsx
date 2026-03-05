@@ -21,6 +21,8 @@ import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
 import { PublicScan } from './src/components/app/PublicScan';
 import { QRViewer } from './src/components/app/QRViewer';
+import { AdminLogin } from './src/components/app/AdminLogin';
+import { AdminDashboard } from './src/components/app/AdminDashboard';
 
 const App: React.FC = () => {
   // Initialize view and IDs directly from URL to avoid mount race conditions and sync loops
@@ -54,7 +56,7 @@ const App: React.FC = () => {
     const validViews: ViewState[] = [
       'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
-      'qr_viewer'
+      'qr_viewer', 'admin_login', 'admin_dashboard'
     ];
 
     return {
@@ -317,7 +319,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (
         <Sidebar
           view={view}
           setView={setView}
@@ -328,7 +330,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? 'ml-64' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -440,6 +442,9 @@ const App: React.FC = () => {
         {view === 'qr_viewer' && currentBusinessProfileId && (
           <QRViewer slug={currentBusinessProfileId} setView={setView} isFileMode={isFileMode} />
         )}
+
+        {view === 'admin_login' && <AdminLogin setView={setView} />}
+        {view === 'admin_dashboard' && <AdminDashboard setView={setView} />}
       </main>
     </div>
   );
