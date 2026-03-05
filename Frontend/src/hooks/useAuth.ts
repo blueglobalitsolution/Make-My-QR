@@ -126,7 +126,15 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
       };
       setCurrentUser(user);
       localStorage.setItem('barqr_user', JSON.stringify(user));
-      setView('my_codes');
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const next = searchParams.get('next');
+      if (next) {
+        window.history.pushState({}, '', decodeURIComponent(next));
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      } else {
+        setView('my_codes');
+      }
     } catch (err) {
       alert("Login failed. Please check your credentials.");
     }

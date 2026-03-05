@@ -20,6 +20,7 @@ import { Account } from './src/components/app/Account';
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
 import { PublicScan } from './src/components/app/PublicScan';
+import { QRViewer } from './src/components/app/QRViewer';
 
 const App: React.FC = () => {
   // Initialize view and IDs directly from URL to avoid mount race conditions and sync loops
@@ -36,14 +37,30 @@ const App: React.FC = () => {
     const path = rawPath.slice(1).split('?')[0] || 'landing';
     if (path === 'public/scan') return { view: 'public_scan' as ViewState, businessId: null };
 
+    // Handle /view/:slug and /view/file/:slug for QR code landing pages
+    if (path.startsWith('view/')) {
+      const parts = path.split('/');
+      // Handle /view/file/:slug (file viewer)
+      if (parts[1] === 'file' && parts[2]) {
+        return { view: 'qr_viewer' as ViewState, businessId: parts[2], fileMode: true };
+      }
+      // Handle /view/:slug (regular QR viewer)
+      const slug = parts[1];
+      if (slug && slug !== 'business' && slug !== 'file') {
+        return { view: 'qr_viewer' as ViewState, businessId: slug, fileMode: false };
+      }
+    }
+
     const validViews: ViewState[] = [
       'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
-      'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan'
+      'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
+      'qr_viewer'
     ];
 
     return {
       view: (validViews.includes(path as any) ? path : 'landing') as ViewState,
       businessId: null as string | null,
+      fileMode: false,
     };
   };
 
@@ -52,6 +69,7 @@ const App: React.FC = () => {
   const [phonePreviewMode, setPhonePreviewMode] = useState<'ui' | 'qr'>('qr');
   const [savedPalettes, setSavedPalettes] = useState<Palette[]>([]);
   const [currentBusinessProfileId, setCurrentBusinessProfileId] = useState<string | null>(initialState.businessId);
+  const [isFileMode, setIsFileMode] = useState<boolean>((initialState as any).fileMode || false);
   const [businessProfiles, setBusinessProfiles] = useState<any[]>([]);
 
   const auth = useAuth(setView);
@@ -79,8 +97,8 @@ const App: React.FC = () => {
   // Sync view changes to URL history
   useEffect(() => {
     const rawPath = window.location.pathname;
-    const isSpecialPath = rawPath.startsWith('/view/business') || rawPath.startsWith('/public/scan');
-    const isSpecialView = view === 'business_profile' || view === 'public_scan';
+    const isSpecialPath = rawPath.startsWith('/view/business') || rawPath.startsWith('/public/scan') || rawPath.startsWith('/view/');
+    const isSpecialView = view === 'business_profile' || view === 'public_scan' || view === 'qr_viewer';
 
     // Skip if we are on a special view path (deep linking) to avoid overriding with base view
     if (isSpecialPath && isSpecialView) return;
@@ -149,19 +167,25 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleRouteChange = async () => {
       const rawPath = window.location.pathname;
+      // Only handle numeric file IDs (old file viewer), not QR code slugs
       if (rawPath.startsWith('/view/file/')) {
         const id = rawPath.replace('/view/file/', '').split('?')[0];
-        const { getFile } = await import('./src/services/fileStorage');
-        const fileData = await getFile(id);
-        if (fileData?.record.filePath) {
-          window.location.href = fileData.record.filePath;
-          return;
+        // Check if id is numeric (file ID) vs alphanumeric (QR slug)
+        if (/^\d+$/.test(id)) {
+          const { getFile } = await import('./src/services/fileStorage');
+          const fileData = await getFile(id);
+          if (fileData?.record.filePath) {
+            window.location.href = fileData.record.filePath;
+            return;
+          }
         }
+        // If not numeric, let it render as QR viewer (file mode)
       }
 
       const state = getInitialRouteState();
       setView(state.view);
       setCurrentBusinessProfileId(state.businessId);
+      setIsFileMode((state as any).fileMode || false);
     };
 
     window.addEventListener('popstate', handleRouteChange);
@@ -180,8 +204,10 @@ const App: React.FC = () => {
   };
 
   const downloadCode = (code: GeneratedCode, format: 'png' | 'svg' = 'png') => {
-    let qrValue = code.shortSlug ? `${window.location.origin}/r/${code.shortSlug}` : code.value;
-    if (qrValue.startsWith('/')) qrValue = window.location.origin + qrValue;
+    const slug = code.shortSlug || (code as any).short_slug;
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+    let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
+    if (qrValue.startsWith('/')) qrValue = backendUrl + qrValue;
     const qr = new QRCodeStyling({ width: 1000, height: 1000, data: qrValue, dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern }, backgroundOptions: { color: code.settings.bgColor }, cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor }, cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor }, image: code.settings.logoUrl, imageOptions: { crossOrigin: "anonymous", margin: 5 } });
     qr.download({ name: code.name || 'qr-code', extension: format });
   };
@@ -195,7 +221,20 @@ const App: React.FC = () => {
     }
     setWhatsappPhone(whatsappPhoneEdit);
     setWhatsappMessage(whatsappMessageEdit);
-    setWizard({ step: 2, mode: code.type, type: code.category as any, value: (code.category === 'whatsapp' || code.category === 'pdf' || code.category === 'business') ? '' : code.value, name: code.name, isPasswordActive: false, folderId: code.folderId, config: code.settings, business: code.settings.business || wizard.business });
+    setWizard({
+      ...wizard,
+      step: 2,
+      mode: code.type,
+      type: code.category as any,
+      value: (code.category === 'whatsapp' || code.category === 'pdf' || code.category === 'business') ? '' : code.value,
+      name: code.name,
+      isPasswordActive: false,
+      is_protected: (code as any).is_protected || false,
+      is_lead_capture: (code as any).is_lead_capture || false,
+      folderId: code.folderId,
+      config: code.settings,
+      business: code.settings.business || wizard.business
+    });
     setPhonePreviewMode('ui');
     setView('wizard');
   };
@@ -224,7 +263,14 @@ const App: React.FC = () => {
   const viewPdf = (fileId: string) => {
     // Redesigned shareable flow: try to find the direct path from history
     const code = history.find(h => h.value.includes(fileId));
-    if (code && !code.value.includes('/view/file/')) {
+    const slug = code?.shortSlug || (code as any)?.short_slug;
+    if (code && slug) {
+      // Use the new branded landing page (/view/:slug)
+      const newPath = `/view/${slug}`;
+      window.history.pushState({ view: 'qr_viewer' }, '', newPath);
+      setView('qr_viewer');
+      setCurrentBusinessProfileId(slug);
+    } else if (code && !code.value.includes('/view/file/')) {
       window.open(code.value, '_blank');
     } else {
       // Fallback or old link
@@ -254,7 +300,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && (
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && (
         <Sidebar
           view={view}
           setView={setView}
@@ -265,7 +311,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' ? 'ml-64' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -373,6 +419,10 @@ const App: React.FC = () => {
         {view === 'business_profile' && currentBusinessProfileId && <BusinessProfileViewer profileId={currentBusinessProfileId} />}
 
         {view === 'public_scan' && <PublicScan setView={setView} />}
+
+        {view === 'qr_viewer' && currentBusinessProfileId && (
+          <QRViewer slug={currentBusinessProfileId} setView={setView} isFileMode={isFileMode} />
+        )}
       </main>
     </div>
   );

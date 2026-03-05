@@ -81,6 +81,8 @@ const getInitialWizardState = (): WizardState => ({
   value: '',
   name: '',
   isPasswordActive: false,
+  is_protected: false,
+  is_lead_capture: false,
   password: '',
   folderId: undefined,
   business: {
@@ -158,10 +160,13 @@ export const useWizard = (
   }, [wizard.step, wizard.type]);
 
   const getQRValue = () => {
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+
     if (editingId) {
       const code = history.find(h => h.id === editingId);
-      if (code?.shortSlug) {
-        return `${window.location.origin}/r/${code.shortSlug}`;
+      const slug = code.shortSlug || (code as any).short_slug;
+      if (slug) {
+        return `${backendUrl}/r/${slug}`;
       }
     }
 
@@ -170,8 +175,8 @@ export const useWizard = (
       const cleanCC = whatsappCountryCode.replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    const val = wizard.value || "https://qr-code.io";
-    return val.startsWith('/') ? window.location.origin + val : val;
+    const val = wizard.value || "https://scannerstudio.co/preview";
+    return val.startsWith('/') ? backendUrl + val : val;
   };
 
   const qrStylingOptions = {
@@ -200,119 +205,121 @@ export const useWizard = (
   const selectedTypeConfig = QR_TYPES_CONFIG.find(t => t.id === wizard.type) || QR_TYPES_CONFIG[0];
 
   const handleNextStep = async () => {
-    if (wizard.step === 3) {
-      let finalValue = '';
+    // 1. Calculate the final value (destination) based on current wizard state
+    let finalValue = '';
 
-      if (wizard.type === 'business') {
-        const businessData = wizard.business;
-        const businessProfileData = {
-          company: businessData?.company || '',
-          logo: businessData?.images?.[0] || '',
-          headline: businessData?.title || '',
-          aboutCompany: businessData?.aboutCompany || '',
-          phones: businessData?.contact?.phones?.filter(p => p.value) || [],
-          emails: businessData?.contact?.emails?.filter(e => e.value) || [],
-          address: businessData?.location?.searchAddress || '',
-          openingHours: businessData?.openingHours || INITIAL_HOURS,
-          socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
-          primaryColor: businessData?.primaryColor || '#156295',
-          secondaryColor: businessData?.secondaryColor || '#9DB3C2',
-          fontTitle: businessData?.fontTitle || 'Inter',
-          fontText: businessData?.fontText || 'Inter',
-        };
+    if (wizard.type === 'business') {
+      const businessData = wizard.business;
+      const businessProfileData = {
+        company: businessData?.company || '',
+        logo: businessData?.images?.[0] || '',
+        headline: businessData?.title || '',
+        aboutCompany: businessData?.aboutCompany || '',
+        phones: businessData?.contact?.phones?.filter(p => p.value) || [],
+        emails: businessData?.contact?.emails?.filter(e => e.value) || [],
+        address: businessData?.location?.searchAddress || '',
+        openingHours: businessData?.openingHours || INITIAL_HOURS,
+        socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
+        primaryColor: businessData?.primaryColor || '#156295',
+        secondaryColor: businessData?.secondaryColor || '#9DB3C2',
+        fontTitle: businessData?.fontTitle || 'Inter',
+        fontText: businessData?.fontText || 'Inter',
+      };
 
-        const profileId = 'b' + Date.now().toString(36);
-        localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
-
-        finalValue = `/view/business?id=${profileId}`;
-      } else if (wizard.type === 'pdf' || wizard.type === 'links') {
-        finalValue = wizard.value || `https://qr-code.io/p/${Math.random().toString(36).substring(7)}`;
-      } else if (wizard.type === 'whatsapp') {
-        const cleanPhone = whatsappPhone.replace(/\s+/g, '');
-        const cleanCC = whatsappCountryCode.replace(/\+/g, '');
-        finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
-      } else {
-        finalValue = wizard.value || "https://qr-code.io";
+      // Reuse existing profile ID if we're editing a code that already points to one
+      let profileId = '';
+      if (editingId) {
+        const code = history.find(h => h.id === editingId);
+        if (code?.value && code.value.includes('id=')) {
+          profileId = code.value.split('id=')[1].split('&')[0];
+        }
       }
 
-      if (editingId) {
-        const existingCode = history.find(h => h.id === editingId);
-        if (existingCode?.folderId !== wizard.folderId) {
-          let updatedFolders = [...folders];
-          if (existingCode?.folderId) {
-            updatedFolders = updatedFolders.map(f => f.id === existingCode.folderId ? { ...f, count: Math.max(0, f.count - 1) } : f);
-          }
-          if (wizard.folderId) {
-            updatedFolders = updatedFolders.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f);
-          }
-          setFolders(updatedFolders);
-          localStorage.setItem('barqr_folders', JSON.stringify(updatedFolders));
-        }
+      if (!profileId) {
+        profileId = 'b' + Date.now().toString(36);
+      }
 
-        try {
-          const updatedCode = await updateCode(editingId, {
+      localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
+      finalValue = `/view/business?id=${profileId}`;
+    } else if (wizard.type === 'pdf' || wizard.type === 'links') {
+      finalValue = wizard.value || `https://scannerstudio.co/p/${Math.random().toString(36).substring(7)}`;
+    } else if (wizard.type === 'whatsapp') {
+      const cleanPhone = whatsappPhone.replace(/\s+/g, '');
+      const cleanCC = whatsappCountryCode.replace(/\+/g, '');
+      finalValue = `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+    } else {
+      finalValue = wizard.value || "https://scannerstudio.co/preview";
+    }
+
+    // 2. Step-specific logic
+    if (wizard.step === 2) {
+      console.log("Wizard: Saving progress at Step 2 to move to Step 3...");
+      try {
+        let savedData;
+        if (editingId) {
+          savedData = await updateCode(editingId, {
             folder: wizard.folderId,
             category: wizard.type,
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
+            is_protected: wizard.is_protected,
+            is_lead_capture: wizard.is_lead_capture,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
-          const updatedHistory = history.map(h => h.id === editingId ? {
-            ...h,
-            ...updatedCode,
-            id: updatedCode.id.toString()
-          } : h);
-
-          setHistory(updatedHistory);
-          setEditingId(null);
-        } catch (err) {
-          alert("Failed to update QR code.");
-        }
-      } else {
-        try {
-          const savedData = await saveCode({
+          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...savedData, id: savedData.id.toString() } : h));
+        } else {
+          savedData = await saveCode({
             folder: wizard.folderId,
             type: wizard.mode,
             category: wizard.type,
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
+            is_protected: wizard.is_protected,
+            is_lead_capture: wizard.is_lead_capture,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
-          const newCode: GeneratedCode = {
-            ...savedData,
-            id: savedData.id.toString()
-          };
-
-          const updatedHistory = [newCode, ...history];
-          setHistory(updatedHistory);
+          const newCode: GeneratedCode = { ...savedData, id: savedData.id.toString() };
+          setHistory(prev => [newCode, ...prev]);
+          setEditingId(newCode.id);
 
           if (wizard.folderId) {
-            const updatedFolders = folders.map(f =>
-              f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f
-            );
-            setFolders(updatedFolders);
+            setFolders(prev => prev.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f));
           }
-        } catch (err) {
-          alert("Failed to save QR code.");
         }
+        setWizard(prev => ({ ...prev, step: 3 }));
+      } catch (err) {
+        console.error("Failed to save progress", err);
+        alert("Connection Error: Could not reach the backend. Please check if your server is running.");
       }
+    } else if (wizard.step === 3) {
+      console.log("Wizard: Finalizing QR code styling...");
+      try {
+        if (editingId) {
+          const updatedCode = await updateCode(editingId, {
+            folder: wizard.folderId,
+            category: wizard.type,
+            name: wizard.name || `My ${selectedTypeConfig.name}`,
+            value: finalValue,
+            is_protected: wizard.is_protected,
+            is_lead_capture: wizard.is_lead_capture,
+            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
+          });
 
-      setView('my_codes');
-      setWizard({ ...wizard, step: 1, value: '', name: '', folderId: undefined });
+          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...updatedCode, id: updatedCode.id.toString() } : h));
+        }
+
+        setView('my_codes');
+        setWizard(prev => ({ ...prev, step: 1, value: '', name: '', folderId: undefined }));
+        setEditingId(null);
+      } catch (err) {
+        console.error("Finalization failed", err);
+        alert("Failed to finalize QR code.");
+      }
     } else {
       const nextStep = (wizard.step + 1) as 1 | 2 | 3;
-      let nextWizard = { ...wizard, step: nextStep };
-
-      if (nextStep === 3 && (wizard.type === 'pdf' || wizard.type === 'business' || wizard.type === 'links')) {
-        if (!wizard.value) {
-          const mockId = Math.random().toString(36).substring(2, 9);
-          nextWizard.value = `https://qr-code.io/${wizard.type}/${mockId}`;
-        }
-      }
-
-      setWizard(nextWizard);
+      setWizard(prev => ({ ...prev, step: nextStep }));
     }
   };
 

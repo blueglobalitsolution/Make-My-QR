@@ -183,9 +183,9 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
                       <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
-                        {code.shortSlug
-                          ? `${window.location.origin.replace(/^https?:\/\//, '')}/r/${code.shortSlug}`
-                          : (code.value.startsWith('/') ? window.location.origin.replace(/^https?:\/\//, '') + code.value : code.value)}
+                        {(code.shortSlug || (code as any).short_slug)
+                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
+                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
                       </span>
                     </div>
                   </div>
@@ -206,6 +206,19 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     {code.category === 'pdf' && (
                       <button
                         onClick={() => {
+                          const slug = code.shortSlug || (code as any).short_slug;
+                          if (slug) {
+                            // Go to branded landing page
+                            setView('qr_viewer');
+                            // In App.tsx, currentBusinessProfileId is hijacked for slug in qr_viewer
+                            // We need to set it. But wait, I should call a prop function if possible.
+                            // For now, let's assume we can navigate via URL pushState + Dispatch.
+                            const newPath = `/view/${slug}`;
+                            window.history.pushState({ view: 'qr_viewer' }, '', newPath);
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                            return;
+                          }
+
                           const fileIdMatch = code.value.match(/\/view\/file\/([^?]+)/);
                           if (fileIdMatch) {
                             viewPdf(fileIdMatch[1]);
