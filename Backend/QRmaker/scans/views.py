@@ -30,13 +30,30 @@ def redirect_scan(request, slug):
     elif user_agent.is_bot:
         device_type = "Bot"
 
+    # Capture IP
+    ip_address = request.META.get("REMOTE_ADDR")
+    country = "Unknown"
+    city = "Unknown"
+
+    # Minimal GeoIP Check (ip-api.com is free and doesn't require keys for low volume)
+    if ip_address and ip_address not in ["127.0.0.1", "localhost"] and not ip_address.startswith("192.168."):
+        import requests
+        try:
+            geo_response = requests.get(f"http://ip-api.com/json/{ip_address}", timeout=1).json()
+            if geo_response.get("status") == "success":
+                country = geo_response.get("country", "Unknown")
+                city = geo_response.get("city", "Unknown")
+        except Exception:
+            pass
+
     # Save Scan record
     Scan.objects.create(
         qrcode=qrcode,
         device_type=device_type,
         os_family=user_agent.os.family,
         browser=user_agent.browser.family,
-        ip_address=request.META.get("REMOTE_ADDR"),
+        ip_address=ip_address,
+        country=f"{city}, {country}" if city != "Unknown" else country,
     )
 
     # Increment total scan count in QRCode model

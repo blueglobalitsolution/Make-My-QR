@@ -16,6 +16,7 @@ import { MyCodes } from './src/components/app/MyCodes';
 import { Wizard } from './src/components/app/Wizard';
 import { Billing } from './src/components/app/Billing';
 import { Account } from './src/components/app/Account';
+import { Analytics } from './src/components/app/Analytics';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
@@ -443,6 +444,7 @@ const App: React.FC = () => {
           <QRViewer slug={currentBusinessProfileId} setView={setView} isFileMode={isFileMode} />
         )}
 
+        {view === 'analytics' && <Analytics />}
         {view === 'admin_login' && <AdminLogin setView={setView} />}
         {view === 'admin_dashboard' && <AdminDashboard setView={setView} />}
       </main>
