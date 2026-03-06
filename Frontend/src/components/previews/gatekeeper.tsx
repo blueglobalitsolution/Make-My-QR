@@ -3,6 +3,7 @@ import { WebsitePreview } from './WebsitePreview';
 import { PdfPreview } from './PdfPreview';
 import { WhatsAppPreview } from './WhatsAppPreview';
 import { DefaultPreview } from './DefaultPreview';
+import { BusinessPreview } from './BusinessPreview';
 import { QRType } from '../../../types';
 
 export interface GatekeeperProps {
@@ -82,6 +83,18 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     isAuthorized={isAuthorized}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
+                    onLeadSubmit={onLeadSubmit}
+                />
+            );
+
+        case 'business':
+            return (
+                <BusinessPreview
+                    name={name}
+                    brandColor={brandColor}
+                    businessData={businessData}
+                    is_lead_capture={is_lead_capture}
+                    isAuthorized={isAuthorized}
                     onLeadSubmit={onLeadSubmit}
                 />
             );

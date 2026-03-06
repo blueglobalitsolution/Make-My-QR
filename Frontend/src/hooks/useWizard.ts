@@ -93,17 +93,26 @@ const getInitialWizardState = (): WizardState => ({
     linkTextColor: '#9DB3C2',
     company: 'My Company',
     title: 'Find me on social networks',
-    subtitle: '',
+    subtitle: 'Discover our products & services',
     description: 'New content every week in the links below',
     buttons: [
-      { id: '1', text: 'My Website', url: '#', icon: 'globe' }
+      { id: '1', text: 'Visit Our Website', url: '#', icon: 'globe' }
     ],
     openingHours: INITIAL_HOURS,
     images: [],
     location: INITIAL_LOCATION,
-    contact: INITIAL_CONTACT,
-    socialNetworks: [],
-    aboutCompany: "",
+    contact: {
+      name: 'John Smith',
+      phones: [{ id: '1', label: 'Mobile', value: '+1 (555) 123-4567', type: 'phone' }],
+      emails: [{ id: '1', label: 'Work', value: 'hello@mycompany.com', type: 'email' }],
+      websites: [{ id: '1', label: 'Website', value: 'www.mycompany.com', type: 'website' }],
+    },
+    socialNetworks: [
+      { network: 'facebook', url: '' },
+      { network: 'instagram', url: '' },
+      { network: 'twitter', url: '' },
+    ] as any[],
+    aboutCompany: "We are a passionate team dedicated to delivering the best service.",
     facilities: [],
     fontTitle: 'Inter',
     fontText: 'Inter',

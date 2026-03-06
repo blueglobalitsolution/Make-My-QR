@@ -105,11 +105,6 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
                         </div>
                     </div>
 
-                    <div className="text-center pt-4">
-                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] opacity-40">
-                            Powered by Scanner Studio Pro
-                        </p>
-                    </div>
                 </div>
             </main>
         </div>
