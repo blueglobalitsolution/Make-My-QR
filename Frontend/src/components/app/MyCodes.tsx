@@ -76,10 +76,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
     }, [code]);
 
     return (
-      <div className="absolute inset-0 flex items-center justify-center scale-[0.8] origin-center pointer-events-none">
-        <QRFrameWrapper frame={code.settings?.frame || 'none'}>
-          <StyledQRCode options={options} size={150} />
-        </QRFrameWrapper>
+      <div className="absolute inset-0 flex items-center justify-center scale-[0.55] origin-center pointer-events-none">
+        <div className="w-40 h-40 flex-shrink-0 flex items-center justify-center">
+          <QRFrameWrapper frame={code.settings?.frame || 'none'}>
+            <StyledQRCode options={options} size={150} />
+          </QRFrameWrapper>
+        </div>
       </div>
     );
   });
@@ -217,17 +219,17 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[220px_1fr_180px_180px_200px] items-center skeu-card px-10 py-8 group hover:translate-y-[-2px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[220px_1fr_180px_180px_180px] items-center skeu-card px-8 py-4 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
-                    <div className="w-40 h-40 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500">
+                    <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500">
                       <CodeThumbnail code={code} />
                       <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </div>
                   </div>
 
-                  <div className="space-y-1 mb-6">
-                    <h3 className="font-black skeu-text-primary text-lg tracking-tight truncate px-1">{code.name}</h3>
+                  <div className="space-y-0.5">
+                    <h3 className="font-black skeu-text-primary text-base tracking-tight truncate px-1">{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black uppercase skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
                       <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
@@ -236,7 +238,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                           : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
                       </span>
                     </div>
-                    <p className="text-[9px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-1">
+                    <p className="text-[8px] uppercase font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-0.5">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
@@ -244,12 +246,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   {/* Folder & Quick Actions */}
                   <div className="flex flex-col items-center justify-center space-y-3">
                     {folder ? (
-                      <span className="text-[10px] font-black uppercase tracking-widest skeu-text-muted skeu-tag px-4 py-2 rounded-xl flex items-center gap-2 max-w-[140px] truncate bg-white/80">
-                        <FolderIcon className="w-3.5 h-3.5 opacity-40 shrink-0 text-red-500" />
+                      <span className="text-[9px] font-black uppercase tracking-widest skeu-text-muted skeu-tag px-3 py-1.5 rounded-lg flex items-center gap-1.5 max-w-[120px] truncate bg-white/80">
+                        <FolderIcon className="w-3 h-3 opacity-40 shrink-0 text-red-500" />
                         <span className="truncate">{folder.name}</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-20 italic bg-white/50 px-4 py-2 rounded-xl">No Folder</span>
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] skeu-text-muted opacity-20 italic bg-white/50 px-3 py-1.5 rounded-lg">No Folder</span>
                     )}
 
                     <div className="flex gap-2 w-full justify-center">
@@ -271,35 +273,35 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   </div>
 
                   {/* Activity */}
-                  <div className="text-center group-hover:scale-110 transition-transform duration-500">
-                    <div className="text-3xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
-                    <div className="text-[9px] font-black skeu-text-muted uppercase tracking-[0.2em] mt-2 flex items-center justify-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-red-400/40 animate-pulse" /> Total Scans
+                  <div className="text-center group-hover:scale-105 transition-transform duration-500">
+                    <div className="text-2xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
+                    <div className="text-[8px] font-black skeu-text-muted uppercase tracking-[0.1em] mt-1.5 flex items-center justify-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400/40 animate-pulse" /> Scans
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-3 pr-2">
+                  <div className="flex items-center justify-end gap-2 pr-1">
                     <button
                       onClick={() => startEditing(code)}
-                      className="w-12 h-12 flex items-center justify-center skeu-btn-secondary group-hover:shadow-lg transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary group-hover:shadow-md transition-all"
                       title="Edit Code"
                     >
-                      <Pencil className="w-5 h-5 opacity-70 group-hover:opacity-100" />
+                      <Pencil className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
                       onClick={() => downloadCode(code, 'png')}
-                      className="w-12 h-12 flex items-center justify-center skeu-btn-secondary group-hover:shadow-lg transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary group-hover:shadow-md transition-all"
                       title="Download"
                     >
-                      <Download className="w-5 h-5 opacity-70 group-hover:opacity-100" />
+                      <Download className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
                       onClick={() => deleteCode(code.id)}
-                      className="w-12 h-12 flex items-center justify-center skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 hover:!border-red-200 transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 hover:!border-red-200 transition-all"
                       title="Delete Code"
                     >
-                      <Trash2 className="w-5 h-5 opacity-70 group-hover:opacity-100" />
+                      <Trash2 className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                   </div>
                 </div>

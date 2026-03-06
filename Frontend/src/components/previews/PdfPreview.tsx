@@ -83,7 +83,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     };
 
     return (
-        <div className="h-full flex flex-col bg-[#fcfdff] overflow-x-hidden relative font-inter pt-10 pb-10">
+        <div className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative font-inter pt-10 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Background Curve */}
             <div
                 className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"
@@ -112,32 +112,21 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6 mt-1">
 
                     {/* Top Image Part */}
-                    <div className="w-full relative bg-slate-100 flex-shrink-0 pt-6 px-6">
-                        {isFileMode && fullValue ? (
-                            <div className="w-full aspect-[1/1.4] relative shadow-2xl shadow-blue-900/20 border border-slate-200 rounded-lg overflow-hidden bg-white mx-auto">
-                                <div className="absolute inset-0 pointer-events-none">
-                                    <iframe
-                                        src={`${fullValue}#view=FitH&toolbar=0&navpanes=0&scrollbar=0`}
-                                        className="w-full h-full border-none object-cover scale-[1.02] origin-top"
-                                        scrolling="no"
-                                        title="PDF Preview Thumbnail"
-                                    />
+                    <div className="w-full relative bg-white flex-shrink-0 pt-6 px-6">
+                        <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative group">
+                            <img
+                                src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
+                                alt="Business meeting"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            {/* PDF/Business Tab (Top Right) */}
+                            <div className="absolute top-0 right-4 bg-red-600 text-white px-5 py-3 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1">
+                                <div className="w-[18px] h-[22px] border-[2px] border-white rounded-[2px] mb-[4px] relative flex items-center justify-center">
+                                    <span className="text-[6px] font-black">PDF</span>
                                 </div>
+                                <span className="text-[7.5px] font-black uppercase tracking-widest leading-none">PDF File</span>
                             </div>
-                        ) : (
-                            <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative">
-                                <img
-                                    src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"
-                                    alt="Business meeting"
-                                    className="w-full h-full object-cover"
-                                />
-                                {/* Business Tab (Top Right) */}
-                                <div className="absolute top-0 right-4 bg-[#3b82f6] text-white px-5 py-3 rounded-b-xl flex flex-col items-center shadow-lg">
-                                    <div className="w-[20px] h-[14px] border-[2px] border-white rounded-[2px] mb-[5px]" />
-                                    <span className="text-[7.5px] font-black uppercase tracking-widest leading-none">Business</span>
-                                </div>
-                            </div>
-                        )}
+                        </div>
                     </div>
 
                     {/* Content Part */}
@@ -165,12 +154,19 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 </div>
 
                 {/* Footer URL */}
-                <div className="flex items-center justify-center gap-2 text-slate-900 mt-2">
-                    <Globe className="w-[22px] h-[22px]" />
-                    <span className="text-[17px] font-medium tracking-wide">
-                        {businessData?.buttons?.[0]?.url?.replace(/^https?:\/\//, '') || "www.google.com"}
-                    </span>
-                </div>
+                {businessData?.buttons?.[0]?.url && (
+                    <a
+                        href={businessData.buttons[0].url.startsWith('http') ? businessData.buttons[0].url : `https://${businessData.buttons[0].url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 text-slate-900 mt-2 hover:opacity-80 transition-opacity"
+                    >
+                        <Globe className="w-[22px] h-[22px]" />
+                        <span className="text-[17px] font-medium tracking-wide">
+                            {businessData.buttons[0].url.replace(/^https?:\/\//, '')}
+                        </span>
+                    </a>
+                )}
 
             </div>
         </div>
