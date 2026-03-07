@@ -111,17 +111,6 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         );
     }
 
-<<<<<<< Updated upstream
-    // Direct redirect for WhatsApp without showing preview UI
-    if (category === 'whatsapp' && isAuthorized) {
-        return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="animate-pulse flex flex-col items-center gap-4">
-                    <div className="w-2 h-2 bg-slate-200 rounded-full" />
-                </div>
-            </div>
-        );
-=======
     const { category, value, name, settings, is_lead_capture, file_url } = qrData;
     const brandColor = settings?.fgColor || '#dc2626';
 
@@ -138,7 +127,6 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         fullValue = `${backendUrl}${value}`;
     } else {
         fullValue = value;
->>>>>>> Stashed changes
     }
 
     if (viewMode === 'preview' && category === 'pdf' && isAuthorized) {

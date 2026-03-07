@@ -1623,11 +1623,7 @@ export const Wizard: React.FC<WizardProps> = ({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header with Stepper */}
-<<<<<<< Updated upstream
-      <header className="bg-transparent border-b border-black/5 px-10 py-6 sticky top-0 z-30 shrink-0">
-=======
       <header className="bg-white border-b border-slate-100 py-6 sticky top-0 z-30 shadow-sm shrink-0">
->>>>>>> Stashed changes
         <div className="max-w-[1600px] mx-auto flex items-center justify-center">
           {renderStepper({ step: wizard.step })}
         </div>
@@ -1685,13 +1681,8 @@ export const Wizard: React.FC<WizardProps> = ({
                     }}>
                     {/* Step 1 & 2 Blur Overlay - Only shown when in Step 1 (no hover) or Step 2 in QR mode */}
                     {(wizard.step === 2 || (wizard.step === 1 && !hoveredType)) && phonePreviewMode === 'qr' && (
-<<<<<<< Updated upstream
-                      <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-[#f8fafc]/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
-                        <p className="text-sm font-black text-slate-600/80 leading-relaxed uppercase tracking-widest">
-=======
                       <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-white/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
                         <p className="text-sm font-black text-slate-600/80 leading-relaxed capitalize tracking-widest">
->>>>>>> Stashed changes
                           {wizard.step === 1 ? "Select a type to start making your qr code" : "make the qr code to preview it"}
                         </p>
                       </div>
@@ -1767,11 +1758,7 @@ export const Wizard: React.FC<WizardProps> = ({
       </div>
 
       {/* Footer Navigation - Refactored to be part of flow */}
-<<<<<<< Updated upstream
-      <footer className="skeu-toolbar border-t border-black/5 px-10 py-6 z-[60] shrink-0 bg-transparent">
-=======
       <footer className="skeu-toolbar border-t border-slate-100 py-6 z-[60] shrink-0 bg-white">
->>>>>>> Stashed changes
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <button
             onClick={handleBackStep}

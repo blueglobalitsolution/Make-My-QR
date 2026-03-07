@@ -357,28 +357,21 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       </div >
 
       {/* QR Preview Modal */}
-<<<<<<< Updated upstream
-      {previewCode && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div
-            className="absolute inset-0 bg-white/20 backdrop-blur-xl cursor-pointer"
-            onClick={() => setPreviewCode(null)}
-          />
-
-          <div className="relative w-full max-w-xl skeu-card p-12 bg-white animate-in zoom-in-95 duration-300 shadow-2xl space-y-8">
-            <button
-=======
       {
         previewCode && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
             <div
               className="absolute inset-0 bg-white/40 backdrop-blur-md cursor-pointer"
->>>>>>> Stashed changes
               onClick={() => setPreviewCode(null)}
             />
 
             <div className="relative w-full max-w-xl skeu-card p-12 bg-white animate-in zoom-in-95 duration-300 shadow-2xl space-y-8">
               <button
+                onClick={() => setPreviewCode(null)}
+                className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
                 onClick={() => setPreviewCode(null)}
                 className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
               >
@@ -445,16 +438,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               </div>
             </div>
           </div>
-<<<<<<< Updated upstream
-        </div>,
-        document.body
-      )}
-=======
-        )
+        )}
       }
->>>>>>> Stashed changes
 
-      {/* Hidden Capture Area for High-Fidelity Downloads */}
+      {/* Hidden Capture Area */}
       <div
         ref={captureRef}
         className="fixed top-0 pointer-events-none bg-white flex items-center justify-center"
