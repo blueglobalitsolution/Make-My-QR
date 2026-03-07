@@ -49,18 +49,18 @@
 
 /* --- Root Variables (Red Skeu Palette) --- */
 :root {
-  --skeu-light: #fff5f5;
-  /* red-50 */
-  --skeu-mid: #fee2e2;
-  /* red-100 */
-  --skeu-dark: #fecaca;
-  /* red-200 */
+  --skeu-light: #f8fafc;
+  /* neutral greyish */
+  --skeu-mid: #f1f5f9;
+  /* slate-100 */
+  --skeu-dark: #e2e8f0;
+  /* slate-200 */
   --skeu-accent: #dc2626;
   --skeu-accent-dark: #991b1b;
   --skeu-accent-red: #dc2626;
   --skeu-accent-red-dark: #991b1b;
   --skeu-surface: #ffffff;
-  --skeu-inset: #fff5f5;
+  --skeu-inset: #f8fafc;
   --skeu-highlight: rgba(255, 255, 255, 0.9);
   --skeu-shadow: rgba(153, 27, 27, 0.08);
   --skeu-shadow-deep: rgba(153, 27, 27, 0.12);
@@ -70,7 +70,7 @@
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background: linear-gradient(145deg, #ffffff 0%, #fff1f2 100%);
+  background: #f8fafc;
   min-height: 100vh;
   position: relative;
 }

@@ -113,12 +113,22 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
                     {/* Top Image Part */}
                     <div className="w-full relative bg-white flex-shrink-0 pt-6 px-6">
-                        <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative group">
-                            <img
-                                src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
-                                alt="Business meeting"
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
+                        <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative group bg-slate-100">
+                            {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
+                                <iframe
+                                    src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                                    className="w-full h-full border-none pointer-events-none"
+                                    title="PDF First Page Preview"
+                                    scrolling="no"
+                                    style={{ overflow: 'hidden' }}
+                                />
+                            ) : (
+                                <img
+                                    src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
+                                    alt="Business meeting"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                            )}
                             {/* PDF/Business Tab (Top Right) */}
                             <div className="absolute top-0 right-4 bg-red-600 text-white px-5 py-3 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1">
                                 <div className="w-[18px] h-[22px] border-[2px] border-white rounded-[2px] mb-[4px] relative flex items-center justify-center">
@@ -154,7 +164,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 </div>
 
                 {/* Footer URL */}
-                {businessData?.buttons?.[0]?.url && (
+                {businessData?.buttons?.[0]?.url && businessData?.buttons?.[0]?.url !== '#' && (
                     <a
                         href={businessData.buttons[0].url.startsWith('http') ? businessData.buttons[0].url : `https://${businessData.buttons[0].url}`}
                         target="_blank"

@@ -15,10 +15,11 @@ const INITIAL_HOURS: OpeningHours = DAYS.reduce((acc, day) => ({
 
 const INITIAL_LOCATION: LocationConfig = {
   searchAddress: '',
+  address: '',
   streetNumberFirst: false,
   street: '',
   number: '',
-  postalCode: '',
+  zipCode: '',
   city: '',
   state: '',
   country: '',
@@ -183,7 +184,7 @@ const getInitialWizardState = (): WizardState => ({
     subtitle: 'Discover our products & services',
     description: 'New content every week in the links below',
     buttons: [
-      { id: '1', text: 'Visit Our Website', url: '#', icon: 'globe' }
+      { id: '1', text: 'View PDF', url: '', icon: 'globe' }
     ],
     openingHours: INITIAL_HOURS,
     images: [],
@@ -312,16 +313,22 @@ export const useWizard = (
         company: businessData?.company || '',
         logo: businessData?.images?.[0] || '',
         headline: businessData?.title || '',
+        title: businessData?.title || '',
+        subtitle: businessData?.subtitle || '',
         aboutCompany: businessData?.aboutCompany || '',
         phones: businessData?.contact?.phones?.filter(p => p.value) || [],
         emails: businessData?.contact?.emails?.filter(e => e.value) || [],
+        websites: businessData?.contact?.websites?.filter(w => w.value) || [],
         address: businessData?.location?.searchAddress || '',
         openingHours: businessData?.openingHours || INITIAL_HOURS,
         socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
+        facilities: businessData?.facilities || [],
+        welcomeScreenImage: businessData?.welcomeScreenImage || '',
         primaryColor: businessData?.primaryColor || '#dc2626',
         secondaryColor: businessData?.secondaryColor || '#9DB3C2',
         fontTitle: businessData?.fontTitle || 'Inter',
         fontText: businessData?.fontText || 'Inter',
+        buttons: businessData?.buttons || [],
       };
 
       // Reuse existing profile ID if we're editing a code that already points to one
@@ -485,7 +492,7 @@ export const useWizard = (
       if (newButtons.length > 0) {
         newButtons[0] = { ...newButtons[0], text: val };
       } else {
-        newButtons.push({ id: '1', text: val, url: '#', icon: 'globe' });
+        newButtons.push({ id: '1', text: val, url: '', icon: 'globe' });
       }
       return { ...prev, business: { ...prev.business, buttons: newButtons } };
     });

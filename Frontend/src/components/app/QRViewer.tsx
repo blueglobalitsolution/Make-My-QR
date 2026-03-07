@@ -16,13 +16,14 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
     const [qrData, setQrData] = useState<any>(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [leadForm, setLeadForm] = useState({ name: '', email: '' });
-
     const [viewMode, setViewMode] = useState<'landing' | 'preview'>('landing');
 
     useEffect(() => {
         const fetchCode = async () => {
             try {
                 setLoading(true);
+                setIsAuthorized(false);
+                setError(null);
                 const data = await getPublicCode(slug);
                 setQrData(data);
 
@@ -46,11 +47,36 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
     const handleLeadSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (leadForm.name && leadForm.email) {
-            // Here you would typically send the lead data to the backend
             console.log("Lead captured:", leadForm);
             setIsAuthorized(true);
         }
     };
+
+    const { category, value, name, settings, is_lead_capture, file_url } = qrData || {};
+    const brandColor = settings?.fgColor || '#156295';
+
+    // Construct URL logic
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
+    let fullValue = '';
+    if (qrData) {
+        if (file_url) {
+            fullValue = file_url;
+        } else if (value?.startsWith('/media/')) {
+            fullValue = `${backendUrl}${value}`;
+        } else if (value?.startsWith('/')) {
+            fullValue = `${backendUrl}${value}`;
+        } else {
+            fullValue = value;
+        }
+    }
+
+    // Effect for WhatsApp redirection
+    useEffect(() => {
+        if (isAuthorized && category === 'whatsapp' && fullValue) {
+            console.log("Redirecting to WhatsApp:", fullValue);
+            window.location.replace(fullValue);
+        }
+    }, [isAuthorized, category, fullValue]);
 
     if (loading) {
         return (
@@ -85,22 +111,15 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         );
     }
 
-    const { category, value, name, settings, is_lead_capture, file_url } = qrData;
-    const brandColor = settings?.fgColor || '#156295';
-
-    // Construct URL
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || window.location.origin;
-    let fullValue;
-
-    // Use file_url if available (for file-type QR codes)
-    if (file_url) {
-        fullValue = file_url;
-    } else if (value?.startsWith('/media/')) {
-        fullValue = `${backendUrl}${value}`;
-    } else if (value?.startsWith('/')) {
-        fullValue = `${backendUrl}${value}`;
-    } else {
-        fullValue = value;
+    // Direct redirect for WhatsApp without showing preview UI
+    if (category === 'whatsapp' && isAuthorized) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="animate-pulse flex flex-col items-center gap-4">
+                    <div className="w-2 h-2 bg-slate-200 rounded-full" />
+                </div>
+            </div>
+        );
     }
 
     if (viewMode === 'preview' && category === 'pdf' && isAuthorized) {
@@ -127,6 +146,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
             name={name}
             brandColor={brandColor}
             fullValue={fullValue}
+            businessData={settings?.business}
             is_lead_capture={is_lead_capture}
             isAuthorized={isAuthorized}
             isFileMode={isFileMode}

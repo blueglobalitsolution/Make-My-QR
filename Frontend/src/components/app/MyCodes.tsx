@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 import { StyledQRCode } from '../../../components/StyledQRCode';
@@ -354,10 +355,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       </div>
 
       {/* QR Preview Modal */}
-      {previewCode && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+      {previewCode && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div
-            className="absolute inset-0 bg-white/40 backdrop-blur-md cursor-pointer"
+            className="absolute inset-0 bg-white/20 backdrop-blur-xl cursor-pointer"
             onClick={() => setPreviewCode(null)}
           />
 
@@ -428,7 +429,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Hidden Capture Area for High-Fidelity Downloads */}

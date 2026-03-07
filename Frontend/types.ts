@@ -112,10 +112,11 @@ export interface OpeningHours {
 
 export interface LocationConfig {
   searchAddress: string;
+  address: string;
   streetNumberFirst: boolean;
   street: string;
   number: string;
-  postalCode: string;
+  zipCode: string;
   city: string;
   state: string;
   country: string;
@@ -215,17 +216,23 @@ export interface BusinessProfile {
   id: string;
   company: string;
   logo: string;
-  headline: string;
-  aboutCompany: string;
+  headline?: string;
+  title?: string;
+  subtitle?: string;
+  aboutCompany?: string;
   phones: ContactField[];
   emails: ContactField[];
+  websites?: ContactField[];
   address: string;
   openingHours: OpeningHours;
   socialNetworks: SocialNetwork[];
+  facilities?: string[];
+  welcomeScreenImage?: string;
   primaryColor: string;
   secondaryColor: string;
   fontTitle: string;
   fontText: string;
+  buttons?: BusinessButton[];
   createdAt: string;
   updatedAt: string;
 }

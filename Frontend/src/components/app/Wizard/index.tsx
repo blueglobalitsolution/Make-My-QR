@@ -809,10 +809,14 @@ export const Wizard: React.FC<WizardProps> = ({
                         <div key={idx} className="flex items-center gap-3">
                           <input
                             type="text"
-                            value={val}
+                            value={typeof val === 'object' ? (val as any).value : val}
                             onChange={(e) => {
                               const newArr = [...(wizard.business?.contact?.[field] || [])];
-                              newArr[idx] = e.target.value;
+                              if (typeof newArr[idx] === 'object' && newArr[idx] !== null) {
+                                newArr[idx] = { ...(newArr[idx] as any), value: e.target.value };
+                              } else {
+                                newArr[idx] = e.target.value;
+                              }
                               updateBusinessField('contact', { ...wizard.business?.contact, [field]: newArr });
                             }}
                             className="flex-1 px-5 py-3 skeu-input text-sm font-bold"
@@ -1617,9 +1621,9 @@ export const Wizard: React.FC<WizardProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full bg-slate-50/50 overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header with Stepper */}
-      <header className="bg-white border-b border-slate-100 px-10 py-6 sticky top-0 z-30 shadow-sm shrink-0">
+      <header className="bg-transparent border-b border-black/5 px-10 py-6 sticky top-0 z-30 shrink-0">
         <div className="max-w-[1600px] mx-auto flex items-center justify-center">
           {renderStepper({ step: wizard.step })}
         </div>
@@ -1644,7 +1648,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="lg:col-span-4 flex flex-col items-center justify-start py-6 min-h-0 shrink-0 overflow-hidden">
               {/* Preview Toggle Pill */}
               <div className="w-full flex justify-center mb-4 shrink-0">
-                <div className="bg-[#f8fafc] border border-slate-200 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[220px]">
+                <div className="bg-transparent border border-black/5 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[220px]">
                   {/* Sliding active background */}
                   <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#dc2626] rounded-lg shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1' : 'left-[calc(50%+2px)]'}`} />
 
@@ -1664,13 +1668,12 @@ export const Wizard: React.FC<WizardProps> = ({
               </div>
 
               <div className="relative group scale-[0.85] xl:scale-[0.85] transition-transform duration-500 flex flex-col items-center justify-center shrink-0 origin-top">
-                {/* Decorative Elements */}
-                <div className="absolute -inset-20 bg-red-500/5 blur-[120px] rounded-full -z-10 group-hover:bg-red-500/10 transition-colors duration-1000" />
+                {/* Decorative Elements - Removed red glow to unify background */}
 
                 <div className="w-[320px] h-[650px] relative shrink-0 flex items-center justify-center">
                   {/* Phone Screen Content Area - Perfectly positioned to fit inside the mockup frame */}
                   <div className={`absolute top-[9px] bottom-[16.5px] left-[15.5px] right-[15.5px] rounded-[2.5rem] overflow-hidden flex flex-col z-40 shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
-                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-white'
+                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
                     }`} style={{
                       backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
                         ? (wizard.business?.primaryColor || '#dc2626')
@@ -1678,7 +1681,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     }}>
                     {/* Step 1 & 2 Blur Overlay - Only shown when in Step 1 (no hover) or Step 2 in QR mode */}
                     {(wizard.step === 2 || (wizard.step === 1 && !hoveredType)) && phonePreviewMode === 'qr' && (
-                      <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-white/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
+                      <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-[#f8fafc]/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
                         <p className="text-sm font-black text-slate-600/80 leading-relaxed uppercase tracking-widest">
                           {wizard.step === 1 ? "Select a type to start making your qr code" : "make the qr code to preview it"}
                         </p>
@@ -1716,8 +1719,8 @@ export const Wizard: React.FC<WizardProps> = ({
                           />
                         </div>
                       ) : (
-                        <div className="h-full flex flex-col items-center justify-center bg-white space-y-16 p-10 animate-in zoom-in-95 duration-700">
-                          <div className="relative group p-6 border border-[#E0EAF2] rounded-[3.5rem] bg-[#F8FAFC] shadow-2xl shadow-red-500/10 transition-transform duration-500 hover:scale-[1.02]">
+                        <div className="h-full flex flex-col items-center justify-center space-y-16 p-10 animate-in zoom-in-95 duration-700">
+                          <div className="relative group p-6 border border-[#E0EAF2] rounded-[3.5rem] bg-transparent shadow-2xl shadow-[#dc2626]/5 transition-transform duration-500 hover:scale-[1.02]">
                             <div className="bg-white p-4 rounded-[3rem] shadow-inner border border-white">
                               <QRFrameWrapper frame={wizard.config.frame}>
                                 <div className="relative">
@@ -1755,7 +1758,7 @@ export const Wizard: React.FC<WizardProps> = ({
       </div>
 
       {/* Footer Navigation - Refactored to be part of flow */}
-      <footer className="skeu-toolbar border-t border-slate-100 px-10 py-6 z-[60] shrink-0 bg-white">
+      <footer className="skeu-toolbar border-t border-black/5 px-10 py-6 z-[60] shrink-0 bg-transparent">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <button
             onClick={handleBackStep}

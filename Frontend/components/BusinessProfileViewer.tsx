@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Phone, Mail, MapPin, Clock, Globe, Facebook, Instagram,
   Twitter, Linkedin, Youtube, MessageCircle, ChevronLeft, ExternalLink,
-  ArrowUpRight
+  ArrowUpRight, Share2, ChevronRight, User, Info
 } from 'lucide-react';
 import { BusinessProfile } from '../types';
 import { getBusinessProfile } from '../src/services/businessProfile';
@@ -114,177 +114,259 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
     );
   }
 
+  const getSocialIcon = (network: string) => {
+    const n = (network || '').toLowerCase();
+    switch (n) {
+      case 'facebook': return <Facebook className="w-5 h-5" />;
+      case 'instagram': return <Instagram className="w-5 h-5" />;
+      case 'twitter': return <Twitter className="w-5 h-5" />;
+      case 'linkedin': return <Linkedin className="w-5 h-5" />;
+      case 'youtube': return <Youtube className="w-5 h-5" />;
+      case 'whatsapp': return <MessageCircle className="w-5 h-5" />;
+      default: return <Globe className="w-5 h-5" />;
+    }
+  };
+
+  const heroImg = profile.logo || profile.welcomeScreenImage;
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: profile.primaryColor, fontFamily: profile.fontText }}>
-      <div className="max-w-md mx-auto min-h-screen bg-white shadow-2xl">
-        {/* Header */}
-        <div
-          className="relative px-6 pt-12 pb-16 text-center"
-          style={{ backgroundColor: profile.primaryColor }}
-        >
+    <div className="min-h-screen w-full bg-[#fcfdff] font-inter overflow-y-auto scrollbar-hide flex justify-center">
+      {/* Main constrained container for desktop/mobile look */}
+      <div className="w-full max-w-[400px] bg-white min-h-screen flex flex-col relative sm:shadow-2xl sm:border sm:border-slate-100 overflow-y-auto scrollbar-hide">
+
+        {/* ── TOP CURVED SECTION ───────────────────────── */}
+        <div className="relative w-full flex-shrink-0">
           {onBack && (
             <button
               onClick={onBack}
-              className="absolute top-4 left-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+              className="absolute top-4 left-4 z-10 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
           )}
 
-          {/* Logo */}
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full border-4 border-white/30 overflow-hidden bg-white shadow-lg flex items-center justify-center">
-            {profile.logo ? (
-              <img src={profile.logo} alt={profile.company} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-slate-200 flex items-center justify-center">
-                <span className="text-3xl font-bold text-slate-400">
-                  {profile.company.charAt(0).toUpperCase()}
-                </span>
-              </div>
+          {/* Solid color block with curved bottom */}
+          <div
+            className="w-full px-5 pt-16 pb-28 text-center"
+            style={{
+              backgroundColor: profile.primaryColor,
+              borderBottomLeftRadius: '50% 40px',
+              borderBottomRightRadius: '50% 40px',
+            }}
+          >
+            <p className="text-white/80 text-[12px] font-bold tracking-widest mb-1 uppercase">
+              {profile.company || 'My Company'}
+            </p>
+            <h1 className="text-white text-[22px] font-black leading-tight tracking-tight">
+              {profile.title || profile.headline || 'Find me on social networks'}
+            </h1>
+            {profile.subtitle && (
+              <p className="text-white/70 text-[13px] font-medium mt-2 leading-snug">
+                {profile.subtitle}
+              </p>
             )}
           </div>
 
-          {/* Company Name */}
-          <h1 className="text-2xl font-black text-white mb-1" style={{ fontFamily: profile.fontTitle }}>
-            {profile.company || 'Company Name'}
-          </h1>
-
-          {/* Headline */}
-          {profile.headline && (
-            <p className="text-white/90 text-sm font-medium px-4">
-              {profile.headline}
-            </p>
-          )}
-        </div>
-
-        {/* About Us */}
-        {profile.aboutCompany && (
-          <div className="px-6 py-6 border-b border-slate-100">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">About Us</h2>
-            <p className="text-slate-700 leading-relaxed text-sm">
-              {profile.aboutCompany}
-            </p>
-          </div>
-        )}
-
-        {/* Contact Info */}
-        {(profile.phones.length > 0 || profile.emails.length > 0) && (
-          <div className="px-6 py-6 border-b border-slate-100">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Contact</h2>
-
-            {/* Phones */}
-            {profile.phones.filter(p => p.value).map((phone) => (
-              <button
-                key={phone.id}
-                onClick={() => handlePhoneClick(phone.value)}
-                className="w-full flex items-center gap-4 py-3 px-4 bg-slate-50 rounded-xl mb-2 hover:bg-blue-50 transition-colors group text-left"
-              >
-                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs text-slate-400 font-medium">{phone.label}</div>
-                  <div className="text-slate-800 font-bold">{phone.value}</div>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500" />
-              </button>
-            ))}
-
-            {/* Emails */}
-            {profile.emails.filter(e => e.value).map((email) => (
-              <button
-                key={email.id}
-                onClick={() => handleEmailClick(email.value)}
-                className="w-full flex items-center gap-4 py-3 px-4 bg-slate-50 rounded-xl mb-2 hover:bg-green-50 transition-colors group text-left"
-              >
-                <div className="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs text-slate-400 font-medium">{email.label}</div>
-                  <div className="text-slate-800 font-bold">{email.value}</div>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-green-500" />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Address */}
-        {profile.address && (
-          <div className="px-6 py-6 border-b border-slate-100">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Location</h2>
-            <button
-              onClick={() => handleAddressClick(profile.address)}
-              className="w-full flex items-center gap-4 py-4 px-4 bg-slate-50 rounded-xl hover:bg-red-50 transition-colors group text-left"
-            >
-              <div className="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                <MapPin className="w-5 h-5" />
+          {/* Hero Card — overlapping the curve */}
+          <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-4">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+              {/* Image area */}
+              <div className="w-full h-36 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                {heroImg ? (
+                  <img
+                    src={heroImg}
+                    alt="Business"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2 opacity-30">
+                    <Globe className="w-12 h-12 text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No image</span>
+                  </div>
+                )}
               </div>
-              <div className="flex-1">
-                <div className="text-slate-800 font-bold">{profile.address}</div>
-                <div className="text-xs text-slate-400 flex items-center gap-1 mt-1">
-                  Open in Maps <ExternalLink className="w-3 h-3" />
-                </div>
+
+              {/* CTA Button */}
+              <div className="px-4 py-3">
+                <button
+                  onClick={() => {
+                    const btn = profile.buttons?.[0];
+                    if (btn?.url) window.open(btn.url, '_blank');
+                  }}
+                  style={{ backgroundColor: profile.secondaryColor || '#7ec8a4' }}
+                  className="w-full py-3 rounded-2xl text-white font-black text-[15px] shadow-md tracking-wide hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  {profile.buttons?.[0]?.text || 'View More'}
+                </button>
               </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-red-500" />
-            </button>
-          </div>
-        )}
-
-        {/* Opening Hours */}
-        <div className="px-6 py-6 border-b border-slate-100">
-          <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Opening Hours</h2>
-          <div className="space-y-2">
-            {DAYS_ORDER.map((day) => {
-              const dayConfig = profile.openingHours[day];
-              if (!dayConfig) return null;
-
-              return (
-                <div key={day} className="flex items-center justify-between py-2">
-                  <span className="text-slate-700 font-medium capitalize">{formatDay(day)}</span>
-                  <span className={`text-sm font-bold ${dayConfig.isOpen ? 'text-green-600' : 'text-slate-400'}`}>
-                    {dayConfig.isOpen
-                      ? dayConfig.slots.map(slot => `${slot.start} - ${slot.end}`).join(', ')
-                      : 'Closed'
-                    }
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Social Media Links */}
-        {profile.socialNetworks.length > 0 && (
-          <div className="px-6 py-6 border-b border-slate-100">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Follow Us</h2>
-            <div className="flex flex-wrap gap-3">
-              {profile.socialNetworks.map((social) => {
-                if (!social.url) return null;
-                const icon = SOCIAL_ICONS[social.platform] || <Globe className="w-5 h-5" />;
-                const color = SOCIAL_COLORS[social.platform] || '#333333';
-
-                return (
-                  <button
-                    key={social.id}
-                    onClick={() => handleSocialClick(social.url)}
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-md"
-                    style={{ backgroundColor: color, color: 'white' }}
-                  >
-                    {icon}
-                  </button>
-                );
-              })}
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Footer */}
-        <div className="px-6 py-8 text-center">
-          <p className="text-xs text-slate-400">
-            Powered by <span className="font-bold text-slate-600">MakeMyQRCode</span>
-          </p>
+        {/* ── SCROLLABLE CONTENT ─────────────────────────── */}
+        <div className="flex-1 px-3 pt-36 pb-6 space-y-3">
+
+          {/* Opening Hours */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                <Clock className="w-3.5 h-3.5 text-white" />
+              </div>
+              <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Opening Hours</h3>
+            </div>
+            <div className="space-y-0.5">
+              {(() => {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const today = days[new Date().getDay()];
+                return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => {
+                  const isToday = day === today;
+                  const dayLower = day.toLowerCase();
+                  const dayConfig = profile.openingHours[dayLower as keyof typeof profile.openingHours];
+                  const slots = dayConfig?.slots || [];
+                  const isOpen = dayConfig?.isOpen !== false && slots.length > 0;
+                  return (
+                    <div key={day} className={`flex justify-between items-center px-2 py-1 rounded-lg ${isToday ? 'bg-red-50' : ''}`}>
+                      <span className={`text-[10px] font-bold ${isToday ? 'text-red-500' : 'text-slate-500'}`}>{day}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-[10px] font-bold whitespace-nowrap ${isToday ? 'text-red-500' : 'text-slate-500'}`}>
+                          {isOpen ? slots.map((slot, i) => <span key={i}>{slot.start} – {slot.end}</span>) : <span className="italic opacity-50">Closed</span>}
+                        </span>
+                        {isToday && <span className="bg-red-500 text-white text-[7px] font-black px-1 py-0.5 rounded-full uppercase tracking-wider">Today</span>}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+
+          {/* About Company */}
+          {profile.aboutCompany && (
+            <div className="bg-white rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                  <Info className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">About Company</h3>
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{profile.aboutCompany}</p>
+            </div>
+          )}
+
+          {/* Services / Facilities */}
+          {profile.facilities && profile.facilities.length > 0 && (
+            <div className="bg-white rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                  <User className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Services</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {profile.facilities.map((item, idx) => (
+                  <span key={idx} className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[10px] font-bold rounded-full border border-slate-100">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Location */}
+          {profile.address && (
+            <div
+              className="bg-white rounded-2xl p-4 shadow-sm flex items-start gap-3 cursor-pointer hover:bg-slate-50"
+              onClick={() => handleAddressClick(profile.address)}
+            >
+              <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Address</p>
+                <p className="text-[11px] font-bold text-slate-700 leading-snug">{profile.address}</p>
+                <div className="text-[9px] font-bold text-red-500 mt-1 flex items-center gap-1 uppercase tracking-tight font-black">
+                  Open in Maps <ExternalLink className="w-2.5 h-2.5" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Social Networks */}
+          {profile.socialNetworks.length > 0 && (
+            <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                  <Share2 className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Social Networks</h3>
+              </div>
+              <div className="space-y-2">
+                {profile.socialNetworks.map((social, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-slate-50 rounded-xl p-2.5 flex items-center gap-3 group cursor-pointer hover:bg-slate-100 transition-all"
+                    onClick={() => handleSocialClick(social.url)}
+                  >
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-blue-50 text-blue-500 shrink-0">
+                      {getSocialIcon(social.platform)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-black text-slate-700 text-[11px] truncate">{social.platform}</h4>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{social.label || 'Social Account'}</p>
+                    </div>
+                    <ChevronRight className="w-3 h-3 text-slate-300 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Contact Details */}
+          {(profile.phones.length > 0 || profile.emails.length > 0 || profile.websites?.length > 0) && (
+            <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2.5">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                  <User className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Contact Information</h3>
+              </div>
+
+              {profile.phones.map((p, i) => (
+                <div key={i} className="flex items-center gap-2.5 cursor-pointer" onClick={() => handlePhoneClick(p.value)}>
+                  <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-3.5 h-3.5 text-slate-300" /></div>
+                  <div className="min-w-0">
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{p.label || 'Phone'}</p>
+                    <p className="text-[11px] font-bold text-slate-700 truncate">{p.value}</p>
+                  </div>
+                </div>
+              ))}
+
+              {profile.emails.map((e, i) => (
+                <div key={i} className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleEmailClick(e.value)}>
+                  <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Mail className="w-3.5 h-3.5 text-slate-300" /></div>
+                  <div className="min-w-0">
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{e.label || 'Email'}</p>
+                    <p className="text-[11px] font-bold text-slate-700 truncate">{e.value}</p>
+                  </div>
+                </div>
+              ))}
+
+              {profile.websites?.map((w, i) => (
+                <div key={i} className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleSocialClick(w.value)}>
+                  <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Globe className="w-3.5 h-3.5 text-slate-300" /></div>
+                  <div className="min-w-0">
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{w.label || 'Website'}</p>
+                    <p className="text-[11px] font-bold text-cyan-600 underline truncate">{w.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="py-8 text-center">
+            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em]">
+              Powered by <span className="text-slate-400">BARQR.io</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
