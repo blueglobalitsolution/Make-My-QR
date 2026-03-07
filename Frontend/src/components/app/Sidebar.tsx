@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText } from 'lucide-react';
+import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText, BarChart3 } from 'lucide-react';
 
 interface SidebarProps {
   view: string;
@@ -52,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <p className="text-[10px] font-black skeu-text-muted uppercase tracking-[0.2em] pl-4 mb-4 opacity-70">Main Menu</p>
           {[
             { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
+            { id: 'analytics', name: 'Analytics', icon: BarChart3 },
             { id: 'account', name: 'My Account', icon: UserCircle },
             { id: 'billing', name: 'Billing', icon: CreditCard },
           ].map((item) => (

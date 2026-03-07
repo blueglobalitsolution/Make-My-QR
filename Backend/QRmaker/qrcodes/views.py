@@ -5,8 +5,13 @@ from .models import QRCode
 from .serializers import QRCodeSerializer
 from folders.models import Folder
 from files.models import File
+from scans.models import Scan
 from hashids import Hashids
 from django.conf import settings
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
+from datetime import timedelta
+from django.utils import timezone
 import json
 
 
@@ -99,6 +104,182 @@ class QRCodeViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(qr_code)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["get"], url_path="summary-analytics")
+    def summary_analytics(self, request):
+        """Overall analytics for all user's QR codes with filtering."""
+        user = request.user
+        
+        # Get Filter Params
+        period = request.query_params.get('period', '30')
+        device_type = request.query_params.get('device_type', 'All')
+        search = request.query_params.get('search', '')
+        location = request.query_params.get('location')
+        
+        try:
+           days = int(period)
+        except:
+           days = 30
+           
+        time_threshold = timezone.now() - timedelta(days=days)
+        
+        # Base queries
+        qr_filters = Q(user=user)
+        if search:
+            qr_filters &= Q(name__icontains=search) | Q(value__icontains=search)
+            
+        user_qr_ids = QRCode.objects.filter(qr_filters).values_list('id', flat=True)
+        
+        scan_filters = Q(qrcode_id__in=user_qr_ids)
+        if days > 0:
+            scan_filters &= Q(timestamp__gte=time_threshold)
+        if device_type != 'All':
+            scan_filters &= Q(device_type=device_type)
+        if location:
+            scan_filters &= Q(country=location)
+            
+        user_scans = Scan.objects.filter(scan_filters)
+        
+        # Summary Counters
+        total_scans = user_scans.count()
+        unique_scans = user_scans.values('ip_address').distinct().count()
+        total_qrcodes = len(user_qr_ids)
+        
+        # Scans by Day
+        daily_scans = user_scans\
+            .annotate(date=TruncDate('timestamp'))\
+            .values('date')\
+            .annotate(count=Count('id'))\
+            .order_by('date')
+            
+        # Device Distribution
+        devices = user_scans.values('device_type')\
+            .annotate(count=Count('id'))\
+            .order_by('-count')
+            
+        # OS Distribution
+        os_stats = user_scans.values('os_family')\
+            .annotate(count=Count('id'))\
+            .order_by('-count')
+            
+        # Browser Distribution
+        browser_stats = user_scans.values('browser')\
+            .annotate(count=Count('id'))\
+            .order_by('-count')
+            
+        # Location Distribution
+        location_stats = user_scans.exclude(country=None).values('country')\
+            .annotate(count=Count('id'))\
+            .order_by('-count')
+            
+        # Top QR Codes within this scan set
+        top_ids = user_scans.values('qrcode_id')\
+            .annotate(scan_count=Count('id'))\
+            .order_by('-scan_count')[:5]
+            
+        # Fetch QR names for top IDs
+        qr_map = {q.id: q.name for q in QRCode.objects.filter(id__in=[t['qrcode_id'] for t in top_ids])}
+        top_qrs_data = [{"id": t['qrcode_id'], "name": qr_map.get(t['qrcode_id'], 'Unknown'), "scans": t['scan_count']} for t in top_ids]
+
+        return Response({
+            "summary": {
+                "total_scans": total_scans,
+                "unique_scans": unique_scans,
+                "total_qrcodes": total_qrcodes
+            },
+            "daily_scans": list(daily_scans),
+            "devices": list(devices),
+            "os": list(os_stats),
+            "browsers": list(browser_stats),
+            "locations": list(location_stats),
+            "top_qrcodes": top_qrs_data
+        })
+
+    @action(detail=False, methods=["get"], url_path="export-scans-csv")
+    def export_scans_csv(self, request):
+        """Export all scans for current user as CSV."""
+        import csv
+        from django.http import HttpResponse
+        
+        user_qr_ids = QRCode.objects.filter(user=request.user).values_list('id', flat=True)
+        scans = Scan.objects.filter(qrcode_id__in=user_qr_ids).select_related('qrcode').order_by('-timestamp')
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="qr_scans_export.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['QR Name', 'QR ID', 'Timestamp', 'IP Address', 'Device', 'OS', 'Browser'])
+        
+        for s in scans:
+            writer.writerow([
+                s.qrcode.name,
+                s.qrcode.id,
+                s.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                s.ip_address,
+                s.device_type,
+                s.os_family,
+                s.browser
+            ])
+            
+        return response
+
+    @action(detail=True, methods=["get"])
+    def analytics(self, request, pk=None):
+        """Detailed analytics for a specific QR code with filtering."""
+        qrcode = self.get_object()
+        
+        # Get Filter Params
+        period = request.query_params.get('period', '30')
+        device_type = request.query_params.get('device_type', 'All')
+        location = request.query_params.get('location')
+        
+        try:
+           days = int(period)
+        except:
+           days = 30
+           
+        time_threshold = timezone.now() - timedelta(days=days)
+        
+        scan_filters = Q(qrcode=qrcode)
+        if days > 0:
+            scan_filters &= Q(timestamp__gte=time_threshold)
+        if device_type != 'All':
+            scan_filters &= Q(device_type=device_type)
+        if location:
+            scan_filters &= Q(country=location)
+
+        user_scans = Scan.objects.filter(scan_filters)
+
+        # Summary
+        total_scans = user_scans.count()
+        unique_scans = user_scans.values('ip_address').distinct().count()
+
+        # Scans by Day
+        daily_scans = user_scans\
+            .annotate(date=TruncDate('timestamp'))\
+            .values('date')\
+            .annotate(count=Count('id'))\
+            .order_by('date')
+
+        # Distributions
+        devices = user_scans.values('device_type').annotate(count=Count('id')).order_by('-count')
+        os_stats = user_scans.values('os_family').annotate(count=Count('id')).order_by('-count')
+        browser_stats = user_scans.values('browser').annotate(count=Count('id')).order_by('-count')
+        location_stats = user_scans.exclude(country=None).values('country').annotate(count=Count('id')).order_by('-count')
+
+        return Response({
+            "name": qrcode.name,
+            "summary": {
+                "total_scans": total_scans, 
+                "unique_scans": unique_scans,
+                "total_qrcodes": 1
+            },
+            "daily_scans": list(daily_scans),
+            "devices": list(devices),
+            "os": list(os_stats),
+            "browsers": list(browser_stats),
+            "locations": list(location_stats)
+        })
 
 
 class PublicQRCodeView(generics.RetrieveAPIView):
