@@ -12,6 +12,7 @@
     "axios": "^1.13.5",
     "crypto-js": "^4.2.0",
     "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
     "jsbarcode": "^3.11.6",
     "jspdf": "^2.5.1",

@@ -1696,7 +1696,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto scrollbar-hide relative">
+                    <div className="flex-1 overflow-hidden scrollbar-hide relative">
                       {phonePreviewMode === 'ui' ? (
                         <div className="h-full flex flex-col animate-in fade-in duration-500">
                           <GatekeeperPreview

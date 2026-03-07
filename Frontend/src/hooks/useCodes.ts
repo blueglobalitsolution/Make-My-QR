@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GeneratedCode, Folder } from '../../types';
 import { getCodes, deleteCode as apiDeleteCode } from '../api/qrcodes';
 import { getFolders, createFolder as apiCreateFolder, deleteFolder as apiDeleteFolder } from '../api/folders';
-import QRCodeStyling from 'qr-code-styling';
 
 export interface UseCodesReturn {
   history: GeneratedCode[];
@@ -15,7 +14,7 @@ export interface UseCodesReturn {
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   filteredHistory: GeneratedCode[];
   deleteCode: (id: string) => Promise<void>;
-  downloadCode: (code: GeneratedCode, format?: 'png' | 'svg') => void;
+  downloadCode: (code: GeneratedCode, format?: 'png' | 'svg') => Promise<void>;
   startEditing: (code: GeneratedCode) => void;
   createNewFolder: () => Promise<void>;
   isCreatingFolder: boolean;
@@ -68,19 +67,9 @@ export const useCodes = (
     }
   };
 
-  const downloadCode = (code: GeneratedCode, format: 'png' | 'svg' = 'png') => {
-    const qr = new QRCodeStyling({
-      width: 1000,
-      height: 1000,
-      data: code.value,
-      dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern },
-      backgroundOptions: { color: code.settings.bgColor },
-      cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor },
-      cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor },
-      image: code.settings.logoUrl,
-      imageOptions: { crossOrigin: "anonymous", margin: 5 }
-    });
-    qr.download({ name: code.name || 'qr-code', extension: format });
+  const downloadCode = async (code: GeneratedCode, format: 'png' | 'svg' = 'png') => {
+    // Note: Most downloads now handled by App.tsx passed-down downloadCode
+    console.log("Hook downloadCode triggered (fallback only)");
   };
 
   const startEditing = (code: GeneratedCode) => {

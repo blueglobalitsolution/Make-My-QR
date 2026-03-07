@@ -56,6 +56,7 @@ export interface GeneratedCode {
   status: 'active' | 'paused';
   createdAt: string;
   settings: any;
+  imageUrl?: string;
 }
 
 export type ViewState =

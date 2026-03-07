@@ -15,6 +15,20 @@ export const updateCode = async (id, codeData) => {
     return response.data;
 };
 
+export const updateCodeImage = async (id: string, imageDataUrl: string): Promise<string> => {
+    const response = await fetch(imageDataUrl);
+    const blob = await response.blob();
+    const formData = new FormData();
+    formData.append('image_file', blob, `qr_${id}.png`);
+    
+    const apiResponse = await apiClient.patch(`/qrcodes/${id}/`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return apiResponse.data;
+};
+
 export const deleteCode = async (id) => {
     const response = await apiClient.delete(`/qrcodes/${id}/`);
     return response.data;

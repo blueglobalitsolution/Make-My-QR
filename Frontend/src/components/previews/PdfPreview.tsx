@@ -83,7 +83,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     };
 
     return (
-        <div className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative font-inter pt-10 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative font-inter pt-16 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Background Curve */}
             <div
                 className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"

@@ -31,7 +31,7 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
     };
 
     return (
-        <div className="h-full flex flex-col bg-[#fcfdff] overflow-x-hidden relative font-inter pt-10 pb-10">
+        <div className="h-full flex flex-col bg-[#fcfdff] scrollbar-hide overflow-hidden relative font-inter pt-16 pb-6">
             {/* Background Curve */}
             <div
                 className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"
@@ -40,7 +40,7 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
 
             <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center px-5">
                 {/* URL Capsule */}
-                <div className="w-full bg-white/20 backdrop-blur-md border border-white/30 px-4 py-2 rounded-full flex items-center gap-3 mb-6 shadow-lg">
+                <div className="w-full bg-white/20 backdrop-blur-md border border-white/30 px-4 py-1.5 rounded-full flex items-center gap-3 mb-4 shadow-lg">
                     <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
                         <Globe className="w-3.5 h-3.5" style={{ color: brandColor }} />
                     </div>
@@ -50,15 +50,15 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                 </div>
 
                 {/* Card Container */}
-                <div className="w-full bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-8">
+                <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6">
                     {/* Visual Placeholder */}
-                    <div className="w-full h-48 bg-slate-50 flex items-center justify-center p-6 bg-gradient-to-br from-slate-50 to-slate-100">
+                    <div className="w-full h-36 bg-slate-50 flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 to-slate-100">
                         <div className="w-full h-full bg-white/50 rounded-2xl flex items-center justify-center border border-slate-200/50 shadow-inner">
                             <Globe className="w-12 h-12 text-slate-200" />
                         </div>
                     </div>
 
-                    <div className="p-8 flex flex-col items-center space-y-6">
+                    <div className="p-6 flex flex-col items-center space-y-4">
                         <div className="text-center space-y-2">
                             <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-tight">
                                 {name || "Website Link"}
@@ -79,7 +79,7 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                             <div className="w-[95%] h-3 bg-slate-100/50 rounded-full animate-pulse" />
                         </div>
 
-                        <div className="w-full p-8 bg-cyan-50/30 rounded-3xl flex items-center justify-center border border-cyan-100/20">
+                        <div className="w-full p-6 bg-cyan-50/30 rounded-2xl flex items-center justify-center border border-cyan-100/20">
                             <div className="w-32 h-3.5 bg-cyan-200/40 rounded-full" />
                         </div>
 
@@ -95,7 +95,7 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                                 <button
                                     onClick={handleAction}
                                     style={{ backgroundColor: brandColor }}
-                                    className="w-full py-5 rounded-2xl text-white font-black text-[11px] uppercase tracking-wider shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 px-6 shadow-blue-900/10"
+                                    className="w-full py-4 rounded-xl text-white font-black text-[11px] uppercase tracking-wider shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 px-6 shadow-blue-900/10"
                                 >
                                     <ExternalLink className="w-4 h-4 shrink-0" /> Visit Website
                                 </button>

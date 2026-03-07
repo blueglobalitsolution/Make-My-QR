@@ -72,7 +72,9 @@ def redirect_scan(request, slug):
         "/media/" in qrcode.value or qrcode.value.startswith("http")
     )
 
+    file_obj = None
     if is_file_category or has_file_url:
+        file_obj = None
         try:
             # Try to parse as JSON first (new format)
             value_data = json.loads(qrcode.value)

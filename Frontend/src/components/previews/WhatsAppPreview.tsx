@@ -83,7 +83,7 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
 
             {/* ── HEADER ─────────────────────────────────── */}
             <div
-                className="flex items-center gap-3 px-3 pt-10 pb-2.5 shrink-0"
+                className="flex items-center gap-3 px-3 pt-16 pb-2.5 shrink-0"
                 style={{ backgroundColor: '#075E54' }}
             >
                 <ChevronLeft className="w-5 h-5 text-white opacity-90 shrink-0" />

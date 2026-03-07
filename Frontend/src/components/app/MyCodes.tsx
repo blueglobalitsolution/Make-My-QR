@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 import { StyledQRCode } from '../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../components/QRFrameWrapper';
@@ -47,33 +47,59 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   onNewQR,
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const captureRef = useRef<HTMLDivElement>(null);
+  const [downloadingCode, setDownloadingCode] = useState<GeneratedCode | null>(null);
+  const [downloadFormat, setDownloadFormat] = useState<'png' | 'svg'>('png');
+  const [previewCode, setPreviewCode] = useState<GeneratedCode | null>(null);
+
+  // Trigger download when capturing area is ready
+  useEffect(() => {
+    if (downloadingCode && captureRef.current) {
+      // Wait for rendering to settle
+      const timer = setTimeout(async () => {
+        try {
+          await downloadCode(downloadingCode, downloadFormat, captureRef.current);
+        } catch (err) {
+          console.error("Capture failed", err);
+        } finally {
+          setDownloadingCode(null);
+        }
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [downloadingCode, downloadFormat, downloadCode]);
+
+  const getQRValue = (code: GeneratedCode) => {
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
+    const slug = code.shortSlug || (code as any).short_slug;
+    let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
+    if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
+    return qrValue || 'https://makemyqr.com';
+  };
+
+  const getQROptions = (code: GeneratedCode) => {
+    return {
+      data: getQRValue(code),
+      dotsOptions: {
+        color: code.settings?.fgColor || '#000000',
+        type: code.settings?.pattern || 'square'
+      },
+      backgroundOptions: { color: code.settings?.bgColor || '#ffffff' },
+      cornersSquareOptions: {
+        type: code.settings?.cornersSquareType || 'square',
+        color: code.settings?.cornersSquareColor || code.settings?.fgColor || '#000000',
+      },
+      cornersDotOptions: {
+        type: code.settings?.cornersDotType || 'square',
+        color: code.settings?.cornersDotColor || code.settings?.fgColor || '#000000',
+      },
+      image: code.settings?.logoUrl || undefined,
+      imageOptions: { crossOrigin: "anonymous", margin: 5 }
+    };
+  };
 
   const CodeThumbnail = React.memo(({ code }: { code: GeneratedCode }) => {
-    const options = React.useMemo(() => {
-      const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
-      const slug = code.shortSlug || (code as any).short_slug;
-      let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
-      if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
-
-      return {
-        data: qrValue || 'https://makemyqr.com',
-        dotsOptions: {
-          color: code.settings?.fgColor || '#000000',
-          type: code.settings?.pattern || 'square'
-        },
-        backgroundOptions: { color: code.settings?.bgColor || '#ffffff' },
-        cornersSquareOptions: {
-          type: code.settings?.cornersSquareType || 'square',
-          color: code.settings?.cornersSquareColor || code.settings?.fgColor || '#000000',
-        },
-        cornersDotOptions: {
-          type: code.settings?.cornersDotType || 'square',
-          color: code.settings?.cornersDotColor || code.settings?.fgColor || '#000000',
-        },
-        image: code.settings?.logoUrl || undefined,
-        imageOptions: { crossOrigin: "anonymous", margin: 5 }
-      };
-    }, [code]);
+    const options = React.useMemo(() => getQROptions(code), [code]);
 
     return (
       <div className="absolute inset-0 flex items-center justify-center scale-[0.55] origin-center pointer-events-none">
@@ -222,10 +248,17 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                 <div key={code.id} className="grid grid-cols-[220px_1fr_180px_180px_180px] items-center skeu-card px-8 py-4 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
-                    <div className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500">
+                    <button
+                      onClick={() => setPreviewCode(code)}
+                      className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500 cursor-zoom-in group/thumb"
+                      title="Click to preview"
+                    >
                       <CodeThumbnail code={code} />
                       <div className="absolute inset-0 bg-red-100/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    </div>
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover/thumb:bg-black/5 transition-all opacity-0 group-hover/thumb:opacity-100">
+                        <Search className="w-5 h-5 text-red-500/50" />
+                      </div>
+                    </button>
                   </div>
 
                   <div className="space-y-0.5">
@@ -256,14 +289,20 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
                     <div className="flex gap-2 w-full justify-center">
                       <button
-                        onClick={() => downloadCode(code, 'png')}
+                        onClick={() => {
+                          setDownloadFormat('png');
+                          setDownloadingCode(code);
+                        }}
                         className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
                         title="Download PNG"
                       >
                         <Download className="w-3 h-3" /> PNG
                       </button>
                       <button
-                        onClick={() => downloadCode(code, 'svg')}
+                        onClick={() => {
+                          setDownloadFormat('svg');
+                          setDownloadingCode(code);
+                        }}
                         className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
                         title="Download SVG"
                       >
@@ -290,7 +329,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       <Pencil className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
-                      onClick={() => downloadCode(code, 'png')}
+                      onClick={() => {
+                        setDownloadFormat('png');
+                        setDownloadingCode(code);
+                      }}
                       className="w-9 h-9 flex items-center justify-center skeu-btn-secondary group-hover:shadow-md transition-all"
                       title="Download"
                     >
@@ -309,6 +351,102 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             })
           )}
         </div>
+      </div>
+
+      {/* QR Preview Modal */}
+      {previewCode && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div
+            className="absolute inset-0 bg-white/40 backdrop-blur-md cursor-pointer"
+            onClick={() => setPreviewCode(null)}
+          />
+
+          <div className="relative w-full max-w-xl skeu-card p-12 bg-white animate-in zoom-in-95 duration-300 shadow-2xl space-y-8">
+            <button
+              onClick={() => setPreviewCode(null)}
+              className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-2 text-center">
+              <h2 className="text-3xl font-black skeu-text-primary tracking-tight">{previewCode.name}</h2>
+              <p className="skeu-text-muted font-medium text-sm tabular-nums tracking-wide">
+                Created on {new Date(previewCode.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            </div>
+
+            <div className="skeu-inset p-12 flex items-center justify-center bg-white aspect-square relative overflow-hidden">
+              <div className="scale-125">
+                <QRFrameWrapper frame={previewCode.settings?.frame || 'none'}>
+                  <StyledQRCode
+                    options={{
+                      data: (previewCode.shortSlug || (previewCode as any).short_slug)
+                        ? `http://local:8010/r/${previewCode.shortSlug || (previewCode as any).short_slug}`
+                        : previewCode.value,
+                      dotsOptions: {
+                        color: previewCode.settings?.fgColor || '#000000',
+                        type: previewCode.settings?.pattern || 'square'
+                      },
+                      backgroundOptions: { color: previewCode.settings?.bgColor || '#ffffff' },
+                      cornersSquareOptions: {
+                        type: previewCode.settings?.cornersSquareType || 'square',
+                        color: previewCode.settings?.cornersSquareColor || previewCode.settings?.fgColor || '#000000',
+                      },
+                      cornersDotOptions: {
+                        type: previewCode.settings?.cornersDotType || 'square',
+                        color: previewCode.settings?.cornersDotColor || previewCode.settings?.fgColor || '#000000',
+                      },
+                      image: previewCode.settings?.logoUrl || undefined,
+                      imageOptions: { crossOrigin: "anonymous", margin: 5 }
+                    }}
+                    size={300}
+                  />
+                </QRFrameWrapper>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => {
+                  setDownloadFormat('png');
+                  setDownloadingCode(previewCode);
+                  setPreviewCode(null);
+                }}
+                className="flex-1 skeu-btn py-4 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" /> Download PNG
+              </button>
+              <button
+                onClick={() => {
+                  startEditing(previewCode);
+                  setPreviewCode(null);
+                }}
+                className="flex-1 skeu-btn-secondary py-4 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <Pencil className="w-4 h-4" /> Edit Code
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden Capture Area for High-Fidelity Downloads */}
+      <div
+        ref={captureRef}
+        className="fixed top-0 left-0 pointer-events-none bg-white flex items-center justify-center translate-x-[-100%]"
+        style={{ width: '1200px', height: '1200px', zIndex: -999, visibility: 'visible' }}
+      >
+        {downloadingCode && (
+          <div className="p-24 bg-white inline-block">
+            <QRFrameWrapper frame={downloadingCode.settings?.frame || 'none'}>
+              <StyledQRCode
+                options={getQROptions(downloadingCode)}
+                size={800}
+              />
+            </QRFrameWrapper>
+          </div>
+        )}
       </div>
     </div>
   );

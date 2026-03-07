@@ -223,9 +223,51 @@ const App: React.FC = () => {
     } catch (err) { alert("Failed to delete QR code."); }
   };
 
-  const downloadCode = (code: GeneratedCode, format: 'png' | 'svg' = 'png') => {
+  const downloadCode = async (code: GeneratedCode, format: 'png' | 'svg' = 'png', captureElement?: HTMLElement) => {
+    // Handle high-fidelity download with frame from capture element
+    if (captureElement) {
+      try {
+        const html2canvas = (await import('html2canvas')).default;
+        const canvas = await html2canvas(captureElement, {
+          backgroundColor: code.settings?.bgColor || '#ffffff',
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+        });
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${code.name || 'qr-code'}.png`;
+        link.click();
+        return;
+      } catch (err) {
+        console.error('Capture download failed, falling back to basic QR:', err);
+      }
+    }
+
+    if (code.imageUrl) {
+      try {
+        const response = await fetch(code.imageUrl);
+        const blob = await response.blob();
+        
+        // Determine correct extension from blob type
+        const mimeType = blob.type || 'image/png';
+        const ext = mimeType.split('/')[1] || 'png';
+        const extension = ext === 'jpeg' ? 'jpg' : ext;
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${code.name || 'qr-code'}.${extension}`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        return;
+      } catch (err) {
+        console.error('Failed to download from imageUrl, falling back to basic QR:', err);
+      }
+    }
+
     const slug = code.shortSlug || (code as any).short_slug;
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
     let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
     if (qrValue.startsWith('/')) qrValue = backendUrl + qrValue;
     const qr = new QRCodeStyling({ width: 1000, height: 1000, data: qrValue, dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern }, backgroundOptions: { color: code.settings.bgColor }, cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor }, cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor }, image: code.settings.logoUrl, imageOptions: { crossOrigin: "anonymous", margin: 5 } });
