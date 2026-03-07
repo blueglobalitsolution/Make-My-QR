@@ -15,8 +15,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                         <LayoutDashboard className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h1 className="font-black text-slate-800 tracking-tight leading-none text-lg">Scanner <span className="text-red-600">Admin</span></h1>
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Control Panel</span>
+                        <h1 className="skeu-page-title !text-lg leading-none">Scanner <span className="text-red-600">Admin</span></h1>
+                        <p className="skeu-page-subtitle !text-[9px] capitalize tracking-[0.2em]">Control Panel</p>
                     </div>
                 </div>
 
@@ -26,7 +26,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     </button>
                     <button
                         onClick={() => setView('admin_login')}
-                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-red-600 transition-colors bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-lg"
+                        className="flex items-center gap-2 text-[10px] font-black capitalize tracking-widest text-slate-500 hover:text-red-600 transition-colors bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-lg"
                     >
                         <LogOut className="w-4 h-4" /> Sign Out
                     </button>
@@ -34,7 +34,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
             </header>
 
             {/* Main Content Area */}
-            <div className="flex-1 p-8">
+            <div className="flex-1 py-10">
                 <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
 
                     {/* Welcome Header */}
@@ -50,7 +50,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <Users className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Users</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">Total Users</p>
                                 <p className="text-2xl font-black text-slate-800 tabular-nums">0</p>
                             </div>
                         </div>
@@ -60,7 +60,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <Database className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Generated QR Codes</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">Generated QR Codes</p>
                                 <p className="text-2xl font-black text-slate-800 tabular-nums">0</p>
                             </div>
                         </div>
@@ -70,7 +70,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <LayoutDashboard className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">System Health</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">System Health</p>
                                 <p className="text-2xl font-black text-slate-800">100%</p>
                             </div>
                         </div>

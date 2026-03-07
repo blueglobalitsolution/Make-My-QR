@@ -7,7 +7,7 @@ interface LandingProps {
 
 export const Landing: React.FC<LandingProps> = ({ setView }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-red-50/30">
+    <div className="min-h-screen flex flex-col bg-red-50/30 font-lato">
       <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-red-100/50">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setView('landing')}>
           <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-8 group-hover:scale-105 transition-transform" />
@@ -41,7 +41,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
           <div className="absolute inset-0 bg-red-500/10 rounded-full blur-3xl transform scale-150" />
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] tracking-tighter mb-5 leading-[0.9] max-w-3xl">
+        <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] tracking-tighter mb-5 leading-[0.9] max-w-3xl font-poppins">
           The Next Generation <br />
           <span className="text-[#dc2626]">of Dynamic QR</span> <br />
           Experience

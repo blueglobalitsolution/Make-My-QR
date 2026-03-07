@@ -241,36 +241,63 @@ const App: React.FC = () => {
         link.click();
         return;
       } catch (err) {
-        console.error('Capture download failed, falling back to basic QR:', err);
+        console.error('Capture download failed, falling back to other methods:', err);
       }
     }
 
-    if (code.imageUrl) {
+    // If we have a frame and it's not 'none', use our unified generator for high-fidelity
+    const frame = code.settings?.frame || 'none';
+    if (frame !== 'none' && format === 'png') {
+      try {
+        const { generateQRWithFrame } = await import('./src/utils/qrCaptureUtils');
+        const slug = code.shortSlug || (code as any).short_slug;
+        const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
+        let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
+        if (qrValue.startsWith('/')) qrValue = backendUrl + qrValue;
+
+        const dataUrl = await generateQRWithFrame(qrValue, code.settings);
+        if (dataUrl) {
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `${code.name || 'qr-code'}.png`;
+          link.click();
+          return;
+        }
+      } catch (err) {
+        console.error('Unified frame generation failed:', err);
+      }
+    }
+
+    if (code.imageUrl && format === 'png') {
       try {
         const response = await fetch(code.imageUrl);
         const blob = await response.blob();
-        
-        // Determine correct extension from blob type
-        const mimeType = blob.type || 'image/png';
-        const ext = mimeType.split('/')[1] || 'png';
-        const extension = ext === 'jpeg' ? 'jpg' : ext;
-        
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `${code.name || 'qr-code'}.${extension}`;
+        link.download = `${code.name || 'qr-code'}.png`;
         link.click();
         URL.revokeObjectURL(link.href);
         return;
       } catch (err) {
-        console.error('Failed to download from imageUrl, falling back to basic QR:', err);
+        console.error('Failed to download from imageUrl:', err);
       }
     }
 
     const slug = code.shortSlug || (code as any).short_slug;
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
     let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
     if (qrValue.startsWith('/')) qrValue = backendUrl + qrValue;
-    const qr = new QRCodeStyling({ width: 1000, height: 1000, data: qrValue, dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern }, backgroundOptions: { color: code.settings.bgColor }, cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor }, cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor }, image: code.settings.logoUrl, imageOptions: { crossOrigin: "anonymous", margin: 5 } });
+    const qr = new QRCodeStyling({
+      width: 1000,
+      height: 1000,
+      data: qrValue,
+      dotsOptions: { color: code.settings.fgColor, type: code.settings.pattern },
+      backgroundOptions: { color: code.settings.bgColor },
+      cornersSquareOptions: { type: code.settings.cornersSquareType as any, color: code.settings.cornersSquareColor },
+      cornersDotOptions: { type: code.settings.cornersDotType as any, color: code.settings.cornersDotColor },
+      image: code.settings.logoUrl,
+      imageOptions: { crossOrigin: "anonymous", margin: 10 }
+    });
     qr.download({ name: code.name || 'qr-code', extension: format });
   };
 
@@ -373,7 +400,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? 'ml-64' : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? 'ml-64 px-12' : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (

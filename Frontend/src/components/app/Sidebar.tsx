@@ -41,7 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Create QR Code Button */}
         <button
           onClick={() => handleNavClick('wizard')}
-          className="w-full flex items-center justify-center gap-3 py-4 skeu-btn text-[11px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg"
+          className="w-full flex items-center justify-center gap-3 py-4 skeu-btn text-[13px] font-black capitalize tracking-widest active:scale-95 transition-all shadow-lg"
         >
           <Plus className="w-4 h-4" />
           <span>Create QR Code</span>
@@ -49,7 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation */}
         <nav className="space-y-3 flex-1">
-          <p className="text-[10px] font-black skeu-text-muted uppercase tracking-[0.2em] pl-4 mb-4 opacity-70">Main Menu</p>
+          <p className="text-[10px] font-black skeu-text-muted capitalize tracking-[0.2em] pl-4 mb-4 opacity-70 font-poppins">Main Menu</p>
           {[
             { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
             { id: 'analytics', name: 'Analytics', icon: BarChart3 },
@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-black transition-all ${view === item.id
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-black transition-all font-poppins ${view === item.id
                 ? 'skeu-tag-active scale-[1.02]'
                 : 'skeu-tag hover:skeu-text-primary'
                 }`}

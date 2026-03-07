@@ -7,13 +7,48 @@
     <title>MakeMyQR - Professional Dynamic QR Studio</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        lato: ['Lato', 'sans-serif'],
+                        avenir: ['Avenir', 'Montserrat', 'Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '2px',
+                        DEFAULT: '5px',
+                        'md': '5px',
+                        'lg': '5px',
+                        'xl': '5px',
+                        '2xl': '5px',
+                        '3xl': '5px',
+                        'full': '9999px',
+                    }
+                }
+            }
+        }
+    </script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;700;900&family=Playfair+Display:wght@700;900&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Lato:wght@300;400;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;700;900&display=swap"
         rel="stylesheet">
     <style>
+        /* --- Global Styles --- */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Lato', 'Inter', sans-serif;
             background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Poppins', sans-serif;
         }
 
         .glass-morphism {

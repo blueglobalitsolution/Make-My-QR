@@ -44,7 +44,7 @@ interface AuthViewsProps {
 
 const inputClass = "w-full pl-12 pr-6 py-4 skeu-input transition-all";
 const inputPasswordClass = "w-full pl-12 pr-12 py-4 skeu-input transition-all";
-const btnPrimary = "w-full py-4 skeu-btn text-xs font-black uppercase tracking-widest active:scale-95 transition-all";
+const btnPrimary = "w-full py-4 skeu-btn text-xs font-black capitalize tracking-widest active:scale-95 transition-all";
 
 export const AuthViews: React.FC<AuthViewsProps> = ({
   view,
@@ -89,7 +89,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
   /* ─── LOGIN ─── */
   if (view === 'auth') {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex flex-col justify-center items-center py-12">
         <div className="max-w-md w-full skeu-auth-card p-10">
           <div className="flex items-center justify-between mb-12">
             <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Welcome back</h2>
+            <h2 className="text-3xl font-black skeu-text-primary tracking-tight font-poppins">Welcome back</h2>
             <p className="mt-2 text-sm skeu-text-secondary font-medium">Please enter your details to sign in.</p>
           </div>
 
@@ -141,7 +141,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
   /* ─── REGISTER ─── */
   if (view === 'register') {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex flex-col justify-center items-center py-12">
         <div className="max-w-md w-full skeu-auth-card p-10">
           <div className="flex items-center justify-between mb-12">
             <div className="flex items-center gap-2">

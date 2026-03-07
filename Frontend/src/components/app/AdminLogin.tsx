@@ -30,7 +30,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
 
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1 mb-1 block">Admin Email</label>
+                            <label className="text-[10px] font-black capitalize text-slate-400 tracking-widest pl-1 mb-1 block">Admin Email</label>
                             <input
                                 type="email"
                                 required
@@ -42,7 +42,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
                         </div>
 
                         <div>
-                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1 mb-1 block">Security Key</label>
+                            <label className="text-[10px] font-black capitalize text-slate-400 tracking-widest pl-1 mb-1 block">Security Key</label>
                             <input
                                 type="password"
                                 required
@@ -55,7 +55,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
 
                         <button
                             type="submit"
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-black text-[11px] uppercase tracking-widest py-4 rounded-xl shadow-lg shadow-red-600/20 transition-all flex items-center justify-center gap-2 mt-4"
+                            className="w-full bg-red-600 hover:bg-red-700 text-white font-black text-[11px] capitalize tracking-widest py-4 rounded-xl shadow-lg shadow-red-600/20 transition-all flex items-center justify-center gap-2 mt-4"
                         >
                             Authenticate <ArrowRight className="w-4 h-4" />
                         </button>
@@ -64,7 +64,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
                     <div className="mt-6 pt-4 border-t border-slate-100">
                         <button
                             onClick={() => setView('landing')}
-                            className="w-full text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors"
+                            className="w-full text-[10px] font-bold text-slate-400 capitalize tracking-widest hover:text-slate-600 transition-colors"
                         >
                             Return to Public Site
                         </button>

@@ -100,9 +100,11 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                     <div className="bg-[#dc2626] p-1.5 rounded-lg shadow-lg">
                         <Scan className="text-white w-5 h-5" />
                     </div>
-                    <h1 className="text-lg font-black text-[#0F172A] tracking-tight">
+                    <h1 className="skeu-page-title !text-lg">
                         Scanner <span className="text-[#dc2626]">Studio</span>
                     </h1>
+                    {/* The original content "Scanner <span className="text-[#dc2626]">Studio</span>" was replaced by "{code.name}" */}
+                    {/* The instruction had a malformed snippet, so I've corrected it to be syntactically valid */}
                 </div>
                 <button onClick={() => setView('landing')} className="text-slate-400 hover:text-[#dc2626] transition-colors">
                     <X className="w-6 h-6" />
@@ -187,7 +189,7 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                                             <div className="space-y-3 w-full mt-auto pb-10">
                                                 <button
                                                     onClick={handleAction}
-                                                    className="w-full py-4 skeu-btn text-[11px] uppercase tracking-widest flex items-center justify-center gap-2"
+                                                    className="w-full py-4 skeu-btn text-[11px] capitalize tracking-widest flex items-center justify-center gap-2"
                                                 >
                                                     {scanResult?.type === 'text' ? (
                                                         <> <Copy className="w-4 h-4" /> Copy Content </>
@@ -209,7 +211,7 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                         <div className="w-full max-w-sm flex flex-col gap-4 animate-in fade-in slide-in-from-right-10 duration-700 delay-300">
                             <div className="skeu-card p-8 space-y-6">
                                 <div className="space-y-2">
-                                    <span className="text-[10px] font-black uppercase text-[#dc2626] bg-red-50 px-3 py-1 rounded-full">Scan Verified</span>
+                                    <span className="text-[10px] font-black capitalize text-[#dc2626] bg-red-50 px-3 py-1 rounded-full">Scan Verified</span>
                                     <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-tight">Content successfully identified.</h2>
                                 </div>
 
@@ -219,7 +221,7 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                                             <Globe className="w-5 h-5 text-red-500" />
                                         </div>
                                         <div className="overflow-hidden">
-                                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Destination</div>
+                                            <div className="text-[10px] text-slate-400 font-black capitalize tracking-widest">Destination</div>
                                             <div className="text-sm font-bold text-slate-700 truncate max-w-[180px]">
                                                 {scanResult?.value.replace(/^https?:\/\//, '')}
                                             </div>
@@ -230,7 +232,7 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
                                 <div className="pt-4 flex flex-col gap-3">
                                     <button
                                         onClick={resetScan}
-                                        className="w-full py-4 skeu-btn-secondary text-[11px] uppercase tracking-widest flex items-center justify-center gap-2"
+                                        className="w-full py-4 skeu-btn-secondary text-[11px] capitalize tracking-widest flex items-center justify-center gap-2"
                                     >
                                         <ChevronLeft className="w-4 h-4" /> Scan Another QR
                                     </button>
@@ -254,7 +256,7 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
             </main>
 
             <footer className="py-6 text-center">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+                <p className="text-[10px] text-slate-400 font-bold capitalize tracking-[0.2em]">
                     Powered by <span className="text-slate-600">MakeMyQRCode Studio</span>
                 </p>
             </footer>

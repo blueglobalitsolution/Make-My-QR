@@ -96,7 +96,7 @@ export const Analytics: React.FC = () => {
             <div className="flex-1 flex items-center justify-center bg-slate-50/30">
                 <div className="text-center space-y-4">
                     <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="font-black text-slate-400 uppercase tracking-widest text-[10px]">Loading Analytics...</p>
+                    <p className="font-black text-slate-400 capitalize tracking-widest text-[10px]">Loading Analytics...</p>
                 </div>
             </div>
         );
@@ -146,7 +146,7 @@ export const Analytics: React.FC = () => {
     const devicesList = ['All', 'Mobile', 'PC', 'Tablet'];
 
     return (
-        <div className="flex-1 overflow-y-auto skeu-app-bg px-8 pt-8 pb-16 space-y-8 font-inter">
+        <div className="flex-1 py-10 pb-16 space-y-8 font-lato">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -154,19 +154,19 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-red-50 rounded-xl">
                             <BarChart3 className="w-5 h-5 text-red-500" />
                         </div>
-                        <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                        <h1 className="skeu-page-title truncate max-w-lg">
                             {selectedCodeId ? (detailData?.name || 'Loading...') : 'Analytics Dashboard'}
                         </h1>
                         {selectedCodeId && (
                             <button
                                 onClick={() => setSelectedCodeId(null)}
-                                className="ml-4 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors"
+                                className="ml-4 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black capitalize tracking-widest transition-colors"
                             >
                                 ← Back to Overview
                             </button>
                         )}
                     </div>
-                    <p className="text-xs font-bold text-slate-400 tracking-wide uppercase">
+                    <p className="skeu-page-subtitle">
                         {selectedCodeId ? 'Detailed performance for this specific QR code.' : 'Track and analyze your QR code performance.'}
                     </p>
                 </div>
@@ -174,7 +174,7 @@ export const Analytics: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleExport}
-                        className="px-6 py-3 skeu-btn text-[11px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2 group transition-all"
+                        className="px-6 py-3 skeu-btn text-[11px] font-black capitalize tracking-widest shadow-lg flex items-center gap-2 group transition-all"
                     >
                         <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" /> Export Data
                     </button>
@@ -185,7 +185,7 @@ export const Analytics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4 p-5 skeu-card bg-white/60 backdrop-blur-md relative z-30">
                 {/* Period Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Period</label>
+                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Period</label>
                     <div
                         onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -219,7 +219,7 @@ export const Analytics: React.FC = () => {
 
                 {/* Device Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Device Type</label>
+                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Device Type</label>
                     <div
                         onClick={() => setShowDeviceDropdown(!showDeviceDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -250,7 +250,7 @@ export const Analytics: React.FC = () => {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Search QR Code</label>
+                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Search QR Code</label>
                     <div className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3">
                         <Search className="w-4 h-4 text-slate-400" />
                         <input
@@ -265,7 +265,7 @@ export const Analytics: React.FC = () => {
 
                 {/* Location Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 pl-1">Location</label>
+                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Location</label>
                     <div
                         onClick={() => setShowLocationDropdown(!showLocationDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -300,29 +300,29 @@ export const Analytics: React.FC = () => {
                     <button
                         onClick={fetchAnalytics}
                         disabled={loading}
-                        className="w-full h-11 bg-slate-900 rounded-xl text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                        className="w-full h-11 bg-slate-900 rounded-xl text-white text-[10px] font-black capitalize tracking-[0.2em] shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
                     >
                         {loading ? 'Processing...' : 'Apply Filters'}
                     </button>
                 </div>
             </div>
 
-            {loading && data && <div className="text-center py-2 animate-pulse"><p className="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">Updating data...</p></div>}
+            {loading && data && <div className="text-center py-2 animate-pulse"><p className="text-[10px] font-black text-red-500 capitalize tracking-[0.3em]">Updating data...</p></div>}
 
             {/* Summary Stats */}
             <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
-                <div className="skeu-card p-6 bg-white flex items-center justify-between border-b-4 border-blue-400/20">
+                <div className="skeu-card p-6 bg-white flex items-center justify-between border-b-4 border-red-400/20">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-blue-50 rounded-lg">
-                                <QrCode className="w-4 h-4 text-blue-500" />
+                            <div className="p-1.5 bg-red-50 rounded-lg">
+                                <QrCode className="w-4 h-4 text-red-500" />
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Codes</p>
+                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Selected Codes</p>
                         </div>
                         <h3 className="text-3xl font-black text-slate-800">{summary.total_qrcodes}</h3>
                     </div>
-                    <div className="w-12 h-12 rounded-full border border-blue-50 flex items-center justify-center">
-                        <ArrowUpRight className="w-5 h-5 text-blue-300" />
+                    <div className="w-12 h-12 rounded-full border border-red-50 flex items-center justify-center">
+                        <ArrowUpRight className="w-5 h-5 text-red-300" />
                     </div>
                 </div>
 
@@ -332,7 +332,7 @@ export const Analytics: React.FC = () => {
                             <div className="p-1.5 bg-green-50 rounded-lg">
                                 <Activity className="w-4 h-4 text-green-500" />
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Period Scans</p>
+                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Period Scans</p>
                         </div>
                         <h3 className="text-3xl font-black text-slate-800">{summary.total_scans}</h3>
                     </div>
@@ -347,7 +347,7 @@ export const Analytics: React.FC = () => {
                             <div className="p-1.5 bg-indigo-50 rounded-lg">
                                 <Globe2 className="w-4 h-4 text-indigo-500" />
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Unique Period Scans</p>
+                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Unique Period Scans</p>
                         </div>
                         <h3 className="text-3xl font-black text-slate-800">{summary.unique_scans}</h3>
                     </div>
@@ -366,11 +366,11 @@ export const Analytics: React.FC = () => {
                     <div className="flex items-center justify-between mb-12 relative z-10">
                         <div>
                             <h2 className="text-lg font-black text-slate-800 tracking-tight">QR Code Scan Activities</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
+                            <p className="text-[10px] font-bold text-slate-400 capitalize tracking-widest">Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
                         </div>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">
                             <Calendar className="w-3 h-3 text-slate-400" />
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                            <span className="text-[9px] font-black text-slate-500 capitalize tracking-widest">
                                 {daily_scans.length > 0 ? `${new Date(daily_scans[0].date).toLocaleDateString()} - ${new Date(daily_scans[daily_scans.length - 1].date).toLocaleDateString()}` : 'Live Trends'}
                             </span>
                         </div>
@@ -390,7 +390,7 @@ export const Analytics: React.FC = () => {
                                             {day.count}
                                         </div>
                                     </div>
-                                    <span className="text-[8px] font-black text-slate-300 uppercase shrink-0">
+                                    <span className="text-[8px] font-black text-slate-300 capitalize shrink-0">
                                         {day.label}
                                     </span>
                                 </div>
@@ -398,7 +398,7 @@ export const Analytics: React.FC = () => {
                         }) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-slate-300 space-y-4">
                                 <Activity className="w-12 h-12 opacity-20" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">Not enough data to show statistics</p>
+                                <p className="text-[10px] font-black capitalize tracking-widest">Not enough data to show statistics</p>
                             </div>
                         )}
                     </div>
@@ -408,7 +408,7 @@ export const Analytics: React.FC = () => {
                     {/* Top QR Codes */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Top Performing</h3>
+                            <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Top Performing</h3>
                             <ExternalLink className="w-4 h-4 text-slate-300" />
                         </div>
 
@@ -420,22 +420,22 @@ export const Analytics: React.FC = () => {
                                     className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${selectedCodeId === qr.id ? 'bg-red-50 border-red-200' : 'bg-slate-50/50 border-slate-100 hover:border-blue-100'}`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-500 border border-slate-100 shadow-sm">
+                                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-red-500 border border-slate-100 shadow-sm">
                                             <QrCode className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-slate-700 truncate max-w-[100px]">{qr.name}</p>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">ID: {qr.id}</p>
+                                            <p className="text-[9px] font-bold text-slate-400 capitalize tracking-widest">ID: {qr.id}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-xs font-black text-slate-800">{qr.scans}</p>
-                                        <p className="text-[9px] font-bold text-green-500 uppercase">Scans</p>
+                                        <p className="text-[9px] font-bold text-green-500 capitalize">Scans</p>
                                     </div>
                                 </div>
                             )) : (
                                 <div className="text-center py-8 opacity-20">
-                                    <p className="text-[10px] font-black uppercase tracking-widest">No data available</p>
+                                    <p className="text-[10px] font-black capitalize tracking-widest">No data available</p>
                                 </div>
                             )}
                         </div>
@@ -444,7 +444,7 @@ export const Analytics: React.FC = () => {
                     {/* Device Distribution */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Scans by Device</h3>
+                            <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Scans by Device</h3>
                             <Smartphone className="w-4 h-4 text-slate-300" />
                         </div>
 
@@ -455,12 +455,12 @@ export const Analytics: React.FC = () => {
                                 const Icon = item.device_type === 'Mobile' ? Smartphone : item.device_type === 'Tablet' ? Tablet : Monitor;
 
                                 // Sleek color palette based on device rank
-                                const barColors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-slate-400'];
+                                const barColors = ['bg-red-500', 'bg-indigo-500', 'bg-purple-500', 'bg-slate-400'];
                                 const barColor = barColors[i] || 'bg-slate-300';
 
                                 return (
                                     <div key={i} className="space-y-2">
-                                        <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-widest">
+                                        <div className="flex items-center justify-between text-[11px] font-black capitalize tracking-widest">
                                             <div className="flex items-center gap-2">
                                                 <Icon className="w-3.5 h-3.5 text-slate-400" />
                                                 <span className="text-slate-700 tracking-tighter">{item.device_type}</span>
@@ -477,7 +477,7 @@ export const Analytics: React.FC = () => {
                                 );
                             }) : (
                                 <div className="text-center py-6 opacity-20">
-                                    <p className="text-[10px] font-black uppercase tracking-widest">No device data</p>
+                                    <p className="text-[10px] font-black capitalize tracking-widest">No device data</p>
                                 </div>
                             )}
                         </div>
@@ -493,16 +493,16 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-purple-50 rounded-lg">
                             <Cpu className="w-4 h-4 text-purple-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">OS Distribution</h3>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">OS Distribution</h3>
                     </div>
                     <div className="space-y-5">
                         {os_stats.length > 0 ? os_stats.slice(0, 4).map((item: any, i: number) => (
                             <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors uppercase tracking-tight">{item.os_family || 'Other'}</span>
+                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.os_family || 'Other'}</span>
                                 <span className="text-[12px] font-black text-slate-800">{item.count}</span>
                             </div>
                         )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 uppercase tracking-widest">No data collected</p>
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 capitalize tracking-widest">No data collected</p>
                         )}
                     </div>
                 </div>
@@ -513,16 +513,16 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-orange-50 rounded-lg">
                             <Chrome className="w-4 h-4 text-orange-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Browser Distribution</h3>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Browser Distribution</h3>
                     </div>
                     <div className="space-y-5">
                         {browsers.length > 0 ? browsers.slice(0, 4).map((item: any, i: number) => (
                             <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors uppercase tracking-tight">{item.browser || 'Other'}</span>
+                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.browser || 'Other'}</span>
                                 <span className="text-[12px] font-black text-slate-800">{item.count}</span>
                             </div>
                         )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 uppercase tracking-widest">No data collected</p>
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 capitalize tracking-widest">No data collected</p>
                         )}
                     </div>
                 </div>
@@ -533,7 +533,7 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-green-50 rounded-lg">
                             <MapPin className="w-4 h-4 text-green-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Top Locations</h3>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Top Locations</h3>
                     </div>
                     <div className="space-y-4">
                         {data?.locations?.length > 0 ? data.locations.slice(0, 5).map((item: any, i: number) => (
@@ -549,7 +549,7 @@ export const Analytics: React.FC = () => {
                         )) : (
                             <div className="flex-1 flex flex-col items-center justify-center py-6 opacity-30 space-y-2">
                                 <Globe className="w-12 h-12 mx-auto animate-pulse" />
-                                <p className="text-[9px] font-black uppercase tracking-widest">Waiting for geo data...</p>
+                                <p className="text-[9px] font-black capitalize tracking-widest">Waiting for geo data...</p>
                             </div>
                         )}
                     </div>
@@ -557,7 +557,7 @@ export const Analytics: React.FC = () => {
             </div>
 
             <div className="pt-8 border-t border-slate-100 flex items-center justify-center">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.3em]">
                     Data is strictly aggregated for your account privacy
                 </p>
             </div>

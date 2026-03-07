@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import QRCodeStyling from 'qr-code-styling';
-import html2canvas from 'html2canvas';
+import { generateQRWithFrame } from '../utils/qrCaptureUtils';
 import { FileRecord, WizardState, BusinessConfig, BusinessButton, GeneratedCode, Folder, OpeningHours, LocationConfig, ContactInfo } from '../../types';
 import { QR_TYPES_CONFIG } from '../../components/constants';
 import { saveCode, updateCode, updateCodeImage } from '../api/qrcodes';
@@ -30,91 +29,6 @@ const INITIAL_CONTACT: ContactInfo = {
   phones: [],
   emails: [],
   websites: [],
-};
-
-const generateQRWithFrame = async (qrValue: string, config: any): Promise<string | null> => {
-  const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.left = '-9999px';
-  container.style.top = '0';
-  container.style.background = config.bgColor || '#ffffff';
-  container.style.padding = '20px';
-  document.body.appendChild(container);
-
-  const qrContainer = document.createElement('div');
-  const qr = new QRCodeStyling({
-    width: 500,
-    height: 500,
-    data: qrValue,
-    dotsOptions: { color: config.fgColor, type: config.pattern },
-    backgroundOptions: { color: config.bgColor },
-    cornersSquareOptions: { type: config.cornersSquareType || 'square', color: config.cornersSquareColor || config.fgColor },
-    cornersDotOptions: { type: config.cornersDotType || 'square', color: config.cornersDotColor || config.fgColor },
-    image: config.logoUrl,
-    imageOptions: { crossOrigin: "anonymous", margin: 5 }
-  });
-  qr.append(qrContainer);
-
-  await new Promise(resolve => setTimeout(resolve, 200));
-
-  const frame = config.frame || 'none';
-
-  if (frame === 'none') {
-    qrContainer.style.padding = '20px';
-    qrContainer.style.background = 'white';
-    qrContainer.style.borderRadius = '16px';
-    container.appendChild(qrContainer);
-  } else {
-    const wrapper = document.createElement('div');
-    const frameConfigs: Record<string, { style: string; label?: string; labelStyle?: string }> = {
-      'basic-label': { style: 'border: 3px solid black; background: white; padding: 20px; display: flex; flex-direction: column; align-items: center;' },
-      'rounded-label': { style: 'border: 3px solid black; border-radius: 32px; background: white; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow: hidden;' },
-      'thick-label': { style: 'border: 6px solid black; background: white; padding: 20px; display: flex; flex-direction: column; align-items: center;' },
-      'bubble': { style: 'padding: 12px; border: 4px solid black; border-radius: 40px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: center;', label: 'Scan Me!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 4px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 9999px;' },
-      'shopping': { style: 'border: 3px solid black; background: white; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border-radius: 4px;', label: 'Shop Now!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 4px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;' },
-      'gift': { style: 'border: 3px solid black; background: white; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden;', label: 'Open Gift!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 4px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;' },
-      'mail': { style: 'border: 3px solid black; background: white; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 12px; display: flex; flex-direction: column; align-items: center;', label: 'Read Me!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 4px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 9999px;' },
-      'delivery': { style: 'border: 3px solid black; background: white; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center;', label: 'Fast Delivery!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 6px 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 24px;' },
-      'service': { style: 'border: 3px solid black; background: white; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 50%; display: flex; flex-direction: column; align-items: center;', label: 'Menu', labelStyle: 'margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: black;' },
-      'hands': { style: 'border: 2px solid #e2e8f0; background: white; padding: 20px; border-radius: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;', label: 'Scan To Interact', labelStyle: 'margin-top: 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: black;' },
-      'ribbon': { style: 'border: 3px solid black; background: white; padding: 20px; display: flex; flex-direction: column; align-items: center;', label: 'Save Discount!', labelStyle: 'margin-top: 12px; background: black; color: white; padding: 8px 24px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;' },
-    };
-
-    const conf = frameConfigs[frame] || frameConfigs['basic-label'];
-    wrapper.style.cssText = conf.style;
-
-    qrContainer.style.display = 'flex';
-    qrContainer.style.justifyContent = 'center';
-    qrContainer.style.alignItems = 'center';
-    qrContainer.style.width = '100%';
-    qrContainer.style.height = '100%';
-
-    wrapper.appendChild(qrContainer);
-
-    if (conf.label) {
-      const label = document.createElement('div');
-      label.style.cssText = conf.labelStyle || '';
-      label.textContent = conf.label;
-      wrapper.appendChild(label);
-    }
-
-    container.appendChild(wrapper);
-  }
-
-  try {
-    const canvas = await html2canvas(container, {
-      backgroundColor: config.bgColor || '#ffffff',
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-    });
-    return canvas.toDataURL('image/png');
-  } catch (err) {
-    console.error('Error generating QR with frame:', err);
-    return null;
-  } finally {
-    document.body.removeChild(container);
-  }
 };
 
 export interface UseWizardReturn {
@@ -211,8 +125,8 @@ const getInitialWizardState = (): WizardState => ({
   config: {
     fgColor: '#000000',
     bgColor: '#ffffff',
-    level: 'H',
-    borderRadius: 0,
+    level: 'M',
+    borderRadius: 5,
     pattern: 'square',
     cornerType: 'square',
     cornersSquareType: 'square',

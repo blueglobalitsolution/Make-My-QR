@@ -95,7 +95,7 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.03),
     0 10px 15px -3px rgba(15, 23, 42, 0.05);
   /* Softer base shadow */
-  border-radius: 2rem;
+  border-radius: 5px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -117,7 +117,7 @@
     0 2px 0 0 rgba(255, 255, 255, 1) inset,
     0 20px 40px rgba(15, 30, 60, 0.06),
     0 8px 16px rgba(0, 0, 0, 0.02);
-  border-radius: 2.5rem;
+  border-radius: 5px;
 }
 
 /* --- Inset / Recessed (Inputs, Wells) --- */
@@ -128,15 +128,16 @@
   box-shadow:
     0 2px 4px rgba(153, 27, 27, 0.04) inset,
     0 1px 1px rgba(255, 255, 255, 0.8);
-  border-radius: 1.5rem;
+  border-radius: 5px;
 }
 
 .skeu-input {
   background: linear-gradient(180deg, #fff1f2 0%, #fffafa 100%);
   border: 1px solid #fee2e2;
   box-shadow: 0 4px 8px rgba(153, 27, 27, 0.05) inset;
-  border-radius: 1.25rem;
+  border-radius: 5px;
   color: #1e293b;
+  font-family: 'Lato', sans-serif;
   font-weight: 700;
   transition: all 0.2s ease;
 }
@@ -155,7 +156,7 @@
   box-shadow:
     0 25px 60px rgba(15, 23, 42, 0.08),
     0 10px 25px rgba(15, 23, 42, 0.04);
-  border-radius: 3rem;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 
@@ -173,11 +174,13 @@
     0 4px 8px rgba(220, 38, 38, 0.2),
     0 1px 2px rgba(0, 0, 0, 0.1);
   color: #fff;
+  font-family: 'Poppins', sans-serif;
   font-weight: 800;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border-radius: 1.25rem;
+  border-radius: 5px;
   transition: all 0.15s ease;
   cursor: pointer;
+  text-transform: capitalize;
 }
 
 .skeu-btn:hover {
@@ -201,8 +204,9 @@
     0 1px 0 0 #fff inset,
     0 2px 4px rgba(15, 23, 42, 0.06);
   color: #475569;
+  font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  border-radius: 1.25rem;
+  border-radius: 5px;
   transition: all 0.15s ease;
 }
 
@@ -222,7 +226,7 @@
   color: #fff;
   font-weight: 800;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-  border-radius: 1.25rem;
+  border-radius: 5px;
 }
 
 /* --- Sidebar --- */
@@ -233,10 +237,12 @@
 
 .skeu-sidebar-item {
   color: #64748b;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  border-radius: 1rem;
+  border-radius: 5px;
   transition: all 0.2s ease;
   margin: 0.25rem 1rem;
+  text-transform: capitalize;
 }
 
 .skeu-sidebar-item:hover {
@@ -314,7 +320,7 @@
   background: linear-gradient(180deg, #ffffff 0%, #fcfdfe 100%);
   border: 1px solid var(--skeu-border-top);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
-  border-radius: 1.5rem;
+  border-radius: 5px;
   overflow: hidden;
 }
 
@@ -327,15 +333,16 @@
   background: #fff1f2;
   border: 1px solid #fee2e2;
   box-shadow: 0 2px 4px rgba(153, 27, 27, 0.04) inset;
-  border-radius: 1.5rem;
+  border-radius: 5px;
   padding: 4px;
 }
 
 .skeu-tab {
-  border-radius: 1.25rem;
+  border-radius: 5px;
   font-weight: 800;
   color: #64748b;
   transition: all 0.2s ease;
+  text-transform: capitalize;
 }
 
 .skeu-tab-active {
@@ -349,8 +356,9 @@
   background: #ffffff;
   border: 1px solid #fee2e2;
   box-shadow: 0 2px 4px rgba(153, 27, 27, 0.03);
-  border-radius: 0.75rem;
+  border-radius: 5px;
   color: #475569;
+  text-transform: capitalize;
 }
 
 .skeu-tag-active {
@@ -374,7 +382,7 @@
   background: #fdf2f2;
   border: 1px solid #fee2e2;
   box-shadow: 0 2px 6px rgba(153, 27, 27, 0.04) inset;
-  border-radius: 1.25rem;
+  border-radius: 5px;
 }
 
 /* --- Toolbar --- */
@@ -427,4 +435,36 @@
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+/* --- Global Typography Standards --- */
+.skeu-page-title {
+  font-size: 1.875rem;
+  /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  /* skeu-text-primary */
+  letter-spacing: -0.025em;
+  /* tracking-tight */
+  text-transform: capitalize;
+}
+
+.skeu-page-subtitle {
+  font-size: 1.0rem;
+  /* text-base */
+  font-weight: 700;
+  color: #94a3b8;
+  /* skeu-text-muted */
+  text-transform: capitalize;
+}
+
+.skeu-step-header {
+  font-size: 1rem;
+  /* text-base */
+  font-weight: 700;
+  color: #94a3b8;
+  /* skeu-text-muted */
+  font-family: 'Lato', sans-serif;
+  text-transform: capitalize;
 }

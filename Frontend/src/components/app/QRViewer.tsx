@@ -83,7 +83,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
             <div className="min-h-screen flex items-center justify-center skeu-app-bg p-6">
                 <div className="text-center space-y-4">
                     <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
-                    <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Verifying Secure Link...</p>
+                    <p className="text-slate-500 font-bold capitalize tracking-widest text-[10px]">Verifying Secure Link...</p>
                 </div>
             </div>
         );
@@ -102,7 +102,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
                     </div>
                     <button
                         onClick={() => setView('landing')}
-                        className="w-full py-4 skeu-btn text-[11px] uppercase tracking-widest"
+                        className="w-full py-4 skeu-btn text-[11px] capitalize tracking-widest"
                     >
                         Return Home
                     </button>
@@ -111,6 +111,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         );
     }
 
+<<<<<<< Updated upstream
     // Direct redirect for WhatsApp without showing preview UI
     if (category === 'whatsapp' && isAuthorized) {
         return (
@@ -120,6 +121,24 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
                 </div>
             </div>
         );
+=======
+    const { category, value, name, settings, is_lead_capture, file_url } = qrData;
+    const brandColor = settings?.fgColor || '#dc2626';
+
+    // Construct URL
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+    let fullValue;
+
+    // Use file_url if available (for file-type QR codes)
+    if (file_url) {
+        fullValue = file_url;
+    } else if (value?.startsWith('/media/')) {
+        fullValue = `${backendUrl}${value}`;
+    } else if (value?.startsWith('/')) {
+        fullValue = `${backendUrl}${value}`;
+    } else {
+        fullValue = value;
+>>>>>>> Stashed changes
     }
 
     if (viewMode === 'preview' && category === 'pdf' && isAuthorized) {
