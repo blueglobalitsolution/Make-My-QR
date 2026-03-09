@@ -7,8 +7,10 @@ from .models import Scan
 from django.conf import settings
 import os
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 def redirect_scan(request, slug):
     # Hashids initialization (uses SECRET_KEY by default)
     hashids = Hashids(salt=settings.SECRET_KEY, min_length=6)
@@ -109,6 +111,21 @@ def redirect_scan(request, slug):
             except Exception:
                 pass
 
+    # If preview is disabled AND no lead capture is active, redirect directly to content
+    if not qrcode.show_preview and not qrcode.is_lead_capture:
+        # For website and whatsapp, redirect to the target URL
+        if qrcode.category in ['website', 'whatsapp']:
+            target_url = qrcode.value
+            if qrcode.category == 'website' and not target_url.startswith('http'):
+                target_url = f"https://{target_url}"
+            return HttpResponseRedirect(target_url)
+        
+        # For file/pdf, redirect directly to the file URL
+        if file_obj and file_obj.file:
+            return HttpResponseRedirect(file_obj.file.url)
+        elif file_url:
+            return HttpResponseRedirect(file_url)
+
     # For file-type QR codes, redirect to Frontend file viewer page
     if file_obj or file_url or is_file_category or has_file_url:
         redirect_url = f"{settings.FRONTEND_URL}/view/file/{slug}"
@@ -116,3 +133,45 @@ def redirect_scan(request, slug):
         redirect_url = f"{settings.FRONTEND_URL}/view/{slug}"
     
     return HttpResponseRedirect(redirect_url)
+
+@csrf_exempt
+def capture_lead(request, slug):
+    print(f"DEBUG: capture_lead hit for slug: {slug}")
+    if request.method == "POST":
+        qrcode = get_object_or_404(QRCode, short_slug=slug, status="active")
+        try:
+            data = json.loads(request.body)
+            visitor_name = data.get("name")
+            visitor_email = data.get("email")
+            
+            # Analyze scanner info
+            user_agent = request.user_agent
+            device_type = "PC"
+            if user_agent.is_mobile:
+                device_type = "Mobile"
+            elif user_agent.is_tablet:
+                device_type = "Tablet"
+            
+            ip_address = request.META.get("REMOTE_ADDR")
+            
+            print(f"DEBUG: Data received - Name: {visitor_name}, Email: {visitor_email}")
+            
+            # Create a scan record with lead data
+            scan = Scan.objects.create(
+                qrcode=qrcode,
+                visitor_name=visitor_name,
+                visitor_email=visitor_email,
+                device_type=device_type,
+                os_family=user_agent.os.family,
+                browser=user_agent.browser.family,
+                ip_address=ip_address,
+            )
+            print(f"DEBUG: Scan record created with ID: {scan.id}")
+            
+            return HttpResponseRedirect("/") # Doesn't matter, frontend will handle it
+        except Exception as e:
+            from django.http import JsonResponse
+            return JsonResponse({"error": str(e)}, status=400)
+    
+    from django.http import JsonResponse
+    return JsonResponse({"error": "Method not allowed"}, status=405)

@@ -16,6 +16,7 @@ class QRCode(models.Model):
     scans = models.IntegerField(default=0)
     status = models.CharField(max_length=20, default='active')
     settings = models.JSONField(null=True, blank=True)
+    show_preview = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

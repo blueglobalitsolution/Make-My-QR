@@ -181,6 +181,16 @@ class QRCodeViewSet(viewsets.ModelViewSet):
         qr_map = {q.id: q.name for q in QRCode.objects.filter(id__in=[t['qrcode_id'] for t in top_ids])}
         top_qrs_data = [{"id": t['qrcode_id'], "name": qr_map.get(t['qrcode_id'], 'Unknown'), "scans": t['scan_count']} for t in top_ids]
 
+        # Recent Leads
+        recent_leads_qs = user_scans.filter(visitor_email__isnull=False).exclude(visitor_email='').order_by('-timestamp')[:10]
+        recent_leads = [{
+            "name": l.visitor_name,
+            "email": l.visitor_email,
+            "qr_name": l.qrcode.name,
+            "timestamp": l.timestamp,
+            "id": l.id
+        } for l in recent_leads_qs]
+
         return Response({
             "summary": {
                 "total_scans": total_scans,
@@ -192,7 +202,8 @@ class QRCodeViewSet(viewsets.ModelViewSet):
             "os": list(os_stats),
             "browsers": list(browser_stats),
             "locations": list(location_stats),
-            "top_qrcodes": top_qrs_data
+            "top_qrcodes": top_qrs_data,
+            "recent_leads": recent_leads
         })
 
     @action(detail=False, methods=["get"], url_path="export-scans-csv")
@@ -208,13 +219,15 @@ class QRCodeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="qr_scans_export.csv"'
         
         writer = csv.writer(response)
-        writer.writerow(['QR Name', 'QR ID', 'Timestamp', 'IP Address', 'Device', 'OS', 'Browser'])
+        writer.writerow(['QR Name', 'QR ID', 'Timestamp', 'Visitor Name', 'Visitor Email', 'IP Address', 'Device', 'OS', 'Browser'])
         
         for s in scans:
             writer.writerow([
                 s.qrcode.name,
                 s.qrcode.id,
                 s.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                s.visitor_name or '',
+                s.visitor_email or '',
                 s.ip_address,
                 s.device_type,
                 s.os_family,
@@ -267,6 +280,15 @@ class QRCodeViewSet(viewsets.ModelViewSet):
         browser_stats = user_scans.values('browser').annotate(count=Count('id')).order_by('-count')
         location_stats = user_scans.exclude(country=None).values('country').annotate(count=Count('id')).order_by('-count')
 
+        # Leads for this specific QR
+        leads_qs = user_scans.filter(visitor_email__isnull=False).exclude(visitor_email='').order_by('-timestamp')
+        leads = [{
+            "name": l.visitor_name,
+            "email": l.visitor_email,
+            "timestamp": l.timestamp,
+            "id": l.id
+        } for l in leads_qs]
+
         return Response({
             "name": qrcode.name,
             "summary": {
@@ -278,7 +300,8 @@ class QRCodeViewSet(viewsets.ModelViewSet):
             "devices": list(devices),
             "os": list(os_stats),
             "browsers": list(browser_stats),
-            "locations": list(location_stats)
+            "locations": list(location_stats),
+            "leads": leads
         })
 
 
