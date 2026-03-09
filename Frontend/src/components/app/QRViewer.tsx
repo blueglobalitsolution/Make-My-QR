@@ -53,7 +53,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
     };
 
     const { category, value, name, settings, is_lead_capture, file_url } = qrData || {};
-    const brandColor = settings?.fgColor || '#156295';
+    const brandColor = settings?.fgColor || '#dc2626';
 
     // Construct URL logic
     const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
@@ -109,24 +109,6 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
                 </div>
             </div>
         );
-    }
-
-    const { category, value, name, settings, is_lead_capture, file_url } = qrData;
-    const brandColor = settings?.fgColor || '#dc2626';
-
-    // Construct URL
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || window.location.origin;
-    let fullValue;
-
-    // Use file_url if available (for file-type QR codes)
-    if (file_url) {
-        fullValue = file_url;
-    } else if (value?.startsWith('/media/')) {
-        fullValue = `${backendUrl}${value}`;
-    } else if (value?.startsWith('/')) {
-        fullValue = `${backendUrl}${value}`;
-    } else {
-        fullValue = value;
     }
 
     if (viewMode === 'preview' && category === 'pdf' && isAuthorized) {

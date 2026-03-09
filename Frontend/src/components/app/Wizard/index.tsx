@@ -121,10 +121,10 @@ export const Wizard: React.FC<WizardProps> = ({
       { n: 3, label: 'STYLE' },
     ];
     return (
-      <div className="flex items-center justify-center gap-12">
+      <div className="flex items-center justify-center w-full max-w-2xl mx-auto gap-3">
         {steps.map((s, idx) => (
           <React.Fragment key={s.n}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <div className={`w-9 h-9 flex items-center justify-center text-[14px] font-black rounded-full transition-all ${step >= s.n ? 'skeu-tag-active shadow-lg shadow-red-500/10 scale-110' : 'skeu-inset skeu-text-muted'}`}>
                 {s.n}
               </div>
@@ -133,7 +133,7 @@ export const Wizard: React.FC<WizardProps> = ({
               </span>
             </div>
             {idx < steps.length - 1 && (
-              <div className="w-16 h-[2px] skeu-inset" />
+              <div className="w-20 h-[2px] skeu-inset flex-shrink-0" />
             )}
           </React.Fragment>
         ))}
@@ -1623,14 +1623,14 @@ export const Wizard: React.FC<WizardProps> = ({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header with Stepper */}
-      <header className="bg-white border-b border-slate-100 py-6 sticky top-0 z-30 shadow-sm shrink-0">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-center">
+      <header className="bg-white border-b border-slate-100 py-6 sticky top-0 z-30 shadow-sm shrink-0 px-12">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-center w-full">
           {renderStepper({ step: wizard.step })}
         </div>
       </header>
 
       {/* Main Content Area - Split Pane Layout */}
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 overflow-hidden relative px-12">
         <div className="max-w-[1600px] mx-auto h-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 h-full items-stretch">
             {/* Left Side: Scrollable Content */}
@@ -1758,8 +1758,8 @@ export const Wizard: React.FC<WizardProps> = ({
       </div>
 
       {/* Footer Navigation - Refactored to be part of flow */}
-      <footer className="skeu-toolbar border-t border-slate-100 py-6 z-[60] shrink-0 bg-white">
-        <div className="max-w-[1600px] mx-auto flex justify-between items-center">
+      <footer className="skeu-toolbar border-t border-slate-100 py-6 z-[60] shrink-0 bg-white px-12 mt-auto">
+        <div className="max-w-[1600px] mx-auto flex justify-between items-center w-full">
           <button
             onClick={handleBackStep}
             disabled={wizard.step === 1}

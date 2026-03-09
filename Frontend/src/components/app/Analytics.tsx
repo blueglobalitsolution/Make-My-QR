@@ -13,7 +13,7 @@ import {
     ChevronDown,
     Activity,
     ExternalLink,
-    Barcode as QrCode,
+    QrCode,
     Globe2,
     TrendingUp,
     Clock,
@@ -35,12 +35,10 @@ export const Analytics: React.FC = () => {
     const [period, setPeriod] = useState('30'); // Default 30 days
     const [deviceType, setDeviceType] = useState('All');
     const [search, setSearch] = useState('');
-    const [location, setLocation] = useState('All');
 
     // Dropdown states
     const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
     const [showDeviceDropdown, setShowDeviceDropdown] = useState(false);
-    const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
     useEffect(() => {
         if (selectedCodeId) {
@@ -48,7 +46,7 @@ export const Analytics: React.FC = () => {
         } else {
             fetchAnalytics();
         }
-    }, [period, deviceType, location, selectedCodeId]); // Auto-refresh on dropdown change or selection
+    }, [period, deviceType, selectedCodeId]); // Auto-refresh on dropdown change or selection
 
     const fetchAnalytics = async () => {
         try {
@@ -56,8 +54,7 @@ export const Analytics: React.FC = () => {
             const params = {
                 period: period,
                 device_type: deviceType,
-                search: search,
-                location: location !== 'All' ? location : undefined
+                search: search
             };
             const result = await getSummaryAnalytics(params);
             setData(result);
@@ -74,8 +71,7 @@ export const Analytics: React.FC = () => {
             setLoading(true);
             const params = {
                 period: period,
-                device_type: deviceType,
-                location: location !== 'All' ? location : undefined
+                device_type: deviceType
             };
             const result = await getCodeAnalytics(id, params);
             setDetailData(result);
@@ -182,7 +178,7 @@ export const Analytics: React.FC = () => {
             </div>
 
             {/* Filters Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 p-5 skeu-card bg-white/60 backdrop-blur-md relative z-30">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-5 skeu-card bg-white/60 backdrop-blur-md relative z-30">
                 {/* Period Filter */}
                 <div className="space-y-2 relative">
                     <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Period</label>
@@ -263,39 +259,6 @@ export const Analytics: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Location Filter */}
-                <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Location</label>
-                    <div
-                        onClick={() => setShowLocationDropdown(!showLocationDropdown)}
-                        className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
-                    >
-                        <span className="text-xs font-bold text-slate-700 truncate max-w-[80px]">
-                            {location}
-                        </span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${showLocationDropdown ? 'rotate-180' : ''}`} />
-                    </div>
-
-                    {showLocationDropdown && (
-                        <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                            {['All', ...(data?.locations?.map((l: any) => l.country) || [])].map((loc) => (
-                                <div
-                                    key={loc}
-                                    onClick={() => {
-                                        setLocation(loc);
-                                        setShowLocationDropdown(false);
-                                    }}
-                                    className="px-4 py-2 hover:bg-slate-50 flex items-center justify-between cursor-pointer group"
-                                >
-                                    <span className={`text-xs ${location === loc ? 'text-red-500 font-black' : 'text-slate-600 font-bold'}`}>
-                                        {loc}
-                                    </span>
-                                    {location === loc && <Check className="w-3 h-3 text-red-500" />}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
                 <div className="flex items-end pb-0.5">
                     <button
                         onClick={fetchAnalytics}
@@ -309,50 +272,106 @@ export const Analytics: React.FC = () => {
 
             {loading && data && <div className="text-center py-2 animate-pulse"><p className="text-[10px] font-black text-red-500 capitalize tracking-[0.3em]">Updating data...</p></div>}
 
-            {/* Summary Stats */}
-            <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
-                <div className="skeu-card p-6 bg-white flex items-center justify-between border-b-4 border-red-400/20">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-red-50 rounded-lg">
-                                <QrCode className="w-4 h-4 text-red-500" />
+            {/* Summary Stats & Distributions Row */}
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
+                {/* Selected Codes */}
+                <div className="skeu-card p-6 bg-white relative overflow-hidden group border-b-4 border-red-500/10">
+                    <div className="flex flex-col h-full justify-between gap-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-red-50 rounded-xl shadow-sm border border-red-100/50">
+                                    <QrCode className="w-5 h-5 text-red-500" />
+                                </div>
+                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Selected Codes</p>
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Selected Codes</p>
                         </div>
-                        <h3 className="text-3xl font-black text-slate-800">{summary.total_qrcodes}</h3>
-                    </div>
-                    <div className="w-12 h-12 rounded-full border border-red-50 flex items-center justify-center">
-                        <ArrowUpRight className="w-5 h-5 text-red-300" />
+                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.total_qrcodes}</h3>
                     </div>
                 </div>
 
-                <div className="skeu-card p-6 bg-white flex items-center justify-between border-b-4 border-green-400/20">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-green-50 rounded-lg">
-                                <Activity className="w-4 h-4 text-green-500" />
+                {/* Period Scans */}
+                <div className="skeu-card p-6 bg-white relative overflow-hidden group border-b-4 border-emerald-500/10">
+                    <div className="flex flex-col h-full justify-between gap-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-emerald-50 rounded-xl shadow-sm border border-emerald-100/50">
+                                    <Activity className="w-5 h-5 text-emerald-500" />
+                                </div>
+                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Period Scans</p>
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Period Scans</p>
                         </div>
-                        <h3 className="text-3xl font-black text-slate-800">{summary.total_scans}</h3>
-                    </div>
-                    <div className="w-12 h-12 rounded-full border border-green-50 flex items-center justify-center">
-                        <Activity className="w-5 h-5 text-green-300" />
+                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.total_scans}</h3>
                     </div>
                 </div>
 
-                <div className="skeu-card p-6 bg-white flex items-center justify-between border-b-4 border-indigo-400/20">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-indigo-50 rounded-lg">
-                                <Globe2 className="w-4 h-4 text-indigo-500" />
+                {/* Unique Period Scans */}
+                <div className="skeu-card p-6 bg-white relative overflow-hidden group border-b-4 border-indigo-500/10">
+                    <div className="flex flex-col h-full justify-between gap-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-indigo-50 rounded-xl shadow-sm border border-indigo-100/50">
+                                    <Globe2 className="w-5 h-5 text-indigo-500" />
+                                </div>
+                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Unique Period Scans</p>
                             </div>
-                            <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest">Unique Period Scans</p>
                         </div>
-                        <h3 className="text-3xl font-black text-slate-800">{summary.unique_scans}</h3>
+                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.unique_scans}</h3>
                     </div>
-                    <div className="w-12 h-12 rounded-full border border-indigo-50 flex items-center justify-center">
-                        <Info className="w-5 h-5 text-indigo-300" />
+                </div>
+
+                {/* OS Distribution */}
+                <div className="skeu-card p-6 bg-white space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-50 rounded-lg">
+                            <Cpu className="w-4 h-4 text-purple-500" />
+                        </div>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">OS Distribution</h3>
+                    </div>
+                    <div className="space-y-3">
+                        {os_stats.length > 0 ? os_stats.slice(0, 3).map((item: any, i: number) => (
+                            <div key={i} className="flex items-center justify-between group">
+                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.os_family || 'Other'}</span>
+                                <span className="text-[11px] font-black text-slate-800">{item.count}</span>
+                            </div>
+                        )) : (
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize tracking-widest">No data</p>
+                        )}
+                        {os_stats.length > 3 && (
+                            <div className="pt-1 flex items-center justify-between opacity-40">
+                                <span className="text-[10px] font-bold text-slate-400">Others</span>
+                                <span className="text-[10px] font-black text-slate-400">
+                                    {os_stats.slice(3).reduce((acc: number, curr: any) => acc + curr.count, 0)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Browser Distribution */}
+                <div className="skeu-card p-6 bg-white space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-50 rounded-lg">
+                            <Chrome className="w-4 h-4 text-orange-500" />
+                        </div>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Browsers</h3>
+                    </div>
+                    <div className="space-y-3">
+                        {browsers.length > 0 ? browsers.slice(0, 3).map((item: any, i: number) => (
+                            <div key={i} className="flex items-center justify-between group">
+                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight truncate max-w-[80px]">{item.browser || 'Other'}</span>
+                                <span className="text-[11px] font-black text-slate-800">{item.count}</span>
+                            </div>
+                        )) : (
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize tracking-widest">No data</p>
+                        )}
+                        {browsers.length > 3 && (
+                            <div className="pt-1 flex items-center justify-between opacity-40">
+                                <span className="text-[10px] font-bold text-slate-400">Others</span>
+                                <span className="text-[10px] font-black text-slate-400">
+                                    {browsers.slice(3).reduce((acc: number, curr: any) => acc + curr.count, 0)}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -409,7 +428,6 @@ export const Analytics: React.FC = () => {
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
                             <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Top Performing</h3>
-                            <ExternalLink className="w-4 h-4 text-slate-300" />
                         </div>
 
                         <div className="space-y-4">
@@ -445,14 +463,12 @@ export const Analytics: React.FC = () => {
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
                             <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Scans by Device</h3>
-                            <Smartphone className="w-4 h-4 text-slate-300" />
                         </div>
 
                         <div className="space-y-6">
                             {devices.length > 0 ? devices.map((item: any, i: number) => {
                                 const total = summary.total_scans || 1;
                                 const percentage = (item.count / total) * 100;
-                                const Icon = item.device_type === 'Mobile' ? Smartphone : item.device_type === 'Tablet' ? Tablet : Monitor;
 
                                 // Sleek color palette based on device rank
                                 const barColors = ['bg-red-500', 'bg-indigo-500', 'bg-purple-500', 'bg-slate-400'];
@@ -462,7 +478,6 @@ export const Analytics: React.FC = () => {
                                     <div key={i} className="space-y-2">
                                         <div className="flex items-center justify-between text-[11px] font-black capitalize tracking-widest">
                                             <div className="flex items-center gap-2">
-                                                <Icon className="w-3.5 h-3.5 text-slate-400" />
                                                 <span className="text-slate-700 tracking-tighter">{item.device_type}</span>
                                             </div>
                                             <span className="text-slate-400 text-[10px]">{percentage.toFixed(0)}%</span>
@@ -485,76 +500,6 @@ export const Analytics: React.FC = () => {
                 </div>
             </div>
 
-            {/* Distributions Footer */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
-                {/* OS Distribution */}
-                <div className="skeu-card p-6 bg-white space-y-7">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-50 rounded-lg">
-                            <Cpu className="w-4 h-4 text-purple-500" />
-                        </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">OS Distribution</h3>
-                    </div>
-                    <div className="space-y-5">
-                        {os_stats.length > 0 ? os_stats.slice(0, 4).map((item: any, i: number) => (
-                            <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.os_family || 'Other'}</span>
-                                <span className="text-[12px] font-black text-slate-800">{item.count}</span>
-                            </div>
-                        )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 capitalize tracking-widest">No data collected</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Browser Distribution */}
-                <div className="skeu-card p-6 bg-white space-y-7">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-50 rounded-lg">
-                            <Chrome className="w-4 h-4 text-orange-500" />
-                        </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Browser Distribution</h3>
-                    </div>
-                    <div className="space-y-5">
-                        {browsers.length > 0 ? browsers.slice(0, 4).map((item: any, i: number) => (
-                            <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[12px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.browser || 'Other'}</span>
-                                <span className="text-[12px] font-black text-slate-800">{item.count}</span>
-                            </div>
-                        )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-6 capitalize tracking-widest">No data collected</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Geographical Data */}
-                <div className="skeu-card p-6 bg-white space-y-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-50 rounded-lg">
-                            <MapPin className="w-4 h-4 text-green-500" />
-                        </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Top Locations</h3>
-                    </div>
-                    <div className="space-y-4">
-                        {data?.locations?.length > 0 ? data.locations.slice(0, 5).map((item: any, i: number) => (
-                            <div key={i} className="flex items-center justify-between">
-                                <span className="text-[11px] font-bold text-slate-600 truncate max-w-[150px]">{item.country || 'Unknown'}</span>
-                                <div className="flex items-center gap-2">
-                                    <div className="h-1 w-12 bg-green-50 rounded-full overflow-hidden">
-                                        <div className="h-full bg-green-400" style={{ width: `${(item.count / summary.total_scans) * 100}%` }} />
-                                    </div>
-                                    <span className="text-[11px] font-black text-slate-800">{item.count}</span>
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="flex-1 flex flex-col items-center justify-center py-6 opacity-30 space-y-2">
-                                <Globe className="w-12 h-12 mx-auto animate-pulse" />
-                                <p className="text-[9px] font-black capitalize tracking-widest">Waiting for geo data...</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
 
             <div className="pt-8 border-t border-slate-100 flex items-center justify-center">
                 <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.3em]">

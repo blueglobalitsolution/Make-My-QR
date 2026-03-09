@@ -97,31 +97,33 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
                 {/* Header Text */}
                 <div className="text-center space-y-2 mb-6 w-full">
-                    <h3 className="text-[17px] font-medium text-slate-900 tracking-tight">
+                    <h3 className="text-[17px] font-medium text-white tracking-tight">
                         {businessData?.company || "Give Your Company Name"}
                     </h3>
-                    <h1 className="text-[26px] font-black text-black leading-[1.1] tracking-tight px-2">
+                    <h1 className="text-[26px] font-black text-white leading-[1.1] tracking-tight px-2">
                         {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
-                    <p className="text-[17px] font-medium text-slate-900 px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap">
+                    <p className="text-[17px] font-medium text-white/90 px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap">
                         {businessData?.description || "Learn about how we can help\nwith all your business needs."}
                     </p>
                 </div>
 
                 {/* Card Container */}
-                <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6 mt-1">
+                <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6 mt-1 flex-shrink-0">
 
                     {/* Top Image Part */}
                     <div className="w-full relative bg-white flex-shrink-0 pt-6 px-6">
-                        <div className="w-full h-[180px] rounded-lg overflow-hidden shadow-lg mx-auto relative group bg-slate-100">
+                        <div className="w-full h-[320px] rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
                             {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
-                                <iframe
-                                    src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                                    className="w-full h-full border-none pointer-events-none"
-                                    title="PDF First Page Preview"
-                                    scrolling="no"
-                                    style={{ overflow: 'hidden' }}
-                                />
+                                <div className="w-[110%] h-[110%] origin-top-left scale-[0.9] absolute top-0 left-0 overflow-hidden scrollbar-hide">
+                                    <iframe
+                                        src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                                        className="w-full h-full border-none pointer-events-none scrollbar-hide"
+                                        title="PDF First Page Preview"
+                                        scrolling="no"
+                                        style={{ overflow: 'hidden' }}
+                                    />
+                                </div>
                             ) : (
                                 <img
                                     src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
@@ -129,21 +131,20 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                             )}
-                            {/* PDF/Business Tab (Top Right) */}
-                            <div className="absolute top-0 right-4 bg-red-600 text-white px-5 py-3 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1">
-                                <div className="w-[18px] h-[22px] border-[2px] border-white rounded-[2px] mb-[4px] relative flex items-center justify-center">
-                                    <span className="text-[6px] font-black">PDF</span>
+                            {/* PDF Tag (Top Right) */}
+                            <div className="absolute top-0 right-4 bg-red-600 text-white px-4 py-2.5 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1 z-10">
+                                <div className="w-4 h-5 border-[2px] border-white/90 rounded-[3px] mb-[3px] relative flex items-center justify-center bg-red-600">
+                                    <span className="text-[5px] font-black text-white">PDF</span>
                                 </div>
-                                <span className="text-[7.5px] font-black uppercase tracking-widest leading-none">PDF File</span>
+                                <span className="text-[7px] font-black uppercase tracking-widest leading-none text-white/90">FILE</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Content Part */}
-                    <div className="p-7 pb-8 flex flex-col items-center justify-center space-y-4">
-
+                    <div className="p-7 pb-8 flex flex-col items-center justify-center w-full">
                         {/* Button / Lead Capture */}
-                        <div className="pt-4">
+                        <div className="w-full flex justify-center mt-2">
                             {is_lead_capture && !isAuthorized ? (
                                 <LeadCaptureForm
                                     brandColor={brandColor}
@@ -154,7 +155,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                             ) : (
                                 <button
                                     onClick={handleAction}
-                                    className="w-[180px] mx-auto bg-[#1e3a8a] py-[12px] rounded-xl flex items-center justify-center gap-2 font-medium text-[16px] text-white shadow-lg transition-all active:scale-95 border-none outline-none tracking-wide"
+                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[14px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[15px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none tracking-wide"
                                 >
                                     <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
                                 </button>

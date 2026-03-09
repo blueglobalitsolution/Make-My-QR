@@ -222,7 +222,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       </div>
 
       {/* Codes Table Header */}
-      < div className="min-w-[1000px]" >
+      <div className="min-w-[1000px]">
         <div className="grid grid-cols-[220px_1fr_180px_180px_180px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
           <div>QR Code</div>
           <div>Details</div>
@@ -354,7 +354,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             })
           )}
         </div>
-      </div >
+      </div>
 
       {/* QR Preview Modal */}
       {
@@ -367,11 +367,6 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
             <div className="relative w-full max-w-xl skeu-card p-12 bg-white animate-in zoom-in-95 duration-300 shadow-2xl space-y-8">
               <button
-                onClick={() => setPreviewCode(null)}
-                className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
-              >
-                <X className="w-5 h-5" />
-              </button>
                 onClick={() => setPreviewCode(null)}
                 className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
               >
@@ -438,7 +433,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               </div>
             </div>
           </div>
-        )}
+        )
       }
 
       {/* Hidden Capture Area */}
@@ -458,6 +453,6 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 };
