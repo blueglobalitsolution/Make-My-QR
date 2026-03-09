@@ -34,6 +34,10 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     viewMode,
     setViewMode
 }) => {
+    const titleFont = businessData?.fontTitle || 'Poppins';
+    const textFont = businessData?.fontText || 'Inter';
+    const titleColor = businessData?.fontTitleColor || '#ffffff';
+
     if (viewMode === 'preview' && isAuthorized) {
         return (
             <div className="h-screen flex flex-col bg-slate-900 overflow-hidden">
@@ -83,7 +87,10 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     };
 
     return (
-        <div className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative font-inter pt-16 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div
+            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative pt-16 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            style={{ fontFamily: textFont }}
+        >
             {/* Background Curve */}
             <div
                 className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"
@@ -97,13 +104,13 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
                 {/* Header Text */}
                 <div className="text-center space-y-2 mb-6 w-full">
-                    <h3 className="text-[17px] font-medium text-white tracking-tight">
+                    <h3 className="text-[17px] font-medium tracking-tight" style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.company || "Give Your Company Name"}
                     </h3>
-                    <h1 className="text-[26px] font-black text-white leading-[1.1] tracking-tight px-2">
+                    <h1 className="text-[26px] font-black leading-[1.1] tracking-tight px-2" style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
-                    <p className="text-[17px] font-medium text-white/90 px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap">
+                    <p className="text-[17px] font-medium px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: titleColor }}>
                         {businessData?.description || "Learn about how we can help\nwith all your business needs."}
                     </p>
                 </div>

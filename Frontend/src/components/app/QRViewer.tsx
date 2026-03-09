@@ -3,6 +3,7 @@ import { getPublicCode } from '../../api/qrcodes';
 import { Shield } from 'lucide-react';
 import { GatekeeperPreview } from '../previews/gatekeeper';
 import { PdfPreview } from '../previews/PdfPreview';
+import { FontLoader } from '../FontLoader';
 
 interface QRViewerProps {
     slug: string;
@@ -53,14 +54,29 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
     };
 
     const { category, value, name, settings, is_lead_capture, file_url } = qrData || {};
-    const brandColor = settings?.fgColor || '#dc2626';
+    // For PDF type, use primaryColor from business settings, otherwise use fgColor
+    const brandColor = (category === 'pdf' && settings?.business?.primaryColor) 
+        ? settings.business.primaryColor 
+        : (settings?.fgColor || '#dc2626');
 
     // Construct URL logic
     const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
     let fullValue = '';
     if (qrData) {
+        // For PDF type, prefer file_url from backend, otherwise construct from value
         if (file_url) {
             fullValue = file_url;
+        } else if (category === 'pdf') {
+            // For PDF category, use value as the file path
+            if (value?.startsWith('http')) {
+                fullValue = value;
+            } else if (value?.startsWith('/media/')) {
+                fullValue = `${backendUrl}${value}`;
+            } else if (value?.startsWith('/')) {
+                fullValue = `${backendUrl}${value}`;
+            } else {
+                fullValue = value;
+            }
         } else if (value?.startsWith('/media/')) {
             fullValue = `${backendUrl}${value}`;
         } else if (value?.startsWith('/')) {
@@ -70,11 +86,21 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         }
     }
 
-    // Effect for WhatsApp redirection
+    // For PDF type, always treat as file mode regardless of URL path
+    const effectiveIsFileMode = isFileMode || category === 'pdf';
+
+    // Effect for Redirections (WhatsApp, Website)
     useEffect(() => {
-        if (isAuthorized && category === 'whatsapp' && fullValue) {
-            console.log("Redirecting to WhatsApp:", fullValue);
-            window.location.replace(fullValue);
+        if (isAuthorized && fullValue) {
+            if (category === 'whatsapp' || category === 'website') {
+                console.log(`Redirecting to ${category}:`, fullValue);
+                // Ensure URL has protocol for website
+                let redirectUrl = fullValue;
+                if (category === 'website' && !redirectUrl.startsWith('http') && !redirectUrl.startsWith('https')) {
+                    redirectUrl = `https://${redirectUrl}`;
+                }
+                window.location.replace(redirectUrl);
+            }
         }
     }, [isAuthorized, category, fullValue]);
 
@@ -111,39 +137,45 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         );
     }
 
-    if (viewMode === 'preview' && category === 'pdf' && isAuthorized) {
-        return (
-            <PdfPreview
-                name={name}
-                brandColor={brandColor}
-                fullValue={fullValue}
-                is_lead_capture={is_lead_capture}
-                isAuthorized={isAuthorized}
-                isFileMode={isFileMode}
-                leadForm={leadForm}
-                setLeadForm={setLeadForm}
-                onLeadSubmit={handleLeadSubmit}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-            />
-        );
+    // Hide everything if we are about to redirect
+    if (isAuthorized && (category === 'website' || category === 'whatsapp')) {
+        return null;
     }
 
     return (
-        <GatekeeperPreview
-            category={category}
-            name={name}
-            brandColor={brandColor}
-            fullValue={fullValue}
-            businessData={settings?.business}
-            is_lead_capture={is_lead_capture}
-            isAuthorized={isAuthorized}
-            isFileMode={isFileMode}
-            leadForm={leadForm}
-            setLeadForm={setLeadForm}
-            onLeadSubmit={handleLeadSubmit}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-        />
+        <>
+            <FontLoader fonts={[settings?.business?.fontTitle, settings?.business?.fontText]} />
+            {viewMode === 'preview' && category === 'pdf' && isAuthorized ? (
+                <PdfPreview
+                    name={name}
+                    brandColor={brandColor}
+                    fullValue={fullValue}
+                    is_lead_capture={is_lead_capture}
+                    isAuthorized={isAuthorized}
+                    isFileMode={effectiveIsFileMode}
+                    leadForm={leadForm}
+                    setLeadForm={setLeadForm}
+                    onLeadSubmit={handleLeadSubmit}
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
+                />
+            ) : (
+                <GatekeeperPreview
+                    category={category}
+                    name={name}
+                    brandColor={brandColor}
+                    fullValue={fullValue}
+                    businessData={settings?.business}
+                    is_lead_capture={is_lead_capture}
+                    isAuthorized={isAuthorized}
+                    isFileMode={effectiveIsFileMode}
+                    leadForm={leadForm}
+                    setLeadForm={setLeadForm}
+                    onLeadSubmit={handleLeadSubmit}
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
+                />
+            )}
+        </>
     );
 };

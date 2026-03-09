@@ -31,6 +31,10 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     setViewMode
 }) => {
     const primaryColor = businessData?.primaryColor || brandColor || '#6366f1';
+    const titleFont = businessData?.fontTitle || 'Poppins';
+    const textFont = businessData?.fontText || 'Lato';
+    const titleColor = businessData?.fontTitleColor || '#ffffff';
+    const textColor = businessData?.fontTextColor || '#ffffff';
     const heroImg = businessData?.images?.[0] || businessData?.welcomeScreenImage;
 
     const getSocialIcon = (network: string) => {
@@ -71,14 +75,23 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                             borderBottomRightRadius: '50% 40px',
                         }}
                     >
-                        <p className="text-white/80 text-[12px] font-bold tracking-widest mb-1 uppercase">
+                        <p
+                            className="text-[12px] font-bold tracking-widest mb-1 uppercase opacity-80"
+                            style={{ fontFamily: titleFont, color: titleColor }}
+                        >
                             {businessData?.company || name || 'My Company'}
                         </p>
-                        <h1 className="text-white text-[22px] font-black leading-tight tracking-tight">
+                        <h1
+                            className="text-[22px] font-black leading-tight tracking-tight"
+                            style={{ fontFamily: titleFont, color: titleColor }}
+                        >
                             {businessData?.title || 'Find me on social networks'}
                         </h1>
                         {businessData?.subtitle && (
-                            <p className="text-white/70 text-[13px] font-medium mt-2 leading-snug">
+                            <p
+                                className="text-[13px] font-medium mt-2 leading-snug opacity-70"
+                                style={{ fontFamily: textFont, color: titleColor }}
+                            >
                                 {businessData.subtitle}
                             </p>
                         )}
@@ -251,8 +264,8 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><User className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Name</p>
-                                        <p className="text-[11px] font-bold text-slate-700 truncate">{businessData.contact.name}</p>
+                                        <p className="text-[8px] font-black uppercase tracking-widest" style={{ color: textColor, opacity: 0.4 }}>Name</p>
+                                        <p className="text-[11px] font-bold truncate" style={{ fontFamily: textFont, color: textColor }}>{businessData.contact.name}</p>
                                     </div>
                                 </div>
                             )}

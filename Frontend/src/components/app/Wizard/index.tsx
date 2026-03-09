@@ -5,6 +5,7 @@ import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, 
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
 import { GatekeeperPreview } from '../../previews/gatekeeper';
+import { FontLoader } from '../../FontLoader';
 // @ts-ignore
 import phoneFrame from './Phone.png';
 
@@ -1223,39 +1224,7 @@ export const Wizard: React.FC<WizardProps> = ({
           </div>
         )}
 
-        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-          <button
-            onClick={() => toggleSection('name')}
-            className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
-            type="button"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                <Type className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Name of the QR Code</h3>
-                <p className="text-[10px] font-medium skeu-text-muted">Give your QR code a name.</p>
-              </div>
-            </div>
-            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
-          </button>
 
-          {activeDesignSection === 'name' && (
-            <div className="p-6 border-t border-black/5 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">QR Code Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Website Launch Campaign"
-                  value={wizard.name}
-                  onChange={(e) => setWizard({ ...wizard, name: e.target.value })}
-                  className="w-full px-5 py-4 skeu-input outline-none text-sm font-bold placeholder:opacity-40"
-                />
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Save to Folder Section */}
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
@@ -1561,6 +1530,41 @@ export const Wizard: React.FC<WizardProps> = ({
           )}
         </div>
 
+        {/* Name Section (Shifted to step 3) */}
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75 mb-6">
+          <button
+            onClick={() => toggleSection('name')}
+            className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
+            type="button"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                <Type className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-base font-black skeu-text-primary tracking-tight">Name of the QR Code</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Give your QR code a name.</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'name' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
+          </button>
+
+          {activeDesignSection === 'name' && (
+            <div className="p-6 border-t border-black/5 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">QR Code Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Website Launch Campaign"
+                  value={wizard.name}
+                  onChange={(e) => setWizard({ ...wizard, name: e.target.value })}
+                  className="w-full px-5 py-4 skeu-input outline-none text-sm font-bold placeholder:opacity-40"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Security & Gatekeeper Section */}
         <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           <button
@@ -1622,6 +1626,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      <FontLoader fonts={[wizard.business?.fontTitle, wizard.business?.fontText]} />
       {/* Header with Stepper */}
       <header className="bg-white border-b border-slate-100 py-6 sticky top-0 z-30 shadow-sm shrink-0 px-12">
         <div className="max-w-[1600px] mx-auto flex items-center justify-center w-full">

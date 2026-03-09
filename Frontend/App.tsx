@@ -89,7 +89,7 @@ const App: React.FC = () => {
   const [newFolderName, setNewFolderName] = useState('');
 
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView);
-  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
+  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
   const filteredHistory = history.filter(item => {
     const matchesFolder = activeFolderId === 'all' || item.folderId === activeFolderId;
@@ -310,12 +310,31 @@ const App: React.FC = () => {
     }
     setWhatsappPhone(whatsappPhoneEdit);
     setWhatsappMessage(whatsappMessageEdit);
+
+    // Handle PDF type - get the PDF URL from code.value or settings
+    let pdfUrlValue: string | null = null;
+    let pdfFileNameValue: string | null = null;
+    if (code.category === 'pdf') {
+      // code.value contains the PDF path/URL
+      const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
+      const pdfPath = code.value;
+      // Construct full URL if it's a relative path
+      pdfUrlValue = pdfPath?.startsWith('http') ? pdfPath : 
+                    pdfPath?.startsWith('/') ? `${backendUrl}${pdfPath}` : 
+                    pdfPath || null;
+      // Extract filename from path
+      if (pdfUrlValue) {
+        const pathParts = pdfUrlValue.split('/');
+        pdfFileNameValue = pathParts[pathParts.length - 1] || 'document.pdf';
+      }
+    }
+
     setWizard({
       ...wizard,
       step: 2,
       mode: code.type,
       type: code.category as any,
-      value: (code.category === 'whatsapp' || code.category === 'pdf' || code.category === 'business') ? '' : code.value,
+      value: (code.category === 'whatsapp' || code.category === 'business') ? '' : code.value,
       name: code.name,
       isPasswordActive: false,
       is_protected: (code as any).is_protected || false,
@@ -324,6 +343,13 @@ const App: React.FC = () => {
       config: code.settings,
       business: code.settings.business || wizard.business
     });
+
+    // Set PDF URL and filename for PDF type
+    if (code.category === 'pdf') {
+      setPdfUrl(pdfUrlValue);
+      setPdfFileName(pdfFileNameValue);
+    }
+
     setPhonePreviewMode('ui');
     setView('wizard');
   };

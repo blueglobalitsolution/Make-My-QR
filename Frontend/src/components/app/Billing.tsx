@@ -1,108 +1,174 @@
-import React from 'react';
-import { CheckCircle2, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Star } from 'lucide-react';
 
-interface BillingProps { }
+type BillingCycle = '3' | '6' | '12';
 
-export const Billing: React.FC<BillingProps> = () => {
+const pricingData = {
+  '3': {
+    starter: { price: '1,999', features: ['10 Dynamic Codes', 'Standard Analytics', 'Email Support'] },
+    pro: { price: '1,299', billing: 'Per Month, Billed Quarterly', discount: 'Standard Rate', features: ['Everything in Starter', 'Unlimited Scans', 'Premium Formatting', 'Direct Support'] },
+    enterprise: { price: '2,499', features: ['Unlimited Codes', 'Custom API Access', 'Team Management', 'Priority Support'] }
+  },
+  '6': {
+    starter: { price: '1,799', features: ['15 Dynamic Codes', 'Standard Analytics', 'Email Support', 'Cancel Anytime'] },
+    pro: { price: '999', billing: 'Per Month, Billed Bi-Annually', discount: 'Save 20% vs 3 Months', features: ['Everything in Starter', 'Full Analytics Dashboard', 'Unlimited Scans', 'Premium Formatting', 'Team Management'] },
+    enterprise: { price: '1,999', features: ['Unlimited Codes', 'Custom API Access', 'Dedicated Account Manager', 'White Labeling', 'Advanced Analytics'] }
+  },
+  '12': {
+    starter: { price: '1,499', features: ['20 Dynamic Codes', 'Full Analytics', 'Priority Support', 'Cancel Anytime', 'Premium Formatting'] },
+    pro: { price: '699', billing: 'Per Month, Billed Yearly', discount: 'Save 60% With Annual Billing', features: ['Everything in Monthly', 'Full Analytics Dashboard', 'API Access', 'Priority Direct Support', 'Dedicated Account Manager', 'Custom Branding'] },
+    enterprise: { price: '1,499', features: ['Unlimited Everything', 'SLA Guarantee', 'Dedicated Infrastructure', 'SSO Integration', 'Custom Feature Development', '24/7 Phone Support'] }
+  }
+};
+
+export const Billing: React.FC = () => {
+  const [cycle, setCycle] = useState<BillingCycle>('12');
+
+  const currentData = pricingData[cycle];
+
+  // Helper styles extracted from the user's provided config
+  const brandRed = 'text-[#ef4444]';
+  const bgBrandRed = 'bg-[#ef4444]';
+  const borderBrandRed = 'border-[#ef4444]';
+  const brandDark = 'text-[#1e293b]';
+  const customShadow = 'shadow-[0_10px_50px_-12px_rgba(0,0,0,0.1)]';
+
   return (
-    <div className="py-10 max-w-6xl mx-auto w-full space-y-8 animate-in fade-in duration-700 pb-24">
-      <div className="text-center space-y-2">
-        <h1 className="skeu-page-title">Flexible <span className="skeu-text-accent">Plans</span> & Pricing</h1>
-        <p className="max-w-2xl mx-auto skeu-page-subtitle leading-relaxed">Choose a professional plan that scales with your growth. All plans include unlimited dynamic QR codes and scans.</p>
-      </div>
+    <div className={`py-10 px-4 font-inter text-[#1e293b] antialiased bg-[#f8fafc] w-full min-h-full flex flex-col justify-center`}>
+      {/* MainHeader */}
+      <header className="text-center mb-10">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-[#1e293b]">
+          Flexible <span className={brandRed}>Plans</span> & Pricing
+        </h1>
+        <p className="text-slate-500 max-w-2xl mx-auto text-[15px] font-medium leading-snug">
+          Choose A Professional Plan That Scales With Your Growth. All Plans Include Unlimited Dynamic QR Codes And Scans.
+        </p>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
-        {/* Monthly Plan */}
-        <div className="skeu-card p-8 flex flex-col group hover:scale-[1.02] transition-all duration-300">
-          <div className="text-center space-y-3 mb-6">
-            <h3 className="text-[11px] font-black skeu-text-muted tracking-widest capitalize">Monthly</h3>
-            <div className="flex flex-col">
-              <span className="text-3xl font-black skeu-text-primary tracking-tight">₹1,799</span>
-              <span className="text-[9px] font-black skeu-text-muted capitalize tracking-wider py-1">per month</span>
-            </div>
-            <div className="skeu-inset rounded-full py-1.5 px-3 shadow-inner">
-              <p className="text-[8px] skeu-text-secondary font-black capitalize tracking-widest">No long-term commitment</p>
-            </div>
-          </div>
-
-          <div className="flex-1 space-y-3 mb-6 px-1">
-            {['Unlimited Dynamic Codes', 'All QR Type Access', 'Unlimited Scans', 'Premium Formatting', 'Cancel Anytime'].map((feature, i) => (
-              <div key={i} className="flex items-center gap-2 text-[12px] font-black skeu-text-primary">
-                <div className="w-5 h-5 skeu-inset flex items-center justify-center skeu-text-accent rounded-lg shadow-inner">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                </div>
-                <span>{feature}</span>
-              </div>
-            ))}
-          </div>
-
-          <button className="w-full py-3 skeu-btn-secondary text-[10px] font-black capitalize tracking-widest active:scale-95 transition-all">
-            Get Started
+      {/* TabSwitcher */}
+      <section className="flex justify-center mb-12 px-4 w-full">
+        <div className="inline-flex items-center gap-2 bg-white p-2 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50">
+          <button
+            type="button"
+            onClick={() => setCycle('3')}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '3' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+          >
+            3 Months
+          </button>
+          <button
+            type="button"
+            onClick={() => setCycle('6')}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '6' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+          >
+            6 Months
+          </button>
+          <button
+            type="button"
+            onClick={() => setCycle('12')}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '12' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+          >
+            12 Months
           </button>
         </div>
+      </section>
 
-        {/* Annual Plan - Popular */}
-        <div className="skeu-card p-8 flex flex-col scale-105 relative z-10 group hover:scale-[1.07] transition-all duration-300 shadow-2xl border-2 border-black/5">
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 skeu-hero-icon text-white text-[9px] font-black px-5 py-1.5 rounded-full capitalize tracking-widest shadow-xl flex items-center gap-2 skeu-gloss">
-            <Star className="w-3 h-3 fill-current" /> Best Value
-          </div>
+      {/* PricingCardsContainer */}
+      <main className="max-w-7xl mx-auto px-4 pb-10 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
 
-          <div className="text-center space-y-3 mb-6 pt-1">
-            <h3 className="text-[11px] font-black skeu-text-accent tracking-widest capitalize">Annually</h3>
-            <div className="flex flex-col">
-              <span className="text-4xl font-black skeu-text-primary tracking-tight">₹699</span>
-              <span className="text-[9px] font-black skeu-text-muted capitalize tracking-wider py-1">per month, billed yearly</span>
-            </div>
-            <div className="skeu-inset rounded-full py-2 px-4 shadow-inner ring-1 ring-black/5">
-              <span className="text-[9px] font-black skeu-text-accent capitalize tracking-widest">Save 60% with Annual Billing</span>
-            </div>
-          </div>
-
-          <div className="flex-1 space-y-3 mb-6 px-1">
-            {['Everything in Monthly', 'Full Analytics Dashboard', 'API Access Access', 'Priority Direct Support', 'Dedicated Account Manager'].map((feature, i) => (
-              <div key={i} className="flex items-center gap-2 text-[12px] font-black skeu-text-primary">
-                <div className="w-5 h-5 skeu-hero-icon flex items-center justify-center text-white rounded-lg shadow-md relative skeu-gloss">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                </div>
-                <span>{feature}</span>
+          {/* Starter Plan */}
+          <section className={`bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] flex flex-col h-full hover:-translate-y-1.5 transition-transform duration-300`}>
+            <div className="text-center mb-6">
+              <h3 className="text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-3">Starter Plan</h3>
+              <div className="flex justify-center items-baseline mb-2">
+                <span className="text-xl font-bold align-top mt-1">₹</span>
+                <span className="text-5xl font-extrabold">{currentData.starter.price}</span>
               </div>
-            ))}
-          </div>
-
-          <button className="w-full py-4 skeu-btn text-[10px] font-black capitalize tracking-widest active:scale-95 transition-all">
-            Upgrade My Account
-          </button>
-        </div>
-
-        {/* Quarterly Plan */}
-        <div className="skeu-card p-8 flex flex-col group hover:scale-[1.02] transition-all duration-300">
-          <div className="text-center space-y-3 mb-6">
-            <h3 className="text-[11px] font-black skeu-text-muted tracking-widest capitalize">Quarterly</h3>
-            <div className="flex flex-col">
-              <span className="text-3xl font-black skeu-text-primary tracking-tight">₹999</span>
-              <span className="text-[9px] font-black skeu-text-muted capitalize tracking-wider py-1">per month</span>
+              <p className="text-[10px] text-slate-400 font-bold uppercase">Per Month</p>
             </div>
-            <div className="skeu-inset rounded-full py-1.5 px-3 shadow-inner">
-              <p className="text-[8px] skeu-text-secondary font-black capitalize tracking-widest">Save 45% vs Monthly</p>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+              No Long-Term Commitment
             </div>
-          </div>
+            <ul className="space-y-4 mb-8 flex-grow">
+              {currentData.starter.features.map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <div className="bg-red-50 border border-red-100 p-0.5 rounded-full shrink-0">
+                    <Check className={`w-3 h-3 ${brandRed}`} strokeWidth={3} />
+                  </div>
+                  <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}>
+              Get Started
+            </button>
+          </section>
 
-          <div className="flex-1 space-y-3 mb-6 px-1">
-            {['Unlimited Dynamic Codes', 'Quarterly Billing Cycle', 'Analytics Access', 'Team Management', 'Email Support'].map((feature, i) => (
-              <div key={i} className="flex items-center gap-2 text-[12px] font-black skeu-text-primary">
-                <div className="w-5 h-5 skeu-inset flex items-center justify-center skeu-text-accent rounded-lg shadow-inner">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                </div>
-                <span>{feature}</span>
+          {/* Pro Plan (Featured) */}
+          <section className={`relative bg-white rounded-[2.5rem] p-10 border-2 ${borderBrandRed} shadow-[0_20px_60px_-15px_rgba(239,68,68,0.15)] flex flex-col h-full transform scale-[1.08] z-10 hover:scale-[1.1] transition-transform duration-300`}>
+            {/* Best Value Badge */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-max">
+              <div className="bg-gradient-to-br from-[#ef4444] to-[#b91c1c] text-white px-5 py-2 rounded-full flex items-center gap-1.5 shadow-lg shadow-red-500/30">
+                <Star className="w-3.5 h-3.5 fill-current" />
+                <span className="text-[11px] font-extrabold tracking-wider uppercase">Best Value</span>
               </div>
-            ))}
-          </div>
+            </div>
+            <div className="text-center mb-6 mt-2">
+              <h3 className={`${brandRed} font-bold uppercase tracking-widest text-[11px] mb-3`}>Pro Plan</h3>
+              <div className="flex justify-center items-baseline mb-2">
+                <span className="text-xl font-bold align-top mt-1">₹</span>
+                <span className="text-6xl font-extrabold">{currentData.pro.price}</span>
+              </div>
+              <p className="text-[10px] text-slate-400 font-bold uppercase">{currentData.pro.billing}</p>
+            </div>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+              <span>{currentData.pro.discount}</span>
+            </div>
+            <ul className="space-y-4 mb-8 flex-grow">
+              {currentData.pro.features.map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <div className={`${bgBrandRed} p-0.5 rounded-full shrink-0 shadow-sm shadow-red-200`}>
+                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={3.5} />
+                  </div>
+                  <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button className={`w-full py-4 mt-auto ${bgBrandRed} text-white font-bold rounded-xl text-[13px] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/25`}>
+              Upgrade My Account
+            </button>
+          </section>
 
-          <button className="w-full py-3 skeu-btn-secondary text-[10px] font-black capitalize tracking-widest active:scale-95 transition-all">
-            Choose Quarterly
-          </button>
+          {/* Enterprise Plan */}
+          <section className={`bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] flex flex-col h-full hover:-translate-y-1.5 transition-transform duration-300`}>
+            <div className="text-center mb-6">
+              <h3 className="text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-3">Enterprise Plan</h3>
+              <div className="flex justify-center items-baseline mb-2">
+                <span className="text-xl font-bold align-top mt-1">₹</span>
+                <span className="text-5xl font-extrabold">{currentData.enterprise.price}</span>
+              </div>
+              <p className="text-[10px] text-slate-400 font-bold uppercase">Per Month</p>
+            </div>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+              Custom Enterprise Suite
+            </div>
+            <ul className="space-y-4 mb-8 flex-grow">
+              {currentData.enterprise.features.map((feature, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <div className="bg-red-50 border border-red-100 p-0.5 rounded-full shrink-0">
+                    <Check className={`w-3 h-3 ${brandRed}`} strokeWidth={3} />
+                  </div>
+                  <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <button className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}>
+              Choose Enterprise
+            </button>
+          </section>
+
         </div>
-      </div>
+      </main>
     </div>
   );
 };
