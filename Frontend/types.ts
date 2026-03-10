@@ -55,6 +55,7 @@ export interface GeneratedCode {
   scans: number;
   status: 'active' | 'paused';
   createdAt: string;
+  show_preview: boolean;
   settings: any;
   imageUrl?: string;
 }
@@ -81,7 +82,8 @@ export type ViewState =
   | 'forgot_password'
   | 'register'
   | 'admin_login'
-  | 'admin_dashboard';
+  | 'admin_dashboard'
+  | 'payment';
 
 export interface BusinessButton {
   id: string;
@@ -178,6 +180,7 @@ export interface WizardState {
   isPasswordActive: boolean;
   is_protected: boolean;
   is_lead_capture: boolean;
+  show_preview: boolean;
   folderId?: string;
   business?: BusinessConfig;
   config: {

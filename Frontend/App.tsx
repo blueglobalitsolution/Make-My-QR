@@ -17,11 +17,12 @@ import { Wizard } from './src/components/app/Wizard';
 import { Billing } from './src/components/app/Billing';
 import { Account } from './src/components/app/Account';
 import { Analytics } from './src/components/app/Analytics';
+import { Payment } from './src/components/app/Payment';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
 import { PublicScan } from './src/components/app/PublicScan';
-import { QRViewer } from './src/components/app/QRViewer';
+import QRViewer from './src/components/app/QRViewer';
 import { AdminLogin } from './src/components/app/AdminLogin';
 import { AdminDashboard } from './src/components/app/AdminDashboard';
 
@@ -55,7 +56,7 @@ const App: React.FC = () => {
     }
 
     const validViews: ViewState[] = [
-      'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing',
+      'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing', 'payment',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
       'qr_viewer', 'admin_login', 'admin_dashboard'
     ];
@@ -75,7 +76,14 @@ const App: React.FC = () => {
   const [isFileMode, setIsFileMode] = useState<boolean>((initialState as any).fileMode || false);
   const [businessProfiles, setBusinessProfiles] = useState<any[]>([]);
 
-  const auth = useAuth(setView);
+  const [viewData, setViewData] = useState<any>(null);
+
+  const auth = useAuth((v: ViewState) => setView(v));
+
+  const handleSetView = (v: ViewState, data?: any) => {
+    setView(v);
+    if (data) setViewData(data);
+  };
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [history, setHistory] = useState<GeneratedCode[]>([]);
@@ -124,7 +132,6 @@ const App: React.FC = () => {
         folderId: code.folder?.toString(),
         shortSlug: code.short_slug,
         isDynamic: code.is_dynamic,
-        isProtected: code.is_protected,
         isLeadCapture: code.is_lead_capture,
         createdAt: code.created_at,
         userId: code.user?.toString()
@@ -319,9 +326,9 @@ const App: React.FC = () => {
       const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
       const pdfPath = code.value;
       // Construct full URL if it's a relative path
-      pdfUrlValue = pdfPath?.startsWith('http') ? pdfPath : 
-                    pdfPath?.startsWith('/') ? `${backendUrl}${pdfPath}` : 
-                    pdfPath || null;
+      pdfUrlValue = pdfPath?.startsWith('http') ? pdfPath :
+        pdfPath?.startsWith('/') ? `${backendUrl}${pdfPath}` :
+          pdfPath || null;
       // Extract filename from path
       if (pdfUrlValue) {
         const pathParts = pdfUrlValue.split('/');
@@ -490,7 +497,7 @@ const App: React.FC = () => {
             setIsCreatingFolder={setIsCreatingFolder}
             newFolderName={newFolderName}
             setNewFolderName={setNewFolderName}
-            setView={setView}
+            setView={handleSetView}
             viewPdf={viewPdf}
             onNewQR={onNewQR}
           />
@@ -529,19 +536,20 @@ const App: React.FC = () => {
           />
         )}
 
-        {view === 'billing' && <Billing />}
+        {view === 'billing' && <Billing setView={handleSetView} />}
 
         {view === 'business_profile' && currentBusinessProfileId && <BusinessProfileViewer profileId={currentBusinessProfileId} />}
 
-        {view === 'public_scan' && <PublicScan setView={setView} />}
+        {view === 'public_scan' && <PublicScan setView={handleSetView} />}
 
         {view === 'qr_viewer' && currentBusinessProfileId && (
-          <QRViewer slug={currentBusinessProfileId} setView={setView} isFileMode={isFileMode} />
+          <QRViewer slug={currentBusinessProfileId} setView={handleSetView} isFileMode={isFileMode} />
         )}
 
         {view === 'analytics' && <Analytics />}
-        {view === 'admin_login' && <AdminLogin setView={setView} />}
-        {view === 'admin_dashboard' && <AdminDashboard setView={setView} />}
+        {view === 'payment' && <Payment setView={handleSetView} selectedPlan={viewData} />}
+        {view === 'admin_login' && <AdminLogin setView={handleSetView} />}
+        {view === 'admin_dashboard' && <AdminDashboard setView={handleSetView} />}
       </main>
     </div>
   );

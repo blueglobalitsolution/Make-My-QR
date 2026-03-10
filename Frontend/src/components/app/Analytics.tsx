@@ -21,7 +21,10 @@ import {
     Cpu,
     Chrome,
     Laptop,
-    Check
+    Check,
+    Mail,
+    User,
+    Inbox
 } from 'lucide-react';
 import { getSummaryAnalytics, exportScansCsv, getCodeAnalytics } from '../../api/qrcodes';
 
@@ -505,6 +508,94 @@ export const Analytics: React.FC = () => {
                 <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.3em]">
                     Data is strictly aggregated for your account privacy
                 </p>
+            </div>
+
+            {/* Captured Leads Table */}
+            <div className={`skeu-card p-8 bg-white space-y-6 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 rounded-xl">
+                            <Inbox className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-black text-slate-800 tracking-tight">Captured Leads</h2>
+                            <p className="text-[10px] font-bold text-slate-400 capitalize tracking-widest">
+                                {selectedCodeId ? 'People who registered for this specific QR.' : 'Latest visitor registrations across all codes.'}
+                            </p>
+                        </div>
+                    </div>
+                    {((selectedCodeId ? detailData?.leads : data?.recent_leads)?.length > 0) && (
+                        <div className="bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                            <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">
+                                {(selectedCodeId ? detailData?.leads : data?.recent_leads)?.length} Leads Found
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-inner">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50">
+                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Visitor Details</th>
+                                {!selectedCodeId && <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source QR</th>}
+                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
+                                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 bg-white">
+                            {(selectedCodeId ? (detailData?.leads || []) : (data?.recent_leads || [])).length > 0 ? (
+                                (selectedCodeId ? detailData.leads : data.recent_leads).map((lead: any) => (
+                                    <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-500 transition-colors">
+                                                    <User className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-black text-slate-700">{lead.name}</p>
+                                                    <div className="flex items-center gap-1.5 text-xs text-slate-400 font-bold group-hover:text-blue-400">
+                                                        <Mail className="w-3 h-3" />
+                                                        {lead.email}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {!selectedCodeId && (
+                                            <td className="px-6 py-5">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="p-1 px-2 bg-red-50 text-red-500 rounded-md text-[9px] font-black uppercase border border-red-100">
+                                                        {lead.qr_name}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        )}
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 capitalize tracking-tight">
+                                                <Clock className="w-3.5 h-3.5 opacity-40" />
+                                                {new Date(lead.timestamp).toLocaleDateString()} at {new Date(lead.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 text-right">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-green-100 shadow-sm">
+                                                <Check className="w-3 h-3" /> Verified
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4 opacity-20">
+                                            <Inbox className="w-16 h-16" />
+                                            <p className="text-sm font-black capitalize tracking-widest">No leads captured yet</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

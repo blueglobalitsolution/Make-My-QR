@@ -71,7 +71,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   }, [downloadingCode, downloadFormat, downloadCode]);
 
   const getQRValue = (code: GeneratedCode) => {
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.114:8010';
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
     const slug = code.shortSlug || (code as any).short_slug;
     let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
     if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
@@ -223,10 +223,11 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
       {/* Codes Table Header */}
       <div className="min-w-[1000px]">
-        <div className="grid grid-cols-[220px_1fr_180px_180px_180px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
+        <div className="grid grid-cols-[220px_1fr_150px_160px_120px_150px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
           <div>QR Code</div>
           <div>Details</div>
-          <div className="text-center">Folder</div>
+          <div className="text-center">Location</div>
+          <div className="text-center">Export</div>
           <div className="text-center">Activity</div>
           <div className="text-right pr-6">Actions</div>
         </div>
@@ -248,7 +249,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[220px_1fr_180px_180px_180px] items-center skeu-card px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[220px_1fr_150px_160px_120px_150px] items-center skeu-card px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
                     <button
@@ -268,50 +269,52 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     <h3 className="font-black skeu-text-primary text-base tracking-tight truncate px-1">{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black capitalize skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
-                      <span className="text-[10px] skeu-text-muted font-medium truncate shrink-0 max-w-[150px]">
-                        {(code.shortSlug || (code as any).short_slug)
-                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
-                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
-                      </span>
+                      {code.show_preview === false && (
+                        <span className="text-[9px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded tracking-widest shadow-sm">Direct</span>
+                      )}
                     </div>
                     <p className="text-[8px] capitalize font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-0.5">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
 
-                  {/* Folder & Quick Actions */}
-                  <div className="flex flex-col items-center justify-center space-y-3">
+                  {/* Folder Location */}
+                  <div className="flex flex-col items-center">
                     {folder ? (
-                      <span className="text-[9px] font-black capitalize tracking-widest skeu-text-muted skeu-tag px-3 py-1.5 rounded-lg flex items-center gap-1.5 max-w-[120px] truncate bg-white/80">
-                        <FolderIcon className="w-3 h-3 opacity-40 shrink-0 text-red-500" />
+                      <span className="text-[10px] font-black capitalize tracking-wide text-red-600 bg-red-50 border border-red-100/50 px-4 py-1.5 rounded-full flex items-center gap-2 max-w-[140px] shadow-sm transition-transform group-hover:scale-105">
+                        <FolderIcon className="w-3 h-3 shrink-0" />
                         <span className="truncate">{folder.name}</span>
                       </span>
                     ) : (
-                      <span className="text-[9px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-20 italic bg-white/50 px-3 py-1.5 rounded-lg">No Folder</span>
+                      <span className="text-[10px] font-black capitalize tracking-wide text-slate-400 bg-slate-50 border border-slate-100 px-4 py-1.5 rounded-full flex items-center gap-2 max-w-[140px]">
+                        <Grid3X3 className="w-3 h-3 shrink-0 opacity-40" />
+                        <span>General</span>
+                      </span>
                     )}
+                  </div>
 
-                    <div className="flex gap-2 w-full justify-center">
-                      <button
-                        onClick={() => {
-                          setDownloadFormat('png');
-                          setDownloadingCode(code);
-                        }}
-                        className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
-                        title="Download PNG"
-                      >
-                        <Download className="w-3 h-3" /> PNG
-                      </button>
-                      <button
-                        onClick={() => {
-                          setDownloadFormat('svg');
-                          setDownloadingCode(code);
-                        }}
-                        className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1 max-w-[70px]"
-                        title="Download SVG"
-                      >
-                        <Download className="w-3 h-3" /> SVG
-                      </button>
-                    </div>
+                  {/* Quick Export */}
+                  <div className="flex flex-col gap-2 w-full px-2">
+                    <button
+                      onClick={() => {
+                        setDownloadFormat('png');
+                        setDownloadingCode(code);
+                      }}
+                      className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 w-full"
+                      title="Download PNG"
+                    >
+                      <Download className="w-3 h-3" /> PNG
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDownloadFormat('svg');
+                        setDownloadingCode(code);
+                      }}
+                      className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 w-full"
+                      title="Download SVG"
+                    >
+                      <Download className="w-3 h-3" /> SVG
+                    </button>
                   </div>
 
                   {/* Activity */}
@@ -330,16 +333,6 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       title="Edit Code"
                     >
                       <Pencil className="w-4 h-4 opacity-70 group-hover:opacity-100" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDownloadFormat('png');
-                        setDownloadingCode(code);
-                      }}
-                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary group-hover:shadow-md transition-all"
-                      title="Download"
-                    >
-                      <Download className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
                       onClick={() => deleteCode(code.id)}

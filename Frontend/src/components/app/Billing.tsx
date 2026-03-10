@@ -21,17 +21,41 @@ const pricingData = {
   }
 };
 
-export const Billing: React.FC = () => {
+export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = ({ setView }) => {
   const [cycle, setCycle] = useState<BillingCycle>('12');
 
   const currentData = pricingData[cycle];
+
+  const handleSelectPlan = (planType: 'starter' | 'pro' | 'enterprise') => {
+    const planInfo = currentData[planType];
+    const durationMonths = parseInt(cycle);
+
+    // Map to database IDs: 1-3 for 3mo, 4-6 for 6mo, 7-9 for 12mo
+    const baseId = cycle === '3' ? 1 : cycle === '6' ? 4 : 7;
+    const planOffset = planType === 'starter' ? 0 : planType === 'pro' ? 1 : 2;
+    const dbId = baseId + planOffset;
+
+    // Remove comma for calculation
+    const monthlyPrice = parseInt(planInfo.price.replace(',', ''));
+    const totalPrice = monthlyPrice * durationMonths;
+
+    const selectedPlan = {
+      id: dbId,
+      name: `${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${cycle} Months)`,
+      price: planInfo.price,
+      total: totalPrice.toLocaleString('en-IN'),
+      duration: cycle,
+      features: planInfo.features
+    };
+
+    setView?.('payment', selectedPlan);
+  };
 
   // Helper styles extracted from the user's provided config
   const brandRed = 'text-[#ef4444]';
   const bgBrandRed = 'bg-[#ef4444]';
   const borderBrandRed = 'border-[#ef4444]';
   const brandDark = 'text-[#1e293b]';
-  const customShadow = 'shadow-[0_10px_50px_-12px_rgba(0,0,0,0.1)]';
 
   return (
     <div className={`py-10 px-4 font-inter text-[#1e293b] antialiased bg-[#f8fafc] w-full min-h-full flex flex-col justify-center`}>
@@ -99,7 +123,10 @@ export const Billing: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <button className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}>
+            <button
+              onClick={() => handleSelectPlan('starter')}
+              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}
+            >
               Get Started
             </button>
           </section>
@@ -134,7 +161,10 @@ export const Billing: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <button className={`w-full py-4 mt-auto ${bgBrandRed} text-white font-bold rounded-xl text-[13px] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/25`}>
+            <button
+              onClick={() => handleSelectPlan('pro')}
+              className={`w-full py-4 mt-auto ${bgBrandRed} text-white font-bold rounded-xl text-[13px] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/25`}
+            >
               Upgrade My Account
             </button>
           </section>
@@ -162,7 +192,10 @@ export const Billing: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <button className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}>
+            <button
+              onClick={() => handleSelectPlan('enterprise')}
+              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}
+            >
               Choose Enterprise
             </button>
           </section>
