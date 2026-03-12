@@ -129,7 +129,7 @@ export const Wizard: React.FC<WizardProps> = ({
               <div className={`w-9 h-9 flex items-center justify-center text-[14px] font-black rounded-full transition-all ${step >= s.n ? 'skeu-tag-active shadow-lg shadow-red-500/10 scale-110' : 'skeu-inset skeu-text-muted'}`}>
                 {s.n}
               </div>
-              <span className={`text-[11px] font-black tracking-widest transition-colors ${step >= s.n ? 'skeu-text-primary' : 'skeu-text-muted'}`}>
+              <span className={`text-[11px] font-black  transition-colors ${step >= s.n ? 'skeu-text-primary' : 'skeu-text-muted'}`}>
                 {s.label}
               </span>
             </div>
@@ -168,8 +168,8 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className={`font-black text-base tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
-              <p className="text-[10px] font-semibold skeu-text-muted leading-relaxed px-2 line-clamp-2 capitalize tracking-wider opacity-70">
+              <h3 className={`font-black text-base  transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
+              <p className="text-[10px] font-semibold skeu-text-muted leading-relaxed px-2 line-clamp-2 capitalize  opacity-70">
                 {type.desc}
               </p>
             </div>
@@ -201,7 +201,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <Globe className="w-5 h-5" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-base font-black skeu-text-primary tracking-tight capitalize">Website URL</h3>
+                  <h3 className="text-base font-black skeu-text-primary  capitalize">Website URL</h3>
                   <p className="text-[10px] font-medium skeu-text-muted">Link your QR code to any website.</p>
                 </div>
               </div>
@@ -211,8 +211,8 @@ export const Wizard: React.FC<WizardProps> = ({
             {activeDesignSection === 'content' && (
               <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                 <div className="flex items-center justify-between px-1">
-                  <label className="text-[10px] font-black skeu-text-muted capitalize tracking-widest">Destination URL *</label>
-                  <span className="text-[9px] font-black skeu-text-muted capitalize tracking-widest italic opacity-60">Supports http:// and https://</span>
+                  <label className="text-[10px] font-black skeu-text-muted capitalize ">Destination URL *</label>
+                  <span className="text-[9px] font-black skeu-text-muted capitalize  italic opacity-60">Supports http:// and https://</span>
                 </div>
 
                 <div className="relative group">
@@ -250,7 +250,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <MessageCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">WhatsApp Information</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">WhatsApp Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Direct link to start a WhatsApp chat</p>
                   </div>
                 </div>
@@ -259,7 +259,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
               <div className="space-y-6">
                 <div className="space-y-3 text-left">
-                  <label className="text-[11px] font-bold skeu-text-muted capitalize tracking-widest pl-1">Phone number *</label>
+                  <label className="text-[11px] font-bold skeu-text-muted capitalize  pl-1">Phone number *</label>
                   <div className="flex items-center skeu-input overflow-hidden">
                     <div className="px-4 py-3 flex items-center gap-2 border-r border-black/5 skeu-mid">
                       <img src="https://flagcdn.com/in.svg" className="w-5 h-3 rounded-[2px] object-cover" alt="IN" />
@@ -287,7 +287,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 </div>
 
                 <div className="space-y-3 text-left">
-                  <label className="text-[11px] font-bold skeu-text-muted capitalize tracking-widest pl-1">Message</label>
+                  <label className="text-[11px] font-bold skeu-text-muted capitalize  pl-1">Message</label>
                   <textarea
                     rows={3}
                     placeholder="Write your message"
@@ -312,7 +312,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">PDF Upload</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">PDF Upload</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Select and upload your PDF document.</p>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <div className="w-24 h-24 skeu-hero-icon text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 relative skeu-gloss">
                             <FileText className="w-12 h-12" />
                           </div>
-                          <h4 className="font-black skeu-text-primary text-xl tracking-tight">{pdfFileName}</h4>
+                          <h4 className="font-black skeu-text-primary text-xl ">{pdfFileName}</h4>
                           <p className="text-sm font-medium skeu-text-muted mt-1">File uploaded successfully</p>
                         </div>
                       ) : (
@@ -337,7 +337,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             <Upload className="w-12 h-12" />
                           </div>
                           <div className="text-center space-y-2">
-                            <p className="font-black skeu-text-primary text-xl tracking-tight">Drop your PDF or browse</p>
+                            <p className="font-black skeu-text-primary text-xl ">Drop your PDF or browse</p>
                             <p className="text-sm font-medium skeu-text-muted">Maximum file size: 20MB</p>
                           </div>
                         </>
@@ -356,7 +356,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Design</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Design</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
@@ -365,7 +365,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'design' && (
                 <div className="p-6 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-6">
-                    <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Color Palette</p>
+                    <p className="text-[11px] font-black text-slate-400 capitalize  pl-1">Color Palette</p>
                     <div className="flex items-center gap-4 flex-wrap">
                       {DEFAULT_BUSINESS_PRESETS.map((preset, i) => (
                         <button
@@ -385,24 +385,24 @@ export const Wizard: React.FC<WizardProps> = ({
                   </div>
                   <div className="flex items-center gap-8">
                     <div className="flex-1 space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Primary Color</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
                       <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.primaryColor}</span>
+                        <span className="font-bold text-slate-700  text-sm">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
                     <button type="button" onClick={swapColors} className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#dc2626] hover:bg-red-50 transition-colors mt-8">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                     </button>
                     <div className="flex-1 space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Secondary Color</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
                       <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.secondaryColor}</span>
+                        <span className="font-bold text-slate-700  text-sm">{wizard.business?.secondaryColor}</span>
                       </div>
                     </div>
                   </div>
@@ -418,7 +418,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">PDF Information</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">PDF Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Details about the PDF content.</p>
                   </div>
                 </div>
@@ -428,25 +428,25 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-6 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Company Name</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Company Name</label>
                       <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">PDF Title</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">PDF Title</label>
                       <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Description</label>
+                    <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Description</label>
                     <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Website</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Website</label>
                       <input type="text" placeholder="https://..." value={wizard.business?.buttons?.[0]?.url || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'url', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Button Name</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Button Name</label>
                       <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'text', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
@@ -462,7 +462,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <i className="font-serif text-lg font-black">T</i>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Fonts</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Fonts</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Customize fonts and colors.</p>
                   </div>
                 </div>
@@ -472,13 +472,13 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-6 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black skeu-text-muted capitalize tracking-widest pl-1">Title Font</label>
+                      <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Title Font</label>
                       <select value={wizard.business?.fontTitle} onChange={(e) => updateBusinessField('fontTitle', e.target.value)} className="w-full pl-8 pr-12 py-5 skeu-input appearance-none">
                         {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black skeu-text-muted capitalize tracking-widest pl-1">Text Font</label>
+                      <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Text Font</label>
                       <select value={wizard.business?.fontText} onChange={(e) => updateBusinessField('fontText', e.target.value)} className="w-full pl-8 pr-12 py-5 skeu-input appearance-none">
                         {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                       </select>
@@ -486,21 +486,21 @@ export const Wizard: React.FC<WizardProps> = ({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Title Color</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Title Color</label>
                       <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTitleColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTitleColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTitleColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.fontTitleColor || '#ffffff'}</span>
+                        <span className="font-bold text-slate-700  text-sm">{wizard.business?.fontTitleColor || '#ffffff'}</span>
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Text Color</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Text Color</label>
                       <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTextColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTextColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTextColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-sm">{wizard.business?.fontTextColor || '#ffffff'}</span>
+                        <span className="font-bold text-slate-700  text-sm">{wizard.business?.fontTextColor || '#ffffff'}</span>
                       </div>
                     </div>
                   </div>
@@ -522,7 +522,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Design</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Design</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
@@ -531,7 +531,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'design' && (
                 <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-4">
-                    <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Color Palette</p>
+                    <p className="text-[10px] font-black text-slate-400 capitalize  pl-1">Color Palette</p>
                     <div className="flex items-center gap-4 flex-wrap">
                       {DEFAULT_BUSINESS_PRESETS.map((preset, i) => (
                         <button
@@ -551,24 +551,24 @@ export const Wizard: React.FC<WizardProps> = ({
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="flex-1 space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Primary Color</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
                       <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
                         <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-[11px] capitalize">{wizard.business?.primaryColor}</span>
+                        <span className="font-bold text-slate-700  text-[11px] capitalize">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
                     <button type="button" onClick={swapColors} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#dc2626] hover:bg-red-50 transition-colors mt-6">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                     </button>
                     <div className="flex-1 space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Secondary Color</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
                       <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
                         <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
-                        <span className="font-bold text-slate-700 tracking-widest text-[11px] capitalize">{wizard.business?.secondaryColor}</span>
+                        <span className="font-bold text-slate-700  text-[11px] capitalize">{wizard.business?.secondaryColor}</span>
                       </div>
                     </div>
                   </div>
@@ -584,7 +584,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Business Information</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Business Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Introduce your business or organization.</p>
                   </div>
                 </div>
@@ -593,7 +593,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'businessInfo' && (
                 <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
                     <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-xl flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
                       <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
@@ -602,15 +602,15 @@ export const Wizard: React.FC<WizardProps> = ({
 
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Company *</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Company *</label>
                       <input type="text" placeholder="E.g. My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Title</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Title</label>
                       <input type="text" placeholder="E.g. Clothing store" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Subtitle</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Subtitle</label>
                       <input type="text" placeholder="E.g. Selling clothes for over 15 years" value={wizard.business?.subtitle || ''} onChange={(e) => updateBusinessField('subtitle', e.target.value)} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
                     </div>
 
@@ -644,7 +644,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Clock className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Opening Hours</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Opening Hours</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Set your business hours.</p>
                   </div>
                 </div>
@@ -740,7 +740,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Location</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Location</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Where is your business located?</p>
                   </div>
                 </div>
@@ -749,7 +749,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'location' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Search Address</label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Search Address</label>
                     <div className="relative">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input type="text" placeholder="Search a location..." className="w-full pl-11 pr-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
@@ -757,23 +757,23 @@ export const Wizard: React.FC<WizardProps> = ({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3 md:col-span-2">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Address</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Address</label>
                       <input type="text" value={wizard.business?.location?.address || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, address: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">City</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">City</label>
                       <input type="text" value={wizard.business?.location?.city || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, city: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Postcode / Zip</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Postcode / Zip</label>
                       <input type="text" value={wizard.business?.location?.zipCode || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, zipCode: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">State / Province</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">State / Province</label>
                       <input type="text" value={wizard.business?.location?.state || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, state: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Country</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Country</label>
                       <input type="text" value={wizard.business?.location?.country || ''} onChange={(e) => updateBusinessField('location', { ...wizard.business?.location, country: e.target.value })} className="w-full px-5 py-3 skeu-input text-sm font-bold" />
                     </div>
                   </div>
@@ -789,7 +789,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <UserCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Contact Information</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Contact Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">How people can reach you.</p>
                   </div>
                 </div>
@@ -798,14 +798,14 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'contactInfo' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Contact Name</label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Contact Name</label>
                     <input type="text" placeholder="E.g. John Doe" value={wizard.business?.contact?.name || ''} onChange={(e) => updateBusinessField('contact', { ...wizard.business?.contact, name: e.target.value })} className="w-full px-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
                   </div>
 
                   {/* Repeated blocks for Phone, Email, Website */}
                   {(['phones', 'emails', 'websites'] as const).map((field) => (
                     <div key={field} className="space-y-3">
-                      <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1 capitalize">{field}</label>
+                      <label className="text-[10px] font-black text-slate-400 capitalize  pl-1 capitalize">{field}</label>
                       {(wizard.business?.contact?.[field] || []).map((val, idx) => (
                         <div key={idx} className="flex items-center gap-3">
                           <input
@@ -858,7 +858,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Share2 className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Social Networks</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Social Networks</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Links to your social profiles.</p>
                   </div>
                 </div>
@@ -867,7 +867,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'social' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Your Social Links</label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Your Social Links</label>
                     <div className="space-y-4">
                       {wizard.business?.socialNetworks?.map((social, idx) => (
                         <div key={idx} className="flex items-center gap-3 bg-slate-50/50 p-2 rounded-xl border border-slate-100">
@@ -945,7 +945,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">About Company</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">About Company</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">A short description of your business.</p>
                   </div>
                 </div>
@@ -954,7 +954,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'about' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">About Text</label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">About Text</label>
                     <textarea
                       rows={5}
                       placeholder="Write something about your company..."
@@ -975,7 +975,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Coffee className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Services</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Services</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Services and amenities available.</p>
                   </div>
                 </div>
@@ -1037,7 +1037,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <ScanEye className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary tracking-tight">Welcome Screen</h3>
+                    <h3 className="text-base font-black skeu-text-primary ">Welcome Screen</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Splash screen image shown while loading.</p>
                   </div>
                 </div>
@@ -1046,7 +1046,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'welcomeScreen' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">Splash Image</label>
+                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Splash Image</label>
                     <div className="w-full h-32 border-2 border-dashed border-[#dc2626]/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
@@ -1079,7 +1079,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <PaletteIcon className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">Design Settings</h3>
+                    <h3 className="text-xl font-black text-[#0F172A] ">Design Settings</h3>
                     <p className="text-sm font-medium text-slate-400">Visual style, fonts and brand colors</p>
                   </div>
                 </div>
@@ -1090,7 +1090,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-10 border-t border-slate-50/50 space-y-10 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="space-y-5">
-                      <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Primary Brand Color</label>
+                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Brand Color</label>
                       <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#dc2626]/20 hover:bg-white hover:shadow-lg hover:shadow-red-500/5 group">
                         <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input
@@ -1100,12 +1100,12 @@ export const Wizard: React.FC<WizardProps> = ({
                             onChange={(e) => updateBusinessField('primaryColor', e.target.value)}
                           />
                         </div>
-                        <span className="font-bold text-slate-700 capitalize tracking-widest text-sm">{wizard.business?.primaryColor}</span>
+                        <span className="font-bold text-slate-700 capitalize  text-sm">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
                     {true && (
                       <div className="space-y-5">
-                        <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Typography</label>
+                        <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Typography</label>
                         <div className="relative group/select">
                           <select
                             value={wizard.business?.fontTitle}
@@ -1135,7 +1135,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Info className="w-7 h-7" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black text-[#0F172A] tracking-tight">
+                    <h3 className="text-xl font-black text-[#0F172A] ">
                       {wizard.type === 'pdf' ? 'PDF Document' : 'Page Content'}
                     </h3>
                     <p className="text-sm font-medium text-slate-400">
@@ -1152,7 +1152,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <div className="space-y-4">
-                        <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Display Title *</label>
+                        <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Display Title *</label>
                         <input
                           type="text"
                           placeholder="e.g. My Website"
@@ -1162,7 +1162,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         />
                       </div>
                       <div className="space-y-4">
-                        <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest pl-1">Company / Sub-headline</label>
+                        <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Company / Sub-headline</label>
                         <input
                           type="text"
                           placeholder="e.g. Tech Solutions"
@@ -1175,11 +1175,11 @@ export const Wizard: React.FC<WizardProps> = ({
 
                     <div className="space-y-8">
                       <div className="flex items-center justify-between px-1">
-                        <label className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Action Buttons / Links</label>
+                        <label className="text-[11px] font-black text-slate-400 capitalize ">Action Buttons / Links</label>
                         <button
                           type="button"
                           onClick={addLink}
-                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-2xl text-[11px] font-black capitalize tracking-widest hover:bg-[#dc2626] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
+                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-2xl text-[11px] font-black capitalize  hover:bg-[#dc2626] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
                         >
                           <Plus className="w-4 h-4" /> Add Link
                         </button>
@@ -1238,7 +1238,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <FolderIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Save To Folder</h3>
+                <h3 className="text-base font-black skeu-text-primary ">Save To Folder</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Organize your codes by category.</p>
               </div>
             </div>
@@ -1249,7 +1249,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-5">
                 <div className="flex items-center justify-between pl-1">
-                  <label className="text-[11px] font-bold text-slate-400 capitalize tracking-widest">Choose Folder</label>
+                  <label className="text-[11px] font-bold text-slate-400 capitalize ">Choose Folder</label>
                   <button
                     type="button"
                     onClick={() => setIsCreatingFolder(true)}
@@ -1272,8 +1272,8 @@ export const Wizard: React.FC<WizardProps> = ({
                           <FolderIcon className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className={`font-black tracking-tight truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
-                          <p className="text-[8px] font-black text-slate-400 capitalize tracking-widest mt-0.5">{folder.count} codes</p>
+                          <p className={`font-black  truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
+                          <p className="text-[8px] font-black text-slate-400 capitalize  mt-0.5">{folder.count} codes</p>
                         </div>
                       </div>
                       {wizard.folderId === folder.id && (
@@ -1333,7 +1333,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Layout className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Frame Layout</h3>
+                <h3 className="text-base font-black skeu-text-primary ">Frame Layout</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Add a call-to-action frame</p>
               </div>
             </div>
@@ -1349,7 +1349,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all group/item ${wizard.config.frame === style.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl font-black' : 'skeu-card skeu-text-muted translate-y-0'}`}
                 >
                   <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125'}`}>{style.icon}</div>
-                  <span className={`text-[9px] font-black capitalize mt-4 tracking-tight ${wizard.config.frame === style.id ? 'skeu-text-accent' : 'skeu-text-muted opacity-50'}`}>{style.label}</span>
+                  <span className={`text-[9px] font-black capitalize mt-4  ${wizard.config.frame === style.id ? 'skeu-text-accent' : 'skeu-text-muted opacity-50'}`}>{style.label}</span>
                 </button>
               ))}
             </div>
@@ -1364,7 +1364,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <PaletteIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">QR Pattern & Colors</h3>
+                <h3 className="text-base font-black skeu-text-primary ">QR Pattern & Colors</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Dots, squares and custom colors</p>
               </div>
             </div>
@@ -1388,21 +1388,21 @@ export const Wizard: React.FC<WizardProps> = ({
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-3 px-1">
-                  <label className="text-[11px] font-black skeu-text-muted capitalize tracking-widest pl-1">Foreground Color</label>
+                  <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Foreground Color</label>
                   <div className="flex items-center gap-4 p-2.5 skeu-input group/color">
                     <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.fgColor }}>
                       <input type="color" value={wizard.config.fgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, fgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold skeu-text-primary capitalize tracking-widest text-sm">{wizard.config.fgColor}</span>
+                    <span className="font-bold skeu-text-primary capitalize  text-sm">{wizard.config.fgColor}</span>
                   </div>
                 </div>
                 <div className="space-y-3 px-1">
-                  <label className="text-[11px] font-black skeu-text-muted capitalize tracking-widest pl-1">Background Color</label>
+                  <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Background Color</label>
                   <div className="flex items-center gap-4 p-2.5 skeu-input group/color">
                     <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.bgColor }}>
                       <input type="color" value={wizard.config.bgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, bgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
-                    <span className="font-bold skeu-text-primary capitalize tracking-widest text-sm">{wizard.config.bgColor}</span>
+                    <span className="font-bold skeu-text-primary capitalize  text-sm">{wizard.config.bgColor}</span>
                   </div>
                 </div>
               </div>
@@ -1416,7 +1416,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   {isTransparent && <Check className="w-4 h-4 text-white" strokeWidth={4} />}
                 </button>
                 <div className="cursor-pointer" onClick={() => setIsTransparent(!isTransparent)}>
-                  <p className="font-black text-[#0F172A] tracking-tight">Transparent Background</p>
+                  <p className="font-black text-[#0F172A] ">Transparent Background</p>
                   <p className="text-sm font-medium text-slate-400">Remove background for transparency</p>
                 </div>
               </div>
@@ -1431,7 +1431,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <ScanEye className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Eye Styles</h3>
+                <h3 className="text-base font-black skeu-text-primary ">Eye Styles</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Shape of the corner indicators</p>
               </div>
             </div>
@@ -1441,7 +1441,7 @@ export const Wizard: React.FC<WizardProps> = ({
           {activeDesignSection === 'corners' && (
             <div className="p-5 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-6">
-                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest px-1">Eye Frame Shape</p>
+                <p className="text-[11px] font-black text-slate-400 capitalize  px-1">Eye Frame Shape</p>
                 <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2.5">
                   {CORNER_SQUARE_OPTIONS.map((opt: any) => (
                     <button
@@ -1457,7 +1457,7 @@ export const Wizard: React.FC<WizardProps> = ({
               </div>
 
               <div className="space-y-6">
-                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest px-1">Eye Dot Shape</p>
+                <p className="text-[11px] font-black text-slate-400 capitalize  px-1">Eye Dot Shape</p>
                 <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2.5">
                   {CORNER_DOT_OPTIONS.map((opt: any) => (
                     <button
@@ -1483,7 +1483,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Add Center Logo</h3>
+                <h3 className="text-base font-black skeu-text-primary ">Add Center Logo</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Place your brand in the center</p>
               </div>
             </div>
@@ -1506,11 +1506,11 @@ export const Wizard: React.FC<WizardProps> = ({
                     <>
                       <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-50/50 group-hover/item:scale-110 group-hover/item:rotate-3 transition-all duration-500">
                         <div className="w-16 h-16 bg-red-50/60 rounded-full flex items-center justify-center border border-red-100/30">
-                          <span className="text-[11px] font-black text-[#dc2626]/50 capitalize tracking-widest">LOGO</span>
+                          <span className="text-[11px] font-black text-[#dc2626]/50 capitalize ">LOGO</span>
                         </div>
                       </div>
                       <div className="text-center space-y-2">
-                        <p className="font-black text-[#0F172A] text-xl tracking-tight">Click or drag logo</p>
+                        <p className="font-black text-[#0F172A] text-xl ">Click or drag logo</p>
                         <p className="text-sm font-medium text-slate-400">PNG or JPG, maximum 5MB</p>
                       </div>
                     </>
@@ -1521,7 +1521,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <button
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, logoUrl: undefined } })}
-                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 capitalize text-xs tracking-widest active:scale-95"
+                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 capitalize text-xs  active:scale-95"
                 >
                   <Trash2 className="w-5 h-5" /> Remove current logo
                 </button>
@@ -1542,7 +1542,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Type className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary tracking-tight">Name of the QR Code</h3>
+                <h3 className="text-base font-black skeu-text-primary ">Name of the QR Code</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Give your QR code a name.</p>
               </div>
             </div>
@@ -1552,7 +1552,7 @@ export const Wizard: React.FC<WizardProps> = ({
           {activeDesignSection === 'name' && (
             <div className="p-6 border-t border-black/5 space-y-4 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-slate-400 capitalize tracking-widest pl-1">QR Code Name</label>
+                <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">QR Code Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Website Launch Campaign"
@@ -1577,7 +1577,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Lock className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Gatekeeper & Security</h3>
+                <h3 className="text-base font-black text-[#0F172A] ">Gatekeeper & Security</h3>
                 <p className="text-[10px] font-medium text-slate-400">Password protection and lead capture.</p>
               </div>
             </div>
@@ -1597,7 +1597,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
                   <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
-                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Login Wall</p>
+                    <p className="font-black text-[#0F172A] text-sm ">Login Wall</p>
                     <p className="text-[10px] font-medium text-slate-400">Require login to view</p>
                   </div>
                 </div>
@@ -1612,7 +1612,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
                   <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
-                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Lead Capture</p>
+                    <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
                     <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
                   </div>
                 </div>
@@ -1659,13 +1659,13 @@ export const Wizard: React.FC<WizardProps> = ({
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
-                    className={`flex-1 py-1 text-[11px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     UI Preview
                   </button>
                   <button
                     onClick={() => setPhonePreviewMode('qr')}
-                    className={`flex-1 py-1 text-[11px] font-black tracking-wide transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`flex-1 py-1 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     QR Code
                   </button>
@@ -1687,14 +1687,14 @@ export const Wizard: React.FC<WizardProps> = ({
                     {/* Step 1 & 2 Blur Overlay - Only shown when in Step 1 (no hover) or Step 2 in QR mode */}
                     {(wizard.step === 2 || (wizard.step === 1 && !hoveredType)) && phonePreviewMode === 'qr' && (
                       <div className="absolute inset-0 z-[100] backdrop-blur-xl bg-white/40 flex items-center justify-center p-8 text-center animate-in fade-in duration-700">
-                        <p className="text-sm font-black text-slate-600/80 leading-relaxed capitalize tracking-widest">
+                        <p className="text-sm font-black text-slate-600/80 leading-relaxed capitalize ">
                           {wizard.step === 1 ? "Select a type to start making your qr code" : "make the qr code to preview it"}
                         </p>
                       </div>
                     )}
                     {/* Status Bar */}
                     <div className="bg-transparent absolute top-0 left-0 right-0 h-12 px-7 flex items-center justify-between shrink-0 z-50 pointer-events-none">
-                      <span className="text-[10px] font-black tracking-tight" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
+                      <span className="text-[10px] font-black " style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
                       <div className="flex items-center gap-1.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19.5h3v-3h-3v3zm4.5 0h3v-6h-3v6zm4.5 0h3v-9h-3v9zm4.5 0h3v-12h-3v12z" /></svg>
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
@@ -1738,13 +1738,13 @@ export const Wizard: React.FC<WizardProps> = ({
                             </div>
                           </div>
                           <div className="text-center space-y-6 px-4">
-                            <h4 className="text-[1.35rem] font-black text-slate-800 leading-tight tracking-tight">
+                            <h4 className="text-[1.35rem] font-black text-slate-800 leading-tight ">
                               {wizard.name || `${selectedTypeConfig.name} QR Code`}
                             </h4>
                             <div className="flex flex-col items-center gap-6">
                               <div className="bg-red-50 text-[#dc2626] px-5 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-red-100/50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#dc2626] animate-pulse" />
-                                <span className="text-[10px] font-black capitalize tracking-wider">LIVE PREVIEW</span>
+                                <span className="text-[10px] font-black capitalize ">LIVE PREVIEW</span>
                               </div>
                             </div>
                           </div>
@@ -1769,7 +1769,7 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-black capitalize tracking-widest flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
+            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-black capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
           >
             <ChevronLeft className="w-4 h-4" /> BACK
           </button>
@@ -1777,7 +1777,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button
             onClick={handleNextStep}
             type="button"
-            className="w-48 py-3.5 skeu-btn text-[11px] font-black capitalize tracking-widest flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
+            className="w-48 py-3.5 skeu-btn text-[11px] font-black capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
             <ChevronRight className="w-4 h-4" />

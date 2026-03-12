@@ -38,18 +38,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-10 group-hover:scale-105 transition-transform" />
         </div>
 
-        {/* Create QR Code Button */}
-        <button
-          onClick={() => handleNavClick('wizard')}
-          className="w-full flex items-center justify-center gap-3 py-4 skeu-btn text-[13px] font-black capitalize tracking-widest active:scale-95 transition-all shadow-lg"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create QR Code</span>
-        </button>
+
 
         {/* Navigation */}
         <nav className="space-y-3 flex-1">
-          <p className="text-[10px] font-black skeu-text-muted capitalize tracking-[0.2em] pl-4 mb-4 opacity-70 font-poppins">Main Menu</p>
+          <p className="text-[10px] font-bold skeu-text-muted capitalize  pl-4 mb-4 opacity-70 font-poppins">Main Menu</p>
           {[
             { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
             { id: 'analytics', name: 'Analytics', icon: BarChart3 },
@@ -59,12 +52,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-black transition-all font-poppins ${view === item.id
+              className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-semibold transition-all font-poppins group ${view === item.id
                 ? 'skeu-tag-active scale-[1.02]'
-                : 'skeu-tag hover:skeu-text-primary'
+                : 'skeu-tag hover:bg-[#3eb5a9] hover:text-white'
                 }`}
             >
-              <item.icon className={`w-5 h-5 ${view === item.id ? 'text-white' : 'skeu-text-accent'}`} />
+              <item.icon className={`w-5 h-5 transition-colors ${view === item.id ? 'text-white' : 'skeu-text-accent group-hover:text-white'}`} />
               <span>{item.name}</span>
             </button>
           ))}
@@ -74,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="pt-6 border-t border-[#fee2e2]">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-5 py-4 text-[13px] font-black skeu-text-muted hover:skeu-text-secondary active:scale-95 transition-all"
+            className="w-full flex items-center gap-4 px-5 py-4 text-[13px] font-semibold skeu-text-muted hover:skeu-text-secondary active:scale-95 transition-all"
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>

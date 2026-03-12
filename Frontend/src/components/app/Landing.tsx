@@ -41,7 +41,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
           <div className="absolute inset-0 bg-red-500/10 rounded-full blur-3xl transform scale-150" />
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] tracking-tighter mb-5 leading-[0.9] max-w-3xl font-poppins">
+        <h1 className="text-5xl md:text-6xl font-black text-[#0F172A]  mb-5 leading-[0.9] max-w-3xl font-poppins">
           The Next Generation <br />
           <span className="text-[#dc2626]">of Dynamic QR</span> <br />
           Experience
@@ -54,7 +54,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
 
         <button
           onClick={() => setView('auth')}
-          className="px-12 py-4 bg-[#dc2626] text-white rounded-[2rem] text-xl font-black tracking-tight hover:bg-[#991b1b] shadow-2xl shadow-red-500/40 transition-all transform hover:scale-105 active:scale-95"
+          className="px-12 py-4 bg-[#dc2626] text-white rounded-[2rem] text-xl font-black  hover:bg-[#991b1b] shadow-2xl shadow-red-500/40 transition-all transform hover:scale-105 active:scale-95"
         >
           Launch Studio
         </button>

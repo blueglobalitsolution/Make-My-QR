@@ -109,7 +109,7 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
             <div className="min-h-screen flex items-center justify-center skeu-app-bg p-6">
                 <div className="text-center space-y-4">
                     <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
-                    <p className="text-slate-500 font-bold capitalize tracking-widest text-[10px]">Verifying Secure Link...</p>
+                    <p className="text-slate-500 font-bold capitalize  text-[10px]">Verifying Secure Link...</p>
                 </div>
             </div>
         );
@@ -123,12 +123,12 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
                         <Shield className="w-10 h-10 text-red-500" />
                     </div>
                     <div className="space-y-2">
-                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Access Denied</h2>
+                        <h2 className="text-2xl font-black text-slate-800 ">Access Denied</h2>
                         <p className="text-slate-500 font-medium">{error || "The link is broken or expired."}</p>
                     </div>
                     <button
                         onClick={() => setView('landing')}
-                        className="w-full py-4 skeu-btn text-[11px] capitalize tracking-widest"
+                        className="w-full py-4 skeu-btn text-[11px] capitalize "
                     >
                         Return Home
                     </button>

@@ -51,21 +51,21 @@ export const Billing: React.FC = () => {
           <button
             type="button"
             onClick={() => setCycle('3')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '3' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '3' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
           >
             3 Months
           </button>
           <button
             type="button"
             onClick={() => setCycle('6')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '6' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '6' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
           >
             6 Months
           </button>
           <button
             type="button"
             onClick={() => setCycle('12')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap tracking-wide ${cycle === '12' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '12' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
           >
             12 Months
           </button>
@@ -79,7 +79,7 @@ export const Billing: React.FC = () => {
           {/* Starter Plan */}
           <section className={`bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] flex flex-col h-full hover:-translate-y-1.5 transition-transform duration-300`}>
             <div className="text-center mb-6">
-              <h3 className="text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-3">Starter Plan</h3>
+              <h3 className="text-slate-500 font-bold uppercase  text-[11px] mb-3">Starter Plan</h3>
               <div className="flex justify-center items-baseline mb-2">
                 <span className="text-xl font-bold align-top mt-1">₹</span>
                 <span className="text-5xl font-extrabold">{currentData.starter.price}</span>
@@ -110,11 +110,11 @@ export const Billing: React.FC = () => {
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-max">
               <div className="bg-gradient-to-br from-[#ef4444] to-[#b91c1c] text-white px-5 py-2 rounded-full flex items-center gap-1.5 shadow-lg shadow-red-500/30">
                 <Star className="w-3.5 h-3.5 fill-current" />
-                <span className="text-[11px] font-extrabold tracking-wider uppercase">Best Value</span>
+                <span className="text-[11px] font-extrabold  uppercase">Best Value</span>
               </div>
             </div>
             <div className="text-center mb-6 mt-2">
-              <h3 className={`${brandRed} font-bold uppercase tracking-widest text-[11px] mb-3`}>Pro Plan</h3>
+              <h3 className={`${brandRed} font-bold uppercase  text-[11px] mb-3`}>Pro Plan</h3>
               <div className="flex justify-center items-baseline mb-2">
                 <span className="text-xl font-bold align-top mt-1">₹</span>
                 <span className="text-6xl font-extrabold">{currentData.pro.price}</span>
@@ -142,7 +142,7 @@ export const Billing: React.FC = () => {
           {/* Enterprise Plan */}
           <section className={`bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] flex flex-col h-full hover:-translate-y-1.5 transition-transform duration-300`}>
             <div className="text-center mb-6">
-              <h3 className="text-slate-500 font-bold uppercase tracking-widest text-[11px] mb-3">Enterprise Plan</h3>
+              <h3 className="text-slate-500 font-bold uppercase  text-[11px] mb-3">Enterprise Plan</h3>
               <div className="flex justify-center items-baseline mb-2">
                 <span className="text-xl font-bold align-top mt-1">₹</span>
                 <span className="text-5xl font-extrabold">{currentData.enterprise.price}</span>

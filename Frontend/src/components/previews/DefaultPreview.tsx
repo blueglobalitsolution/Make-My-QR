@@ -39,7 +39,7 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
                     <div className="p-1.5 rounded-lg shadow-sm" style={{ backgroundColor: brandColor }}>
                         <Info className="text-white w-5 h-5" />
                     </div>
-                    <h1 className="text-lg font-black text-slate-800 tracking-tight">
+                    <h1 className="text-lg font-black text-slate-800 ">
                         Scanner <span style={{ color: brandColor }}>Studio</span>
                     </h1>
                 </div>
@@ -58,7 +58,7 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-tight px-4">
+                                    <h2 className="text-3xl font-black text-slate-800  leading-tight px-4">
                                         {name || "Secure Content Access"}
                                     </h2>
                                     <p className="text-sm text-slate-500 font-medium capitalize">
@@ -66,7 +66,7 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
                                     </p>
                                     <div className="flex items-center justify-center gap-2">
                                         {is_lead_capture && (
-                                            <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 px-2 py-1 rounded-md border border-blue-100">
+                                            <span className="flex items-center gap-1 text-[9px] font-black uppercase  bg-blue-50 text-blue-600 px-2 py-1 rounded-md border border-blue-100">
                                                 <User className="w-3 h-3" /> Registration Required
                                             </span>
                                         )}
@@ -86,12 +86,12 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
                                     <button
                                         onClick={handleAction}
                                         style={{ backgroundColor: brandColor }}
-                                        className="w-full py-5 rounded-2xl text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                                        className="w-full py-5 rounded-2xl text-white font-black text-xs uppercase  shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                                     >
                                         <ExternalLink className="w-5 h-5" /> Continue
                                     </button>
 
-                                    <p className="text-[10px] text-slate-400 font-bold text-center uppercase tracking-widest flex items-center justify-center gap-2">
+                                    <p className="text-[10px] text-slate-400 font-bold text-center uppercase  flex items-center justify-center gap-2">
                                         <Shield className="w-3 h-3" /> Secure Link Verified
                                     </p>
                                 </div>

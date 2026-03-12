@@ -70,7 +70,7 @@
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background: #f8fafc;
+  background: #fff;
   min-height: 100vh;
   position: relative;
 }
@@ -357,7 +357,7 @@
   border: 1px solid #fee2e2;
   box-shadow: 0 2px 4px rgba(153, 27, 27, 0.03);
   border-radius: 5px;
-  color: #475569;
+  color: #1e293b;
   text-transform: capitalize;
 }
 
@@ -442,7 +442,7 @@
   font-size: 1.875rem;
   /* text-3xl */
   line-height: 2.25rem;
-  font-weight: 900;
+  font-weight: 700;
   color: #0f172a;
   /* skeu-text-primary */
   letter-spacing: -0.025em;
@@ -454,7 +454,7 @@
   font-size: 1.0rem;
   /* text-base */
   font-weight: 700;
-  color: #94a3b8;
+  color: #444444;
   /* skeu-text-muted */
   text-transform: capitalize;
 }

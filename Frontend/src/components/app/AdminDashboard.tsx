@@ -16,7 +16,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     </div>
                     <div>
                         <h1 className="skeu-page-title !text-lg leading-none">Scanner <span className="text-red-600">Admin</span></h1>
-                        <p className="skeu-page-subtitle !text-[9px] capitalize tracking-[0.2em]">Control Panel</p>
+                        <p className="skeu-page-subtitle !text-[9px] capitalize ">Control Panel</p>
                     </div>
                 </div>
 
@@ -26,7 +26,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     </button>
                     <button
                         onClick={() => setView('admin_login')}
-                        className="flex items-center gap-2 text-[10px] font-black capitalize tracking-widest text-slate-500 hover:text-red-600 transition-colors bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-lg"
+                        className="flex items-center gap-2 text-[10px] font-black capitalize  text-slate-500 hover:text-red-600 transition-colors bg-slate-100 hover:bg-red-50 px-4 py-2 rounded-lg"
                     >
                         <LogOut className="w-4 h-4" /> Sign Out
                     </button>
@@ -39,7 +39,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                     {/* Welcome Header */}
                     <div className="mb-10">
-                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">System Overview</h2>
+                        <h2 className="text-2xl font-black text-slate-800 ">System Overview</h2>
                         <p className="text-slate-500 text-sm font-medium mt-1">Monitor all platform metrics and users globally.</p>
                     </div>
 
@@ -50,7 +50,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <Users className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">Total Users</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize  leading-none mb-1">Total Users</p>
                                 <p className="text-2xl font-black text-slate-800 tabular-nums">0</p>
                             </div>
                         </div>
@@ -60,7 +60,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <Database className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">Generated QR Codes</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize  leading-none mb-1">Generated QR Codes</p>
                                 <p className="text-2xl font-black text-slate-800 tabular-nums">0</p>
                             </div>
                         </div>
@@ -70,7 +70,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 <LayoutDashboard className="w-6 h-6" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 capitalize tracking-widest leading-none mb-1">System Health</p>
+                                <p className="text-[10px] font-black text-slate-400 capitalize  leading-none mb-1">System Health</p>
                                 <p className="text-2xl font-black text-slate-800">100%</p>
                             </div>
                         </div>
@@ -81,7 +81,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                             <Database className="w-8 h-8 text-slate-300" />
                         </div>
-                        <h3 className="text-lg font-black text-slate-800 tracking-tight">Awaiting Backend Data Integration</h3>
+                        <h3 className="text-lg font-black text-slate-800 ">Awaiting Backend Data Integration</h3>
                         <p className="text-sm font-medium text-slate-400 max-w-md mt-2">
                             This dashboard is currently running in UI mode. Real user statistics and QR tables will appear here once connected to the Django Admin API.
                         </p>

@@ -76,13 +76,13 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                         }}
                     >
                         <p
-                            className="text-[12px] font-bold tracking-widest mb-1 uppercase opacity-80"
+                            className="text-[12px] font-bold  mb-1 uppercase opacity-80"
                             style={{ fontFamily: titleFont, color: titleColor }}
                         >
                             {businessData?.company || name || 'My Company'}
                         </p>
                         <h1
-                            className="text-[22px] font-black leading-tight tracking-tight"
+                            className="text-[22px] font-black leading-tight "
                             style={{ fontFamily: titleFont, color: titleColor }}
                         >
                             {businessData?.title || 'Find me on social networks'}
@@ -112,7 +112,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 ) : (
                                     <div className="flex flex-col items-center gap-2 opacity-30">
                                         <Globe className="w-12 h-12 text-slate-400" />
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No image</span>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase ">No image</span>
                                     </div>
                                 )}
                             </div>
@@ -131,7 +131,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 ) : (
                                     <button
                                         style={{ backgroundColor: businessData?.secondaryColor || '#7ec8a4' }}
-                                        className="w-full py-3 rounded-2xl text-white font-black text-[15px] shadow-md tracking-wide hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                        className="w-full py-3 rounded-2xl text-white font-black text-[15px] shadow-md  hover:scale-[1.02] active:scale-[0.98] transition-all"
                                         onClick={() => {
                                             const btn = businessData?.buttons?.[0];
                                             if (btn?.url) window.open(btn.url.startsWith('http') ? btn.url : `https://${btn.url}`, '_blank');
@@ -154,7 +154,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                             <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                 <Clock className="w-3.5 h-3.5 text-white" />
                             </div>
-                            <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Opening Hours</h3>
+                            <h3 className="text-[12px] font-black text-slate-700 ">Opening Hours</h3>
                         </div>
                         <div className="space-y-0.5">
                             {(() => {
@@ -171,7 +171,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                                 <span className={`text-[10px] font-bold whitespace-nowrap ${isToday ? 'text-red-500' : 'text-slate-500'}`}>
                                                     {isOpen ? slots.map((slot: any, i: number) => <span key={i}>{slot.start} – {slot.end}</span>) : <span className="italic opacity-50">Closed</span>}
                                                 </span>
-                                                {isToday && <span className="bg-red-500 text-white text-[7px] font-black px-1 py-0.5 rounded-full uppercase tracking-wider">Today</span>}
+                                                {isToday && <span className="bg-red-500 text-white text-[7px] font-black px-1 py-0.5 rounded-full uppercase ">Today</span>}
                                             </div>
                                         </div>
                                     );
@@ -187,7 +187,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <Info className="w-3.5 h-3.5 text-white" />
                                 </div>
-                                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">About Company</h3>
+                                <h3 className="text-[12px] font-black text-slate-700 ">About Company</h3>
                             </div>
                             <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{businessData.aboutCompany}</p>
                         </div>
@@ -200,7 +200,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <User className="w-3.5 h-3.5 text-white" />
                                 </div>
-                                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Services</h3>
+                                <h3 className="text-[12px] font-black text-slate-700 ">Services</h3>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {businessData.facilities.map((item: string, idx: number) => (
@@ -217,7 +217,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                         <div className="bg-white rounded-2xl p-4 shadow-sm flex items-start gap-3">
                             <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Address</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase  mb-0.5">Address</p>
                                 <p className="text-[11px] font-bold text-slate-700 leading-snug">
                                     {businessData.location.address || businessData.location.searchAddress}
                                 </p>
@@ -232,7 +232,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <Share2 className="w-3.5 h-3.5 text-white" />
                                 </div>
-                                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Social Networks</h3>
+                                <h3 className="text-[12px] font-black text-slate-700 ">Social Networks</h3>
                             </div>
                             <div className="space-y-2">
                                 {businessData.socialNetworks.map((social: any, idx: number) => (
@@ -242,7 +242,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <h4 className="font-black text-slate-700 text-[11px] truncate">{social.platform || social.network}</h4>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{social.text || social.label || 'Social Account'}</p>
+                                            <p className="text-[9px] font-bold text-slate-400 uppercase ">{social.text || social.label || 'Social Account'}</p>
                                         </div>
                                         <ChevronRight className="w-3 h-3 text-slate-300 group-hover:translate-x-0.5 transition-transform shrink-0" />
                                     </div>
@@ -258,13 +258,13 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <User className="w-3.5 h-3.5 text-white" />
                                 </div>
-                                <h3 className="text-[12px] font-black text-slate-700 tracking-tight">Contact</h3>
+                                <h3 className="text-[12px] font-black text-slate-700 ">Contact</h3>
                             </div>
                             {businessData.contact.name && (
                                 <div className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><User className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[8px] font-black uppercase tracking-widest" style={{ color: textColor, opacity: 0.4 }}>Name</p>
+                                        <p className="text-[8px] font-black uppercase " style={{ color: textColor, opacity: 0.4 }}>Name</p>
                                         <p className="text-[11px] font-bold truncate" style={{ fontFamily: textFont, color: textColor }}>{businessData.contact.name}</p>
                                     </div>
                                 </div>
@@ -273,7 +273,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div key={idx} className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{phone.label || 'Phone'}</p>
+                                        <p className="text-[8px] font-black text-slate-300 uppercase ">{phone.label || 'Phone'}</p>
                                         <p className="text-[11px] font-bold text-slate-700 truncate">{phone.value}</p>
                                     </div>
                                 </div>
@@ -282,7 +282,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div key={idx} className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Mail className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{email.label || 'Email'}</p>
+                                        <p className="text-[8px] font-black text-slate-300 uppercase ">{email.label || 'Email'}</p>
                                         <p className="text-[11px] font-bold text-slate-700 truncate">{email.value}</p>
                                     </div>
                                 </div>
@@ -291,7 +291,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div key={idx} className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Globe className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">{web.label || 'Website'}</p>
+                                        <p className="text-[8px] font-black text-slate-300 uppercase ">{web.label || 'Website'}</p>
                                         <p className="text-[11px] font-bold text-cyan-600 underline truncate">{web.value}</p>
                                     </div>
                                 </div>

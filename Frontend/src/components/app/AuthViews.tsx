@@ -44,7 +44,7 @@ interface AuthViewsProps {
 
 const inputClass = "w-full pl-12 pr-6 py-4 skeu-input transition-all";
 const inputPasswordClass = "w-full pl-12 pr-12 py-4 skeu-input transition-all";
-const btnPrimary = "w-full py-4 skeu-btn text-xs font-black capitalize tracking-widest active:scale-95 transition-all";
+const btnPrimary = "w-full py-4 skeu-btn text-xs font-black capitalize  active:scale-95 transition-all";
 
 export const AuthViews: React.FC<AuthViewsProps> = ({
   view,
@@ -101,7 +101,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-black skeu-text-primary tracking-tight font-poppins">Welcome back</h2>
+            <h2 className="text-3xl font-black skeu-text-primary  font-poppins">Welcome back</h2>
             <p className="mt-2 text-sm skeu-text-secondary font-medium">Please enter your details to sign in.</p>
           </div>
 
@@ -153,7 +153,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-black skeu-text-primary tracking-tight">Sign up</h2>
+            <h2 className="text-3xl font-black skeu-text-primary ">Sign up</h2>
             <p className="mt-2 text-sm skeu-text-secondary font-medium">Create a free account</p>
           </div>
 
@@ -214,7 +214,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             <div className="skeu-icon-raised p-4 rounded-3xl w-16 h-16 mx-auto flex items-center justify-center mb-6">
               <Lock className="text-amber-500 w-8 h-8" />
             </div>
-            <h2 className="mt-2 text-3xl font-black skeu-text-primary tracking-tight">
+            <h2 className="mt-2 text-3xl font-black skeu-text-primary ">
               {resetStep === 1 ? "Reset password" : resetStep === 2 ? "Verify OTP" : "New Password"}
             </h2>
             <p className="mt-2 text-sm skeu-text-secondary font-medium">
@@ -248,7 +248,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold skeu-text-secondary ml-1">6-digit OTP</label>
-                  <input type="text" maxLength={6} required value={resetOTP} onChange={(e) => setResetOTP(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm text-center tracking-[1em] font-bold" placeholder="000000" />
+                  <input type="text" maxLength={6} required value={resetOTP} onChange={(e) => setResetOTP(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm text-center  font-bold" placeholder="000000" />
                 </div>
               </div>
               <div>
