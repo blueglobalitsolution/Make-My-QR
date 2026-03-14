@@ -69,7 +69,7 @@ export const Account: React.FC<AccountProps> = ({
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-[1rem] flex items-center justify-center relative skeu-gloss">
                 <UserIcon className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-black skeu-text-primary ">Personal Information</h3>
+              <h3 className="text-lg font-normal skeu-text-primary ">Personal Information</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
@@ -103,7 +103,7 @@ export const Account: React.FC<AccountProps> = ({
               </div>
             </div>
 
-            <button onClick={handleUpdateProfile} className="px-8 py-4 skeu-btn text-[10px] font-black capitalize  active:scale-95 transition-all">
+            <button onClick={handleUpdateProfile} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
               Save Changes
             </button>
           </div>
@@ -113,7 +113,7 @@ export const Account: React.FC<AccountProps> = ({
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-[1rem] flex items-center justify-center relative skeu-gloss">
                 <Lock className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-black skeu-text-primary ">Security & Password</h3>
+              <h3 className="text-lg font-normal skeu-text-primary ">Security & Password</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
@@ -135,7 +135,7 @@ export const Account: React.FC<AccountProps> = ({
               </div>
             </div>
 
-            <button onClick={handleUpdatePassword} className="px-8 py-4 skeu-btn text-[10px] font-black capitalize  active:scale-95 transition-all">
+            <button onClick={handleUpdatePassword} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
               Update Password
             </button>
           </div>

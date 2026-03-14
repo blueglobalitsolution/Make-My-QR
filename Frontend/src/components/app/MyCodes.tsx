@@ -443,7 +443,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         style={{ left: '-2000px', width: '2000px', height: '2000px', zIndex: -999, visibility: 'visible' }}
       >
         {downloadingCode && (
-          <div className="p-32 bg-white inline-block">
+          <div className="p-4 bg-white inline-block">
             <QRFrameWrapper frame={downloadingCode.settings?.frame || 'none'}>
               <StyledQRCode
                 options={getQROptions(downloadingCode, 1000)}
