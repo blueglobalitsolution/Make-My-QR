@@ -11,7 +11,7 @@ interface QRViewerProps {
     isFileMode?: boolean;
 }
 
-export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }) => {
+const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [qrData, setQrData] = useState<any>(null);
@@ -45,18 +45,34 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         }
     }, [slug, setView]);
 
-    const handleLeadSubmit = (e: React.FormEvent) => {
+    const handleLeadSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (leadForm.name && leadForm.email) {
-            console.log("Lead captured:", leadForm);
-            setIsAuthorized(true);
+            try {
+                const response = await fetch(`/r/${slug}/capture-lead/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leadForm)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to capture lead: ${response.status}`);
+                }
+
+                console.log("Lead captured successfully");
+                setIsAuthorized(true);
+            } catch (err) {
+                console.error("Lead Capture Error:", err);
+                // Still allow them through even if capture fails to not break the user experience
+                setIsAuthorized(true);
+            }
         }
     };
 
     const { category, value, name, settings, is_lead_capture, file_url } = qrData || {};
     // For PDF type, use primaryColor from business settings, otherwise use fgColor
-    const brandColor = (category === 'pdf' && settings?.business?.primaryColor) 
-        ? settings.business.primaryColor 
+    const brandColor = (category === 'pdf' && settings?.business?.primaryColor)
+        ? settings.business.primaryColor
         : (settings?.fgColor || '#dc2626');
 
     // Construct URL logic
@@ -179,3 +195,5 @@ export const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = 
         </>
     );
 };
+
+export default QRViewer;

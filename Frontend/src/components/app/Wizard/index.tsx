@@ -1577,7 +1577,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Lock className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] ">Gatekeeper & Security</h3>
+                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Gatekeeper & Security</h3>
                 <p className="text-[10px] font-medium text-slate-400">Password protection and lead capture.</p>
               </div>
             </div>
@@ -1597,7 +1597,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
                   <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
-                    <p className="font-black text-[#0F172A] text-sm ">Login Wall</p>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Login Wall</p>
                     <p className="text-[10px] font-medium text-slate-400">Require login to view</p>
                   </div>
                 </div>
@@ -1614,6 +1614,21 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
                     <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
                     <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
+                  </div>
+                </div>
+
+                {/* Show Preview Toggle */}
+                <div className="flex items-center gap-5 p-6 bg-white rounded-2xl border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
+                  <button
+                    type="button"
+                    onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}
+                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626] shadow-lg shadow-red-500/20' : 'bg-white border-slate-200'}`}
+                  >
+                    {wizard.show_preview && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                  </button>
+                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Show Preview Page</p>
+                    <p className="text-[10px] font-medium text-slate-400">Directly link if disabled</p>
                   </div>
                 </div>
               </div>

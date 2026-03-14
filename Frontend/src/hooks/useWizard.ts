@@ -85,6 +85,7 @@ const getInitialWizardState = (): WizardState => ({
   isPasswordActive: false,
   is_protected: false,
   is_lead_capture: false,
+  show_preview: true,
   password: '',
   folderId: undefined,
   business: {
@@ -286,6 +287,7 @@ export const useWizard = (
             value: finalValue,
             is_protected: wizard.is_protected,
             is_lead_capture: wizard.is_lead_capture,
+            show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
@@ -301,6 +303,7 @@ export const useWizard = (
             value: finalValue,
             is_protected: wizard.is_protected,
             is_lead_capture: wizard.is_lead_capture,
+            show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
@@ -344,6 +347,7 @@ export const useWizard = (
             value: finalValue,
             is_protected: wizard.is_protected,
             is_lead_capture: wizard.is_lead_capture,
+            show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
