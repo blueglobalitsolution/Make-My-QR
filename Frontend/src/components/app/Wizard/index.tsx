@@ -339,7 +339,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <div className="flex items-center gap-2 ml-auto relative z-20">
                             <button
                               type="button"
-                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#dc2626] hover:bg-red-50 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
                               title="Delete PDF"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -350,7 +350,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               <Trash2 className="w-4 h-4" />
                             </button>
                             <label
-                              className="p-2.5 bg-[#dc2626] text-white hover:bg-[#991b1b] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                              className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
                               title="Change PDF"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -362,7 +362,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         </div>
                       ) : (
                         <div className="flex items-center gap-5 w-full justify-start">
-                          <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#dc2626] group-hover/upload:to-[#991b1b] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                          <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
                             <Upload className="w-7 h-7" />
                           </div>
                           <div className="text-left">
@@ -588,7 +588,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         <span className="font-bold text-slate-700  text-[11px] capitalize">{wizard.business?.primaryColor}</span>
                       </div>
                     </div>
-                    <button type="button" onClick={swapColors} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#dc2626] hover:bg-red-50 transition-colors mt-6">
+                    <button type="button" onClick={swapColors} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#3eb5a9] transition-colors mt-6">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                     </button>
                     <div className="flex-1 space-y-3">
@@ -656,7 +656,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           </div>
                         </div>
                       ))}
-                      <button type="button" onClick={addLink} className="w-full py-4 border-2 border-[#dc2626] text-[#dc2626] font-black text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-[#dc2626] hover:text-white transition-colors">
+                      <button type="button" onClick={addLink} className="w-full py-4 border-2 border-[#dc2626] text-[#dc2626] font-black text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-[#3eb5a9] hover:text-white hover:border-[#3eb5a9] transition-colors">
                         <Plus className="w-4 h-4" /> Add Button
                       </button>
                     </div>
@@ -1208,7 +1208,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         <button
                           type="button"
                           onClick={addLink}
-                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-2xl text-[11px] font-black capitalize  hover:bg-[#dc2626] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
+                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-2xl text-[11px] font-black capitalize  hover:bg-[#3eb5a9] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
                         >
                           <Plus className="w-4 h-4" /> Add Link
                         </button>
@@ -1326,7 +1326,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <button
                       type="button"
                       onClick={createNewFolder}
-                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#991b1b]"
+                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#3eb5a9]"
                     >
                       Create
                     </button>
@@ -1522,7 +1522,7 @@ export const Wizard: React.FC<WizardProps> = ({
           {activeDesignSection === 'logo' && (
             <div className="p-5 border-t border-black/5 space-y-5 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="relative group/logo-zone">
-                <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] hover:bg-red-50/20 hover:shadow-2xl hover:shadow-red-500/5 transition-all duration-500 cursor-pointer group/item">
+                <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#3eb5a9] hover:bg-red-50/20 hover:shadow-2xl hover:shadow-[#3eb5a9]/5 transition-all duration-500 cursor-pointer group/item">
                   <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleLogoUpload} />
                   {wizard.config.logoUrl ? (
                     <div className="relative group/logo-preview animate-in zoom-in duration-500">
@@ -1550,7 +1550,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <button
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, logoUrl: undefined } })}
-                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 capitalize text-xs  active:scale-95"
+                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-[#3eb5a9] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-[#3eb5a9]/20 capitalize text-xs  active:scale-95"
                 >
                   <Trash2 className="w-5 h-5" /> Remove current logo
                 </button>
@@ -1699,7 +1699,7 @@ export const Wizard: React.FC<WizardProps> = ({
               <div className="w-full flex justify-center mb-4 shrink-0">
                 <div className="bg-transparent border border-black/5 p-1 rounded-xl flex items-center shadow-inner relative w-full max-w-[220px]">
                   {/* Sliding active background */}
-                  <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#dc2626] rounded-lg shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1' : 'left-[calc(50%+2px)]'}`} />
+                  <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#3eb5a9] rounded-lg shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1' : 'left-[calc(50%+2px)]'}`} />
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
@@ -1786,7 +1786,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               {wizard.name || `${selectedTypeConfig.name} QR Code`}
                             </h4>
                             <div className="flex flex-col items-center gap-6">
-                              <div className="bg-red-50 text-[#dc2626] px-5 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-red-100/50">
+                              <div className="bg-red-50 text-[#3eb5a9] px-5 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-red-100/50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#dc2626] animate-pulse" />
                                 <span className="text-[10px] font-black capitalize ">LIVE PREVIEW</span>
                               </div>

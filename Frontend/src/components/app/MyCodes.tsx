@@ -142,7 +142,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               placeholder="Search by name or URL..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-14 pr-8 py-4 skeu-search font-medium text-[14px] outline-none"
+              className="w-full pl-14 pr-8 py-4 skeu-search font-medium text-[14px] outline-none hover:border-[#3eb5a9] focus:border-[#3eb5a9] transition-colors"
             />
           </div>
           <button
@@ -158,7 +158,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       <div className="flex items-center gap-2 -mx-2 px-2 relative">
         <button
           onClick={() => scrollFolders('left')}
-          className="flex flex-shrink-0 z-10 text-red-500 hover:text-red-700 transition-colors bg-transparent border-0 outline-none pr-4"
+          className="flex flex-shrink-0 z-10 text-red-500 hover:text-[#3eb5a9] transition-colors bg-transparent border-0 outline-none pr-4"
         >
           <ChevronLeft className="w-8 h-8" />
         </button>
@@ -234,7 +234,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         </div>
         <button
           onClick={() => scrollFolders('right')}
-          className="flex flex-shrink-0 z-10 text-red-500 hover:text-red-700 transition-colors bg-transparent border-0 outline-none pl-4"
+          className="flex flex-shrink-0 z-10 text-red-500 hover:text-[#3eb5a9] transition-colors bg-transparent border-0 outline-none pl-4"
         >
           <ChevronRight className="w-8 h-8" />
         </button>
@@ -355,7 +355,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     </button>
                     <button
                       onClick={() => deleteCode(code.id)}
-                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 hover:!border-red-200 transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary hover:!bg-[#3eb5a9] hover:!text-white hover:!border-[#3eb5a9] transition-all"
                       title="Delete Code"
                     >
                       <Trash2 className="w-4 h-4 opacity-70 group-hover:opacity-100" />
@@ -380,7 +380,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             <div className="relative w-full max-w-xl skeu-card p-12 bg-white animate-in zoom-in-95 duration-300 shadow-2xl space-y-8">
               <button
                 onClick={() => setPreviewCode(null)}
-                className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-red-50 hover:!text-red-500 transition-all z-10"
+                className="absolute right-6 top-6 p-2 skeu-btn-secondary hover:!bg-[#3eb5a9] hover:!text-white transition-all z-10"
               >
                 <X className="w-5 h-5" />
               </button>

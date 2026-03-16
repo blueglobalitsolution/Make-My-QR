@@ -66,6 +66,7 @@
   --skeu-shadow-deep: rgba(153, 27, 27, 0.12);
   --skeu-border-top: rgba(255, 255, 255, 0.8);
   --skeu-border-bottom: rgba(153, 27, 27, 0.1);
+  --skeu-hover: #3eb5a9;
 }
 
 /* --- Base Background --- */
@@ -185,9 +186,11 @@
 
 .skeu-btn:hover {
   transform: translateY(-1px);
+  background: var(--skeu-hover);
+  border-color: #2d8a81;
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.4) inset,
-    0 6px 12px rgba(220, 38, 38, 0.3);
+    0 6px 12px rgba(62, 181, 169, 0.3);
 }
 
 .skeu-btn:active {
@@ -211,22 +214,17 @@
 }
 
 .skeu-btn-secondary:hover {
-  background: #fff;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1);
-  border-color: #cbd5e1;
+  background: var(--skeu-hover);
+  box-shadow: 0 4px 8px rgba(62, 181, 169, 0.2);
+  border-color: #2d8a81;
+  color: #fff;
 }
 
-.skeu-btn-danger {
-  background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
-  border: 1px solid #991b1b;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.3) inset,
-    0 4px 8px rgba(220, 38, 38, 0.2);
+.skeu-btn-danger:hover {
+  background: var(--skeu-hover);
+  border-color: #2d8a81;
+  box-shadow: 0 4px 8px rgba(62, 181, 169, 0.2);
   color: #fff;
-  font-weight: 800;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-  border-radius: 5px;
 }
 
 /* --- Sidebar --- */
@@ -246,8 +244,8 @@
 }
 
 .skeu-sidebar-item:hover {
-  background: rgba(220, 38, 38, 0.05);
-  color: var(--skeu-accent-red);
+  background: var(--skeu-hover);
+  color: #fff;
 }
 
 .skeu-sidebar-item-active {
@@ -351,6 +349,11 @@
   color: #0f172a;
 }
 
+.skeu-tab:hover {
+  background: var(--skeu-hover);
+  color: #fff;
+}
+
 /* --- Tags --- */
 .skeu-tag {
   background: #ffffff;
@@ -359,6 +362,12 @@
   border-radius: 5px;
   color: #1e293b;
   text-transform: capitalize;
+}
+
+.skeu-tag:hover {
+  background: var(--skeu-hover);
+  color: #fff;
+  border-color: #2d8a81;
 }
 
 .skeu-tag-active {
@@ -379,7 +388,7 @@
 
 /* --- Search --- */
 .skeu-search {
-  background: #fdf2f2;
+  background: #ffffff;
   border: 1px solid #fee2e2;
   box-shadow: 0 2px 6px rgba(153, 27, 27, 0.04) inset;
   border-radius: 5px;

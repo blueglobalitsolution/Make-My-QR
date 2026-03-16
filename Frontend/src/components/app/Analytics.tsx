@@ -288,7 +288,7 @@ export const Analytics: React.FC = () => {
                                 <p className="text-[11px] font-black text-slate-400 capitalize ">Selected Codes</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.total_qrcodes}</h3>
+                        <h3 className="text-6xl font-black text-slate-800 font-medium mb-2">{summary.total_qrcodes}</h3>
                     </div>
                 </div>
 
@@ -303,7 +303,7 @@ export const Analytics: React.FC = () => {
                                 <p className="text-[11px] font-black text-slate-400 capitalize ">Period Scans</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.total_scans}</h3>
+                        <h3 className="text-6xl font-black text-slate-800 font-medium  mb-2">{summary.total_scans}</h3>
                     </div>
                 </div>
 
@@ -318,7 +318,7 @@ export const Analytics: React.FC = () => {
                                 <p className="text-[11px] font-black text-slate-400 capitalize ">Unique Period Scans</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.unique_scans}</h3>
+                        <h3 className="text-6xl font-black text-slate-800 font-medium mb-2">{summary.unique_scans}</h3>
                     </div>
                 </div>
 

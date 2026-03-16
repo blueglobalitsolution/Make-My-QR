@@ -75,21 +75,21 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
           <button
             type="button"
             onClick={() => setCycle('3')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '3' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '3' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
           >
             3 Months
           </button>
           <button
             type="button"
             onClick={() => setCycle('6')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '6' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '6' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
           >
             6 Months
           </button>
           <button
             type="button"
             onClick={() => setCycle('12')}
-            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '12' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-[#ee4342] hover:bg-slate-50'}`}
+            className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === '12' ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
           >
             12 Months
           </button>
@@ -125,7 +125,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
             </ul>
             <button
               onClick={() => handleSelectPlan('starter')}
-              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}
+              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-[#3eb5a9] hover:text-white transition-colors`}
             >
               Get Started
             </button>
@@ -163,7 +163,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
             </ul>
             <button
               onClick={() => handleSelectPlan('pro')}
-              className={`w-full py-4 mt-auto ${bgBrandRed} text-white font-bold rounded-xl text-[13px] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/25`}
+              className={`w-full py-4 mt-auto ${bgBrandRed} text-white font-bold rounded-xl text-[13px] hover:bg-[#3eb5a9] transition-colors shadow-lg shadow-red-500/25`}
             >
               Upgrade My Account
             </button>
@@ -194,7 +194,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
             </ul>
             <button
               onClick={() => handleSelectPlan('enterprise')}
-              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-colors`}
+              className={`w-full py-4 bg-slate-50 border border-slate-200 ${brandDark} text-[13px] font-bold rounded-xl hover:bg-[#3eb5a9] hover:text-white transition-colors`}
             >
               Choose Enterprise
             </button>
