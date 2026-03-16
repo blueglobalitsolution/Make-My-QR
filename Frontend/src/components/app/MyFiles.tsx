@@ -112,7 +112,7 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isUploading}
-                        className="px-8 py-4 bg-[#dc2626] text-white rounded-2xl font-bold text-xs capitalize tracking-widest flex items-center gap-2 hover:bg-[#991b1b] shadow-xl shadow-red-500/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50"
+                        className="px-8 py-4 bg-[#dc2626] text-white rounded-2xl font-bold text-xs capitalize  flex items-center gap-2 hover:bg-[#991b1b] shadow-xl shadow-red-500/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50"
                     >
                         {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                         {isUploading ? 'Uploading...' : 'Upload New Asset'}
@@ -124,7 +124,7 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                 {/* Sidebar */}
                 <div className="w-72 shrink-0 space-y-6">
                     <div className="skeu-card p-6 space-y-3">
-                        <h3 className="text-[11px] font-bold text-slate-400 capitalize tracking-widest pl-2 mb-4">Folders</h3>
+                        <h3 className="text-[11px] font-bold text-slate-400 capitalize  pl-2 mb-4">Folders</h3>
                         <button
                             onClick={() => setActiveFolderId('all')}
                             className={`w-full px-5 py-3.5 rounded-2xl text-left font-bold text-sm flex items-center justify-between transition-all ${activeFolderId === 'all' ? 'bg-[#dc2626] text-white shadow-lg shadow-red-500/20' : 'text-slate-600 hover:bg-slate-50'}`}
@@ -195,11 +195,11 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                             <div className="w-24 h-24 bg-red-50 text-[#dc2626]/30 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6">
                                 <FileText className="w-10 h-10" />
                             </div>
-                            <h3 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">No Assets Found</h3>
+                            <h3 className="text-2xl font-black text-slate-800 mb-2 ">No Assets Found</h3>
                             <p className="text-slate-400 font-medium mb-10 max-w-sm mx-auto">You haven't uploaded any files yet, or no files match your search.</p>
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="px-8 py-4 bg-[#dc2626] text-white rounded-2xl font-bold text-xs capitalize tracking-widest hover:bg-[#991b1b] shadow-xl shadow-red-500/20 transition-all transform hover:-translate-y-0.5"
+                                className="px-8 py-4 bg-[#dc2626] text-white rounded-2xl font-bold text-xs capitalize  hover:bg-[#991b1b] shadow-xl shadow-red-500/20 transition-all transform hover:-translate-y-0.5"
                             >
                                 <Plus className="w-4 h-4 mr-2 inline" /> Upload Your First Asset
                             </button>
@@ -231,9 +231,9 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                                     </div>
 
                                     <div className="space-y-1 mb-6">
-                                        <h3 className="font-black text-slate-800 text-lg tracking-tight truncate px-1">{file.name}</h3>
+                                        <h3 className="font-black text-slate-800 text-lg  truncate px-1">{file.name}</h3>
                                         <div className="flex items-center gap-2 px-1">
-                                            <span className="text-[9px] font-black capitalize text-[#dc2626] bg-red-50 px-2 py-0.5 rounded tracking-widest">{file.type === 'pdf' ? 'PDF Document' : 'Image'}</span>
+                                            <span className="text-[9px] font-black capitalize text-[#dc2626] bg-red-50 px-2 py-0.5 rounded ">{file.type === 'pdf' ? 'PDF Document' : 'Image'}</span>
                                             <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
                                         </div>
                                     </div>
@@ -243,14 +243,14 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                                             href={file.filePath}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize tracking-wider text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
+                                            className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize  text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
                                         >
                                             <Download className="w-3.5 h-3.5" /> Download
                                         </a>
                                         {file.type === 'pdf' ? (
                                             <button
                                                 onClick={() => viewPdf(file.id)}
-                                                className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize tracking-wider text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
+                                                className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize  text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
                                             >
                                                 <Eye className="w-3.5 h-3.5" /> View
                                             </button>
@@ -259,14 +259,14 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                                                 href={file.filePath}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize tracking-wider text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
+                                                className="py-3 bg-white border border-slate-100 hover:border-[#dc2626]/30 rounded-xl text-[10px] font-black capitalize  text-slate-600 hover:text-[#dc2626] transition-all flex items-center justify-center gap-2 shadow-sm"
                                             >
                                                 <Eye className="w-3.5 h-3.5" /> Open
                                             </a>
                                         )}
                                         <button
                                             onClick={() => startQrFromAsset?.(file)}
-                                            className="col-span-2 py-3 bg-[#dc2626] text-white rounded-xl text-[10px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/10"
+                                            className="col-span-2 py-3 bg-[#dc2626] text-white rounded-xl text-[10px] font-black capitalize  transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/10"
                                         >
                                             <QrCode className="w-3.5 h-3.5" /> Generate QR Code
                                         </button>

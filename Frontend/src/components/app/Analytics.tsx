@@ -95,7 +95,7 @@ export const Analytics: React.FC = () => {
             <div className="flex-1 flex items-center justify-center bg-slate-50/30">
                 <div className="text-center space-y-4">
                     <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="font-black text-slate-400 capitalize tracking-widest text-[10px]">Loading Analytics...</p>
+                    <p className="font-black text-slate-400 capitalize  text-[10px]">Loading Analytics...</p>
                 </div>
             </div>
         );
@@ -159,7 +159,7 @@ export const Analytics: React.FC = () => {
                         {selectedCodeId && (
                             <button
                                 onClick={() => setSelectedCodeId(null)}
-                                className="ml-4 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black capitalize tracking-widest transition-colors"
+                                className="ml-4 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black capitalize  transition-colors"
                             >
                                 ← Back to Overview
                             </button>
@@ -173,7 +173,7 @@ export const Analytics: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleExport}
-                        className="px-6 py-3 skeu-btn text-[11px] font-black capitalize tracking-widest shadow-lg flex items-center gap-2 group transition-all"
+                        className="px-6 py-3 skeu-btn text-[11px] font-black capitalize  shadow-lg flex items-center gap-2 group transition-all"
                     >
                         <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" /> Export Data
                     </button>
@@ -184,7 +184,7 @@ export const Analytics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-5 skeu-card bg-white/60 backdrop-blur-md relative z-30">
                 {/* Period Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Period</label>
+                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Period</label>
                     <div
                         onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -218,7 +218,7 @@ export const Analytics: React.FC = () => {
 
                 {/* Device Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Device Type</label>
+                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Device Type</label>
                     <div
                         onClick={() => setShowDeviceDropdown(!showDeviceDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -249,7 +249,7 @@ export const Analytics: React.FC = () => {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                    <label className="text-[9px] font-black capitalize tracking-widest text-slate-400 pl-1">Search QR Code</label>
+                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Search QR Code</label>
                     <div className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3">
                         <Search className="w-4 h-4 text-slate-400" />
                         <input
@@ -266,14 +266,14 @@ export const Analytics: React.FC = () => {
                     <button
                         onClick={fetchAnalytics}
                         disabled={loading}
-                        className="w-full h-11 bg-slate-900 rounded-xl text-white text-[10px] font-black capitalize tracking-[0.2em] shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                        className="w-full h-11 bg-slate-900 rounded-xl text-white text-[10px] font-black capitalize  shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
                     >
                         {loading ? 'Processing...' : 'Apply Filters'}
                     </button>
                 </div>
             </div>
 
-            {loading && data && <div className="text-center py-2 animate-pulse"><p className="text-[10px] font-black text-red-500 capitalize tracking-[0.3em]">Updating data...</p></div>}
+            {loading && data && <div className="text-center py-2 animate-pulse"><p className="text-[10px] font-black text-red-500 capitalize ">Updating data...</p></div>}
 
             {/* Summary Stats & Distributions Row */}
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
@@ -285,10 +285,10 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-red-50 rounded-xl shadow-sm border border-red-100/50">
                                     <QrCode className="w-5 h-5 text-red-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Selected Codes</p>
+                                <p className="text-[11px] font-black text-slate-400 capitalize ">Selected Codes</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.total_qrcodes}</h3>
+                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.total_qrcodes}</h3>
                     </div>
                 </div>
 
@@ -300,10 +300,10 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-emerald-50 rounded-xl shadow-sm border border-emerald-100/50">
                                     <Activity className="w-5 h-5 text-emerald-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Period Scans</p>
+                                <p className="text-[11px] font-black text-slate-400 capitalize ">Period Scans</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.total_scans}</h3>
+                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.total_scans}</h3>
                     </div>
                 </div>
 
@@ -315,10 +315,10 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-indigo-50 rounded-xl shadow-sm border border-indigo-100/50">
                                     <Globe2 className="w-5 h-5 text-indigo-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize tracking-widest">Unique Period Scans</p>
+                                <p className="text-[11px] font-black text-slate-400 capitalize ">Unique Period Scans</p>
                             </div>
                         </div>
-                        <h3 className="text-6xl font-black text-slate-800 tracking-tight mb-2">{summary.unique_scans}</h3>
+                        <h3 className="text-6xl font-black text-slate-800  mb-2">{summary.unique_scans}</h3>
                     </div>
                 </div>
 
@@ -328,16 +328,16 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-purple-50 rounded-lg">
                             <Cpu className="w-4 h-4 text-purple-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">OS Distribution</h3>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize ">OS Distribution</h3>
                     </div>
                     <div className="space-y-3">
                         {os_stats.length > 0 ? os_stats.slice(0, 3).map((item: any, i: number) => (
                             <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight">{item.os_family || 'Other'}</span>
+                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize ">{item.os_family || 'Other'}</span>
                                 <span className="text-[11px] font-black text-slate-800">{item.count}</span>
                             </div>
                         )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize tracking-widest">No data</p>
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize ">No data</p>
                         )}
                         {os_stats.length > 3 && (
                             <div className="pt-1 flex items-center justify-between opacity-40">
@@ -356,16 +356,16 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-orange-50 rounded-lg">
                             <Chrome className="w-4 h-4 text-orange-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize tracking-widest">Browsers</h3>
+                        <h3 className="text-[11px] font-black text-slate-800 capitalize ">Browsers</h3>
                     </div>
                     <div className="space-y-3">
                         {browsers.length > 0 ? browsers.slice(0, 3).map((item: any, i: number) => (
                             <div key={i} className="flex items-center justify-between group">
-                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize tracking-tight truncate max-w-[80px]">{item.browser || 'Other'}</span>
+                                <span className="text-[11px] font-semibold text-slate-600 group-hover:text-slate-900 transition-colors capitalize  truncate max-w-[80px]">{item.browser || 'Other'}</span>
                                 <span className="text-[11px] font-black text-slate-800">{item.count}</span>
                             </div>
                         )) : (
-                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize tracking-widest">No data</p>
+                            <p className="text-[10px] font-bold text-slate-300 text-center py-2 capitalize ">No data</p>
                         )}
                         {browsers.length > 3 && (
                             <div className="pt-1 flex items-center justify-between opacity-40">
@@ -387,12 +387,12 @@ export const Analytics: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between mb-12 relative z-10">
                         <div>
-                            <h2 className="text-lg font-black text-slate-800 tracking-tight">QR Code Scan Activities</h2>
-                            <p className="text-[10px] font-bold text-slate-400 capitalize tracking-widest">Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
+                            <h2 className="text-lg font-black text-slate-800 ">QR Code Scan Activities</h2>
+                            <p className="text-[10px] font-bold text-slate-400 capitalize ">Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
                         </div>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">
                             <Calendar className="w-3 h-3 text-slate-400" />
-                            <span className="text-[9px] font-black text-slate-500 capitalize tracking-widest">
+                            <span className="text-[9px] font-black text-slate-500 capitalize ">
                                 {daily_scans.length > 0 ? `${new Date(daily_scans[0].date).toLocaleDateString()} - ${new Date(daily_scans[daily_scans.length - 1].date).toLocaleDateString()}` : 'Live Trends'}
                             </span>
                         </div>
@@ -408,7 +408,7 @@ export const Analytics: React.FC = () => {
                                             className="w-full bg-red-400 group-hover:bg-red-500 rounded-t-lg transition-all duration-700 ease-out shadow-sm"
                                             style={{ height: `${height}%`, minHeight: day.count > 0 ? '4px' : '0' }}
                                         />
-                                        <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[8px] font-black py-1 px-2 rounded tracking-widest pointer-events-none transition-all z-20">
+                                        <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[8px] font-black py-1 px-2 rounded  pointer-events-none transition-all z-20">
                                             {day.count}
                                         </div>
                                     </div>
@@ -420,7 +420,7 @@ export const Analytics: React.FC = () => {
                         }) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-slate-300 space-y-4">
                                 <Activity className="w-12 h-12 opacity-20" />
-                                <p className="text-[10px] font-black capitalize tracking-widest">Not enough data to show statistics</p>
+                                <p className="text-[10px] font-black capitalize ">Not enough data to show statistics</p>
                             </div>
                         )}
                     </div>
@@ -430,7 +430,7 @@ export const Analytics: React.FC = () => {
                     {/* Top QR Codes */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Top Performing</h3>
+                            <h3 className="text-sm font-black text-slate-800 capitalize ">Top Performing</h3>
                         </div>
 
                         <div className="space-y-4">
@@ -446,7 +446,7 @@ export const Analytics: React.FC = () => {
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-slate-700 truncate max-w-[100px]">{qr.name}</p>
-                                            <p className="text-[9px] font-bold text-slate-400 capitalize tracking-widest">ID: {qr.id}</p>
+                                            <p className="text-[9px] font-bold text-slate-400 capitalize ">ID: {qr.id}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -456,7 +456,7 @@ export const Analytics: React.FC = () => {
                                 </div>
                             )) : (
                                 <div className="text-center py-8 opacity-20">
-                                    <p className="text-[10px] font-black capitalize tracking-widest">No data available</p>
+                                    <p className="text-[10px] font-black capitalize ">No data available</p>
                                 </div>
                             )}
                         </div>
@@ -465,7 +465,7 @@ export const Analytics: React.FC = () => {
                     {/* Device Distribution */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 capitalize tracking-wider">Scans by Device</h3>
+                            <h3 className="text-sm font-black text-slate-800 capitalize ">Scans by Device</h3>
                         </div>
 
                         <div className="space-y-6">
@@ -479,9 +479,9 @@ export const Analytics: React.FC = () => {
 
                                 return (
                                     <div key={i} className="space-y-2">
-                                        <div className="flex items-center justify-between text-[11px] font-black capitalize tracking-widest">
+                                        <div className="flex items-center justify-between text-[11px] font-black capitalize ">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-slate-700 tracking-tighter">{item.device_type}</span>
+                                                <span className="text-slate-700 ">{item.device_type}</span>
                                             </div>
                                             <span className="text-slate-400 text-[10px]">{percentage.toFixed(0)}%</span>
                                         </div>
@@ -495,7 +495,7 @@ export const Analytics: React.FC = () => {
                                 );
                             }) : (
                                 <div className="text-center py-6 opacity-20">
-                                    <p className="text-[10px] font-black capitalize tracking-widest">No device data</p>
+                                    <p className="text-[10px] font-black capitalize ">No device data</p>
                                 </div>
                             )}
                         </div>
@@ -505,7 +505,7 @@ export const Analytics: React.FC = () => {
 
 
             <div className="pt-8 border-t border-slate-100 flex items-center justify-center">
-                <p className="text-[9px] font-black text-slate-400 capitalize tracking-[0.3em]">
+                <p className="text-[9px] font-black text-slate-400 capitalize ">
                     Data is strictly aggregated for your account privacy
                 </p>
             </div>

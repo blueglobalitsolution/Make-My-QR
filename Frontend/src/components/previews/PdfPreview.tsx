@@ -48,11 +48,11 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         </button>
                         <div className="flex flex-col">
                             <h1 className="text-slate-900 font-bold text-sm truncate max-w-[200px] leading-tight">{name}</h1>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Scanner Studio Viewer</p>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase ">Scanner Studio Viewer</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <a href={fullValue} download className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2">
+                        <a href={fullValue} download className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase  transition-all shadow-lg flex items-center gap-2">
                             <Download className="w-4 h-4" /> Download
                         </a>
                     </div>
@@ -104,10 +104,10 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
                 {/* Header Text */}
                 <div className="text-center space-y-2 mb-6 w-full">
-                    <h3 className="text-[17px] font-medium tracking-tight" style={{ fontFamily: titleFont, color: titleColor }}>
+                    <h3 className="text-[17px] font-medium " style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.company || "Give Your Company Name"}
                     </h3>
-                    <h1 className="text-[26px] font-black leading-[1.1] tracking-tight px-2" style={{ fontFamily: titleFont, color: titleColor }}>
+                    <h1 className="text-[26px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
                     <p className="text-[17px] font-medium px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: titleColor }}>
@@ -143,7 +143,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                 <div className="w-4 h-5 border-[2px] border-white/90 rounded-[3px] mb-[3px] relative flex items-center justify-center bg-red-600">
                                     <span className="text-[5px] font-black text-white">PDF</span>
                                 </div>
-                                <span className="text-[7px] font-black uppercase tracking-widest leading-none text-white/90">FILE</span>
+                                <span className="text-[7px] font-black uppercase  leading-none text-white/90">FILE</span>
                             </div>
                         </div>
                     </div>
@@ -162,7 +162,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                             ) : (
                                 <button
                                     onClick={handleAction}
-                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[14px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[15px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none tracking-wide"
+                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[14px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[15px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
                                 >
                                     <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
                                 </button>
@@ -180,7 +180,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         className="flex items-center justify-center gap-2 text-slate-900 mt-2 hover:opacity-80 transition-opacity"
                     >
                         <Globe className="w-[22px] h-[22px]" />
-                        <span className="text-[17px] font-medium tracking-wide">
+                        <span className="text-[17px] font-medium ">
                             {businessData.buttons[0].url.replace(/^https?:\/\//, '')}
                         </span>
                     </a>

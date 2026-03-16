@@ -234,8 +234,9 @@ const App: React.FC = () => {
     // Handle high-fidelity download with frame from capture element
     if (captureElement) {
       try {
+        const targetElement = captureElement.firstElementChild as HTMLElement || captureElement;
         const html2canvas = (await import('html2canvas')).default;
-        const canvas = await html2canvas(captureElement, {
+        const canvas = await html2canvas(targetElement, {
           backgroundColor: code.settings?.bgColor || '#ffffff',
           scale: 2,
           useCORS: true,

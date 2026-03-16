@@ -49,13 +49,13 @@ export const Account: React.FC<AccountProps> = ({
 
         <button
           onClick={() => setActiveTab('profile')}
-          className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${activeTab === 'profile' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          className={`flex-1 py-1.5 text-[12px] font-black  transition-all duration-300 relative z-10 ${activeTab === 'profile' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
         >
           Profile Details
         </button>
         <button
           onClick={() => setActiveTab('billing')}
-          className={`flex-1 py-1.5 text-[12px] font-black tracking-wide transition-all duration-300 relative z-10 ${activeTab === 'billing' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          className={`flex-1 py-1.5 text-[12px] font-black  transition-all duration-300 relative z-10 ${activeTab === 'billing' ? 'text-white drop-shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
         >
           Billing & Plans
         </button>
@@ -64,78 +64,78 @@ export const Account: React.FC<AccountProps> = ({
       {activeTab === 'profile' ? (
         <>
 
-          <div className="skeu-card p-5 space-y-4">
+          <div className="bg-[#f0f0f0] rounded-[8px] p-5 space-y-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-[1rem] flex items-center justify-center relative skeu-gloss">
                 <UserIcon className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-black skeu-text-primary tracking-tight">Personal Information</h3>
+              <h3 className="text-lg font-normal skeu-text-primary ">Personal Information</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">First Name</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">First Name</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><UserIcon className="w-3.5 h-3.5" /></div>
-                  <input type="text" value={accFirstName} onChange={(e) => setAccFirstName(e.target.value)} className="w-full pl-10 pr-4 py-4 skeu-input text-[13px]" />
+                  <input type="text" value={accFirstName} onChange={(e) => setAccFirstName(e.target.value)} className="w-full pl-10 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">Last Name</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">Last Name</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><UserIcon className="w-3.5 h-3.5" /></div>
-                  <input type="text" value={accLastName} onChange={(e) => setAccLastName(e.target.value)} className="w-full pl-10 pr-4 py-4 skeu-input text-[13px]" />
+                  <input type="text" value={accLastName} onChange={(e) => setAccLastName(e.target.value)} className="w-full pl-10 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">Email Address</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">Email Address</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><Mail className="w-3.5 h-3.5" /></div>
-                  <input type="email" value={accEmail} onChange={(e) => setAccEmail(e.target.value)} className="w-full pl-10 pr-4 py-4 skeu-input text-[13px]" />
+                  <input type="email" value={accEmail} onChange={(e) => setAccEmail(e.target.value)} className="w-full pl-10 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">Phone Number</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">Phone Number</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><Phone className="w-3.5 h-3.5" /></div>
-                  <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full pl-10 pr-4 py-4 skeu-input text-[13px]" />
+                  <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full pl-10 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                 </div>
               </div>
             </div>
 
-            <button onClick={handleUpdateProfile} className="px-8 py-4 skeu-btn text-[10px] font-black capitalize tracking-widest active:scale-95 transition-all">
+            <button onClick={handleUpdateProfile} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
               Save Changes
             </button>
           </div>
 
-          <div className="skeu-card p-5 space-y-4">
+          <div className="bg-[#f0f0f0] rounded-[8px] p-5 space-y-4 shadow-sm border border-slate-100">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 skeu-hero-icon text-white rounded-[1rem] flex items-center justify-center relative skeu-gloss">
                 <Lock className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-black skeu-text-primary tracking-tight">Security & Password</h3>
+              <h3 className="text-lg font-normal skeu-text-primary ">Security & Password</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">New Password</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">New Password</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><Lock className="w-3.5 h-3.5" /></div>
-                  <input type="password" value={accPassword} onChange={(e) => setAccPassword(e.target.value)} placeholder="••••••••" className="w-full pl-10 pr-10 py-4 skeu-input text-[13px]" />
+                  <input type="password" value={accPassword} onChange={(e) => setAccPassword(e.target.value)} placeholder="••••••••" className="w-full pl-10 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                   <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 skeu-text-muted hover:skeu-text-primary transition-colors"><Eye className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] font-black skeu-text-muted capitalize tracking-widest pl-1">Confirm Password</label>
+                <label className="text-[9px] font-black skeu-text-muted capitalize  pl-1">Confirm Password</label>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 skeu-text-accent transition-colors"><Lock className="w-3.5 h-3.5" /></div>
-                  <input type="password" value={accConfirmPassword} onChange={(e) => setAccConfirmPassword(e.target.value)} placeholder="••••••••" className="w-full pl-10 pr-10 py-4 skeu-input text-[13px]" />
+                  <input type="password" value={accConfirmPassword} onChange={(e) => setAccConfirmPassword(e.target.value)} placeholder="••••••••" className="w-full pl-10 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                   <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 skeu-text-muted hover:skeu-text-primary transition-colors"><Eye className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             </div>
 
-            <button onClick={handleUpdatePassword} className="px-8 py-4 skeu-btn text-[10px] font-black capitalize tracking-widest active:scale-95 transition-all">
+            <button onClick={handleUpdatePassword} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
               Update Password
             </button>
           </div>
@@ -146,7 +146,7 @@ export const Account: React.FC<AccountProps> = ({
             <Lock className="w-8 h-8 opacity-50" />
           </div>
           <div className="space-y-2 max-w-sm">
-            <h3 className="text-2xl font-black skeu-text-primary tracking-tight">Billing & Plans</h3>
+            <h3 className="text-2xl font-black skeu-text-primary ">Billing & Plans</h3>
             <p className="skeu-text-muted font-medium text-sm">
               Manage your subscription and billing details here. This feature will be available shortly.
             </p>

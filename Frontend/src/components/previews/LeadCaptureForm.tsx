@@ -22,7 +22,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
     return (
         <form onSubmit={onSubmit} className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="space-y-4 bg-slate-50/50 p-6 rounded-3xl border border-slate-100 shadow-inner">
-                <p className="text-xs text-slate-500 font-bold text-center mb-4 uppercase tracking-widest">Complete to View Content</p>
+                <p className="text-xs text-slate-500 font-bold text-center mb-4 uppercase ">Complete to View Content</p>
 
                 <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -52,7 +52,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
             <button
                 type="submit"
                 style={{ backgroundColor: brandColor }}
-                className="w-full py-5 rounded-2xl text-white font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                className="w-full py-5 rounded-2xl text-white font-black text-xs uppercase  shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
             >
                 Access Content <ArrowRight className="w-5 h-5" />
             </button>

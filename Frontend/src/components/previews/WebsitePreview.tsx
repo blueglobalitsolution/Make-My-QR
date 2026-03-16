@@ -44,7 +44,7 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                     <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
                         <Globe className="w-3.5 h-3.5" style={{ color: brandColor }} />
                     </div>
-                    <span className="text-white font-bold text-sm truncate tracking-tight">
+                    <span className="text-white font-bold text-sm truncate ">
                         {fullValue?.replace(/^https?:\/\//, '') || "your-website.com"}
                     </span>
                 </div>
@@ -60,12 +60,12 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
 
                     <div className="p-6 flex flex-col items-center space-y-4">
                         <div className="text-center space-y-2">
-                            <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-tight">
+                            <h2 className="text-2xl font-black text-slate-800  leading-tight">
                                 {name || "Website Link"}
                             </h2>
                             {is_lead_capture && (
                                 <div className="flex items-center justify-center pt-1">
-                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100">
+                                    <span className="flex items-center gap-1 text-[9px] font-black uppercase  bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100">
                                         <User className="w-3 h-3" /> Registration Required
                                     </span>
                                 </div>
@@ -95,12 +95,12 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                                 <button
                                     onClick={handleAction}
                                     style={{ backgroundColor: brandColor }}
-                                    className="w-full py-4 rounded-xl text-white font-black text-[11px] uppercase tracking-wider shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 px-6 shadow-blue-900/10"
+                                    className="w-full py-4 rounded-xl text-white font-black text-[11px] uppercase  shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 px-6 shadow-blue-900/10"
                                 >
                                     <ExternalLink className="w-4 h-4 shrink-0" /> Visit Website
                                 </button>
 
-                                <p className="text-[9px] text-slate-400 font-bold text-center uppercase tracking-widest flex items-center justify-center gap-1.5 opacity-60">
+                                <p className="text-[9px] text-slate-400 font-bold text-center uppercase  flex items-center justify-center gap-1.5 opacity-60">
                                     <Shield className="w-3 h-3" /> Secure Link Verified
                                 </p>
                             </div>

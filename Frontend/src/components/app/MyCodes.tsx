@@ -142,12 +142,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               placeholder="Search by name or URL..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-14 pr-8 py-4 skeu-search font-bold text-sm outline-none"
+              className="w-full pl-14 pr-8 py-4 skeu-search font-medium text-[14px] outline-none"
             />
           </div>
           <button
             onClick={onNewQR}
-            className="px-8 py-4 skeu-btn text-[13px] capitalize tracking-widest flex items-center gap-2"
+            className="px-8 py-4 skeu-btn text-[14px] font-medium capitalize flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Create New
           </button>
@@ -168,21 +168,40 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         >
           <button
             onClick={() => setActiveFolderId('all')}
-            className={`px-6 py-3.5 rounded-2xl font-black text-[11px] capitalize tracking-wider flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
+            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
             <Grid3X3 className="w-4 h-4" />
             <span>All ({history.length})</span>
           </button>
 
+          <button
+            onClick={() => setActiveFolderId('general')}
+            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
+          >
+            <FolderIcon className={`w-4 h-4 ${activeFolderId === 'general' ? 'text-white' : 'text-slate-400/30'}`} />
+            <span>General ({history.filter(c => !folders.some(f => f.id === c.folderId)).length})</span>
+          </button>
+
           {folders.map(folder => (
-            <button
-              key={folder.id}
-              onClick={() => setActiveFolderId(folder.id)}
-              className={`px-6 py-3.5 rounded-2xl font-black text-[11px] capitalize tracking-wider flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
-            >
-              <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
-              <span>{folder.name} ({folder.count || 0})</span>
-            </button>
+            <div key={folder.id} className="relative group/folder-tab">
+              <button
+                onClick={() => setActiveFolderId(folder.id)}
+                className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
+              >
+                <FolderIcon className={`w-4 h-4 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
+                <span>{folder.name} ({folder.count || 0})</span>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(folder.id);
+                }}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg opacity-0 group-hover/folder-tab:opacity-100 transition-all hover:bg-black/5 ${activeFolderId === folder.id ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-red-400/50 hover:text-red-500 hover:bg-red-50'}`}
+                title="Delete Folder"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           ))}
 
           {isCreatingFolder ? (
@@ -206,7 +225,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-black text-[11px] capitalize tracking-wider flex items-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins"
+              className="px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -239,9 +258,9 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               <div className="w-24 h-24 skeu-inset flex items-center justify-center mx-auto mb-6">
                 <Search className="w-10 h-10 skeu-text-muted" />
               </div>
-              <h3 className="text-2xl font-black skeu-text-primary mb-2 tracking-tight">No Results Found</h3>
+              <h3 className="text-2xl font-black skeu-text-primary mb-2 ">No Results Found</h3>
               <p className="skeu-text-muted font-medium mb-10 max-w-sm mx-auto">We couldn't find any QR codes matching your search or filter criteria.</p>
-              <button onClick={() => setView('wizard')} className="skeu-btn px-8 py-4 text-xs capitalize tracking-widest">
+              <button onClick={() => setView('wizard')} className="skeu-btn px-8 py-4 text-xs capitalize ">
                 <Plus className="w-4 h-4 mr-2 inline" /> Create Your First Code
               </button>
             </div>
@@ -266,14 +285,14 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   </div>
 
                   <div className="space-y-0.5">
-                    <h3 className="font-black skeu-text-primary text-base tracking-tight truncate px-1">{code.name}</h3>
+                    <h3 className="skeu-text-primary text-xl  truncate px-1" style={{ fontWeight: 700 }}>{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[9px] font-black capitalize skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
                       {code.show_preview === false && (
                         <span className="text-[9px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded tracking-widest shadow-sm">Direct</span>
                       )}
                     </div>
-                    <p className="text-[8px] capitalize font-black tracking-[0.2em] skeu-text-muted opacity-40 mt-0.5">
+                    <p className="text-[12px] capitalize font-black  skeu-text-muted opacity-50 mt-1">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
@@ -319,8 +338,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
                   {/* Activity */}
                   <div className="text-center group-hover:scale-105 transition-transform duration-500">
-                    <div className="text-2xl font-black skeu-text-primary leading-none tabular-nums tracking-tighter">{code.scans || 0}</div>
-                    <div className="text-[8px] font-black skeu-text-muted capitalize tracking-[0.1em] mt-1.5 flex items-center justify-center gap-1">
+                    <div className="text-2xl font-black skeu-text-primary leading-none tabular-nums ">{code.scans || 0}</div>
+                    <div className="text-[8px] font-black skeu-text-muted capitalize  mt-1.5 flex items-center justify-center gap-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-red-400/40 animate-pulse" /> Scans
                     </div>
                   </div>
@@ -367,8 +386,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
               </button>
 
               <div className="space-y-2 text-center">
-                <h2 className="text-3xl font-black skeu-text-primary tracking-tight">{previewCode.name}</h2>
-                <p className="skeu-text-muted font-medium text-sm tabular-nums tracking-wide">
+                <h2 className="text-3xl font-black skeu-text-primary ">{previewCode.name}</h2>
+                <p className="skeu-text-muted font-medium text-sm tabular-nums ">
                   Created on {new Date(previewCode.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
@@ -410,7 +429,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     setDownloadingCode(previewCode);
                     setPreviewCode(null);
                   }}
-                  className="flex-1 skeu-btn py-4 text-xs capitalize tracking-widest flex items-center justify-center gap-2"
+                  className="flex-1 skeu-btn py-4 text-xs capitalize  flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" /> Download PNG
                 </button>
@@ -419,7 +438,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     startEditing(previewCode);
                     setPreviewCode(null);
                   }}
-                  className="flex-1 skeu-btn-secondary py-4 text-xs capitalize tracking-widest flex items-center justify-center gap-2"
+                  className="flex-1 skeu-btn-secondary py-4 text-xs capitalize  flex items-center justify-center gap-2"
                 >
                   <Pencil className="w-4 h-4" /> Edit Code
                 </button>
@@ -436,7 +455,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         style={{ left: '-2000px', width: '2000px', height: '2000px', zIndex: -999, visibility: 'visible' }}
       >
         {downloadingCode && (
-          <div className="p-32 bg-white inline-block">
+          <div className="p-4 bg-white inline-block">
             <QRFrameWrapper frame={downloadingCode.settings?.frame || 'none'}>
               <StyledQRCode
                 options={getQROptions(downloadingCode, 1000)}
