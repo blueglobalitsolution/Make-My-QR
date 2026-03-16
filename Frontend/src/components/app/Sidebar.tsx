@@ -42,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation */}
         <nav className="space-y-3 flex-1">
-          <p className="text-[10px] font-bold skeu-text-muted capitalize  pl-4 mb-4 opacity-70 font-poppins">Main Menu</p>
+
           {[
             { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
             { id: 'analytics', name: 'Analytics', icon: BarChart3 },

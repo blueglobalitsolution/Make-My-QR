@@ -70,7 +70,7 @@
 
 /* --- Base Background --- */
 .skeu-app-bg {
-  background: #fff;
+  background: #f0f0f0;
   min-height: 100vh;
   position: relative;
 }

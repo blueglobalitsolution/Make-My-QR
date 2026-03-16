@@ -18,6 +18,7 @@ import { Billing } from './src/components/app/Billing';
 import { Account } from './src/components/app/Account';
 import { Analytics } from './src/components/app/Analytics';
 import { Payment } from './src/components/app/Payment';
+import { ConfirmModal } from './src/components/app/ConfirmModal';
 
 import { useAuth } from './src/hooks/useAuth';
 import { useWizard } from './src/hooks/useWizard';
@@ -95,12 +96,53 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type?: 'danger' | 'info';
+    confirmText?: string;
+    showCancel?: boolean;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
-  const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView);
+  const showAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      confirmText: 'OK',
+      showCancel: false,
+      onConfirm: () => {},
+    });
+  };
+
+  const showConfirm = (title: string, message: string, onConfirm: () => void, type: 'danger' | 'info' = 'danger', confirmText = 'Confirm') => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      confirmText,
+      showCancel: true,
+      onConfirm,
+    });
+  };
+
+  const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert);
   const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
   const filteredHistory = history.filter(item => {
-    const matchesFolder = activeFolderId === 'all' || item.folderId === activeFolderId;
+    const matchesFolder = activeFolderId === 'all' || 
+                         (activeFolderId === 'general' 
+                           ? !folders.some(f => f.id === item.folderId) 
+                           : item.folderId === activeFolderId);
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.value.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFolder && matchesSearch;
   });
@@ -138,11 +180,13 @@ const App: React.FC = () => {
       }));
 
       setHistory(mappedHistory);
-      if (Array.isArray(foldersData)) setFolders(foldersData);
+      if (Array.isArray(foldersData)) {
+        setFolders(foldersData.map((f: any) => ({ ...f, id: f.id.toString() })));
+      }
     } catch (err: any) {
       console.error("Failed to fetch library data", err);
       if (err.message === 'Network Error' || err.code === 'ERR_NETWORK') {
-        alert("Backend Connection Refused: Please ensure the Django server is running on port 8010 and accessible.");
+        showAlert("Connection Error", "Backend Connection Refused: Please ensure the Django server is running on port 8010 and accessible.", "danger");
       }
     }
   };
@@ -220,14 +264,24 @@ const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
-  const deleteCode = async (id: string) => {
-    const { deleteCode: apiDeleteCode } = await import('./src/api/qrcodes');
-    try {
-      await apiDeleteCode(id);
-      const codeToDelete = history.find(h => h.id === id);
-      setHistory(history.filter(h => h.id !== id));
-      if (codeToDelete?.folderId) setFolders(folders.map(f => f.id === codeToDelete.folderId ? { ...f, count: Math.max(0, f.count - 1) } : f));
-    } catch (err) { alert("Failed to delete QR code."); }
+  const deleteCode = (id: string) => {
+    const code = history.find(h => h.id === id);
+    if (!code) return;
+
+    showConfirm(
+      'Delete QR Code',
+      `Are you sure you want to delete "${code.name}"? This action cannot be undone.`,
+      async () => {
+        const { deleteCode: apiDeleteCode } = await import('./src/api/qrcodes');
+        try {
+          await apiDeleteCode(id);
+          setHistory(prev => prev.filter(h => h.id !== id));
+          if (code.folderId) {
+            setFolders(prev => prev.map(f => f.id === code.folderId ? { ...f, count: Math.max(0, (f.count || 0) - 1) } : f));
+          }
+        } catch (err) { showAlert("Error", "Failed to delete QR code.", "danger"); }
+      }
+    );
   };
 
   const downloadCode = async (code: GeneratedCode, format: 'png' | 'svg' = 'png', captureElement?: HTMLElement) => {
@@ -362,25 +416,28 @@ const App: React.FC = () => {
     setView('wizard');
   };
 
-  const deleteFolder = async (id: string) => {
+  const deleteFolder = (id: string) => {
     const folder = folders.find(f => f.id === id);
     if (!folder) return;
 
     const codeCount = history.filter(c => (c as any).folder === id || c.folderId === id).length;
-
     const message = codeCount > 0
-      ? `This folder contains ${codeCount} QR codes. Deleting it will also delete all codes inside. Are you sure?`
-      : "Are you sure you want to delete this folder?";
+      ? `This folder contains ${codeCount} QR codes. Deleting it will move all codes to the General folder. Are you sure?`
+      : `Are you sure you want to delete "${folder.name}"?`;
 
-    if (!window.confirm(message)) return;
-
-    const { deleteFolder: apiDeleteFolder } = await import('./src/api/folders');
-    try {
-      await apiDeleteFolder(id);
-      setFolders(folders.filter(f => f.id !== id));
-      setHistory(history.filter(c => (c as any).folder !== id && c.folderId !== id));
-      if (activeFolderId === id) setActiveFolderId('all');
-    } catch (err) { alert("Failed to delete folder."); }
+    showConfirm(
+      'Delete Folder',
+      message,
+      async () => {
+        const { deleteFolder: apiDeleteFolder } = await import('./src/api/folders');
+        try {
+          await apiDeleteFolder(id);
+          setFolders(prev => prev.filter(f => f.id !== id));
+          setHistory(prev => prev.map(c => (c.folderId === id || (c as any).folder === id) ? { ...c, folderId: undefined } : c));
+          if (activeFolderId === id) setActiveFolderId('all');
+        } catch (err) { showAlert("Error", "Failed to delete folder.", "danger"); }
+      }
+    );
   };
 
   const viewPdf = (fileId: string) => {
@@ -418,7 +475,7 @@ const App: React.FC = () => {
       setWizard({ ...wizard, folderId: newFolder.id });
       setNewFolderName('');
       setIsCreatingFolder(false);
-    } catch (err) { alert("Failed to create folder."); }
+    } catch (err) { showAlert("Error", "Failed to create folder.", "danger"); }
   };
 
   return (
@@ -552,6 +609,17 @@ const App: React.FC = () => {
         {view === 'admin_login' && <AdminLogin setView={handleSetView} />}
         {view === 'admin_dashboard' && <AdminDashboard setView={handleSetView} />}
       </main>
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        type={confirmModal.type}
+        confirmText={confirmModal.confirmText}
+        showCancel={confirmModal.showCancel}
+        onConfirm={confirmModal.onConfirm}
+        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

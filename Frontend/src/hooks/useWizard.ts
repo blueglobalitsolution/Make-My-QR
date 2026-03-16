@@ -145,7 +145,8 @@ export const useWizard = (
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>,
   editingId: string | null,
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>,
-  setView: React.Dispatch<React.SetStateAction<any>>
+  setView: React.Dispatch<React.SetStateAction<any>>,
+  showAlert?: (title: string, message: string, type?: 'info' | 'danger') => void
 ): UseWizardReturn => {
   const [wizard, setWizard] = useState<WizardState>(getInitialWizardState());
   const [activeDesignSection, setActiveDesignSection] = useState<string | null>(null);
@@ -277,7 +278,7 @@ export const useWizard = (
       try {
         let savedData;
         if (editingId) {
-          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
+          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
           savedData = await updateCode(editingId, {
             folder: sanitizedFolderId,
             type: wizard.mode,
@@ -291,9 +292,10 @@ export const useWizard = (
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
-          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...savedData, id: savedData.id.toString() } : h));
+          const mappedNewData = { ...savedData, id: savedData.id.toString(), folderId: savedData.folder?.toString() };
+          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedNewData } : h));
         } else {
-          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
+          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
           savedData = await saveCode({
             folder: sanitizedFolderId,
             type: wizard.mode,
@@ -307,7 +309,7 @@ export const useWizard = (
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
-          const newCode: GeneratedCode = { ...savedData, id: savedData.id.toString() };
+          const newCode: GeneratedCode = { ...savedData, id: savedData.id.toString(), folderId: savedData.folder?.toString() };
           setHistory(prev => [newCode, ...prev]);
           setEditingId(newCode.id);
 
@@ -330,14 +332,16 @@ export const useWizard = (
         }
         setWizard(prev => ({ ...prev, step: 3 }));
       } catch (err) {
+        const errorMsg = (err as any)?.response?.data?.detail || (err as any)?.response?.data?.error || (err as any).message || "Unknown error";
         console.error("Failed to save progress", err);
-        alert("Connection Error: Could not reach the backend. Please check if your server is running.");
+        if (showAlert) showAlert("Error", `Failed to save progress: ${errorMsg}`, "danger");
+        else alert(`Failed to save progress: ${errorMsg}`);
       }
     } else if (wizard.step === 3) {
       console.log("Wizard: Finalizing QR code styling...");
       try {
         if (editingId) {
-          const sanitizedFolderId = (wizard.folderId && !wizard.folderId.startsWith('f')) ? wizard.folderId : undefined;
+          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
           const updatedCode = await updateCode(editingId, {
             folder: sanitizedFolderId,
             type: wizard.mode,
@@ -351,7 +355,8 @@ export const useWizard = (
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
           });
 
-          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...updatedCode, id: updatedCode.id.toString() } : h));
+          const mappedUpdatedData = { ...updatedCode, id: updatedCode.id.toString(), folderId: updatedCode.folder?.toString() };
+          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedUpdatedData } : h));
 
           try {
             const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
@@ -372,8 +377,10 @@ export const useWizard = (
         setWizard(prev => ({ ...prev, step: 1, value: '', name: '', folderId: undefined }));
         setEditingId(null);
       } catch (err) {
+        const errorMsg = (err as any)?.response?.data?.detail || (err as any)?.response?.data?.error || (err as any).message || "Unknown error";
         console.error("Finalization failed", err);
-        alert("Failed to finalize QR code.");
+        if (showAlert) showAlert("Error", `Failed to finalize QR code: ${errorMsg}`, "danger");
+        else alert(`Failed to finalize QR code: ${errorMsg}`);
       }
     } else {
       const nextStep = (wizard.step + 1) as 1 | 2 | 3;
