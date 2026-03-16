@@ -66,6 +66,7 @@ export interface UseWizardReturn {
   swapColors: () => void;
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  handleDeletePdf: () => void;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   startQrFromAsset: (file: FileRecord) => void;
   resetWizard: () => void;
@@ -509,6 +510,14 @@ export const useWizard = (
     }
   };
 
+  const handleDeletePdf = () => {
+    if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+    setPdfUrl(null);
+    setPdfFileName(null);
+    setPdfFileRecord(null);
+    setWizard(prev => ({ ...prev, value: '' }));
+  };
+
   const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -587,6 +596,7 @@ export const useWizard = (
     handleLogoUpload,
     handlePdfUpload,
     handleCoverImageUpload,
+    handleDeletePdf,
     startQrFromAsset,
     resetWizard,
     getQRValue,

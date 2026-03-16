@@ -44,6 +44,7 @@ interface WizardProps {
   swapColors: () => void;
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeletePdf: () => void;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   qrStylingOptions: any;
   selectedTypeConfig: any;
@@ -88,6 +89,7 @@ export const Wizard: React.FC<WizardProps> = ({
   swapColors,
   handleLogoUpload,
   handlePdfUpload,
+  handleDeletePdf,
   handleCoverImageUpload,
   qrStylingOptions,
   selectedTypeConfig,
@@ -168,8 +170,8 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             <div className="space-y-2">
-              <h3 className={`font-black text-base  transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
-              <p className="text-[10px] font-semibold skeu-text-muted leading-relaxed px-2 line-clamp-2 capitalize  opacity-70">
+              <h3 className={`font-medium text-lg tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'skeu-text-accent' : 'skeu-text-primary'}`}>{type.name}</h3>
+              <p className="text-xs font-medium skeu-text-muted leading-relaxed px-2 line-clamp-2 capitalize tracking-tight opacity-70">
                 {type.desc}
               </p>
             </div>
@@ -201,7 +203,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <Globe className="w-5 h-5" />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-base font-black skeu-text-primary  capitalize">Website URL</h3>
+                  <h3 className="text-base font-medium skeu-text-primary  capitalize">Website URL</h3>
                   <p className="text-[10px] font-medium skeu-text-muted">Link your QR code to any website.</p>
                 </div>
               </div>
@@ -250,7 +252,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <MessageCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">WhatsApp Information</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">WhatsApp Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Direct link to start a WhatsApp chat</p>
                   </div>
                 </div>
@@ -312,7 +314,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">PDF Upload</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">PDF Upload</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Select and upload your PDF document.</p>
                   </div>
                 </div>
@@ -321,26 +323,53 @@ export const Wizard: React.FC<WizardProps> = ({
               {activeDesignSection === 'upload' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="relative group">
-                    <div className="border-4 border-dashed skeu-dark rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] skeu-mid hover:shadow-2xl transition-all duration-500 cursor-pointer group/upload">
-                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />
+                    <div className={`border-2 border-solid skeu-dark rounded-[1rem] p-8 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] skeu-mid hover:shadow-2xl transition-all duration-500 group/upload ${!pdfUrl ? 'cursor-pointer' : ''}`}>
+                      {!pdfUrl && <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />}
                       {pdfUrl ? (
-                        <div className="text-center animate-in zoom-in duration-500">
-                          <div className="w-24 h-24 skeu-hero-icon text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 relative skeu-gloss">
-                            <FileText className="w-12 h-12" />
+                        <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
+                          <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss shrink-0">
+                            <FileText className="w-7 h-7" />
                           </div>
-                          <h4 className="font-black skeu-text-primary text-xl ">{pdfFileName}</h4>
-                          <p className="text-sm font-medium skeu-text-muted mt-1">File uploaded successfully</p>
+                          <div className="text-left min-w-0 flex-1">
+                            <h4 className="font-medium skeu-text-primary text-sm truncate">{pdfFileName}</h4>
+                            <p className="text-xs font-medium text-green-500 mt-0.5 flex items-center gap-1.5">
+                              <Check className="w-3.5 h-3.5" /> Uploaded successfully
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 ml-auto relative z-20">
+                            <button
+                              type="button"
+                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#dc2626] hover:bg-red-50 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                              title="Delete PDF"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDeletePdf();
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <label
+                              className="p-2.5 bg-[#dc2626] text-white hover:bg-[#991b1b] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                              title="Change PDF"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Upload className="w-4 h-4" />
+                              <span className="text-[10px] font-black uppercase">Edit</span>
+                              <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} />
+                            </label>
+                          </div>
                         </div>
                       ) : (
-                        <>
-                          <div className="w-24 h-24 skeu-inset skeu-text-muted rounded-[2.5rem] flex items-center justify-center group-hover/upload:skeu-hero-icon group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl">
-                            <Upload className="w-12 h-12" />
+                        <div className="flex items-center gap-5 w-full justify-start">
+                          <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#dc2626] group-hover/upload:to-[#991b1b] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                            <Upload className="w-7 h-7" />
                           </div>
-                          <div className="text-center space-y-2">
-                            <p className="font-black skeu-text-primary text-xl ">Drop your PDF or browse</p>
-                            <p className="text-sm font-medium skeu-text-muted">Maximum file size: 20MB</p>
+                          <div className="text-left">
+                            <p className="font-medium skeu-text-primary text-sm">Drop your PDF or browse</p>
+                            <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 20MB</p>
                           </div>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -356,7 +385,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Design</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Design</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
@@ -418,7 +447,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">PDF Information</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">PDF Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Details about the PDF content.</p>
                   </div>
                 </div>
@@ -462,7 +491,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <i className="font-serif text-lg font-black">T</i>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Fonts</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Fonts</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Customize fonts and colors.</p>
                   </div>
                 </div>
@@ -522,7 +551,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Design</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Design</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Choose a color theme for your page.</p>
                   </div>
                 </div>
@@ -584,7 +613,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Business Information</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Business Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Introduce your business or organization.</p>
                   </div>
                 </div>
@@ -644,7 +673,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Clock className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Opening Hours</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Opening Hours</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Set your business hours.</p>
                   </div>
                 </div>
@@ -740,7 +769,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Location</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Location</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Where is your business located?</p>
                   </div>
                 </div>
@@ -789,7 +818,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <UserCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Contact Information</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Contact Information</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">How people can reach you.</p>
                   </div>
                 </div>
@@ -858,7 +887,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Share2 className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Social Networks</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Social Networks</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Links to your social profiles.</p>
                   </div>
                 </div>
@@ -945,7 +974,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">About Company</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">About Company</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">A short description of your business.</p>
                   </div>
                 </div>
@@ -975,7 +1004,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Coffee className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Services</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Services</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Services and amenities available.</p>
                   </div>
                 </div>
@@ -1037,7 +1066,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <ScanEye className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base font-black skeu-text-primary ">Welcome Screen</h3>
+                    <h3 className="text-base font-medium skeu-text-primary ">Welcome Screen</h3>
                     <p className="text-[10px] font-medium skeu-text-muted">Splash screen image shown while loading.</p>
                   </div>
                 </div>
@@ -1238,7 +1267,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <FolderIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">Save To Folder</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">Save To Folder</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Organize your codes by category.</p>
               </div>
             </div>
@@ -1333,7 +1362,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Layout className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">Frame Layout</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">Frame Layout</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Add a call-to-action frame</p>
               </div>
             </div>
@@ -1364,7 +1393,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <PaletteIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">QR Pattern & Colors</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">QR Pattern & Colors</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Dots, squares and custom colors</p>
               </div>
             </div>
@@ -1431,7 +1460,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <ScanEye className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">Eye Styles</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">Eye Styles</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Shape of the corner indicators</p>
               </div>
             </div>
@@ -1483,7 +1512,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">Add Center Logo</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">Add Center Logo</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Place your brand in the center</p>
               </div>
             </div>
@@ -1542,7 +1571,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Type className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black skeu-text-primary ">Name of the QR Code</h3>
+                <h3 className="text-base font-medium skeu-text-primary ">Name of the QR Code</h3>
                 <p className="text-[10px] font-medium skeu-text-muted">Give your QR code a name.</p>
               </div>
             </div>
@@ -1566,22 +1595,22 @@ export const Wizard: React.FC<WizardProps> = ({
         </div>
 
         {/* Security & Gatekeeper Section */}
-        <div className="skeu-card overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           <button
             onClick={() => toggleSection('gatekeeper')}
-            className="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group"
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Lock className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Gatekeeper & Security</h3>
-                <p className="text-[10px] font-medium text-slate-400">Password protection and lead capture.</p>
+                <h3 className="text-base font-medium skeu-text-primary ">Gatekeeper & Security</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Password protection and lead capture.</p>
               </div>
             </div>
-            <ChevronDown className={`w-4 h-4 text-slate-300 transition-all duration-500 ${activeDesignSection === 'gatekeeper' ? 'rotate-180 text-indigo-600' : 'group-hover:text-slate-400'}`} />
+            <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'gatekeeper' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
           </button>
 
           {activeDesignSection === 'gatekeeper' && (
@@ -1784,7 +1813,7 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-black capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
+            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
           >
             <ChevronLeft className="w-4 h-4" /> BACK
           </button>
@@ -1792,7 +1821,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button
             onClick={handleNextStep}
             type="button"
-            className="w-48 py-3.5 skeu-btn text-[11px] font-black capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
+            className="w-48 py-3.5 skeu-btn text-[11px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
             <ChevronRight className="w-4 h-4" />

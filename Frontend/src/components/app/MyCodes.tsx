@@ -223,11 +223,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
       {/* Codes Table Header */}
       <div className="min-w-[1000px]">
-<<<<<<< HEAD
-        <div className="grid grid-cols-[220px_1fr_180px_180px_180px] px-8 py-4 gap-6 text-[10px] font-black capitalize  skeu-text-muted opacity-50">
-=======
         <div className="grid grid-cols-[220px_1fr_150px_160px_120px_150px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
->>>>>>> origin/main
           <div>QR Code</div>
           <div>Details</div>
           <div className="text-center">Location</div>
@@ -272,19 +268,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="space-y-0.5">
                     <h3 className="skeu-text-primary text-xl  truncate px-1" style={{ fontWeight: 700 }}>{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
-<<<<<<< HEAD
-                      <span className="text-[12px] font-black capitalize px-2.5 py-1 rounded  text-white shadow-sm" style={{ backgroundColor: '#3eb5a9' }}>{code.category}</span>
-                      <span className="text-[14px] skeu-text-muted truncate shrink-0 max-w-[200px]" style={{ fontWeight: 500 }}>
-                        {(code.shortSlug || (code as any).short_slug)
-                          ? `192.168.1.208:8010/r/${code.shortSlug || (code as any).short_slug}`
-                          : (code.value.startsWith('/') ? `192.168.1.208:8010${code.value}` : code.value)}
-                      </span>
-=======
                       <span className="text-[9px] font-black capitalize skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
                       {code.show_preview === false && (
                         <span className="text-[9px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded tracking-widest shadow-sm">Direct</span>
                       )}
->>>>>>> origin/main
                     </div>
                     <p className="text-[12px] capitalize font-black  skeu-text-muted opacity-50 mt-1">
                       Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
@@ -294,14 +281,6 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   {/* Folder Location */}
                   <div className="flex flex-col items-center">
                     {folder ? (
-<<<<<<< HEAD
-                      <span className="text-[12px] font-black capitalize  skeu-text-muted skeu-tag px-3.5 py-2 rounded-lg flex items-center gap-2 max-w-[140px] truncate bg-white/80">
-                        <FolderIcon className="w-3.5 h-3.5 opacity-50 shrink-0 text-red-500" />
-                        <span className="truncate">{folder.name}</span>
-                      </span>
-                    ) : (
-                      <span className="text-[12px] font-black capitalize  skeu-text-muted opacity-30 italic bg-white/50 px-3.5 py-2 rounded-lg">No Folder</span>
-=======
                       <span className="text-[10px] font-black capitalize tracking-wide text-red-600 bg-red-50 border border-red-100/50 px-4 py-1.5 rounded-full flex items-center gap-2 max-w-[140px] shadow-sm transition-transform group-hover:scale-105">
                         <FolderIcon className="w-3 h-3 shrink-0" />
                         <span className="truncate">{folder.name}</span>
@@ -311,34 +290,9 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                         <Grid3X3 className="w-3 h-3 shrink-0 opacity-40" />
                         <span>General</span>
                       </span>
->>>>>>> origin/main
                     )}
                   </div>
 
-<<<<<<< HEAD
-                    <div className="flex gap-2 w-full justify-center">
-                      <button
-                        onClick={() => {
-                          setDownloadFormat('png');
-                          setDownloadingCode(code);
-                        }}
-                        className="py-1.5 px-3 skeu-btn-secondary text-[11px] font-black capitalize  transition-all flex items-center justify-center gap-1 flex-1 max-w-[80px] "
-                        title="Download PNG" style={{ fontWeight: 600 }}
-                      >
-                        <Download className="w-3.5 h-3.5" /> PNG
-                      </button>
-                      <button
-                        onClick={() => {
-                          setDownloadFormat('svg');
-                          setDownloadingCode(code);
-                        }}
-                        className="py-1.5 px-3 skeu-btn-secondary text-[11px] font-black capitalize  transition-all flex items-center justify-center gap-1 flex-1 max-w-[80px]"
-                        title="Download SVG" style={{ fontWeight: 600 }}
-                      >
-                        <Download className="w-3.5 h-3.5" /> SVG
-                      </button>
-                    </div>
-=======
                   {/* Quick Export */}
                   <div className="flex flex-col gap-2 w-full px-2">
                     <button
@@ -361,7 +315,6 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     >
                       <Download className="w-3 h-3" /> SVG
                     </button>
->>>>>>> origin/main
                   </div>
 
                   {/* Activity */}

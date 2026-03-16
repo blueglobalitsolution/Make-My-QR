@@ -88,47 +88,47 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
     return (
         <div
-            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto overflow-x-hidden relative pt-16 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="h-full flex flex-col bg-[#fcfdff] overflow-hidden relative pt-12 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             style={{ fontFamily: textFont }}
         >
             {/* Background Curve */}
             <div
-                className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[380px] rounded-b-[100%] z-0"
+                className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[320px] rounded-b-[100%] z-0"
                 style={{ backgroundColor: brandColor || '#9b9cf2' }}
             />
             {/* Glow effects */}
             <div className="absolute top-1/2 left-0 w-64 h-64 bg-pink-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[50px] px-5">
+            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 flex-1 min-h-0">
 
                 {/* Header Text */}
-                <div className="text-center space-y-2 mb-6 w-full">
-                    <h3 className="text-[17px] font-medium " style={{ fontFamily: titleFont, color: titleColor }}>
+                <div className="text-center space-y-1 mb-3 w-full">
+                    <h3 className="text-[13px] font-medium " style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.company || "Give Your Company Name"}
                     </h3>
-                    <h1 className="text-[26px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
+                    <h1 className="text-[20px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
-                    <p className="text-[17px] font-medium px-2 leading-snug mt-1 pt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: titleColor }}>
+                    <p className="text-[13px] font-medium px-2 leading-snug mt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: titleColor }}>
                         {businessData?.description || "Learn about how we can help\nwith all your business needs."}
                     </p>
                 </div>
 
                 {/* Card Container */}
-                <div className="w-full bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-6 mt-1 flex-shrink-0">
+                <div className="w-full bg-white rounded-[1.5rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-3 mt-1 flex-1 min-h-0">
 
                     {/* Top Image Part */}
-                    <div className="w-full relative bg-white flex-shrink-0 pt-6 px-6">
-                        <div className="w-full h-[320px] rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
+                    <div className="w-full relative bg-white flex-1 min-h-0 pt-4 px-4">
+                        <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
                             {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
-                                <div className="w-[110%] h-[110%] origin-top-left scale-[0.9] absolute top-0 left-0 overflow-hidden scrollbar-hide">
+                                <div className="absolute inset-0 bg-white overflow-hidden">
                                     <iframe
-                                        src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                                        className="w-full h-full border-none pointer-events-none scrollbar-hide"
+                                        src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
+                                        className="h-full border-none pointer-events-none bg-white"
                                         title="PDF First Page Preview"
                                         scrolling="no"
-                                        style={{ overflow: 'hidden' }}
+                                        style={{ overflow: 'hidden', background: 'white', width: 'calc(100% + 20px)' }}
                                     />
                                 </div>
                             ) : (
@@ -149,7 +149,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                     </div>
 
                     {/* Content Part */}
-                    <div className="p-7 pb-8 flex flex-col items-center justify-center w-full">
+                    <div className="p-4 pb-5 flex flex-col items-center justify-center w-full shrink-0">
                         {/* Button / Lead Capture */}
                         <div className="w-full flex justify-center mt-2">
                             {is_lead_capture && !isAuthorized ? (
@@ -162,7 +162,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                             ) : (
                                 <button
                                     onClick={handleAction}
-                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[14px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[15px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
+                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
                                 >
                                     <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
                                 </button>
