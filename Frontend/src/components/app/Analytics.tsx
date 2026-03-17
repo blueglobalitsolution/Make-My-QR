@@ -150,9 +150,6 @@ export const Analytics: React.FC = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-red-50 rounded-xl">
-                            <BarChart3 className="w-5 h-5 text-red-500" />
-                        </div>
                         <h1 className="skeu-page-title truncate max-w-lg">
                             {selectedCodeId ? (detailData?.name || 'Loading...') : 'Analytics Dashboard'}
                         </h1>
@@ -173,9 +170,9 @@ export const Analytics: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleExport}
-                        className="px-6 py-3 skeu-btn text-[11px] font-black capitalize  shadow-lg flex items-center gap-2 group transition-all"
+                        className="px-6 py-2.5 skeu-btn text-[14px] font-medium capitalize flex items-center gap-2 transition-all"
                     >
-                        <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" /> Export Data
+                        <Download className="w-4 h-4" /> Export Data
                     </button>
                 </div>
             </div>
@@ -184,7 +181,7 @@ export const Analytics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-5 skeu-card bg-white/60 backdrop-blur-md relative z-30">
                 {/* Period Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Period</label>
+                    <label className="text-[14px] font-medium capitalize pl-1" style={{ color: '#444444' }}>Period</label>
                     <div
                         onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -218,7 +215,7 @@ export const Analytics: React.FC = () => {
 
                 {/* Device Filter */}
                 <div className="space-y-2 relative">
-                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Device Type</label>
+                    <label className="text-[14px] font-medium capitalize pl-1" style={{ color: '#444444' }}>Device Type</label>
                     <div
                         onClick={() => setShowDeviceDropdown(!showDeviceDropdown)}
                         className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between cursor-pointer hover:border-red-100 transition-colors"
@@ -249,7 +246,7 @@ export const Analytics: React.FC = () => {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                    <label className="text-[9px] font-black capitalize  text-slate-400 pl-1">Search QR Code</label>
+                    <label className="text-[14px] font-medium capitalize pl-1" style={{ color: '#444444' }}>Search QR Code</label>
                     <div className="px-4 py-3 bg-white border border-slate-100 rounded-xl flex items-center gap-3">
                         <Search className="w-4 h-4 text-slate-400" />
                         <input
@@ -266,7 +263,8 @@ export const Analytics: React.FC = () => {
                     <button
                         onClick={fetchAnalytics}
                         disabled={loading}
-                        className="w-full h-11 bg-slate-900 rounded-xl text-white text-[10px] font-black capitalize  shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                        className="w-full h-11 rounded-xl text-white text-[14px] font-medium capitalize shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                        style={{ backgroundColor: '#3eb5a9' }}
                     >
                         {loading ? 'Processing...' : 'Apply Filters'}
                     </button>
@@ -285,7 +283,7 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-red-50 rounded-xl shadow-sm border border-red-100/50">
                                     <QrCode className="w-5 h-5 text-red-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize ">Selected Codes</p>
+                                <h3 className="text-[14px] font-medium capitalize" style={{ color: '#444444' }}>Selected Codes</h3>
                             </div>
                         </div>
                         <h3 className="text-6xl font-black text-slate-800 font-medium mb-2">{summary.total_qrcodes}</h3>
@@ -300,7 +298,7 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-emerald-50 rounded-xl shadow-sm border border-emerald-100/50">
                                     <Activity className="w-5 h-5 text-emerald-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize ">Period Scans</p>
+                                <h3 className="text-[14px] font-medium capitalize" style={{ color: '#444444' }}>Period Scans</h3>
                             </div>
                         </div>
                         <h3 className="text-6xl font-black text-slate-800 font-medium  mb-2">{summary.total_scans}</h3>
@@ -315,7 +313,7 @@ export const Analytics: React.FC = () => {
                                 <div className="p-2 bg-indigo-50 rounded-xl shadow-sm border border-indigo-100/50">
                                     <Globe2 className="w-5 h-5 text-indigo-500" />
                                 </div>
-                                <p className="text-[11px] font-black text-slate-400 capitalize ">Unique Period Scans</p>
+                                <h3 className="text-[14px] font-medium capitalize" style={{ color: '#444444' }}>Unique Period Scans</h3>
                             </div>
                         </div>
                         <h3 className="text-6xl font-black text-slate-800 font-medium mb-2">{summary.unique_scans}</h3>
@@ -328,7 +326,7 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-purple-50 rounded-lg">
                             <Cpu className="w-4 h-4 text-purple-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize ">OS Distribution</h3>
+                        <h3 className="text-[14px] font-medium capitalize" style={{ color: '#444444' }}>OS Distribution</h3>
                     </div>
                     <div className="space-y-3">
                         {os_stats.length > 0 ? os_stats.slice(0, 3).map((item: any, i: number) => (
@@ -356,7 +354,7 @@ export const Analytics: React.FC = () => {
                         <div className="p-2 bg-orange-50 rounded-lg">
                             <Chrome className="w-4 h-4 text-orange-500" />
                         </div>
-                        <h3 className="text-[11px] font-black text-slate-800 capitalize ">Browsers</h3>
+                        <h3 className="text-[14px] font-medium capitalize" style={{ color: '#444444' }}>Browsers</h3>
                     </div>
                     <div className="space-y-3">
                         {browsers.length > 0 ? browsers.slice(0, 3).map((item: any, i: number) => (
@@ -387,8 +385,8 @@ export const Analytics: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between mb-12 relative z-10">
                         <div>
-                            <h2 className="text-lg font-black text-slate-800 ">QR Code Scan Activities</h2>
-                            <p className="text-[10px] font-bold text-slate-400 capitalize ">Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
+                            <h2 className="text-lg font-medium" style={{ color: '#444444' }}>QR Code Scan Activities</h2>
+                            <p className="text-[10px] capitalize font-medium" style={{ color: '#444444' }}>Daily scan trends for {periods.find(p => p.value === period)?.label || 'selected period'}</p>
                         </div>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">
                             <Calendar className="w-3 h-3 text-slate-400" />
@@ -430,7 +428,7 @@ export const Analytics: React.FC = () => {
                     {/* Top QR Codes */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 capitalize ">Top Performing</h3>
+                            <h3 className="text-lg font-medium capitalize " style={{ color: '#444444' }}>Top Performing</h3>
                         </div>
 
                         <div className="space-y-4">
@@ -465,7 +463,7 @@ export const Analytics: React.FC = () => {
                     {/* Device Distribution */}
                     <div className="skeu-card p-6 bg-white space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-800 capitalize ">Scans by Device</h3>
+                            <h3 className="text-lg font-medium capitalize " style={{ color: '#444444' }}>Scans by Device</h3>
                         </div>
 
                         <div className="space-y-6">
@@ -518,8 +516,8 @@ export const Analytics: React.FC = () => {
                             <Inbox className="w-5 h-5 text-blue-500" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-black text-slate-800 tracking-tight">Captured Leads</h2>
-                            <p className="text-[10px] font-bold text-slate-400 capitalize tracking-widest">
+                            <h2 className="text-lg font-medium tracking-tight" style={{ color: '#444444' }}>Captured Leads</h2>
+                            <p className="text-[10px] capitalize tracking-widest font-medium" style={{ color: '#444444' }}>
                                 {selectedCodeId ? 'People who registered for this specific QR.' : 'Latest visitor registrations across all codes.'}
                             </p>
                         </div>

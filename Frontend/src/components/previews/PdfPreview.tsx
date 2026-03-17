@@ -18,6 +18,7 @@ interface PdfPreviewProps {
     onLeadSubmit: (e: React.FormEvent) => void;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
+    isPreview?: boolean;
 }
 
 export const PdfPreview: React.FC<PdfPreviewProps> = ({
@@ -32,11 +33,13 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     setLeadForm,
     onLeadSubmit,
     viewMode,
-    setViewMode
+    setViewMode,
+    isPreview = false
 }) => {
     const titleFont = businessData?.fontTitle || 'Poppins';
     const textFont = businessData?.fontText || 'Inter';
     const titleColor = businessData?.fontTitleColor || '#ffffff';
+    const textColor = businessData?.fontTextColor || '#ffffff';
 
     if (viewMode === 'preview' && isAuthorized) {
         return (
@@ -75,6 +78,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     }
 
     const handleAction = () => {
+        if (isPreview) return;
+
         if (is_lead_capture && !isAuthorized) {
             return;
         }
@@ -88,7 +93,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
     return (
         <div
-            className="h-full flex flex-col bg-[#fcfdff] overflow-hidden relative pt-12 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto scrollbar-hide relative pt-12 pb-20"
             style={{ fontFamily: textFont }}
         >
             {/* Background Curve */}
@@ -100,7 +105,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
             <div className="absolute top-1/2 left-0 w-64 h-64 bg-pink-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 flex-1 min-h-0">
+            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 pb-12">
 
                 {/* Header Text */}
                 <div className="text-center space-y-1 mb-3 w-full">
@@ -110,16 +115,16 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                     <h1 className="text-[20px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
                         {businessData?.title || name || "Here PDF Title Placement"}
                     </h1>
-                    <p className="text-[13px] font-medium px-2 leading-snug mt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: titleColor }}>
+                    <p className="text-[13px] font-medium px-2 leading-snug mt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: textColor }}>
                         {businessData?.description || "Learn about how we can help\nwith all your business needs."}
                     </p>
                 </div>
 
                 {/* Card Container */}
-                <div className="w-full bg-white rounded-[1.5rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-3 mt-1 flex-1 min-h-0">
+                <div className="w-full bg-white rounded-[1.5rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-3 mt-1">
 
                     {/* Top Image Part */}
-                    <div className="w-full relative bg-white flex-1 min-h-0 pt-4 px-4">
+                    <div className="w-full relative bg-white h-[250px] pt-4 px-4">
                         <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
                             {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
                                 <div className="absolute inset-0 bg-white overflow-hidden">

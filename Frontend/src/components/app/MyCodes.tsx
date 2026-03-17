@@ -168,17 +168,17 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         >
           <button
             onClick={() => setActiveFolderId('all')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
+            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
-            <Grid3X3 className="w-4 h-4" />
+            <Grid3X3 className={`w-4 h-4 transition-colors ${activeFolderId === 'all' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
             <span>All ({history.length})</span>
           </button>
 
           <button
             onClick={() => setActiveFolderId('general')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
+            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
-            <FolderIcon className={`w-4 h-4 ${activeFolderId === 'general' ? 'text-white' : 'text-slate-400/30'}`} />
+            <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === 'general' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
             <span>General ({history.filter(c => !folders.some(f => f.id === c.folderId)).length})</span>
           </button>
 
@@ -186,9 +186,9 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             <div key={folder.id} className="relative group/folder-tab">
               <button
                 onClick={() => setActiveFolderId(folder.id)}
-                className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
+                className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 min-w-[160px] whitespace-nowrap group/folder-tab ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
               >
-                <FolderIcon className={`w-4 h-4 ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/30'}`} />
+                <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
                 <span>{folder.name} ({folder.count || 0})</span>
               </button>
               <button
@@ -196,7 +196,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   e.stopPropagation();
                   deleteFolder(folder.id);
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg opacity-0 group-hover/folder-tab:opacity-100 transition-all hover:bg-black/5 ${activeFolderId === folder.id ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-red-400/50 hover:text-red-500 hover:bg-red-50'}`}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg group-hover/folder-tab:opacity-100 transition-all hover:bg-black/5 ${activeFolderId === folder.id ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-red-400/50 group-hover/folder-tab:text-white/60 hover:!text-white hover:bg-red-50'}`}
                 title="Delete Folder"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins"
+              className="px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins min-w-[120px]"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -242,9 +242,10 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
       {/* Codes Table Header */}
       <div className="min-w-[1000px]">
-        <div className="grid grid-cols-[220px_1fr_150px_160px_120px_150px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
+        <div className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
           <div>QR Code</div>
           <div>Details</div>
+          <div className="text-center">Created</div>
           <div className="text-center">Location</div>
           <div className="text-center">Export</div>
           <div className="text-center">Activity</div>
@@ -268,12 +269,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[220px_1fr_150px_160px_120px_150px] items-center skeu-card px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] items-center skeu-card px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
                     <button
                       onClick={() => setPreviewCode(code)}
-                      className="w-24 h-24 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500 cursor-zoom-in group/thumb"
+                      className="w-20 h-20 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500 cursor-zoom-in group/thumb"
                       title="Click to preview"
                     >
                       <CodeThumbnail code={code} />
@@ -284,42 +285,46 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     </button>
                   </div>
 
-                  <div className="space-y-0.5">
-                    <h3 className="skeu-text-primary text-xl  truncate px-1" style={{ fontWeight: 700 }}>{code.name}</h3>
+                  <div className="space-y-1">
+                    <h3 className="skeu-text-primary text-lg truncate px-1" style={{ fontWeight: 700 }}>{code.name}</h3>
                     <div className="flex items-center gap-2 px-1">
-                      <span className="text-[9px] font-black capitalize skeu-tag-active px-2 py-0.5 rounded tracking-widest">{code.category}</span>
+                      <span className="text-[11px] font-black capitalize bg-[#3eb5a9] text-white px-2.5 py-1 rounded tracking-wider shadow-sm">{code.category}</span>
                       {code.show_preview === false && (
-                        <span className="text-[9px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded tracking-widest shadow-sm">Direct</span>
+                        <span className="text-[11px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1 rounded tracking-wider shadow-sm">Direct</span>
                       )}
                     </div>
-                    <p className="text-[12px] capitalize font-black  skeu-text-muted opacity-50 mt-1">
-                      Created {new Date(code.createdAt).toLocaleDateString('en-GB')}
+                  </div>
+
+                  {/* Created Date Column */}
+                  <div className="text-center">
+                    <p className="text-[15px] font-bold" style={{ color: '#444444' }}>
+                      {new Date(code.createdAt).toLocaleDateString('en-GB')}
                     </p>
                   </div>
 
                   {/* Folder Location */}
                   <div className="flex flex-col items-center">
                     {folder ? (
-                      <span className="text-[10px] font-black capitalize tracking-wide text-red-600 bg-red-50 border border-red-100/50 px-4 py-1.5 rounded-full flex items-center gap-2 max-w-[140px] shadow-sm transition-transform group-hover:scale-105">
-                        <FolderIcon className="w-3 h-3 shrink-0" />
+                      <span className="text-[12px] font-black capitalize tracking-wide text-red-600 bg-red-50 border border-red-100/30 px-5 py-2 rounded-full flex items-center gap-2 max-w-[160px] shadow-sm transition-transform group-hover:scale-105">
+                        <FolderIcon className="w-4 h-4 shrink-0" />
                         <span className="truncate">{folder.name}</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-black capitalize tracking-wide text-slate-400 bg-slate-50 border border-slate-100 px-4 py-1.5 rounded-full flex items-center gap-2 max-w-[140px]">
-                        <Grid3X3 className="w-3 h-3 shrink-0 opacity-40" />
-                        <span>General</span>
+                      <span className="text-[12px] font-black capitalize tracking-wide text-gray-400 bg-gray-50 border border-gray-100/50 px-5 py-2 rounded-full flex items-center gap-2 max-w-[160px] shadow-sm">
+                        <FolderIcon className="w-4 h-4 shrink-0" />
+                        <span>No Folder</span>
                       </span>
                     )}
                   </div>
 
                   {/* Quick Export */}
-                  <div className="flex flex-col gap-2 w-full px-2">
+                  <div className="flex flex-row gap-2 w-full px-2">
                     <button
                       onClick={() => {
                         setDownloadFormat('png');
                         setDownloadingCode(code);
                       }}
-                      className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 w-full"
+                      className="py-1.5 px-3 skeu-btn-secondary text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
                       title="Download PNG"
                     >
                       <Download className="w-3 h-3" /> PNG
@@ -329,7 +334,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                         setDownloadFormat('svg');
                         setDownloadingCode(code);
                       }}
-                      className="py-1.5 px-3 skeu-btn-secondary text-[9px] font-black capitalize tracking-wider transition-all flex items-center justify-center gap-1 w-full"
+                      className="py-1.5 px-3 skeu-btn-secondary text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
                       title="Download SVG"
                     >
                       <Download className="w-3 h-3" /> SVG
@@ -387,7 +392,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
               <div className="space-y-2 text-center">
                 <h2 className="text-3xl font-black skeu-text-primary ">{previewCode.name}</h2>
-                <p className="skeu-text-muted font-medium text-sm tabular-nums ">
+                <p className="font-bold text-sm tabular-nums" style={{ color: '#444444' }}>
                   Created on {new Date(previewCode.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>

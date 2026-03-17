@@ -58,13 +58,13 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   const brandDark = 'text-[#1e293b]';
 
   return (
-    <div className={`py-10 px-4 font-inter text-[#1e293b] antialiased bg-[#f8fafc] w-full min-h-full flex flex-col justify-center`}>
+    <div className={`py-10 px-4 font-inter text-[#1e293b] antialiased bg-[#f0f0f0] w-full min-h-full flex flex-col justify-center`}>
       {/* MainHeader */}
-      <header className="text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-[#1e293b]">
+      <header className="text-center mb-10 space-y-1">
+        <h1 className="skeu-page-title">
           Flexible <span className={brandRed}>Plans</span> & Pricing
         </h1>
-        <p className="text-slate-500 max-w-2xl mx-auto text-[15px] font-medium leading-snug">
+        <p className="skeu-page-subtitle max-w-2xl mx-auto">
           Choose A Professional Plan That Scales With Your Growth. All Plans Include Unlimited Dynamic QR Codes And Scans.
         </p>
       </header>
@@ -110,14 +110,14 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
               </div>
               <p className="text-[10px] text-slate-400 font-bold uppercase">Per Month</p>
             </div>
-            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[14px] font-bold mb-8 border border-red-50`}>
               No Long-Term Commitment
             </div>
             <ul className="space-y-4 mb-8 flex-grow">
               {currentData.starter.features.map((feature, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <div className="bg-red-50 border border-red-100 p-0.5 rounded-full shrink-0">
-                    <Check className={`w-3 h-3 ${brandRed}`} strokeWidth={3} />
+                  <div className="bg-[#3eb5a9] p-0.5 rounded-full shrink-0 shadow-sm shadow-teal-500/10">
+                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
                   </div>
                   <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
                 </li>
@@ -148,13 +148,13 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
               </div>
               <p className="text-[10px] text-slate-400 font-bold uppercase">{currentData.pro.billing}</p>
             </div>
-            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[14px] font-bold mb-8 border border-red-50`}>
               <span>{currentData.pro.discount}</span>
             </div>
             <ul className="space-y-4 mb-8 flex-grow">
               {currentData.pro.features.map((feature, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <div className={`${bgBrandRed} p-0.5 rounded-full shrink-0 shadow-sm shadow-red-200`}>
+                  <div className="bg-[#3eb5a9] p-0.5 rounded-full shrink-0 shadow-sm shadow-teal-100">
                     <Check className="w-3.5 h-3.5 text-white" strokeWidth={3.5} />
                   </div>
                   <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
@@ -179,7 +179,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
               </div>
               <p className="text-[10px] text-slate-400 font-bold uppercase">Per Month</p>
             </div>
-            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[10px] font-bold mb-8 border border-red-50`}>
+            <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[14px] font-bold mb-8 border border-red-50`}>
               Custom Enterprise Suite
             </div>
             <ul className="space-y-4 mb-8 flex-grow">

@@ -23,6 +23,7 @@ export interface GatekeeperProps {
     onLeadSubmit: (e: React.FormEvent) => void;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
+    isPreview?: boolean;
 }
 
 export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
@@ -38,7 +39,8 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     setLeadForm,
     onLeadSubmit,
     viewMode,
-    setViewMode
+    setViewMode,
+    isPreview = false
 }) => {
     switch (category) {
         case 'website':
@@ -52,6 +54,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
+                    isPreview={isPreview}
                 />
             );
 
@@ -67,9 +70,9 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     isFileMode={isFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
-                    onLeadSubmit={onLeadSubmit}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
+                    isPreview={isPreview}
                 />
             );
 

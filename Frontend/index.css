@@ -123,19 +123,19 @@
 
 /* --- Inset / Recessed (Inputs, Wells) --- */
 .skeu-inset {
-  background: linear-gradient(180deg, #fff1f2 0%, #fffafa 100%);
-  border: 1px solid rgba(153, 27, 27, 0.08);
-  border-top: 2px solid rgba(153, 27, 27, 0.12);
+  background: #f0f0f0;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-top: 2px solid rgba(0, 0, 0, 0.08);
   box-shadow:
-    0 2px 4px rgba(153, 27, 27, 0.04) inset,
+    0 2px 4px rgba(0, 0, 0, 0.04) inset,
     0 1px 1px rgba(255, 255, 255, 0.8);
   border-radius: 5px;
 }
 
 .skeu-input {
-  background: linear-gradient(180deg, #fff1f2 0%, #fffafa 100%);
-  border: 1px solid #fee2e2;
-  box-shadow: 0 4px 8px rgba(153, 27, 27, 0.05) inset;
+  background: #f0f0f0;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) inset;
   border-radius: 5px;
   color: #1e293b;
   font-family: 'Lato', sans-serif;
@@ -472,7 +472,7 @@
   font-size: 1rem;
   /* text-base */
   font-weight: 700;
-  color: #94a3b8;
+  color: #444444;
   /* skeu-text-muted */
   font-family: 'Lato', sans-serif;
   text-transform: capitalize;

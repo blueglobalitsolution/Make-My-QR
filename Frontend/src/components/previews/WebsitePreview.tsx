@@ -14,6 +14,7 @@ interface WebsitePreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    isPreview?: boolean;
 }
 
 export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
@@ -24,9 +25,11 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
     isAuthorized,
     leadForm,
     setLeadForm,
-    onLeadSubmit
+    onLeadSubmit,
+    isPreview = false
 }) => {
     const handleAction = () => {
+        if (isPreview) return;
         window.location.href = fullValue;
     };
 

@@ -227,11 +227,11 @@ export const Wizard: React.FC<WizardProps> = ({
                     placeholder="https://www.yourwebsite.com"
                     value={wizard.value}
                     onChange={(e) => setWizard({ ...wizard, value: e.target.value })}
-                    className="w-full pl-20 pr-6 py-4 skeu-input text-sm font-bold placeholder:opacity-20 translate-y-0"
+                    className="w-full pl-20 pr-6 py-3 skeu-input text-sm font-bold placeholder:opacity-20 translate-y-0"
                   />
                 </div>
 
-                <div className="bg-red-50/50 p-6 rounded-2xl border border-red-100/50 flex gap-4 animate-in fade-in duration-700">
+                <div className="bg-[#f0f0f0] p-6 rounded-2xl border border-black/5 flex gap-4 animate-in fade-in duration-700">
                   <Info className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                   <p className="text-[13px] font-medium text-red-600/80 leading-relaxed">
                     Make sure to include <span className="font-black">https://</span> for a secure connection. Your QR code will redirect users instantly when scanned.
@@ -295,7 +295,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     placeholder="Write your message"
                     value={whatsappMessage}
                     onChange={(e) => setWhatsappMessage(e.target.value)}
-                    className="w-full px-5 py-4 skeu-input resize-none text-sm font-bold"
+                    className="w-full px-5 py-3 skeu-input resize-none text-sm font-bold"
                   />
                 </div>
               </div>
@@ -415,7 +415,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="flex items-center gap-8">
                     <div className="flex-1 space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
-                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
@@ -427,7 +427,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </button>
                     <div className="flex-1 space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
-                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
@@ -458,25 +458,25 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Company Name</label>
-                      <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">PDF Title</label>
-                      <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
                   <div className="space-y-4">
                     <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Description</label>
-                    <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
+                    <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Website</label>
-                      <input type="text" placeholder="https://..." value={wizard.business?.buttons?.[0]?.url || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'url', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="https://..." value={wizard.business?.buttons?.[0]?.url || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'url', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Button Name</label>
-                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'text', e.target.value)} className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'text', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
                 </div>
@@ -516,7 +516,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Title Color</label>
-                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTitleColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTitleColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTitleColor', e.target.value)} />
                         </div>
@@ -525,7 +525,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Text Color</label>
-                      <div className="flex items-center gap-4 p-4 bg-slate-50/50 rounded-2xl border-2 border-slate-50">
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
                         <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTextColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTextColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTextColor', e.target.value)} />
                         </div>
@@ -581,7 +581,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="flex items-center gap-6">
                     <div className="flex-1 space-y-3">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
-                      <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
+                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-xl border-2 border-black/5">
                         <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
@@ -593,7 +593,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </button>
                     <div className="flex-1 space-y-3">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
-                      <div className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border-2 border-slate-50">
+                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-xl border-2 border-black/5">
                         <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
@@ -899,7 +899,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Your Social Links</label>
                     <div className="space-y-4">
                       {wizard.business?.socialNetworks?.map((social, idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                        <div key={idx} className="flex items-center gap-3 bg-[#f0f0f0] p-2 rounded-xl border border-black/5">
                           <span className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#dc2626] font-black text-xs capitalize shrink-0">
                             {social.network.slice(0, 2)}
                           </span>
@@ -1120,7 +1120,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="space-y-5">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Brand Color</label>
-                      <div className="flex items-center gap-6 p-2 bg-slate-50/50 rounded-2xl border-2 border-slate-50 transition-all hover:border-[#dc2626]/20 hover:bg-white hover:shadow-lg hover:shadow-red-500/5 group">
+                      <div className="flex items-center gap-6 p-2 bg-[#f0f0f0] rounded-2xl border-2 border-black/5 transition-all hover:border-[#dc2626]/20 hover:bg-white hover:shadow-lg hover:shadow-red-500/5 group">
                         <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input
                             type="color"
@@ -1139,7 +1139,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <select
                             value={wizard.business?.fontTitle}
                             onChange={(e) => updateBusinessField('fontTitle', e.target.value)}
-                            className="w-full pl-8 pr-12 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5"
+                            className="w-full pl-8 pr-12 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5"
                           >
                             {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                           </select>
@@ -1187,7 +1187,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           placeholder="e.g. My Website"
                           value={wizard.business?.title || ''}
                           onChange={(e) => updateBusinessField('title', e.target.value)}
-                          className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
+                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
                         />
                       </div>
                       <div className="space-y-4">
@@ -1197,7 +1197,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           placeholder="e.g. Tech Solutions"
                           value={wizard.business?.company || ''}
                           onChange={(e) => updateBusinessField('company', e.target.value)}
-                          className="w-full px-8 py-5 bg-slate-50/50 border-2 border-slate-50 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
+                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
                         />
                       </div>
                     </div>
@@ -1215,7 +1215,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       </div>
                       <div className="grid grid-cols-1 gap-6">
                         {wizard.business?.buttons.map((link) => (
-                          <div key={link.id} className="group/item flex items-center gap-4 p-5 bg-slate-50/30 border-2 border-slate-50 rounded-2xl hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
+                          <div key={link.id} className="group/item flex items-center gap-4 p-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
                             <div className="flex-1 space-y-5">
                               <input
                                 type="text"
@@ -1224,7 +1224,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                 placeholder="Button Name"
                                 className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-base p-0 focus:ring-0 placeholder:text-slate-200"
                               />
-                              <div className="flex items-center gap-4 group/input bg-white/50 p-4 rounded-xl border border-slate-100/50 focus-within:border-[#dc2626]/30 focus-within:bg-white transition-all shadow-inner">
+                              <div className="flex items-center gap-4 group/input bg-[#f0f0f0]/50 p-4 rounded-xl border border-black/5 focus-within:border-[#dc2626]/30 focus-within:bg-white transition-all shadow-inner">
                                 <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#dc2626] transition-colors" />
                                 <input
                                   type="text"
@@ -1520,41 +1520,58 @@ export const Wizard: React.FC<WizardProps> = ({
           </button>
 
           {activeDesignSection === 'logo' && (
-            <div className="p-5 border-t border-black/5 space-y-5 animate-in slide-in-from-top-4 duration-500 origin-top">
-              <div className="relative group/logo-zone">
-                <div className="border-4 border-dashed border-slate-100 rounded-[3rem] p-16 flex flex-col items-center justify-center gap-8 hover:border-[#3eb5a9] hover:bg-red-50/20 hover:shadow-2xl hover:shadow-[#3eb5a9]/5 transition-all duration-500 cursor-pointer group/item">
-                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleLogoUpload} />
+            <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
+              <div className="relative group">
+                <div className={`border-2 border-solid skeu-dark rounded-[1rem] p-8 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] skeu-mid hover:shadow-2xl transition-all duration-500 group/upload ${!wizard.config.logoUrl ? 'cursor-pointer' : ''}`}>
+                  {!wizard.config.logoUrl && <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/png, image/jpeg" onChange={handleLogoUpload} />}
                   {wizard.config.logoUrl ? (
-                    <div className="relative group/logo-preview animate-in zoom-in duration-500">
-                      <img src={wizard.config.logoUrl} className="w-36 h-36 object-contain shadow-2xl rounded-3xl border-4 border-white transition-transform duration-500 group-hover/logo-preview:scale-105" alt="Logo" />
-                      <div className="absolute inset-0 bg-[#dc2626]/20 rounded-3xl opacity-0 group-hover/logo-preview:opacity-100 transition-opacity flex items-center justify-center z-10 backdrop-blur-[2px]">
-                        <Upload className="w-10 h-10 text-white drop-shadow-lg" />
+                    <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
+                      <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center relative shrink-0 p-2 overflow-hidden">
+                        <img src={wizard.config.logoUrl} className="w-full h-full object-contain" alt="Logo" />
+                      </div>
+                      <div className="text-left min-w-0 flex-1">
+                        <h4 className="font-medium skeu-text-primary text-sm truncate">Center Logo</h4>
+                        <p className="text-xs font-medium text-green-500 mt-0.5 flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5" /> Uploaded successfully
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 ml-auto relative z-20">
+                        <button
+                          type="button"
+                          className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                          title="Delete Logo"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setWizard({ ...wizard, config: { ...wizard.config, logoUrl: undefined } });
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <label
+                          className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                          title="Change Logo"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Upload className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase">Edit</span>
+                          <input type="file" className="hidden" accept="image/png, image/jpeg" onChange={handleLogoUpload} />
+                        </label>
                       </div>
                     </div>
                   ) : (
-                    <>
-                      <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-50/50 group-hover/item:scale-110 group-hover/item:rotate-3 transition-all duration-500">
-                        <div className="w-16 h-16 bg-red-50/60 rounded-full flex items-center justify-center border border-red-100/30">
-                          <span className="text-[11px] font-black text-[#dc2626]/50 capitalize ">LOGO</span>
-                        </div>
+                    <div className="flex items-center gap-5 w-full justify-start">
+                      <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                        <Upload className="w-7 h-7" />
                       </div>
-                      <div className="text-center space-y-2">
-                        <p className="font-black text-[#0F172A] text-xl ">Click or drag logo</p>
-                        <p className="text-sm font-medium text-slate-400">PNG or JPG, maximum 5MB</p>
+                      <div className="text-left">
+                        <p className="font-medium skeu-text-primary text-sm">Drop your logo or browse</p>
+                        <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 5MB</p>
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
-              {wizard.config.logoUrl && (
-                <button
-                  type="button"
-                  onClick={() => setWizard({ ...wizard, config: { ...wizard.config, logoUrl: undefined } })}
-                  className="w-full py-5 bg-red-50 text-red-600 font-black rounded-2xl hover:bg-[#3eb5a9] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg hover:shadow-[#3eb5a9]/20 capitalize text-xs  active:scale-95"
-                >
-                  <Trash2 className="w-5 h-5" /> Remove current logo
-                </button>
-              )}
             </div>
           )}
         </div>
@@ -1606,8 +1623,8 @@ export const Wizard: React.FC<WizardProps> = ({
                 <Lock className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="text-base font-black text-[#0F172A] tracking-tight">Gatekeeper & Settings</h3>
-                <p className="text-[10px] font-medium text-slate-400">Lead capture and redirection settings.</p>
+                <h3 className="text-base font-medium skeu-text-primary ">Gatekeeper & Settings</h3>
+                <p className="text-[10px] font-medium skeu-text-muted">Lead capture and redirection settings.</p>
               </div>
             </div>
             <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'gatekeeper' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
@@ -1765,17 +1782,18 @@ export const Wizard: React.FC<WizardProps> = ({
                             onLeadSubmit={handlePreviewLeadSubmit}
                             viewMode={previewViewMode}
                             setViewMode={setPreviewViewMode as any}
+                            isPreview={true}
                           />
                         </div>
                       ) : (
-                        <div className="h-full flex flex-col items-center justify-center space-y-16 p-10 animate-in zoom-in-95 duration-700">
-                          <div className="relative group p-6 border border-[#E0EAF2] rounded-[3.5rem] bg-transparent shadow-2xl shadow-[#dc2626]/5 transition-transform duration-500 hover:scale-[1.02]">
-                            <div className="bg-white p-4 rounded-[3rem] shadow-inner border border-white">
+                        <div className="h-full flex flex-col items-center justify-center space-y-16 px-12 py-10 animate-in zoom-in-95 duration-700">
+                          <div className="relative animate-in zoom-in-95 duration-700">
+                            <div className="bg-white p-6 rounded-[3rem] shadow-2xl border border-white/50">
                               <QRFrameWrapper frame={wizard.config.frame}>
                                 <div className="relative">
                                   <StyledQRCode
                                     options={qrStylingOptions}
-                                    size={200}
+                                    size={180}
                                   />
                                 </div>
                               </QRFrameWrapper>
@@ -1813,7 +1831,7 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="w-48 py-3.5 skeu-btn-secondary text-[11px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
+            className="w-48 py-3.5 skeu-btn-secondary text-[14px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
           >
             <ChevronLeft className="w-4 h-4" /> BACK
           </button>
@@ -1821,7 +1839,7 @@ export const Wizard: React.FC<WizardProps> = ({
           <button
             onClick={handleNextStep}
             type="button"
-            className="w-48 py-3.5 skeu-btn text-[11px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
+            className="w-48 py-3.5 skeu-btn text-[14px] font-medium capitalize  flex items-center justify-center gap-2 rounded-xl active:scale-95 transition-all shadow-lg"
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
             <ChevronRight className="w-4 h-4" />
