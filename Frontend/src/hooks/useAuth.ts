@@ -59,7 +59,10 @@ export interface UseAuthReturn {
   setAccConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): UseAuthReturn => {
+export const useAuth = (
+  setView: React.Dispatch<React.SetStateAction<any>>,
+  showAlert?: (title: string, message: string, type?: 'danger' | 'info') => void
+): UseAuthReturn => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [loginEmail, setLoginEmail] = useState('');
@@ -88,6 +91,14 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
   const [accPassword, setAccPassword] = useState('');
   const [accConfirmPassword, setAccConfirmPassword] = useState('');
 
+  const triggerAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
+    if (showAlert) {
+      showAlert(title, message, type);
+    } else {
+      alert(`${title}: ${message}`);
+    }
+  };
+
   useEffect(() => {
     if (currentUser) {
       setAccFirstName(currentUser.firstName || currentUser.name?.split(' ')[0] || '');
@@ -103,7 +114,7 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
         setResetTimer((prev) => prev - 1);
       }, 1000);
     } else if (resetTimer === 0 && resetStep === 2) {
-      alert("OTP expired. Please request a new one.");
+      triggerAlert("OTP Expired", "Please request a new one.", "danger");
       setResetStep(1);
     }
     return () => clearInterval(interval);
@@ -135,8 +146,9 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
       } else {
         setView('my_codes');
       }
-    } catch (err) {
-      alert("Login failed. Please check your credentials.");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || err.response?.data?.non_field_errors?.[0] || "Login failed. Please check your credentials.";
+      triggerAlert("Login Failed", errorMsg, "danger");
     }
   };
 
@@ -149,7 +161,7 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (regPassword !== regConfirmPassword) {
-      alert("Passwords don't match!");
+      triggerAlert("Validation Error", "Passwords don't match!", "danger");
       return;
     }
     try {
@@ -169,8 +181,27 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
       setCurrentUser(user);
       localStorage.setItem('makemyqr_user', JSON.stringify(user));
       setView('my_codes');
-    } catch (err) {
-      alert("Registration failed. Please try again.");
+    } catch (err: any) {
+      const data = err.response?.data;
+      let errorMsg = "Registration failed. Please try again.";
+      
+      if (typeof data === 'string') {
+        errorMsg = data;
+      } else if (data) {
+        if (data.error) errorMsg = data.error;
+        else if (data.message) errorMsg = data.message;
+        else if (data.non_field_errors?.[0]) errorMsg = data.non_field_errors[0];
+        else {
+          // Try to get the first field-specific error
+          const fields = Object.keys(data);
+          if (fields.length > 0) {
+            const firstField = fields[0];
+            const fieldError = Array.isArray(data[firstField]) ? data[firstField][0] : data[firstField];
+            errorMsg = `${firstField}: ${fieldError}`;
+          }
+        }
+      }
+      triggerAlert("Registration Failed", errorMsg, "danger");
     }
   };
 
@@ -178,9 +209,9 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
     e.preventDefault();
     try {
       await updateProfile({
-        first_name: accFirstName,
-        last_name: accLastName,
-        email: accEmail
+          first_name: accFirstName,
+          last_name: accLastName,
+          email: accEmail
       });
       if (currentUser) {
         const updatedUser = {
@@ -193,25 +224,27 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
         setCurrentUser(updatedUser);
         localStorage.setItem('makemyqr_user', JSON.stringify(updatedUser));
       }
-      alert("Profile updated successfully!");
-    } catch (err) {
-      alert("Failed to update profile. Please try again.");
+      triggerAlert("Success", "Profile updated successfully!", "info");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to update profile. Please try again.";
+      triggerAlert("Error", errorMsg, "danger");
     }
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (accPassword !== accConfirmPassword) {
-      alert("Passwords don't match!");
+      triggerAlert("Validation Error", "Passwords don't match!", "danger");
       return;
     }
     try {
       await changePassword(accPassword);
       setAccPassword('');
       setAccConfirmPassword('');
-      alert("Password changed successfully!");
-    } catch (err) {
-      alert("Failed to change password. Please try again.");
+      triggerAlert("Success", "Password changed successfully!", "info");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to change password. Please try again.";
+      triggerAlert("Error", errorMsg, "danger");
     }
   };
 
@@ -222,7 +255,8 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
       setResetStep(2);
       setResetTimer(180);
     } catch (err: any) {
-      alert(err.response?.data?.error || "Failed to request password reset.");
+      const errorMsg = err.response?.data?.error || "Failed to request password reset.";
+      triggerAlert("Reset Failed", errorMsg, "danger");
     }
   };
 
@@ -233,7 +267,8 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
       setResetStep(3);
       setResetTimer(0);
     } catch (err: any) {
-      alert(err.response?.data?.error || "Invalid or expired OTP.");
+      const errorMsg = err.response?.data?.error || "Invalid or expired OTP.";
+      triggerAlert("Verification Failed", errorMsg, "danger");
     }
   };
 
@@ -241,14 +276,15 @@ export const useAuth = (setView: React.Dispatch<React.SetStateAction<any>>): Use
     e.preventDefault();
     try {
       await confirmPasswordReset(resetEmail, newPasswordReset);
-      alert("Password reset successfully! Please login with your new password.");
+      triggerAlert("Success", "Password reset successfully! Please login with your new password.", "info");
       setView('auth');
       setResetStep(1);
       setResetEmail('');
       setResetOTP('');
       setNewPasswordReset('');
     } catch (err: any) {
-      alert(err.response?.data?.error || "Failed to reset password.");
+      const errorMsg = err.response?.data?.error || "Failed to reset password.";
+      triggerAlert("Reset Failed", errorMsg, "danger");
     }
   };
 

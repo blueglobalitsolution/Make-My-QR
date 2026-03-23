@@ -80,23 +80,6 @@ const App: React.FC = () => {
 
   const [viewData, setViewData] = useState<any>(null);
 
-  const auth = useAuth((v: ViewState) => setView(v));
-
-  const handleSetView = (v: ViewState, data?: any) => {
-    setView(v);
-    if (data) setViewData(data);
-  };
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [history, setHistory] = useState<GeneratedCode[]>([]);
-  const [folders, setFolders] = useState<Folder[]>([
-    { id: 'f1', name: 'Marketing Campaigns', count: 0, createdAt: new Date().toISOString() },
-    { id: 'f2', name: 'Social Media', count: 0, createdAt: new Date().toISOString() },
-  ]);
-  const [activeFolderId, setActiveFolderId] = useState<string | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
-  const [newFolderName, setNewFolderName] = useState('');
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -135,6 +118,26 @@ const App: React.FC = () => {
       onConfirm,
     });
   };
+
+  const auth = useAuth((v: ViewState) => setView(v), showAlert);
+
+
+  const handleSetView = (v: ViewState, data?: any) => {
+    setView(v);
+    if (data) setViewData(data);
+  };
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [history, setHistory] = useState<GeneratedCode[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([
+    { id: 'f1', name: 'Marketing Campaigns', count: 0, createdAt: new Date().toISOString() },
+    { id: 'f2', name: 'Social Media', count: 0, createdAt: new Date().toISOString() },
+  ]);
+  const [activeFolderId, setActiveFolderId] = useState<string | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert);
