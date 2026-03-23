@@ -791,13 +791,6 @@ export const Wizard: React.FC<WizardProps> = ({
               </button>
               {activeDesignSection === 'location' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Search Address</label>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input type="text" placeholder="Search a location..." className="w-full pl-11 pr-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
-                    </div>
-                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3 md:col-span-2">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Address</label>
@@ -1058,12 +1051,12 @@ export const Wizard: React.FC<WizardProps> = ({
                             }
                             updateBusinessField('facilities', newArr);
                           }}
-                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item cursor-pointer ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'skeu-input !border-transparent hover:!bg-white hover:!border-slate-300 hover:shadow-md'}`}
                         >
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#dc2626] text-white shadow-sm' : 'bg-slate-50 text-slate-400 group-hover/item:bg-slate-100 group-hover/item:text-[#dc2626]'}`}>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#dc2626] text-white shadow-sm' : 'bg-white text-slate-400 border border-black/5 group-hover/item:text-[#dc2626]'}`}>
                             {fac.icon}
                           </div>
-                          <span className="text-[10px] font-black text-center">{fac.label}</span>
+                          <span className="text-xs font-black text-center">{fac.label}</span>
                         </button>
                       );
                     })}
@@ -1090,15 +1083,71 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Splash Image</label>
-                    <div className="w-full h-32 border-2 border-dashed border-[#dc2626]/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
-                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const url = URL.createObjectURL(e.target.files[0]);
-                          updateBusinessField('welcomeScreenImage', url);
-                        }
-                      }} />
-                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
-                      <span className="text-xs font-bold text-[#dc2626] opacity-70 group-hover/img:opacity-100">Click or drag image here</span>
+                    <div className="relative group">
+                      <div className={`border-2 border-solid skeu-dark rounded-[1rem] p-8 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] skeu-mid hover:shadow-2xl transition-all duration-500 group/upload ${!wizard.business?.welcomeScreenImage ? 'cursor-pointer' : ''}`}>
+                        {!wizard.business?.welcomeScreenImage && (
+                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const url = URL.createObjectURL(e.target.files[0]);
+                              updateBusinessField('welcomeScreenImage', url);
+                            }
+                          }} />
+                        )}
+                        {wizard.business?.welcomeScreenImage ? (
+                          <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
+                            <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center relative shrink-0 p-2 overflow-hidden">
+                              <img src={wizard.business.welcomeScreenImage} className="w-full h-full object-cover" alt="Splash Screen" />
+                            </div>
+                            <div className="text-left min-w-0 flex-1">
+                              <h4 className="font-medium skeu-text-primary text-sm truncate">Splash Image</h4>
+                              <p className="text-xs font-medium text-green-500 mt-0.5 flex items-center gap-1.5">
+                                <Check className="w-3.5 h-3.5" /> Uploaded successfully
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-auto relative z-20">
+                              <button
+                                type="button"
+                                className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#dc2626] hover:bg-[#dc2626]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                                title="Delete Image"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  updateBusinessField('welcomeScreenImage', undefined);
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              <label
+                                className="p-2.5 bg-[#dc2626] text-white hover:bg-slate-800 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                                title="Change Image"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Upload className="w-4 h-4" />
+                                <span className="text-[10px] font-black uppercase">Edit</span>
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    const url = URL.createObjectURL(e.target.files[0]);
+                                    updateBusinessField('welcomeScreenImage', url);
+                                  }
+                                }} />
+                              </label>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-5 w-full justify-start">
+                            <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#dc2626] group-hover/upload:to-[#b91c1c] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                              <ImageIcon className="w-7 h-7" />
+                            </div>
+                            <div className="text-left">
+                              <p className="font-medium skeu-text-primary text-sm">Drop splash image or browse</p>
+                              <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 5MB</p>
+                            </div>
+                            <div className="ml-auto flex items-center gap-2">
+                              <span className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold skeu-text-muted group-hover/upload:bg-slate-50 transition-colors shadow-sm cursor-pointer relative z-20">Browse Files</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1333,6 +1382,59 @@ export const Wizard: React.FC<WizardProps> = ({
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {folders.map(folder => (
+                    <button
+                      key={folder.id}
+                      type="button"
+                      onClick={() => setWizard({ ...wizard, folderId: folder.id })}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder cursor-pointer ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'skeu-input !border-transparent hover:!bg-white hover:!border-slate-200 hover:shadow-md hover:shadow-slate-200/50'}`}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-white text-slate-300 border border-black/5 group-hover/folder:text-[#dc2626]'}`}>
+                          <FolderIcon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className={`font-black  truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
+                          <p className="text-[8px] font-black text-slate-400 capitalize  mt-0.5">{folder.count} codes</p>
+                        </div>
+                      </div>
+                      {wizard.folderId === folder.id && (
+                        <div className="absolute top-4 right-4 bg-[#dc2626] text-white p-0.5 rounded-full shadow-lg animate-in zoom-in duration-300">
+                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {isCreatingFolder && (
+                  <div className="mt-6 flex items-center gap-4 p-6 bg-red-50/50 rounded-3xl border border-red-100 animate-in slide-in-from-top-2">
+                    <input
+                      type="text"
+                      placeholder="Folder name..."
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      className="flex-1 px-5 py-3 rounded-xl border border-red-100 outline-none focus:ring-2 focus:ring-[#dc2626] font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={createNewFolder}
+                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#3eb5a9]"
+                    >
+                      Create
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setIsCreatingFolder(false); setNewFolderName(''); }}
+                      className="p-3 text-slate-400 hover:text-slate-600"
+                    >
+                      <Plus className="w-5 h-5 rotate-45" />
+                    </button>
+>>>>>>> origin/main
+                  </div>
+                </div>
+
                 {/* Show Preview Toggle */}
                 <div className="flex items-center gap-5 p-6 bg-white rounded-2xl border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
                   <button
@@ -1387,8 +1489,64 @@ export const Wizard: React.FC<WizardProps> = ({
                 >
                   <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125'}`}>{style.icon}</div>
                   <span className={`text-[9px] font-black capitalize mt-4  ${wizard.config.frame === style.id ? 'skeu-text-accent' : 'skeu-text-muted opacity-50'}`}>{style.label}</span>
-                </button>
-              ))}
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {folders.map(folder => (
+                    <button
+                      key={folder.id}
+                      type="button"
+                      onClick={() => setWizard({ ...wizard, folderId: folder.id })}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#dc2626] border border-transparent group-hover/folder:border-slate-100'}`}>
+                          <FolderIcon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className={`font-black  truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
+                          <p className="text-[8px] font-black text-slate-400 capitalize  mt-0.5">{folder.count} codes</p>
+                        </div>
+                      </div>
+                      {wizard.folderId === folder.id && (
+                        <div className="absolute top-4 right-4 bg-[#dc2626] text-white p-0.5 rounded-full shadow-lg animate-in zoom-in duration-300">
+                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {isCreatingFolder && (
+                  <div className="mt-6 flex items-center gap-4 p-6 bg-red-50/50 rounded-3xl border border-red-100 animate-in slide-in-from-top-2">
+                    <input
+                      type="text"
+                      placeholder="Folder name..."
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      className="flex-1 px-5 py-3 rounded-xl border border-red-100 outline-none focus:ring-2 focus:ring-[#dc2626] font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={createNewFolder}
+                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#3eb5a9]"
+                    >
+                      Create
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setIsCreatingFolder(false); setNewFolderName(''); }}
+                      className="p-3 text-slate-400 hover:text-slate-600"
+                    >
+                      <Plus className="w-5 h-5 rotate-45" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+              </div>
             </div>
           )}
         </div>
@@ -1651,58 +1809,6 @@ export const Wizard: React.FC<WizardProps> = ({
                     <Plus className="w-3.5 h-3.5" /> Create New
                   </button>
                 </div>
-
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  {folders.map(folder => (
-                    <button
-                      key={folder.id}
-                      type="button"
-                      onClick={() => setWizard({ ...wizard, folderId: folder.id })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
-                    >
-                      <div className="flex flex-col gap-2">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#dc2626] border border-transparent group-hover/folder:border-slate-100'}`}>
-                          <FolderIcon className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className={`font-black  truncate text-sm ${wizard.folderId === folder.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{folder.name}</p>
-                          <p className="text-[8px] font-black text-slate-400 capitalize  mt-0.5">{folder.count} codes</p>
-                        </div>
-                      </div>
-                      {wizard.folderId === folder.id && (
-                        <div className="absolute top-4 right-4 bg-[#dc2626] text-white p-0.5 rounded-full shadow-lg animate-in zoom-in duration-300">
-                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                {isCreatingFolder && (
-                  <div className="mt-6 flex items-center gap-4 p-6 bg-red-50/50 rounded-3xl border border-red-100 animate-in slide-in-from-top-2">
-                    <input
-                      type="text"
-                      placeholder="Folder name..."
-                      value={newFolderName}
-                      onChange={(e) => setNewFolderName(e.target.value)}
-                      className="flex-1 px-5 py-3 rounded-xl border border-red-100 outline-none focus:ring-2 focus:ring-[#dc2626] font-bold"
-                    />
-                    <button
-                      type="button"
-                      onClick={createNewFolder}
-                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#3eb5a9]"
-                    >
-                      Create
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setIsCreatingFolder(false); setNewFolderName(''); }}
-                      className="p-3 text-slate-400 hover:text-slate-600"
-                    >
-                      <Plus className="w-5 h-5 rotate-45" />
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -1713,224 +1819,11 @@ export const Wizard: React.FC<WizardProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <FontLoader fonts={[wizard.business?.fontTitle, wizard.business?.fontText]} />
-      {/* Header with Stepper */}
-      <header className="bg-white/80 backdrop-blur-md lg:bg-white border-b border-slate-100 py-4 lg:py-6 sticky top-0 z-30 shadow-sm shrink-0 px-4 md:px-12">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-center w-full">
-          {renderStepper({ step: wizard.step })}
-          <div className="lg:hidden flex items-center justify-between w-full px-4">
-            <div className="w-20 flex items-center">
-              <button 
-                onClick={handleBackStep}
-                className="flex items-center gap-1 -ml-2 text-slate-400 active:scale-95 transition-all"
-              >
-                <ChevronLeft className="w-6 h-6" strokeWidth={3} />
-                <span className="text-[11px] font-black tracking-tighter">BACK</span>
-              </button>
-            </div>
-            <div className="flex-1 flex justify-center">
-              <img src="/src/assets/logo-full.png" alt="Logo" className="h-8 object-contain" />
-            </div>
-            <div className="w-20" /> {/* Right Spacer for centering */}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content Area - Split Pane Layout */}
-      <div className="flex-1 overflow-hidden relative px-0 lg:px-12 bg-[#F8FAFC]">
-        <div className="max-w-[1600px] mx-auto h-full px-4 lg:px-0">
-          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 lg:gap-16 h-full items-stretch">
-
-            {/* Phone Preview Section - Priority 1 on mobile */}
-            <div className={`lg:col-span-4 order-1 lg:order-2 flex flex-col items-center justify-center py-4 lg:py-6 shrink transition-all duration-300 ${wizard.step === 1 ? 'flex-1' : 'h-auto'}`}>
-              {/* Preview Toggle Pill - Hidden on mobile, visible on desktop */}
-              <div className="w-full hidden lg:flex justify-center mb-4 shrink-0 px-4">
-                <div className="bg-white border border-slate-100 p-1.5 rounded-2xl flex items-center shadow-sm relative w-full max-w-[220px]">
-                  <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#dc2626] rounded-xl shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
-
-                  <button
-                    onClick={() => setPhonePreviewMode('ui')}
-                    className={`flex-1 py-1.5 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400'}`}
-                  >
-                    UI Preview
-                  </button>
-                  <button
-                    onClick={() => setPhonePreviewMode('qr')}
-                    className={`flex-1 py-1.5 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400'}`}
-                  >
-                    QR Code
-                  </button>
-                </div>
-              </div>
-
-              {/* PREVIEW AREA (Isolated Mobile/Desktop Architecture) */}
-              
-              {/* PC & Tablet View (lg and up) - Decreased Fixed Mockup */}
-              <div className="hidden lg:flex flex-1 flex-col items-center justify-center w-full relative group transition-all duration-700">
-                <div className="w-[280px] h-[600px] relative skeu-phone p-[10px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.85] xl:scale-[0.9] pointer-events-auto">
-                  
-                  {/* Inner Screen Area */}
-                  <div className={`flex-1 rounded-[2.5rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
-                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
-                    }`} style={{
-                      backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
-                        ? (wizard.business?.primaryColor || '#dc2626')
-                        : undefined
-                    }}>
-                    
-                    {/* PC Status Bar & Notch - Resized for Compact Mockup */}
-                    <div className="absolute top-0 left-0 right-0 h-14 z-[60] pointer-events-none flex flex-col items-center">
-                       <div className="skeu-phone-notch mt-2 scale-[0.75]" />
-                       <div className="absolute inset-0 flex items-center justify-between px-9 pt-1">
-                          <span className="text-[11px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
-                          <div className="flex items-center gap-1.5 opacity-80">
-                             <Wifi className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                             <Clock className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className="flex-1 overflow-hidden relative">
-                      {phonePreviewMode === 'ui' ? (
-                        <div className="h-full flex flex-col animate-in fade-in duration-500">
-                          <GatekeeperPreview
-                            category={hoveredType || wizard.type}
-                            name={wizard.name}
-                            brandColor={wizard.business?.primaryColor || '#dc2626'}
-                            fullValue={pdfUrl || getQRValue()}
-                            businessData={wizard.business}
-                            is_lead_capture={wizard.is_lead_capture}
-                            isAuthorized={previewIsAuthorized}
-                            isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
-                            isFileMode={wizard.type === 'pdf'}
-                            leadForm={leadForm}
-                            setLeadForm={setLeadForm as any}
-                            onLeadSubmit={handlePreviewLeadSubmit}
-                            onPasswordSubmit={handlePreviewPasswordSubmit}
-                            viewMode={previewViewMode}
-                            setViewMode={setPreviewViewMode as any}
-                            isPreview={true}
-                          />
-                        </div>
-                      ) : (
-                        <div className="h-full flex flex-col items-center justify-center space-y-12 p-8 animate-in zoom-in-95 duration-700">
-                          <div className="relative group p-4 border border-[#E0EAF2] rounded-[3rem] bg-transparent shadow-xl transition-transform duration-500 hover:scale-[1.02]">
-                            <div className="bg-white p-3 rounded-[2.5rem] shadow-inner border border-white">
-                              <QRFrameWrapper frame={wizard.config.frame}>
-                                <div className="relative">
-                                  <StyledQRCode options={qrStylingOptions} size={180} />
-                                </div>
-                              </QRFrameWrapper>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Phone View (below lg) - Resized Compact Adaptive Mockup */}
-              <div className="lg:hidden flex-1 flex flex-col items-center justify-center w-full px-4 py-4 relative group transition-all duration-700 h-[500px] overflow-hidden">
-                <div className="w-full max-w-[260px] h-[500px] relative skeu-phone p-[8px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.8] pointer-events-auto">
-                  
-                  {/* Inner Screen Area */}
-                  <div className={`flex-1 rounded-[2.2rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
-                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
-                    }`} style={{
-                      backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
-                        ? (wizard.business?.primaryColor || '#dc2626')
-                        : undefined
-                    }}>
-                    
-                    {/* Mobile Status Bar & Notch - Ultra Compact */}
-                    <div className="absolute top-0 left-0 right-0 h-10 z-[60] pointer-events-none flex flex-col items-center">
-                       <div className="skeu-phone-notch mt-1.5 scale-[0.6]" />
-                       <div className="absolute inset-0 flex items-center justify-between px-7 pt-1">
-                          <span className="text-[9px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
-                          <div className="flex items-center gap-1 opacity-60">
-                             <Wifi className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                             <Clock className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className="flex-1 overflow-hidden relative">
-                        <div className="h-full flex flex-col animate-in fade-in duration-500">
-                          <GatekeeperPreview
-                            category={hoveredType || wizard.type}
-                            name={wizard.name}
-                            brandColor={wizard.business?.primaryColor || '#dc2626'}
-                            fullValue={pdfUrl || getQRValue()}
-                            businessData={wizard.business}
-                            is_lead_capture={wizard.is_lead_capture}
-                            isAuthorized={previewIsAuthorized}
-                            isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
-                            isFileMode={wizard.type === 'pdf'}
-                            leadForm={leadForm}
-                            setLeadForm={setLeadForm as any}
-                            onLeadSubmit={handlePreviewLeadSubmit}
-                            onPasswordSubmit={handlePreviewPasswordSubmit}
-                            viewMode={previewViewMode}
-                            setViewMode={setPreviewViewMode as any}
-                            isPreview={true}
-                          />
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Live Preview Label - Hidden on mobile, visible on desktop */}
-              <div className="mt-2 text-center shrink-0 hidden lg:block">
-                <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase flex items-center justify-center gap-2">
-                  Live Preview: <span className="text-[#dc2626] font-black">{selectedTypeConfig.name}</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Content/Selection Section - Priority 2 on mobile */}
-            <div className={`lg:col-span-8 order-2 lg:order-1 transition-all duration-300 ${wizard.step === 1 ? 'h-auto shrink-0 z-50 mb-6 pb-32 lg:mb-0 lg:pb-0 mt-[-2rem] lg:mt-0' : 'flex-1 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48'}`}>
-              {wizard.step === 1 ? (
-                renderStep1TypeSelection()
-              ) : wizard.step === 2 ? (
-                <div className="space-y-12 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48">
-                  {renderStep2Content()}
-                </div>
-              ) : (
-                <div className="space-y-12 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48">
-                  {renderStep3Style()}
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#fafafa]">
+      <div className="max-w-[1920px] mx-auto flex">
+        <Sidebar />
+        <MainContent />
       </div>
-
-      {/* Footer Navigation - Refactored to be part of flow */}
-      <footer className={`${wizard.step === 1 ? 'hidden lg:block' : 'block'} skeu-toolbar border-t border-slate-100 py-6 z-[60] shrink-0 bg-white px-4 md:px-12 mt-auto`}>
-        <div className="max-w-[1600px] mx-auto flex justify-between items-center w-full">
-          <button
-            onClick={handleBackStep}
-            disabled={wizard.step === 1}
-            type="button"
-            className="hidden lg:flex sm:w-48 py-3.5 skeu-btn-secondary text-[11px] font-medium capitalize items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
-          >
-            <ChevronLeft className="w-4 h-4" /> BACK
-          </button>
-
-          <button
-            onClick={handleNextStep}
-            type="button"
-            className={`${wizard.step === 1 ? 'hidden lg:flex' : 'flex'} w-full lg:w-48 py-4 lg:py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-2xl lg:rounded-xl active:scale-95 transition-all shadow-lg ml-0`}
-          >
-            {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </footer>
     </div>
   );
 };

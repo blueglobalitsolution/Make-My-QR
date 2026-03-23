@@ -26,6 +26,7 @@ export interface GatekeeperProps {
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
+    activeSection?: string | null;
 }
 
 export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
@@ -44,7 +45,8 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     onPasswordSubmit,
     viewMode,
     setViewMode,
-    isPreview = false
+    isPreview = false,
+    activeSection
 }) => {
     switch (category) {
         case 'website':
@@ -111,6 +113,8 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     isPasswordVerified={isPasswordVerified}
                     onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
+                    isPreview={isPreview}
+                    activeSection={activeSection}
                 />
             );
 

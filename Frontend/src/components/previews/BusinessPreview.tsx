@@ -19,6 +19,8 @@ interface BusinessPreviewProps {
     isPasswordVerified?: boolean;
     viewMode?: 'landing' | 'preview';
     setViewMode?: (mode: 'landing' | 'preview') => void;
+    isPreview?: boolean;
+    activeSection?: string | null;
 }
 
 export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
@@ -33,7 +35,9 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     onPasswordSubmit,
     isPasswordVerified = true,
     viewMode,
-    setViewMode
+    setViewMode,
+    isPreview,
+    activeSection
 }) => {
     const primaryColor = businessData?.primaryColor || brandColor || '#6366f1';
     const titleFont = businessData?.fontTitle || 'Poppins';
@@ -41,6 +45,33 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     const titleColor = businessData?.fontTitleColor || '#ffffff';
     const textColor = businessData?.fontTextColor || '#ffffff';
     const heroImg = businessData?.images?.[0] || businessData?.welcomeScreenImage;
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (activeSection && scrollContainerRef.current) {
+            // Map Wizard section IDs to Preview element IDs
+            const sectionMap: Record<string, string> = {
+                'about': 'aboutCompany',
+                'hours': 'openingHours',
+                'welcomeScreen': 'business_design',
+                'location': 'location',
+                'facilities': 'facilities',
+                'contactInfo': 'contactInfo',
+                'social': 'social'
+            };
+            
+            const targetId = sectionMap[activeSection] || activeSection;
+            const el = document.getElementById(`section-${targetId}`);
+            
+            if (el) {
+                const container = scrollContainerRef.current;
+                // Get the total offset relative to the scroll container's content
+                const totalOffset = el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+                // Scroll with a small buffer
+                container.scrollTo({ top: Math.max(0, totalOffset - 20), behavior: 'smooth' });
+            }
+        }
+    }, [activeSection]);
 
     const getSocialIcon = (network: string) => {
         const n = (network || '').toLowerCase();
@@ -56,12 +87,12 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] flex justify-center overflow-y-auto scrollbar-hide">
+        <div className={`bg-[#f8fafc] flex justify-center scrollbar-hide ${isPreview ? 'h-full' : 'min-h-screen'}`}>
             {/* Main constrained container for desktop/mobile look */}
-            <div className="w-full max-w-[420px] bg-white min-h-screen flex flex-col relative sm:shadow-2xl sm:border sm:border-slate-100 overflow-y-auto scrollbar-hide">
+            <div ref={scrollContainerRef} className={`w-full max-w-[420px] bg-white flex flex-col relative sm:shadow-2xl sm:border sm:border-slate-100 overflow-y-auto scrollbar-hide ${isPreview ? 'h-full' : 'min-h-screen'}`}>
 
                 {/* ── TOP CURVED SECTION ───────────────────────── */}
-                <div className="relative w-full flex-shrink-0">
+                <div className="relative w-full flex-shrink-0" id="section-business_design">
                     {viewMode === 'preview' && setViewMode && (
                         <button
                             onClick={() => setViewMode('landing')}
@@ -156,10 +187,10 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                 </div>
 
                 {/* ── SCROLLABLE CONTENT ─────────────────────────── */}
-                <div className="flex-1 px-3 pt-36 pb-6 space-y-3">
+                <div className="flex-1 px-3 pt-36 pb-6 space-y-3 relative w-full scrollbar-hide">
 
                     {/* Opening Hours */}
-                    <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2" id="section-openingHours">
                         <div className="flex items-center gap-2 mb-1">
                             <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                 <Clock className="w-3.5 h-3.5 text-white" />
@@ -192,7 +223,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
 
                     {/* About Company */}
                     {businessData?.aboutCompany && (
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                        <div className="bg-white rounded-2xl p-4 shadow-sm" id="section-aboutCompany">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <Info className="w-3.5 h-3.5 text-white" />
@@ -205,7 +236,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
 
                     {/* Services / Facilities */}
                     {(businessData?.facilities?.length > 0) && (
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                        <div className="bg-white rounded-2xl p-4 shadow-sm" id="section-facilities">
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <User className="w-3.5 h-3.5 text-white" />
@@ -214,7 +245,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {businessData.facilities.map((item: string, idx: number) => (
-                                    <span key={idx} className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[10px] font-bold rounded-full border border-slate-100">
+                                    <span key={idx} className="px-3 py-1.5 bg-slate-50 text-slate-600 text-[11.5px] font-bold rounded-full border border-slate-100">
                                         {item}
                                     </span>
                                 ))}
@@ -223,21 +254,32 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                     )}
 
                     {/* Address */}
-                    {(businessData?.location?.address || businessData?.location?.searchAddress) && (
-                        <div className="bg-white rounded-2xl p-4 shadow-sm flex items-start gap-3">
-                            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                            <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase  mb-0.5">Address</p>
-                                <p className="text-[11px] font-bold text-slate-700 leading-snug">
-                                    {businessData.location.address || businessData.location.searchAddress}
-                                </p>
+                    {(businessData?.location?.address || businessData?.location?.city || businessData?.location?.zipCode || businessData?.location?.state || businessData?.location?.country) && (
+                        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2" id="section-location">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                                    <MapPin className="w-3.5 h-3.5 text-white" />
+                                </div>
+                                <h3 className="text-[12px] font-black text-slate-700 ">Address</h3>
+                            </div>
+                            <div className="pl-1">
+                                {businessData.location.address && (
+                                    <p className="text-[11px] font-bold text-slate-700 leading-snug">
+                                        {businessData.location.address}
+                                    </p>
+                                )}
+                                {(businessData.location.city || businessData.location.zipCode || businessData.location.state || businessData.location.country) && (
+                                    <p className="text-[10px] font-semibold text-slate-500 leading-snug mt-0.5">
+                                        {[businessData.location.city, businessData.location.state, businessData.location.zipCode, businessData.location.country].filter(Boolean).join(', ')}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )}
 
                     {/* Social Networks */}
                     {(businessData?.socialNetworks?.length > 0) && (
-                        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2">
+                        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2" id="section-social">
                             <div className="flex items-center gap-2 mb-1">
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <Share2 className="w-3.5 h-3.5 text-white" />
@@ -263,7 +305,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
 
                     {/* Contact */}
                     {businessData?.contact && (
-                        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2.5">
+                        <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2.5" id="section-contactInfo">
                             <div className="flex items-center gap-2 mb-1">
                                 <div className="w-7 h-7 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
                                     <User className="w-3.5 h-3.5 text-white" />
@@ -274,8 +316,8 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 <div className="flex items-center gap-2.5">
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><User className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
-                                        <p className="text-[8px] font-black uppercase " style={{ color: textColor, opacity: 0.4 }}>Name</p>
-                                        <p className="text-[11px] font-bold truncate" style={{ fontFamily: textFont, color: textColor }}>{businessData.contact.name}</p>
+                                        <p className="text-[8px] font-black text-slate-300 uppercase ">Name</p>
+                                        <p className="text-[11px] font-bold text-slate-700 truncate" style={{ fontFamily: textFont }}>{businessData.contact.name}</p>
                                     </div>
                                 </div>
                             )}
@@ -310,7 +352,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                     )}
 
                     {/* Bottom spacer */}
-                    <div className="h-6" />
+                    <div className="h-12" />
                 </div>
             </div>
         </div>

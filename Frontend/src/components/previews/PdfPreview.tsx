@@ -102,7 +102,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
     return (
         <div
-            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto scrollbar-hide relative pt-12 pb-20"
+            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto scrollbar-hide relative pt-12 pb-6"
             style={{ fontFamily: textFont }}
         >
             {/* Background Curve */}
@@ -114,11 +114,11 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
             <div className="absolute top-1/2 left-0 w-64 h-64 bg-pink-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 pb-12">
+            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 pb-6">
 
                 {/* Header Text */}
                 <div className="text-center space-y-1 mb-3 w-full">
-                    <h3 className="text-[13px] font-medium " style={{ fontFamily: titleFont, color: titleColor }}>
+                    <h3 className="text-[13px] font-medium " style={{ fontFamily: titleFont, color: textColor }}>
                         {businessData?.company || "Give Your Company Name"}
                     </h3>
                     <h1 className="text-[20px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
@@ -202,8 +202,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 text-slate-900 mt-2 hover:opacity-80 transition-opacity"
                     >
-                        <Globe className="w-[22px] h-[22px]" />
-                        <span className="text-[17px] font-medium ">
+                        <Globe className="w-[22px] h-[22px] shrink-0" />
+                        <span className="text-[17px] font-medium break-all text-center">
                             {businessData.buttons[0].url.replace(/^https?:\/\//, '')}
                         </span>
                     </a>
