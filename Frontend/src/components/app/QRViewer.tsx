@@ -17,6 +17,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
     const [qrData, setQrData] = useState<any>(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isPasswordVerified, setIsPasswordVerified] = useState(false);
     const [leadForm, setLeadForm] = useState({ name: '', email: '' });
     const [viewMode, setViewMode] = useState<'landing' | 'preview'>('landing');
 
@@ -34,15 +35,17 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 const hasSession = !!savedUser;
                 setIsLoggedIn(hasSession);
 
-                // Authourization logic:
-                // 1. If protected, must be logged in
-                // 2. If lead capture, must submit lead (not yet)
-                // 3. Otherwise, authorized immediately
+                // Authorization logic:
+                // 1. Password Must be verified if enabled
+                // 2. Lead capture must be submitted if enabled
+                // 3. Otherwise authorized immediately
                 
                 if (!data.is_protected && !data.is_lead_capture) {
                     setIsAuthorized(true);
-                } else if (data.is_protected && hasSession && !data.is_lead_capture) {
-                    setIsAuthorized(true);
+                }
+                
+                if (!data.is_protected) {
+                    setIsPasswordVerified(true);
                 }
             } catch (err) {
                 console.error("Error fetching QR data:", err);
@@ -57,10 +60,26 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
         }
     }, [slug, setView]);
 
+    const handlePasswordSubmit = (password: string) => {
+        if (password === qrData.password) {
+            setIsPasswordVerified(true);
+            if (!qrData.is_lead_capture) {
+                setIsAuthorized(true);
+            }
+            return true;
+        }
+        return false;
+    };
+
     const handleLeadSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (leadForm.name && leadForm.email) {
             try {
+                // If password enabled, must be verified first
+                if (qrData.is_protected && !isPasswordVerified) {
+                    return;
+                }
+                
                 const response = await fetch(`/r/${slug}/capture-lead/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -168,40 +187,6 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
         );
     }
 
-    // ─── LOGIN WALL VIEW ───
-    if (is_protected && !isLoggedIn) {
-        return (
-            <div className="min-h-screen flex items-center justify-center skeu-app-bg p-6">
-                <div className="skeu-card p-12 max-w-md w-full text-center space-y-8 animate-in zoom-in duration-500">
-                    <div className="relative mx-auto w-24 h-24">
-                        <div className="absolute inset-0 bg-blue-500/10 rounded-[2.5rem] animate-pulse" />
-                        <div className="relative w-full h-full bg-white rounded-[2.5rem] flex items-center justify-center shadow-xl border border-slate-50">
-                            <Lock className="w-10 h-10 text-blue-600" />
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        <h2 className="text-3xl font-black text-slate-800 tracking-tight">Protected Link</h2>
-                        <p className="text-slate-500 font-medium px-4 leading-relaxed">
-                            This QR code is private. Please log in to your account to view the content.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => setView('auth')}
-                        className="w-full py-5 skeu-btn text-[12px] font-black tracking-widest uppercase transition-all hover:scale-[1.02] shadow-xl shadow-blue-500/10"
-                    >
-                        Login to Access
-                    </button>
-                    <button
-                        onClick={() => setView('landing')}
-                        className="text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-tighter transition-colors"
-                    >
-                        Back to Home
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     // Hide everything if we are about to redirect
     if (isAuthorized && !show_preview && (category === 'website' || category === 'whatsapp' || category === 'pdf')) {
         return null;
@@ -233,10 +218,12 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     businessData={settings?.business}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     isFileMode={effectiveIsFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={handleLeadSubmit}
+                    onPasswordSubmit={handlePasswordSubmit}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
                 />

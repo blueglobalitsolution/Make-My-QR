@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeft, Video, Phone, MoreVertical, Smile, Paperclip, Mic, User } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
+import { PasswordWall } from './PasswordWall';
 
 interface WhatsAppPreviewProps {
     name: string;
@@ -14,6 +15,8 @@ interface WhatsAppPreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    onPasswordSubmit?: (password: string) => boolean;
+    isPasswordVerified?: boolean;
 }
 
 // WhatsApp-style chat background pattern (SVG as data URL)
@@ -27,7 +30,9 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
     isAuthorized,
     leadForm,
     setLeadForm,
-    onLeadSubmit
+    onLeadSubmit,
+    onPasswordSubmit,
+    isPasswordVerified = true
 }) => {
     const handleOpen = () => { window.open(fullValue, '_blank'); };
 
@@ -60,15 +65,22 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
     // Format phone for display (e.g. +91 8460687490)
     const displayPhone = phone ? `+${phone}` : (name || 'Contact');
 
-    if (is_lead_capture && !isAuthorized) {
+    if (!isAuthorized && (is_lead_capture || !isPasswordVerified)) {
         return (
             <div className="h-full flex flex-col items-center justify-center p-6 bg-[#e5ddd5]">
-                <LeadCaptureForm
-                    brandColor="#25D366"
-                    leadForm={leadForm}
-                    setLeadForm={setLeadForm}
-                    onSubmit={onLeadSubmit}
-                />
+                {!isPasswordVerified && onPasswordSubmit ? (
+                    <PasswordWall 
+                        brandColor="#075E54" 
+                        onSubmit={onPasswordSubmit} 
+                    />
+                ) : (
+                    <LeadCaptureForm
+                        brandColor="#25D366"
+                        leadForm={leadForm}
+                        setLeadForm={setLeadForm}
+                        onSubmit={onLeadSubmit}
+                    />
+                )}
             </div>
         );
     }

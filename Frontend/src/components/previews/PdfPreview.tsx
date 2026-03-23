@@ -1,6 +1,7 @@
 import React from 'react';
 import { Download, ChevronLeft, Eye, Globe, Clock, BarChart2 } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
+import { PasswordWall } from './PasswordWall';
 
 interface PdfPreviewProps {
     name: string;
@@ -16,6 +17,8 @@ interface PdfPreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    onPasswordSubmit?: (password: string) => boolean;
+    isPasswordVerified?: boolean;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
@@ -32,6 +35,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     leadForm,
     setLeadForm,
     onLeadSubmit,
+    onPasswordSubmit,
+    isPasswordVerified = true,
     viewMode,
     setViewMode,
     isPreview = false
@@ -81,6 +86,10 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
         if (isPreview) return;
 
         if (is_lead_capture && !isAuthorized) {
+            return;
+        }
+
+        if (!isPasswordVerified && onPasswordSubmit) {
             return;
         }
 
@@ -157,21 +166,30 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                     <div className="p-4 pb-5 flex flex-col items-center justify-center w-full shrink-0">
                         {/* Button / Lead Capture */}
                         <div className="w-full flex justify-center mt-2">
-                            {is_lead_capture && !isAuthorized ? (
+                        {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
+                            (!isPasswordVerified && onPasswordSubmit) ? (
+                                <div className="w-full">
+                                    <PasswordWall 
+                                        brandColor={brandColor} 
+                                        onSubmit={onPasswordSubmit} 
+                                    />
+                                </div>
+                            ) : (
                                 <LeadCaptureForm
                                     brandColor={brandColor}
                                     leadForm={leadForm}
                                     setLeadForm={setLeadForm}
                                     onSubmit={onLeadSubmit}
                                 />
-                            ) : (
-                                <button
-                                    onClick={handleAction}
-                                    className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
-                                >
-                                    <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
-                                </button>
-                            )}
+                            )
+                        ) : (
+                            <button
+                                onClick={handleAction}
+                                className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
+                            >
+                                <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
+                            </button>
+                        )}
                         </div>
                     </div>
                 </div>

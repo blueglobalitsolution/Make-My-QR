@@ -111,8 +111,8 @@ def redirect_scan(request, slug):
             except Exception:
                 pass
 
-    # If preview is disabled AND no lead capture is active, redirect directly to content
-    if not qrcode.show_preview and not qrcode.is_lead_capture:
+    # If preview is disabled AND no gatekeepers (lead capture/protected) are active, redirect directly to content
+    if not qrcode.show_preview and not qrcode.is_lead_capture and not qrcode.is_protected:
         # For website and whatsapp, redirect to the target URL
         if qrcode.category in ['website', 'whatsapp']:
             target_url = qrcode.value

@@ -4,6 +4,7 @@ import {
     Linkedin, Youtube, MessageCircle, Share2, ChevronRight, User, Info, ChevronLeft
 } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
+import { PasswordWall } from './PasswordWall';
 
 interface BusinessPreviewProps {
     name: string;
@@ -14,6 +15,8 @@ interface BusinessPreviewProps {
     leadForm?: { name: string; email: string };
     setLeadForm?: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    onPasswordSubmit?: (password: string) => boolean;
+    isPasswordVerified?: boolean;
     viewMode?: 'landing' | 'preview';
     setViewMode?: (mode: 'landing' | 'preview') => void;
 }
@@ -27,6 +30,8 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     leadForm,
     setLeadForm,
     onLeadSubmit,
+    onPasswordSubmit,
+    isPasswordVerified = true,
     viewMode,
     setViewMode
 }) => {
@@ -119,15 +124,20 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
 
                             {/* CTA Button / Lead Capture */}
                             <div className="px-4 py-3">
-                                {is_lead_capture && !isAuthorized && leadForm && setLeadForm ? (
-                                    <div className="px-2 pb-2">
+                                {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
+                                    (!isPasswordVerified && onPasswordSubmit) ? (
+                                        <PasswordWall 
+                                            brandColor={primaryColor} 
+                                            onSubmit={onPasswordSubmit} 
+                                        />
+                                    ) : (leadForm && setLeadForm && (
                                         <LeadCaptureForm
                                             brandColor={primaryColor}
                                             leadForm={leadForm}
                                             setLeadForm={setLeadForm}
                                             onSubmit={onLeadSubmit}
                                         />
-                                    </div>
+                                    ))
                                 ) : (
                                     <button
                                         style={{ backgroundColor: businessData?.secondaryColor || '#7ec8a4' }}

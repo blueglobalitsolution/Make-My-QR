@@ -10,6 +10,7 @@ import { getFolders } from './src/api/folders';
 import { getInitialBusinessProfile } from './src/services/businessProfile';
 
 import { Sidebar } from './src/components/app/Sidebar';
+import { BottomNav } from './src/components/app/BottomNav';
 import { Landing } from './src/components/app/Landing';
 import { AuthViews } from './src/components/app/AuthViews';
 import { MyCodes } from './src/components/app/MyCodes';
@@ -135,6 +136,7 @@ const App: React.FC = () => {
     });
   };
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert);
   const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
@@ -146,6 +148,10 @@ const App: React.FC = () => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.value.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFolder && matchesSearch;
   });
+  const foldersWithQRCounts = folders.map(f => ({
+    ...f,
+    count: history.filter(c => c.folderId === f.id).length
+  }));
 
   // Sync view changes to URL history
   useEffect(() => {
@@ -175,6 +181,7 @@ const App: React.FC = () => {
         shortSlug: code.short_slug,
         isDynamic: code.is_dynamic,
         isLeadCapture: code.is_lead_capture,
+        password: code.password,
         createdAt: code.created_at,
         userId: code.user?.toString()
       }));
@@ -400,6 +407,7 @@ const App: React.FC = () => {
       name: code.name,
       isPasswordActive: false,
       is_protected: (code as any).is_protected || false,
+      password: (code as any).password || '',
       is_lead_capture: (code as any).is_lead_capture || false,
       folderId: code.folderId,
       config: code.settings,
@@ -483,15 +491,28 @@ const App: React.FC = () => {
       {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (
         <Sidebar
           view={view}
-          setView={setView}
+          setView={(v) => { setView(v); setIsSidebarOpen(false); }}
           setEditingId={setEditingId}
           resetWizard={resetWizard}
           setPhonePreviewMode={setPhonePreviewMode}
           handleLogout={auth.handleLogout}
+          isOpen={isSidebarOpen}
+          setIsOpen={setIsSidebarOpen}
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? `ml-64 ${view === 'wizard' ? '' : 'px-12'}` : 'w-full'}`}>
+      {/* Bottom Navigation for Mobile */}
+      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (
+        <BottomNav
+          view={view}
+          setView={handleSetView}
+          resetWizard={resetWizard}
+          setEditingId={setEditingId}
+          setPhonePreviewMode={setPhonePreviewMode}
+        />
+      )}
+
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto pb-32 lg:pb-0 ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? `skeu-main-content ${view === 'wizard' ? '' : 'px-responsive'}` : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -540,7 +561,7 @@ const App: React.FC = () => {
         {view === 'my_codes' && (
           <MyCodes
             history={history}
-            folders={folders}
+            folders={foldersWithQRCounts}
             activeFolderId={activeFolderId}
             setActiveFolderId={setActiveFolderId}
             searchQuery={searchQuery}
@@ -564,7 +585,7 @@ const App: React.FC = () => {
         {view === 'wizard' && (
           <Wizard
             {...wizardProps}
-            folders={folders}
+            folders={foldersWithQRCounts}
             isCreatingFolder={isCreatingFolder}
             setIsCreatingFolder={setIsCreatingFolder}
             newFolderName={newFolderName}

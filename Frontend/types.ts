@@ -51,6 +51,7 @@ export interface GeneratedCode {
   short_slug?: string;
   isDynamic: boolean;
   is_protected?: boolean;
+  password?: string;
   is_lead_capture?: boolean;
   scans: number;
   status: 'active' | 'paused';

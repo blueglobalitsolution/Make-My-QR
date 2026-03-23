@@ -14,6 +14,7 @@ export interface GatekeeperProps {
     businessData?: any;
     is_lead_capture: boolean;
     isAuthorized: boolean;
+    isPasswordVerified: boolean;
     isFileMode: boolean;
     leadForm: {
         name: string;
@@ -21,6 +22,7 @@ export interface GatekeeperProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    onPasswordSubmit: (password: string) => boolean;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
@@ -34,10 +36,12 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     businessData,
     is_lead_capture,
     isAuthorized,
+    isPasswordVerified,
     isFileMode,
     leadForm,
     setLeadForm,
     onLeadSubmit,
+    onPasswordSubmit,
     viewMode,
     setViewMode,
     isPreview = false
@@ -51,9 +55,11 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     fullValue={fullValue}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
+                    onPasswordSubmit={onPasswordSubmit}
                     isPreview={isPreview}
                 />
             );
@@ -67,9 +73,11 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     businessData={businessData}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     isFileMode={isFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
+                    onPasswordSubmit={onPasswordSubmit}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
                     isPreview={isPreview}
@@ -84,9 +92,11 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     fullValue={fullValue}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
+                    onPasswordSubmit={onPasswordSubmit}
                 />
             );
 
@@ -98,7 +108,9 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     businessData={businessData}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     onLeadSubmit={onLeadSubmit}
+                    onPasswordSubmit={onPasswordSubmit}
                 />
             );
 
@@ -111,9 +123,11 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     fullValue={fullValue}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
+                    onPasswordSubmit={onPasswordSubmit}
                 />
             );
     }

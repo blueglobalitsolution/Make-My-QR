@@ -288,6 +288,7 @@ export const useWizard = (
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
+            password: wizard.password,
             is_lead_capture: wizard.is_lead_capture,
             show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
@@ -305,6 +306,7 @@ export const useWizard = (
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
+            password: wizard.password,
             is_lead_capture: wizard.is_lead_capture,
             show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
@@ -319,7 +321,7 @@ export const useWizard = (
           }
 
           try {
-            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
             const slug = savedData.shortSlug || savedData.short_slug;
             const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
             const qrImage = await generateQRWithFrame(qrValue, wizard.config);
@@ -351,6 +353,7 @@ export const useWizard = (
             name: wizard.name || `My ${selectedTypeConfig.name}`,
             value: finalValue,
             is_protected: wizard.is_protected,
+            password: wizard.password,
             is_lead_capture: wizard.is_lead_capture,
             show_preview: wizard.show_preview,
             settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
@@ -360,7 +363,7 @@ export const useWizard = (
           setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedUpdatedData } : h));
 
           try {
-            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
             const existingCode = history.find(h => h.id === editingId);
             const slug = existingCode?.shortSlug || existingCode?.short_slug || updatedCode.shortSlug || updatedCode.short_slug;
             const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
@@ -390,6 +393,10 @@ export const useWizard = (
   };
 
   const handleBackStep = () => {
+    if (wizard.step === 1) {
+      setView('my_codes');
+      return;
+    }
     const prevStep = Math.max(1, wizard.step - 1) as 1 | 2 | 3;
     setWizard({ ...wizard, step: prevStep });
   };

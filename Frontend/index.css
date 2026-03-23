@@ -477,3 +477,32 @@
   font-family: 'Lato', sans-serif;
   text-transform: capitalize;
 }
+
+/* ============================================
+   RESPONSIVE ARCHITECTURE
+   ============================================ */
+
+/* Mobile Only (< 1024px) */
+@media screen and (max-width: 1024px) {
+  .px-responsive {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+}
+
+/* Tablet & PC (>= 1024px) */
+@media screen and (min-width: 1024px) {
+  .px-responsive {
+    padding-left: 3.5rem !important;
+    padding-right: 3.5rem !important;
+  }
+
+  .skeu-main-content {
+    margin-left: 280px !important;
+  }
+}
+
+.skeu-scroll-x-touch {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}

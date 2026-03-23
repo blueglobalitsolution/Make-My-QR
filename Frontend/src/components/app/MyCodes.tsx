@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X, Lock } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 import { StyledQRCode } from '../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../components/QRFrameWrapper';
@@ -71,7 +71,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   }, [downloadingCode, downloadFormat, downloadCode]);
 
   const getQRValue = (code: GeneratedCode) => {
-    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || 'http://192.168.1.208:8010';
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
     const slug = code.shortSlug || (code as any).short_slug;
     let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
     if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
@@ -126,7 +126,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   };
 
   return (
-    <div className="flex-1 py-12 w-full space-y-6 animate-in fade-in duration-700 pb-24 skeu-text-primary font-lato">
+    <div className="flex-1 py-12 w-full space-y-6 animate-in fade-in duration-700 pb-24 skeu-text-primary px-responsive font-lato">
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div className="space-y-1">
@@ -189,7 +189,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                 className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 min-w-[160px] whitespace-nowrap group/folder-tab ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
               >
                 <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
-                <span>{folder.name} ({folder.count || 0})</span>
+                <span>{folder.name} ({history.filter(c => c.folderId === folder.id).length})</span>
               </button>
               <button
                 onClick={(e) => {
@@ -240,8 +240,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         </button>
       </div>
 
-      {/* Codes Table Header */}
-      <div className="min-w-[1000px]">
+      {/* PC View: Table */}
+      <div className="hidden lg:block w-full overflow-x-auto skeu-scroll-x">
         <div className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] px-8 py-4 gap-6 text-[10px] font-black capitalize tracking-[0.2em] skeu-text-muted opacity-50">
           <div>QR Code</div>
           <div>Details</div>
@@ -291,6 +291,11 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       <span className="text-[11px] font-black capitalize bg-[#3eb5a9] text-white px-2.5 py-1 rounded tracking-wider shadow-sm">{code.category}</span>
                       {code.show_preview === false && (
                         <span className="text-[11px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1 rounded tracking-wider shadow-sm">Direct</span>
+                      )}
+                      {code.is_protected && (
+                        <span className="text-[11px] font-black uppercase bg-amber-50 text-amber-600 border border-amber-100 px-2.5 py-1 rounded tracking-wider shadow-sm flex items-center gap-1">
+                          <Lock className="w-3 h-3" /> Protected
+                        </span>
                       )}
                     </div>
                   </div>
@@ -373,6 +378,86 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         </div>
       </div>
 
+      {/* Mobile View: Cards (Only visible on Phone) */}
+      <div className="lg:hidden space-y-6">
+        {filteredHistory.length === 0 ? (
+          <div className="skeu-card py-24 text-center">
+            <div className="w-24 h-24 skeu-inset flex items-center justify-center mx-auto mb-6">
+              <Search className="w-10 h-10 skeu-text-muted" />
+            </div>
+            <h3 className="text-2xl font-black skeu-text-primary mb-2 ">No Results Found</h3>
+            <button onClick={() => setView('wizard')} className="skeu-btn px-8 py-4 text-xs capitalize ">
+              <Plus className="w-4 h-4 mr-2 inline" /> Create Your First Code
+            </button>
+          </div>
+        ) : (
+          filteredHistory.map(code => {
+            const folder = folders.find(f => f.id === code.folderId);
+            return (
+              <div key={code.id} className="skeu-card p-6 space-y-6 bg-white/50 backdrop-blur-sm relative overflow-hidden ring-1 ring-red-100/10">
+                <div className="flex gap-5">
+                  <button onClick={() => setPreviewCode(code)} className="w-24 h-24 skeu-inset flex items-center justify-center bg-white rounded-2xl shrink-0 overflow-hidden relative group">
+                    <CodeThumbnail code={code} />
+                    <div className="absolute inset-0 bg-black/0 active:bg-black/5 transition-all flex items-center justify-center opacity-0 active:opacity-100">
+                      <Search className="w-6 h-6 text-red-500/50" />
+                    </div>
+                  </button>
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="space-y-1">
+                      <h3 className="skeu-text-primary text-xl font-black truncate">{code.name}</h3>
+                      <div className="text-[14px] font-bold text-[#444444]">{new Date(code.createdAt).toLocaleDateString('en-GB')}</div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-[11px] font-black capitalize bg-[#3eb5a9] text-white px-3 py-1.5 rounded-lg shadow-sm">{code.category}</span>
+                      {code.is_protected && (
+                        <span className="text-[11px] font-black uppercase bg-amber-50 text-amber-600 border border-amber-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                          <Lock className="w-3 h-3" /> Protected
+                        </span>
+                      )}
+                      {folder && (
+                        <span className="text-[11px] font-black capitalize text-red-600 bg-red-50 border border-red-100/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                          <FolderIcon className="w-3.5 h-3.5" /> {folder.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="skeu-inset p-4 flex flex-col items-center justify-center gap-1">
+                    <div className="text-2xl font-black skeu-text-primary leading-none">{code.scans || 0}</div>
+                    <div className="text-[9px] font-black skeu-text-muted uppercase tracking-wider">Total Scans</div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => downloadCode(code, 'png')}
+                      className="flex-1 py-3 skeu-btn-secondary text-[11px] font-black capitalize flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5" /> PNG
+                    </button>
+                    <button
+                      onClick={() => downloadCode(code, 'svg')}
+                      className="flex-1 py-3 skeu-btn-secondary text-[11px] font-black capitalize flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-3.5 h-3.5" /> SVG
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-black/5">
+                  <button onClick={() => startEditing(code)} className="py-4 skeu-btn-secondary text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
+                    <Pencil className="w-4 h-4" /> Edit Code
+                  </button>
+                  <button onClick={() => deleteCode(code.id)} className="py-4 skeu-btn-secondary !text-red-500 hover:!bg-[#3eb5a9] hover:!text-white transition-all text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
+                    <Trash2 className="w-4 h-4" /> Delete
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
       {/* QR Preview Modal */}
       {
         previewCode && (
@@ -402,9 +487,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <QRFrameWrapper frame={previewCode.settings?.frame || 'none'}>
                     <StyledQRCode
                       options={{
-                        data: (previewCode.shortSlug || (previewCode as any).short_slug)
-                          ? `http://local:8010/r/${previewCode.shortSlug || (previewCode as any).short_slug}`
-                          : previewCode.value,
+                        data: getQRValue(previewCode),
                         dotsOptions: {
                           color: previewCode.settings?.fgColor || '#000000',
                           type: previewCode.settings?.pattern || 'square'

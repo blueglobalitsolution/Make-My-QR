@@ -145,7 +145,7 @@ export const MyFiles: React.FC<MyFilesProps> = ({
                                     <FolderIcon className={`w-3.5 h-3.5 ${activeFolderId === folder.id ? 'text-white' : 'text-blue-400/30'}`} />
                                     <span>{folder.name}</span>
                                 </div>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'bg-slate-100 text-slate-400'}`}>{folder.count}</span>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeFolderId === folder.id ? 'bg-white/20' : 'bg-slate-100 text-slate-400'}`}>{files.filter(f => f.folderId === folder.id).length}</span>
                             </button>
                         ))}
 

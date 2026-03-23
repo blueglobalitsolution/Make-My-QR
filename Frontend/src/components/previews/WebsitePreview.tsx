@@ -1,6 +1,7 @@
 import React from 'react';
 import { Globe, ExternalLink, Shield, Info, User } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
+import { PasswordWall } from './PasswordWall';
 
 interface WebsitePreviewProps {
     name: string;
@@ -14,6 +15,8 @@ interface WebsitePreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
+    onPasswordSubmit?: (password: string) => boolean;
+    isPasswordVerified?: boolean;
     isPreview?: boolean;
 }
 
@@ -26,6 +29,8 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
     leadForm,
     setLeadForm,
     onLeadSubmit,
+    onPasswordSubmit,
+    isPasswordVerified = true,
     isPreview = false
 }) => {
     const handleAction = () => {
@@ -86,13 +91,20 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
                             <div className="w-32 h-3.5 bg-cyan-200/40 rounded-full" />
                         </div>
 
-                        {is_lead_capture && !isAuthorized ? (
-                            <LeadCaptureForm
-                                brandColor={brandColor}
-                                leadForm={leadForm}
-                                setLeadForm={setLeadForm}
-                                onSubmit={onLeadSubmit}
-                            />
+                        {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
+                            (!isPasswordVerified && onPasswordSubmit) ? (
+                                <PasswordWall 
+                                    brandColor={brandColor} 
+                                    onSubmit={onPasswordSubmit} 
+                                />
+                            ) : (
+                                <LeadCaptureForm
+                                    brandColor={brandColor}
+                                    leadForm={leadForm}
+                                    setLeadForm={setLeadForm}
+                                    onSubmit={onLeadSubmit}
+                                />
+                            )
                         ) : (
                             <div className="w-full space-y-4">
                                 <button
