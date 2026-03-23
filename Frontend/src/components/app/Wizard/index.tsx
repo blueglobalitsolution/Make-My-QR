@@ -167,9 +167,9 @@ export const Wizard: React.FC<WizardProps> = ({
         {QR_TYPES_CONFIG.map((type) => (
           <button
             key={type.id}
-            onClick={() => { 
-                setWizard(prev => ({ ...prev, type: type.id as any, step: 2 })); 
-                setPhonePreviewMode('ui');
+            onClick={() => {
+              setWizard(prev => ({ ...prev, type: type.id as any, step: 2 }));
+              setPhonePreviewMode('ui');
             }}
             onMouseEnter={() => setHoveredType(type.id as any)}
             onMouseLeave={() => setHoveredType(null)}
@@ -1721,7 +1721,7 @@ export const Wizard: React.FC<WizardProps> = ({
           {renderStepper({ step: wizard.step })}
           <div className="lg:hidden flex items-center justify-between w-full px-4">
             <div className="w-20 flex items-center">
-              <button 
+              <button
                 onClick={handleBackStep}
                 className="flex items-center gap-1 -ml-2 text-slate-400 active:scale-95 transition-all"
               >
@@ -1765,11 +1765,11 @@ export const Wizard: React.FC<WizardProps> = ({
               </div>
 
               {/* PREVIEW AREA (Isolated Mobile/Desktop Architecture) */}
-              
+
               {/* PC & Tablet View (lg and up) - Decreased Fixed Mockup */}
               <div className="hidden lg:flex flex-1 flex-col items-center justify-center w-full relative group transition-all duration-700">
                 <div className="w-[280px] h-[600px] relative skeu-phone p-[10px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.85] xl:scale-[0.9] pointer-events-auto">
-                  
+
                   {/* Inner Screen Area */}
                   <div className={`flex-1 rounded-[2.5rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
@@ -1778,17 +1778,17 @@ export const Wizard: React.FC<WizardProps> = ({
                         ? (wizard.business?.primaryColor || '#dc2626')
                         : undefined
                     }}>
-                    
+
                     {/* PC Status Bar & Notch - Resized for Compact Mockup */}
                     <div className="absolute top-0 left-0 right-0 h-14 z-[60] pointer-events-none flex flex-col items-center">
-                       <div className="skeu-phone-notch mt-2 scale-[0.75]" />
-                       <div className="absolute inset-0 flex items-center justify-between px-9 pt-1">
-                          <span className="text-[11px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
-                          <div className="flex items-center gap-1.5 opacity-80">
-                             <Wifi className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                             <Clock className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                          </div>
-                       </div>
+                      <div className="skeu-phone-notch mt-2 scale-[0.75]" />
+                      <div className="absolute inset-0 flex items-center justify-between px-9 pt-1">
+                        <span className="text-[11px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
+                        <div className="flex items-center gap-1.5 opacity-80">
+                          <Wifi className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
+                          <Clock className="w-3.5 h-3.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex-1 overflow-hidden relative">
@@ -1834,7 +1834,7 @@ export const Wizard: React.FC<WizardProps> = ({
               {/* Phone View (below lg) - Resized Compact Adaptive Mockup */}
               <div className="lg:hidden flex-1 flex flex-col items-center justify-center w-full px-4 py-4 relative group transition-all duration-700 h-[500px] overflow-hidden">
                 <div className="w-full max-w-[260px] h-[500px] relative skeu-phone p-[8px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.8] pointer-events-auto">
-                  
+
                   {/* Inner Screen Area */}
                   <div className={`flex-1 rounded-[2.2rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
@@ -1843,40 +1843,40 @@ export const Wizard: React.FC<WizardProps> = ({
                         ? (wizard.business?.primaryColor || '#dc2626')
                         : undefined
                     }}>
-                    
+
                     {/* Mobile Status Bar & Notch - Ultra Compact */}
                     <div className="absolute top-0 left-0 right-0 h-10 z-[60] pointer-events-none flex flex-col items-center">
-                       <div className="skeu-phone-notch mt-1.5 scale-[0.6]" />
-                       <div className="absolute inset-0 flex items-center justify-between px-7 pt-1">
-                          <span className="text-[9px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
-                          <div className="flex items-center gap-1 opacity-60">
-                             <Wifi className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                             <Clock className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
-                          </div>
-                       </div>
+                      <div className="skeu-phone-notch mt-1.5 scale-[0.6]" />
+                      <div className="absolute inset-0 flex items-center justify-between px-7 pt-1">
+                        <span className="text-[9px] font-black" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }}>9:41</span>
+                        <div className="flex items-center gap-1 opacity-60">
+                          <Wifi className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
+                          <Clock className="w-2.5 h-2.5" style={{ color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : 'black' }} />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex-1 overflow-hidden relative">
-                        <div className="h-full flex flex-col animate-in fade-in duration-500">
-                          <GatekeeperPreview
-                            category={hoveredType || wizard.type}
-                            name={wizard.name}
-                            brandColor={wizard.business?.primaryColor || '#dc2626'}
-                            fullValue={pdfUrl || getQRValue()}
-                            businessData={wizard.business}
-                            is_lead_capture={wizard.is_lead_capture}
-                            isAuthorized={previewIsAuthorized}
-                            isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
-                            isFileMode={wizard.type === 'pdf'}
-                            leadForm={leadForm}
-                            setLeadForm={setLeadForm as any}
-                            onLeadSubmit={handlePreviewLeadSubmit}
-                            onPasswordSubmit={handlePreviewPasswordSubmit}
-                            viewMode={previewViewMode}
-                            setViewMode={setPreviewViewMode as any}
-                            isPreview={true}
-                          />
-                        </div>
+                      <div className="h-full flex flex-col animate-in fade-in duration-500">
+                        <GatekeeperPreview
+                          category={hoveredType || wizard.type}
+                          name={wizard.name}
+                          brandColor={wizard.business?.primaryColor || '#dc2626'}
+                          fullValue={pdfUrl || getQRValue()}
+                          businessData={wizard.business}
+                          is_lead_capture={wizard.is_lead_capture}
+                          isAuthorized={previewIsAuthorized}
+                          isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
+                          isFileMode={wizard.type === 'pdf'}
+                          leadForm={leadForm}
+                          setLeadForm={setLeadForm as any}
+                          onLeadSubmit={handlePreviewLeadSubmit}
+                          onPasswordSubmit={handlePreviewPasswordSubmit}
+                          viewMode={previewViewMode}
+                          setViewMode={setPreviewViewMode as any}
+                          isPreview={true}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
