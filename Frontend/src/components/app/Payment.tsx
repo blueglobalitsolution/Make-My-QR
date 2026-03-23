@@ -196,7 +196,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                             <button 
                                 type="submit"
                                 disabled={loading}
-                                className="w-full md:w-[420px] py-5.5 bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-2xl font-black text-[15px] uppercase tracking-wider shadow-[0_15px_40px_-10px_rgba(220,38,38,0.4)] hover:shadow-[0_20px_50px_-8px_rgba(220,38,38,0.5)] hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                className="w-full md:w-[420px] py-5 bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-[1rem] font-black text-[15px] uppercase tracking-wider shadow-[0_15px_40px_-10px_rgba(220,38,38,0.4)] hover:shadow-[0_20px_50px_-8px_rgba(220,38,38,0.5)] hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed group"
                             >
                                 {loading ? (
                                     <>
