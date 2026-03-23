@@ -26,7 +26,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
         can_create_business: false,
         can_password_protect: false,
         can_lead_capture: false,
-        can_access_analytics: false
+        can_access_analytics: false,
+        upload_limit_mb: 5
     });
 
     useEffect(() => {
@@ -95,7 +96,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_create_business: plan.can_create_business || false,
                 can_password_protect: plan.can_password_protect || false,
                 can_lead_capture: plan.can_lead_capture || false,
-                can_access_analytics: plan.can_access_analytics || false
+                can_access_analytics: plan.can_access_analytics || false,
+                upload_limit_mb: plan.upload_limit_mb || 5
             });
         } else {
             setIsEditingPlan({ isNew: true });
@@ -110,7 +112,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_create_business: false,
                 can_password_protect: false,
                 can_lead_capture: false,
-                can_access_analytics: false
+                can_access_analytics: false,
+                upload_limit_mb: 5
             });
         }
     };
@@ -282,7 +285,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Price (INR)</label>
+                                                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Total Price for Duration (INR)</label>
                                                         <input 
                                                             type="number" 
                                                             value={planForm.price}
@@ -388,6 +391,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     />
                                                 </div>
 
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Upload Limit (MB)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        value={planForm.upload_limit_mb}
+                                                        onChange={(e) => setPlanForm({ ...planForm, upload_limit_mb: parseInt(e.target.value) })}
+                                                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all"
+                                                        placeholder="e.g. 10"
+                                                    />
+                                                </div>
                                                 <div className="pt-6">
                                                     <button 
                                                         onClick={handleSavePlan}
@@ -441,6 +454,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                         </div>
                                                         <div className="flex items-center gap-2 text-[11px] font-bold text-red-600">
                                                             <Database className="w-4 h-4" /> Max QR Codes: {plan.qr_limit}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-[11px] font-bold text-blue-600">
+                                                            <Plus className="w-4 h-4" /> Upload Limit: {plan.upload_limit_mb}MB
                                                         </div>
                                                     </div>
                                                 </div>

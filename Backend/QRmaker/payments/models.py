@@ -13,6 +13,7 @@ class SubscriptionPlan(models.Model):
     can_password_protect = models.BooleanField(default=False)
     can_lead_capture = models.BooleanField(default=False)
     can_access_analytics = models.BooleanField(default=False)
+    upload_limit_mb = models.IntegerField(default=5)  # Default 5MB for free
 
     def __str__(self):
         return self.name

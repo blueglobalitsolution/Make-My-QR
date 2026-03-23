@@ -28,7 +28,8 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   };
 
   const handleSelectPlan = (plan: any) => {
-    const totalPrice = Number(plan.price) * Number(plan.duration_months);
+    // The price in the database is the total price for the duration
+    const totalPrice = Number(plan.price);
     const selectedPlan = {
       ...plan,
       total: totalPrice.toLocaleString('en-IN'),
@@ -104,7 +105,9 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
                     <span className="text-xl font-bold align-top mt-1">₹</span>
                     <span className={`${isFeatured ? 'text-6xl' : 'text-5xl'} font-extrabold`}>{parseFloat(plan.price).toLocaleString('en-IN')}</span>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase">Per Month</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">
+                    {plan.duration_months === 1 ? 'Per Month' : plan.duration_months === 12 ? 'Per Year' : `For ${plan.duration_months} Months`}
+                  </p>
                 </div>
 
                 <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[14px] font-bold mb-8 border border-red-50`}>

@@ -44,6 +44,7 @@ export interface User {
       can_password_protect: boolean;
       can_lead_capture: boolean;
       can_access_analytics: boolean;
+      upload_limit_mb: number;
     };
   };
 }

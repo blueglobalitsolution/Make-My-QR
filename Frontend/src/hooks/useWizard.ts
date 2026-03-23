@@ -503,6 +503,13 @@ export const useWizard = (
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `Image is too large. Your plan allows up to ${limitMb}MB.`;
+        if (showAlert) showAlert("Upload Limit", msg, "danger");
+        else alert(msg);
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setWizard({ ...wizard, config: { ...wizard.config, logoUrl: reader.result as string } });
@@ -514,6 +521,13 @@ export const useWizard = (
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `File is too large. Your plan allows up to ${limitMb}MB uploads. Upgrade your plan for higher limits.`;
+        if (showAlert) showAlert("Upload Limit Reached", msg, "danger");
+        else alert(msg);
+        return;
+      }
       setPdfFileName(file.name);
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(file));
@@ -546,6 +560,13 @@ export const useWizard = (
   const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `Image is too large. Your plan allows up to ${limitMb}MB.`;
+        if (showAlert) showAlert("Upload Limit", msg, "danger");
+        else alert(msg);
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setWizard(prev => ({

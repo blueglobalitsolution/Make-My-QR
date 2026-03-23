@@ -29,6 +29,7 @@ def get_user_subscription_data(user):
                         'can_password_protect': plan.can_password_protect,
                         'can_lead_capture': plan.can_lead_capture,
                         'can_access_analytics': plan.can_access_analytics,
+                        'upload_limit_mb': plan.upload_limit_mb,
                     },
                     'expiry_date': sub.expiry_date.isoformat() if sub.expiry_date else None,
                     'is_active': True
@@ -47,6 +48,7 @@ def get_user_subscription_data(user):
             'can_password_protect': False,
             'can_lead_capture': False,
             'can_access_analytics': False,
+            'upload_limit_mb': 5,
         },
         'expiry_date': None,
         'is_active': False

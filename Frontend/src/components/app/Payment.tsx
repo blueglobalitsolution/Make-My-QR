@@ -27,6 +27,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
         id: 1, // Default ID for backend
         name: '1 Month Plan',
         price: '1799.00',
+        duration_months: 1,
         total: '1799',
         features: [
             'Create unlimited dynamic QR codes',
@@ -247,11 +248,11 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                                         </div>
                                         <div>
                                             <h3 className="text-base font-black text-slate-800">{plan.name}</h3>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Monthly Plan</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{(plan.duration_months === 1 || !plan.duration_months) ? 'Monthly' : plan.duration_months === 12 ? 'Annual' : `${plan.duration_months} Month`} Plan</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-base font-black text-slate-900">₹ {plan.price}/mo</p>
+                                        <p className="text-base font-black text-slate-900">₹ {plan.price}{(plan.duration_months === 1 || !plan.duration_months) ? '/mo' : plan.duration_months === 12 ? '/year' : `/${plan.duration_months}mo`}</p>
                                     </div>
                                 </div>
 
@@ -265,7 +266,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
 
                                 {/* Features List */}
                                 <div className="space-y-4 pt-4">
-                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Monthly Plan includes:</p>
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{(plan.duration_months === 1 || !plan.duration_months) ? 'Monthly' : plan.duration_months === 12 ? 'Annual' : `${plan.duration_months} Month`} Plan includes:</p>
                                     <ul className="space-y-4">
                                         {plan.features.map((feature: string, i: number) => (
                                             <li key={i} className="flex items-start gap-4 group">
@@ -282,7 +283,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                             {/* Small Disclaimer */}
                             <div className="p-8 bg-slate-50/50 border-t border-slate-100">
                                 <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                                    The selected plan provides access to QR code.io and renews every 1 month at ₹ {plan.price} until canceled. Cancel anytime directly from your account. Please refer to our Terms & Conditions for more details. Charges may appear on your credit card statement as "QR CODE.IO".
+                                    The selected plan provides access to QR code.io and renews every {plan.duration_months} month{plan.duration_months > 1 ? 's' : ''} at ₹ {plan.price} until canceled. Cancel anytime directly from your account. Please refer to our Terms & Conditions for more details. Charges may appear on your credit card statement as "QR CODE.IO".
                                 </p>
                             </div>
                         </div>

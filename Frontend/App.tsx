@@ -78,7 +78,14 @@ const App: React.FC = () => {
   const [isFileMode, setIsFileMode] = useState<boolean>((initialState as any).fileMode || false);
   const [businessProfiles, setBusinessProfiles] = useState<any[]>([]);
 
-  const [viewData, setViewData] = useState<any>(null);
+  const [viewData, setViewData] = useState<any>(() => {
+    const saved = localStorage.getItem('makemyqr_view_data');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -123,8 +130,17 @@ const App: React.FC = () => {
 
 
   const handleSetView = (v: ViewState, data?: any) => {
+    if (data) {
+      setViewData(data);
+      localStorage.setItem('makemyqr_view_data', JSON.stringify(data));
+    } else {
+      // Clear data only when switching to views that don't need it
+      if (v !== 'payment') {
+        setViewData(null);
+        localStorage.removeItem('makemyqr_view_data');
+      }
+    }
     setView(v);
-    if (data) setViewData(data);
   };
 
   const [editingId, setEditingId] = useState<string | null>(null);

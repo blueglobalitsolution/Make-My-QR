@@ -392,7 +392,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           </div>
                           <div className="text-left">
                             <p className="font-medium skeu-text-primary text-sm">Drop your PDF or browse</p>
-                            <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 20MB</p>
+                            <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: {currentUser?.subscription?.plan_details?.upload_limit_mb || 5}MB</p>
                           </div>
                         </div>
                       )}
