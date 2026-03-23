@@ -45,6 +45,7 @@ export interface User {
       can_lead_capture: boolean;
       can_access_analytics: boolean;
       upload_limit_mb: number;
+      is_lifetime: boolean;
     };
   };
 }

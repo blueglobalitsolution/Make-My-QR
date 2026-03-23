@@ -14,6 +14,7 @@ class SubscriptionPlan(models.Model):
     can_lead_capture = models.BooleanField(default=False)
     can_access_analytics = models.BooleanField(default=False)
     upload_limit_mb = models.IntegerField(default=5)  # Default 5MB for free
+    is_lifetime = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -56,11 +57,15 @@ class UserSubscription(models.Model):
         self.plan = plan
         current_now = timezone.now()
         
-        # If already active and not expired, extend from expiry date, otherwise from now
-        if self.expiry_date and self.expiry_date > current_now:
-            self.expiry_date = self.expiry_date + timedelta(days=plan.duration_months * 30)
+        # Handle lifetime plans
+        if plan.is_lifetime:
+            self.expiry_date = None
         else:
-            self.expiry_date = current_now + timedelta(days=plan.duration_months * 30)
+            # If already active and not expired, extend from expiry date, otherwise from now
+            if self.expiry_date and self.expiry_date > current_now:
+                self.expiry_date = self.expiry_date + timedelta(days=plan.duration_months * 30)
+            else:
+                self.expiry_date = current_now + timedelta(days=plan.duration_months * 30)
             
         self.is_active = True
         self.purchase_count += 1

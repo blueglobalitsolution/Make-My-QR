@@ -16,9 +16,13 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
       const data = await getPlans();
       setPlans(data);
       if (data.length > 0) {
-        // Set initial cycle to the first available duration
-        const durations = [...new Set(data.map((p: any) => p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
-        if (durations.length > 0) setCycle(durations[0]);
+        // Find best initial cycle (Monthly if available, else first)
+        const rawDurations = [...new Set(data.map((p: any) => p.is_lifetime ? 0 : p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
+        if (rawDurations.includes(1)) {
+            setCycle(1);
+        } else if (rawDurations.length > 0) {
+            setCycle(rawDurations[0]);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch plans", err);
@@ -28,7 +32,6 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   };
 
   const handleSelectPlan = (plan: any) => {
-    // The price in the database is the total price for the duration
     const totalPrice = Number(plan.price);
     const selectedPlan = {
       ...plan,
@@ -37,9 +40,9 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
     setView?.('payment', selectedPlan);
   };
 
-  // Filter plans for the current cycle
-  const currentPlans = plans.filter(p => p.duration_months === cycle);
-  const availableCycles = [...new Set(plans.map(p => p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
+  const isLifetimeVisible = cycle === 0;
+  const currentPlans = plans.filter(p => isLifetimeVisible ? p.is_lifetime : (p.duration_months === cycle && !p.is_lifetime));
+  const availableCycles = [...new Set(plans.map(p => p.is_lifetime ? 0 : p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
 
   const brandRed = 'text-[#ef4444]';
   const bgBrandRed = 'bg-[#ef4444]';
@@ -75,7 +78,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
                 onClick={() => setCycle(dur)}
                 className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === dur ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
               >
-                {dur} {dur === 1 ? 'Month' : 'Months'}
+                {dur === 0 ? 'LIFETIME' : (dur === 12 ? 'ANNUAL' : (dur === 1 ? 'MONTHLY' : `${dur} MONTHS`))}
               </button>
             ))}
           </div>
@@ -106,12 +109,12 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
                     <span className={`${isFeatured ? 'text-6xl' : 'text-5xl'} font-extrabold`}>{parseFloat(plan.price).toLocaleString('en-IN')}</span>
                   </div>
                   <p className="text-[10px] text-slate-400 font-bold uppercase">
-                    {plan.duration_months === 1 ? 'Per Month' : plan.duration_months === 12 ? 'Per Year' : `For ${plan.duration_months} Months`}
+                    {plan.is_lifetime ? 'One-Time Payment' : (plan.duration_months === 1 ? 'Per Month' : plan.duration_months === 12 ? 'Per Year' : `For ${plan.duration_months} Months`)}
                   </p>
                 </div>
 
                 <div className={`bg-red-50 ${brandRed} py-3 rounded-xl text-center text-[14px] font-bold mb-8 border border-red-50`}>
-                  {plan.duration_months === 12 ? 'Save with Annual Billing' : 'Flexible Subscription'}
+                  {plan.is_lifetime ? 'Unlimited Access Forever' : (plan.duration_months === 12 ? 'Save with Annual Billing' : 'Flexible Subscription')}
                 </div>
 
                 <ul className="space-y-4 mb-8 flex-grow">

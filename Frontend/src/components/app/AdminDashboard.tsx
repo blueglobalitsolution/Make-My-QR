@@ -27,7 +27,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
         can_password_protect: false,
         can_lead_capture: false,
         can_access_analytics: false,
-        upload_limit_mb: 5
+        upload_limit_mb: 5,
+        is_lifetime: false,
     });
 
     useEffect(() => {
@@ -97,7 +98,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_password_protect: plan.can_password_protect || false,
                 can_lead_capture: plan.can_lead_capture || false,
                 can_access_analytics: plan.can_access_analytics || false,
-                upload_limit_mb: plan.upload_limit_mb || 5
+                upload_limit_mb: plan.upload_limit_mb || 5,
+                is_lifetime: plan.is_lifetime || false
             });
         } else {
             setIsEditingPlan({ isNew: true });
@@ -113,7 +115,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_password_protect: false,
                 can_lead_capture: false,
                 can_access_analytics: false,
-                upload_limit_mb: 5
+                upload_limit_mb: 5,
+                is_lifetime: false
             });
         }
     };
@@ -376,6 +379,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 />
                                                                 <label htmlFor="can_access_analytics" className="text-xs font-bold text-slate-700">Full Analytics</label>
                                                             </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    id="is_lifetime"
+                                                                    checked={planForm.is_lifetime}
+                                                                    onChange={(e) => setPlanForm({ ...planForm, is_lifetime: e.target.checked })}
+                                                                    className="w-5 h-5 rounded border-slate-200 text-red-600 focus:ring-red-500"
+                                                                />
+                                                                <label htmlFor="is_lifetime" className="text-xs font-bold text-red-600">Lifetime Access</label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -435,11 +448,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     </div>
                                                     
                                                     <h4 className="text-xl font-black text-slate-800 mb-1">{plan.name}</h4>
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Duration: {plan.duration_months} Month(s)</p>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
+                                                        {plan.is_lifetime ? 'LIFETIME ACCESS' : `Duration: ${plan.duration_months} Month(s)`}
+                                                    </p>
                                                     
                                                     <div className="flex items-baseline gap-1 mb-6">
                                                         <span className="text-3xl font-black text-slate-800">₹{plan.price}</span>
-                                                        <span className="text-slate-400 text-xs font-bold">/ period</span>
+                                                        <span className="text-slate-400 text-xs font-bold">{plan.is_lifetime ? '/ lifetime' : '/ period'}</span>
                                                     </div>
 
                                                     <div className="space-y-3 pt-6 border-t border-slate-50">
@@ -526,7 +541,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 ? 'text-red-500' : 'text-slate-500'
                                                             }`}>
                                                                 <Calendar className="w-3.5 h-3.5" />
-                                                                {sub.expiry_date ? new Date(sub.expiry_date).toLocaleDateString() : 'N/A'}
+                                                                {sub.expiry_date ? new Date(sub.expiry_date).toLocaleDateString() : (sub.plan_name?.toLowerCase().includes('lifetime') ? 'LIFETIME' : 'N/A')}
                                                                 {sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 && (
                                                                     <span className="bg-red-50 text-[8px] px-1.5 py-0.5 rounded ml-1 animate-pulse">EXPIRING SOON</span>
                                                                 )}
