@@ -39,11 +39,11 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 // 1. Password Must be verified if enabled
                 // 2. Lead capture must be submitted if enabled
                 // 3. Otherwise authorized immediately
-                
+
                 if (!data.is_protected && !data.is_lead_capture) {
                     setIsAuthorized(true);
                 }
-                
+
                 if (!data.is_protected) {
                     setIsPasswordVerified(true);
                 }
@@ -79,7 +79,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 if (qrData.is_protected && !isPasswordVerified) {
                     return;
                 }
-                
+
                 const response = await fetch(`/r/${slug}/capture-lead/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

@@ -102,98 +102,99 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
 
     return (
         <div
-            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto scrollbar-hide relative pt-12 pb-6"
+            className="h-full flex flex-col bg-[#fcfdff] overflow-y-auto scrollbar-hide relative"
             style={{ fontFamily: textFont }}
         >
-            {/* Background Curve */}
-            <div
-                className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[180%] h-[320px] rounded-b-[100%] z-0"
-                style={{ backgroundColor: brandColor || '#9b9cf2' }}
-            />
-            {/* Glow effects */}
-            <div className="absolute top-1/2 left-0 w-64 h-64 bg-pink-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 w-full max-w-[340px] mx-auto flex flex-col items-center pt-[30px] px-5 pb-6">
-
-                {/* Header Text */}
-                <div className="text-center space-y-1 mb-3 w-full">
-                    <h3 className="text-[13px] font-medium " style={{ fontFamily: titleFont, color: textColor }}>
-                        {businessData?.company || "Give Your Company Name"}
+            <div className="relative w-full flex-shrink-0">
+                {/* Background Curve Header */}
+                <div
+                    className="w-full px-5 pt-20 pb-44 text-center"
+                    style={{
+                        backgroundColor: brandColor || '#9b9cf2',
+                        borderBottomLeftRadius: '50% 40px',
+                        borderBottomRightRadius: '50% 40px',
+                    }}
+                >
+                    <h3 className="text-[12px] font-bold tracking-widest mb-1 uppercase opacity-80" style={{ fontFamily: titleFont, color: textColor }}>
+                        {businessData?.company || "My Company"}
                     </h3>
-                    <h1 className="text-[20px] font-black leading-[1.1]  px-2" style={{ fontFamily: titleFont, color: titleColor }}>
-                        {businessData?.title || name || "Here PDF Title Placement"}
+                    <h1 className="text-[22px] font-black leading-tight tracking-tight" style={{ fontFamily: titleFont, color: titleColor }}>
+                        {businessData?.title || name || "PDF Content Title"}
                     </h1>
-                    <p className="text-[13px] font-medium px-2 leading-snug mt-1 whitespace-pre-wrap opacity-90" style={{ fontFamily: textFont, color: textColor }}>
+                    <p className="text-[13px] font-medium px-2 leading-snug mt-2 opacity-90" style={{ fontFamily: textFont, color: textColor }}>
                         {businessData?.description || "Learn about how we can help\nwith all your business needs."}
                     </p>
                 </div>
 
-                {/* Card Container */}
-                <div className="w-full bg-white rounded-[1.5rem] shadow-2xl shadow-blue-900/10 overflow-hidden relative flex flex-col mb-3 mt-1">
+                {/* Card Container — overlapping the curve */}
+                <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-6">
+                    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden relative flex flex-col">
 
-                    {/* Top Image Part */}
-                    <div className="w-full relative bg-white h-[250px] pt-4 px-4">
-                        <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
-                            {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
-                                <div className="absolute inset-0 bg-white overflow-hidden">
-                                    <iframe
-                                        src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
-                                        className="h-full border-none pointer-events-none bg-white"
-                                        title="PDF First Page Preview"
-                                        scrolling="no"
-                                        style={{ overflow: 'hidden', background: 'white', width: 'calc(100% + 20px)' }}
+                        {/* Top Image Part */}
+                        <div className="w-full relative bg-white h-[250px] pt-4 px-4 pb-2">
+                            <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
+                                {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
+                                    <div className="absolute inset-0 bg-white overflow-hidden">
+                                        <iframe
+                                            src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
+                                            className="h-full border-none pointer-events-none bg-white"
+                                            title="PDF First Page Preview"
+                                            scrolling="no"
+                                            style={{ overflow: 'hidden', background: 'white', width: 'calc(100% + 20px)' }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
+                                        alt="Business meeting"
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
+                                )}
+                                {/* PDF Tag (Top Right) */}
+                                <div className="absolute top-0 right-4 bg-red-600 text-white px-4 py-2.5 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1 z-10">
+                                    <div className="w-4 h-5 border-[2px] border-white/90 rounded-[3px] mb-[3px] relative flex items-center justify-center bg-red-600">
+                                        <span className="text-[5px] font-black text-white">PDF</span>
+                                    </div>
+                                    <span className="text-[7px] font-black uppercase  leading-none text-white/90">FILE</span>
                                 </div>
-                            ) : (
-                                <img
-                                    src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
-                                    alt="Business meeting"
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            )}
-                            {/* PDF Tag (Top Right) */}
-                            <div className="absolute top-0 right-4 bg-red-600 text-white px-4 py-2.5 rounded-b-xl flex flex-col items-center shadow-lg transition-transform hover:-translate-y-1 z-10">
-                                <div className="w-4 h-5 border-[2px] border-white/90 rounded-[3px] mb-[3px] relative flex items-center justify-center bg-red-600">
-                                    <span className="text-[5px] font-black text-white">PDF</span>
-                                </div>
-                                <span className="text-[7px] font-black uppercase  leading-none text-white/90">FILE</span>
+                            </div>
+                        </div>
+
+                        {/* Content Part */}
+                        <div className="p-4 pb-5 flex flex-col items-center justify-center w-full shrink-0">
+                            {/* Button / Lead Capture */}
+                            <div className="w-full flex justify-center mt-2">
+                                {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
+                                    (!isPasswordVerified && onPasswordSubmit) ? (
+                                        <div className="w-full">
+                                            <PasswordWall
+                                                brandColor={brandColor}
+                                                onSubmit={onPasswordSubmit}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <LeadCaptureForm
+                                            brandColor={brandColor}
+                                            leadForm={leadForm}
+                                            setLeadForm={setLeadForm}
+                                            onSubmit={onLeadSubmit}
+                                        />
+                                    )
+                                ) : (
+                                    <button
+                                        onClick={handleAction}
+                                        className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
+                                    >
+                                        <Eye className="w-5 h-5" strokeWidth={3} /> {businessData?.buttons?.[0]?.text || "View PDF"}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
-
-                    {/* Content Part */}
-                    <div className="p-4 pb-5 flex flex-col items-center justify-center w-full shrink-0">
-                        {/* Button / Lead Capture */}
-                        <div className="w-full flex justify-center mt-2">
-                        {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
-                            (!isPasswordVerified && onPasswordSubmit) ? (
-                                <div className="w-full">
-                                    <PasswordWall 
-                                        brandColor={brandColor} 
-                                        onSubmit={onPasswordSubmit} 
-                                    />
-                                </div>
-                            ) : (
-                                <LeadCaptureForm
-                                    brandColor={brandColor}
-                                    leadForm={leadForm}
-                                    setLeadForm={setLeadForm}
-                                    onSubmit={onLeadSubmit}
-                                />
-                            )
-                        ) : (
-                            <button
-                                onClick={handleAction}
-                                className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
-                            >
-                                <Eye className="w-5 h-5" /> {businessData?.buttons?.[0]?.text || "View PDF"}
-                            </button>
-                        )}
-                        </div>
-                    </div>
                 </div>
+            </div>
 
+            <div className="mt-40 mb-6 flex flex-col items-center">
                 {/* Footer URL */}
                 {businessData?.buttons?.[0]?.url && businessData?.buttons?.[0]?.url !== '#' && (
                     <a
@@ -208,7 +209,6 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         </span>
                     </a>
                 )}
-
             </div>
         </div>
     );

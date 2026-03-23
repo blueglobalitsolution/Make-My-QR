@@ -51,6 +51,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
         if (activeSection && scrollContainerRef.current) {
             // Map Wizard section IDs to Preview element IDs
             const sectionMap: Record<string, string> = {
+                'content': 'business_design',
                 'about': 'aboutCompany',
                 'hours': 'openingHours',
                 'welcomeScreen': 'business_design',
@@ -59,10 +60,10 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                 'contactInfo': 'contactInfo',
                 'social': 'social'
             };
-            
+
             const targetId = sectionMap[activeSection] || activeSection;
             const el = document.getElementById(`section-${targetId}`);
-            
+
             if (el) {
                 const container = scrollContainerRef.current;
                 // Get the total offset relative to the scroll container's content
@@ -104,7 +105,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
 
                     {/* Solid color block with curved bottom */}
                     <div
-                        className="w-full px-5 pt-16 pb-28 text-center"
+                        className="w-full px-5 pt-20 pb-24 text-center"
                         style={{
                             backgroundColor: primaryColor,
                             borderBottomLeftRadius: '50% 40px',
@@ -125,7 +126,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                         </h1>
                         {businessData?.subtitle && (
                             <p
-                                className="text-[13px] font-medium mt-2 leading-snug opacity-70"
+                                className="text-[13px] font-medium mt-2 mb-2 leading-snug opacity-70"
                                 style={{ fontFamily: textFont, color: titleColor }}
                             >
                                 {businessData.subtitle}
@@ -134,7 +135,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                     </div>
 
                     {/* Hero Card — overlapping the curve */}
-                    <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-4">
+                    <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-6">
                         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
                             {/* Image area */}
@@ -153,35 +154,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                 )}
                             </div>
 
-                            {/* CTA Button / Lead Capture */}
-                            <div className="px-4 py-3">
-                                {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
-                                    (!isPasswordVerified && onPasswordSubmit) ? (
-                                        <PasswordWall 
-                                            brandColor={primaryColor} 
-                                            onSubmit={onPasswordSubmit} 
-                                        />
-                                    ) : (leadForm && setLeadForm && (
-                                        <LeadCaptureForm
-                                            brandColor={primaryColor}
-                                            leadForm={leadForm}
-                                            setLeadForm={setLeadForm}
-                                            onSubmit={onLeadSubmit}
-                                        />
-                                    ))
-                                ) : (
-                                    <button
-                                        style={{ backgroundColor: businessData?.secondaryColor || '#7ec8a4' }}
-                                        className="w-full py-3 rounded-2xl text-white font-black text-[15px] shadow-md  hover:scale-[1.02] active:scale-[0.98] transition-all"
-                                        onClick={() => {
-                                            const btn = businessData?.buttons?.[0];
-                                            if (btn?.url) window.open(btn.url.startsWith('http') ? btn.url : `https://${btn.url}`, '_blank');
-                                        }}
-                                    >
-                                        {businessData?.buttons?.[0]?.text || 'View More'}
-                                    </button>
-                                )}
-                            </div>
+                            {/* CTA Button section removed as per user request */}
                         </div>
                     </div>
                 </div>
