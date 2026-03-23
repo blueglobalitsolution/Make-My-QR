@@ -147,7 +147,7 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
 
           {/* Solid color block with curved bottom */}
           <div
-            className="w-full px-5 pt-16 pb-28 text-center"
+            className="w-full px-5 pt-20 pb-24 text-center"
             style={{
               backgroundColor: profile.primaryColor,
               borderBottomLeftRadius: '50% 40px',
@@ -161,14 +161,14 @@ const BusinessProfileViewer: React.FC<BusinessProfileViewerProps> = ({ profileId
               {profile.title || profile.headline || 'Find me on social networks'}
             </h1>
             {profile.subtitle && (
-              <p className="text-white/70 text-[13px] font-medium mt-2 leading-snug">
+              <p className="text-white/70 text-[13px] font-medium mt-2 mb-2 leading-snug">
                 {profile.subtitle}
               </p>
             )}
           </div>
 
           {/* Hero Card — overlapping the curve */}
-          <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-4">
+          <div className="absolute bottom-0 translate-y-1/2 left-0 right-0 mx-6">
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
               {/* Image area */}
               <div className="w-full h-36 bg-slate-100 relative overflow-hidden flex items-center justify-center">

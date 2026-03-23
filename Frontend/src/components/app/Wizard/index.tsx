@@ -47,6 +47,7 @@ interface WizardProps {
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDeletePdf: () => void;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteCoverImage: () => void;
   qrStylingOptions: any;
   selectedTypeConfig: any;
   phonePreviewMode: 'ui' | 'qr';
@@ -92,6 +93,7 @@ export const Wizard: React.FC<WizardProps> = ({
   handlePdfUpload,
   handleDeletePdf,
   handleCoverImageUpload,
+  handleDeleteCoverImage,
   qrStylingOptions,
   selectedTypeConfig,
   phonePreviewMode,
@@ -648,10 +650,34 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-6 border-t border-black/5 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
-                    <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-xl flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
-                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
-                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
-                    </div>
+                    {wizard.business?.images?.[0] ? (
+                      <div className="relative group/img w-full max-w-[200px] aspect-square rounded-2xl overflow-hidden border-2 border-black/5 shadow-sm">
+                        <img src={wizard.business.images[0]} alt="Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                          <button
+                            type="button"
+                            onClick={handleDeleteCoverImage}
+                            className="p-2 bg-white text-red-500 hover:bg-red-50 rounded-xl transition-all shadow-md active:scale-90"
+                            title="Delete Image"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <label
+                            className="p-2 bg-[#dc2626] text-white hover:bg-red-700 rounded-xl transition-all shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                            title="Change Image"
+                          >
+                            <Upload className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase">Edit</span>
+                            <input type="file" className="hidden" accept="image/*" onChange={handleCoverImageUpload} />
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-xl flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
+                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
+                        <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-6">
@@ -681,9 +707,6 @@ export const Wizard: React.FC<WizardProps> = ({
                           </div>
                         </div>
                       ))}
-                      <button type="button" onClick={addLink} className="w-full py-4 border-2 border-[#dc2626] text-[#dc2626] font-black text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-[#3eb5a9] hover:text-white hover:border-[#3eb5a9] transition-colors">
-                        <Plus className="w-4 h-4" /> Add Button
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1850,18 +1873,31 @@ export const Wizard: React.FC<WizardProps> = ({
                             viewMode={previewViewMode}
                             setViewMode={setPreviewViewMode as any}
                             isPreview={true}
+                            activeSection={activeDesignSection}
                           />
                         </div>
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center space-y-12 p-8 animate-in zoom-in-95 duration-700">
-                          <div className="relative group p-4 border border-[#E0EAF2] rounded-[3rem] bg-transparent shadow-xl transition-transform duration-500 hover:scale-[1.02]">
-                            <div className="bg-white p-3 rounded-[2.5rem] shadow-inner border border-white">
-                              <QRFrameWrapper frame={wizard.config.frame}>
-                                <div className="relative">
-                                  <StyledQRCode options={qrStylingOptions} size={180} />
-                                </div>
-                              </QRFrameWrapper>
+                          <div className="flex flex-col items-center gap-6">
+                            <div className="relative group p-4 border border-[#E0EAF2] rounded-[3rem] bg-transparent shadow-xl transition-transform duration-500 hover:scale-[1.02]">
+                              <div className="bg-white p-3 rounded-[2.5rem] shadow-inner border border-white">
+                                <QRFrameWrapper frame={wizard.config.frame}>
+                                  <div className="relative">
+                                    <StyledQRCode options={qrStylingOptions} size={180} />
+                                  </div>
+                                </QRFrameWrapper>
+                              </div>
                             </div>
+                            {wizard.name && (
+                              <h2
+                                className="text-xl font-black text-center px-4 animate-in fade-in slide-in-from-bottom-2 duration-700"
+                                style={{
+                                  color: ['business', 'links', 'whatsapp', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'white' : '#1e293b'
+                                }}
+                              >
+                                {wizard.name}
+                              </h2>
+                            )}
                           </div>
                         </div>
                       )}
@@ -1914,6 +1950,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           viewMode={previewViewMode}
                           setViewMode={setPreviewViewMode as any}
                           isPreview={true}
+                          activeSection={activeDesignSection}
                         />
                       </div>
                     </div>

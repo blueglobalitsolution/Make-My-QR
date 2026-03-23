@@ -157,7 +157,7 @@ const App: React.FC = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert, auth.currentUser);
-  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
+  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, handleDeleteCoverImage, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
   const filteredHistory = history.filter(item => {
     const matchesFolder = activeFolderId === 'all' || 

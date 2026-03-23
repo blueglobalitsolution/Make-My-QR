@@ -68,6 +68,7 @@ export interface UseWizardReturn {
   handlePdfUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleDeletePdf: () => void;
   handleCoverImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDeleteCoverImage: () => void;
   startQrFromAsset: (file: FileRecord) => void;
   resetWizard: () => void;
   getQRValue: () => string;
@@ -99,9 +100,7 @@ const getInitialWizardState = (): WizardState => ({
     title: 'Find me on social networks',
     subtitle: 'Discover our products & services',
     description: 'New content every week in the links below',
-    buttons: [
-      { id: '1', text: 'View PDF', url: '', icon: 'globe' }
-    ],
+    buttons: [],
     openingHours: INITIAL_HOURS,
     images: [],
     location: INITIAL_LOCATION,
@@ -272,7 +271,12 @@ export const useWizard = (
         profileId = 'b' + Date.now().toString(36);
       }
 
-      localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
+      // Business Profile Specific Persistence - Move inside try/catch but calculate finalValue here
+      try {
+        localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
+      } catch (storageErr) {
+        console.warn("Storage warning: Could not save to localStorage", storageErr);
+      }
       finalValue = `/view/business?id=${profileId}`;
     } else if (wizard.type === 'pdf' || wizard.type === 'links') {
       finalValue = wizard.value || `${window.location.origin}/p/${Math.random().toString(36).substring(7)}`;
@@ -578,6 +582,13 @@ export const useWizard = (
     }
   };
 
+  const handleDeleteCoverImage = () => {
+    setWizard(prev => ({
+      ...prev,
+      business: prev.business ? { ...prev.business, images: [] } : undefined
+    }));
+  };
+
   const startQrFromAsset = (file: FileRecord) => {
     setWizard(prev => ({
       ...prev,
@@ -642,6 +653,7 @@ export const useWizard = (
     handleLogoUpload,
     handlePdfUpload,
     handleCoverImageUpload,
+    handleDeleteCoverImage,
     handleDeletePdf,
     startQrFromAsset,
     resetWizard,
