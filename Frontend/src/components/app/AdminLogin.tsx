@@ -9,11 +9,23 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // For now, simple transition
-        if (email && password) {
-            setView('admin_dashboard');
+        
+        // Use the auth login logic for superuser
+        try {
+            const response = await import('../../api/auth');
+            const data = await response.login(email, password);
+            
+            if (data.user && data.user.is_staff) {
+                localStorage.setItem('makemyqr_token', data.token);
+                localStorage.setItem('makemyqr_user', JSON.stringify(data.user));
+                setView('admin_dashboard');
+            } else {
+                alert("Unauthorized: Admin access required.");
+            }
+        } catch (err: any) {
+            alert(err.response?.data?.error || "Login Failed: check your credentials.");
         }
     };
 

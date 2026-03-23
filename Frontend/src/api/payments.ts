@@ -13,3 +13,7 @@ export const verifyPayment = async (paymentData: {
     const response = await client.post('/api/payments/verify-payment/', paymentData);
     return response.data;
 };
+export const getPlans = async () => {
+    const response = await client.get('/payments/plans/');
+    return response.data;
+};

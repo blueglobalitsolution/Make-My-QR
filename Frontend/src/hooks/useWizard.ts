@@ -147,7 +147,8 @@ export const useWizard = (
   editingId: string | null,
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>,
   setView: React.Dispatch<React.SetStateAction<any>>,
-  showAlert?: (title: string, message: string, type?: 'info' | 'danger') => void
+  showAlert?: (title: string, message: string, type?: 'info' | 'danger') => void,
+  currentUser?: import('../../types').User | null
 ): UseWizardReturn => {
   const [wizard, setWizard] = useState<WizardState>(getInitialWizardState());
   const [activeDesignSection, setActiveDesignSection] = useState<string | null>(null);
@@ -221,6 +222,16 @@ export const useWizard = (
   const selectedTypeConfig = QR_TYPES_CONFIG.find(t => t.id === wizard.type) || QR_TYPES_CONFIG[0];
 
   const handleNextStep = async () => {
+    // Check QR limit if creating new code
+    if (!editingId && currentUser?.subscription?.plan_details) {
+        if (history.length >= currentUser.subscription.plan_details.qr_limit) {
+            const msg = `You have reached your limit of ${currentUser.subscription.plan_details.qr_limit} QR codes. Upgrade your plan to create more.`;
+            if (showAlert) showAlert("Limit Reached", msg, "danger");
+            else alert(msg);
+            return;
+        }
+    }
+
     // 1. Calculate the final value (destination) based on current wizard state
     let finalValue = '';
 

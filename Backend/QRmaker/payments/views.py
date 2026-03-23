@@ -2,9 +2,9 @@ import razorpay
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from .models import PaymentOrder, SubscriptionPlan
-from .serializers import PaymentOrderSerializer
+from rest_framework import status, permissions, viewsets
+from .models import PaymentOrder, SubscriptionPlan, UserSubscription
+from .serializers import PaymentOrderSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer
 import json
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -72,10 +72,9 @@ class VerifyPaymentView(APIView):
             order.status = 'success'
             order.save()
 
-            # Here you would typically update the user's plan/subscription details
-            # user_profile = order.user.profile
-            # user_profile.plan = order.plan
-            # user_profile.save()
+            # Update UserSubscription
+            user_sub, created = UserSubscription.objects.get_or_create(user=order.user)
+            user_sub.update_subscription(order.plan)
 
             return Response({"status": "Payment verified successfully"}, status=status.HTTP_200_OK)
         except razorpay.errors.SignatureVerificationError:
@@ -85,3 +84,33 @@ class VerifyPaymentView(APIView):
             return Response({"error": "Payment verification failed"}, status=status.HTTP_400_BAD_REQUEST)
         except PaymentOrder.DoesNotExist:
             return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+class AdminSubscriptionPlanViewSet(viewsets.ModelViewSet):
+    queryset = SubscriptionPlan.objects.all()
+    serializer_class = SubscriptionPlanSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class SubscriptionPlanViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SubscriptionPlan.objects.all()
+    serializer_class = SubscriptionPlanSerializer
+    permission_classes = [permissions.AllowAny]
+
+class AdminUserSubscriptionListView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        subscriptions = UserSubscription.objects.all().select_related('user', 'plan')
+        serializer = UserSubscriptionSerializer(subscriptions, many=True)
+        return Response(serializer.data)
+class AdminStatsView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from django.contrib.auth.models import User
+        from qrcodes.models import QRCode
+        
+        return Response({
+            "total_users": User.objects.count(),
+            "total_qrcodes": QRCode.objects.count(),
+            "active_subscriptions": UserSubscription.objects.filter(is_active=True).count(),
+            "system_health": "100%",
+        })
