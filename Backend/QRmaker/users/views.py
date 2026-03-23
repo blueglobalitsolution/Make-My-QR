@@ -121,7 +121,7 @@ class PasswordResetRequestView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({'error': 'No user found with this email'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'No user exists with this email'}, status=status.HTTP_404_NOT_FOUND)
         
         otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
         # Store OTP in cache for 3 minutes (180 seconds)

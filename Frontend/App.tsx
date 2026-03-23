@@ -558,6 +558,7 @@ const App: React.FC = () => {
             handleResetRequest={auth.handleResetRequest}
             handleResetVerify={auth.handleResetVerify}
             handleResetConfirm={auth.handleResetConfirm}
+            isProcessing={auth.isProcessing}
           />
         )}
 

@@ -57,6 +57,7 @@ export interface UseAuthReturn {
   setAccPassword: React.Dispatch<React.SetStateAction<string>>;
   accConfirmPassword: string;
   setAccConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
+  isProcessing: boolean;
 }
 
 export const useAuth = (
@@ -90,6 +91,7 @@ export const useAuth = (
   const [accPhone, setAccPhone] = useState('');
   const [accPassword, setAccPassword] = useState('');
   const [accConfirmPassword, setAccConfirmPassword] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const triggerAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
     if (showAlert) {
@@ -250,6 +252,7 @@ export const useAuth = (
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsProcessing(true);
     try {
       await requestPasswordReset(resetEmail);
       setResetStep(2);
@@ -257,6 +260,8 @@ export const useAuth = (
     } catch (err: any) {
       const errorMsg = err.response?.data?.error || "Failed to request password reset.";
       triggerAlert("Reset Failed", errorMsg, "danger");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -343,5 +348,6 @@ export const useAuth = (
     setAccPassword,
     accConfirmPassword,
     setAccConfirmPassword,
+    isProcessing,
   };
 };

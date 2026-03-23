@@ -40,6 +40,7 @@ interface AuthViewsProps {
   handleResetRequest: (e: React.FormEvent) => Promise<void>;
   handleResetVerify: (e: React.FormEvent) => Promise<void>;
   handleResetConfirm: (e: React.FormEvent) => Promise<void>;
+  isProcessing: boolean;
 }
 
 const inputClass = "w-full pl-12 pr-6 py-4 skeu-input transition-all";
@@ -85,6 +86,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
   handleResetRequest,
   handleResetVerify,
   handleResetConfirm,
+  isProcessing,
 }) => {
   /* ─── LOGIN ─── */
   if (view === 'auth') {
@@ -234,7 +236,18 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   <input type="email" required value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
                 </div>
               </div>
-              <button type="submit" className="skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl">Send OTP</button>
+              <button 
+                type="submit" 
+                disabled={isProcessing}
+                className={`skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl transition-all duration-300 ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                {isProcessing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Sending OTP...
+                  </div>
+                ) : "Send OTP"}
+              </button>
             </form>
           )}
 
