@@ -185,8 +185,8 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
             <ul className="space-y-4 mb-8 flex-grow">
               {currentData.enterprise.features.map((feature, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <div className="bg-red-50 border border-red-100 p-0.5 rounded-full shrink-0">
-                    <Check className={`w-3 h-3 ${brandRed}`} strokeWidth={3} />
+                  <div className="bg-[#3eb5a9] p-0.5 rounded-full shrink-0 shadow-sm shadow-teal-500/10">
+                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
                   </div>
                   <span className={`text-[13px] font-semibold ${brandDark}`}>{feature}</span>
                 </li>

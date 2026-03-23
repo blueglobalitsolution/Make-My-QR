@@ -778,13 +778,6 @@ export const Wizard: React.FC<WizardProps> = ({
               </button>
               {activeDesignSection === 'location' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Search Address</label>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input type="text" placeholder="Search a location..." className="w-full pl-11 pr-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
-                    </div>
-                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3 md:col-span-2">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Address</label>
@@ -1045,12 +1038,12 @@ export const Wizard: React.FC<WizardProps> = ({
                             }
                             updateBusinessField('facilities', newArr);
                           }}
-                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item cursor-pointer ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'skeu-input !border-transparent hover:!bg-white hover:!border-slate-300 hover:shadow-md'}`}
                         >
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#dc2626] text-white shadow-sm' : 'bg-slate-50 text-slate-400 group-hover/item:bg-slate-100 group-hover/item:text-[#dc2626]'}`}>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#dc2626] text-white shadow-sm' : 'bg-white text-slate-400 border border-black/5 group-hover/item:text-[#dc2626]'}`}>
                             {fac.icon}
                           </div>
-                          <span className="text-[10px] font-black text-center">{fac.label}</span>
+                          <span className="text-xs font-black text-center">{fac.label}</span>
                         </button>
                       );
                     })}
@@ -1077,15 +1070,71 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
                   <div className="space-y-3">
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Splash Image</label>
-                    <div className="w-full h-32 border-2 border-dashed border-[#dc2626]/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
-                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const url = URL.createObjectURL(e.target.files[0]);
-                          updateBusinessField('welcomeScreenImage', url);
-                        }
-                      }} />
-                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
-                      <span className="text-xs font-bold text-[#dc2626] opacity-70 group-hover/img:opacity-100">Click or drag image here</span>
+                    <div className="relative group">
+                      <div className={`border-2 border-solid skeu-dark rounded-[1rem] p-8 flex flex-col items-center justify-center gap-8 hover:border-[#dc2626] skeu-mid hover:shadow-2xl transition-all duration-500 group/upload ${!wizard.business?.welcomeScreenImage ? 'cursor-pointer' : ''}`}>
+                        {!wizard.business?.welcomeScreenImage && (
+                          <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const url = URL.createObjectURL(e.target.files[0]);
+                              updateBusinessField('welcomeScreenImage', url);
+                            }
+                          }} />
+                        )}
+                        {wizard.business?.welcomeScreenImage ? (
+                          <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
+                            <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center relative shrink-0 p-2 overflow-hidden">
+                              <img src={wizard.business.welcomeScreenImage} className="w-full h-full object-cover" alt="Splash Screen" />
+                            </div>
+                            <div className="text-left min-w-0 flex-1">
+                              <h4 className="font-medium skeu-text-primary text-sm truncate">Splash Image</h4>
+                              <p className="text-xs font-medium text-green-500 mt-0.5 flex items-center gap-1.5">
+                                <Check className="w-3.5 h-3.5" /> Uploaded successfully
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-auto relative z-20">
+                              <button
+                                type="button"
+                                className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#dc2626] hover:bg-[#dc2626]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                                title="Delete Image"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  updateBusinessField('welcomeScreenImage', undefined);
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              <label
+                                className="p-2.5 bg-[#dc2626] text-white hover:bg-slate-800 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                                title="Change Image"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Upload className="w-4 h-4" />
+                                <span className="text-[10px] font-black uppercase">Edit</span>
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    const url = URL.createObjectURL(e.target.files[0]);
+                                    updateBusinessField('welcomeScreenImage', url);
+                                  }
+                                }} />
+                              </label>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-5 w-full justify-start">
+                            <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#dc2626] group-hover/upload:to-[#b91c1c] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                              <ImageIcon className="w-7 h-7" />
+                            </div>
+                            <div className="text-left">
+                              <p className="font-medium skeu-text-primary text-sm">Drop splash image or browse</p>
+                              <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 5MB</p>
+                            </div>
+                            <div className="ml-auto flex items-center gap-2">
+                              <span className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold skeu-text-muted group-hover/upload:bg-slate-50 transition-colors shadow-sm cursor-pointer relative z-20">Browse Files</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1295,10 +1344,10 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={folder.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, folderId: folder.id })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder cursor-pointer ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'skeu-input !border-transparent hover:!bg-white hover:!border-slate-200 hover:shadow-md hover:shadow-slate-200/50'}`}
                     >
                       <div className="flex flex-col gap-2">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#dc2626] border border-transparent group-hover/folder:border-slate-100'}`}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-white text-slate-300 border border-black/5 group-hover/folder:text-[#dc2626]'}`}>
                           <FolderIcon className="w-4 h-4" />
                         </div>
                         <div>
@@ -1635,47 +1684,48 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="p-8 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Login Wall Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/gate">
+                <div className="flex items-center gap-5 p-6 skeu-input !rounded-2xl hover:bg-white hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/gate cursor-pointer" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
                   <button
                     type="button"
-                    onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}
-                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                    className={`shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
-                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
-                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Login Wall</p>
-                    <p className="text-[10px] font-medium text-slate-400">Require login to view</p>
+                  <div>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight text-left">Login Wall</p>
+                    <p className="text-[10px] font-medium text-slate-400 text-left">Require login to view</p>
                   </div>
                 </div>
 
                 {/* Lead Capture Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
+                <div className="flex items-center gap-5 p-6 skeu-input !rounded-2xl hover:bg-white hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
                   <button
                     type="button"
-                    onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}
-                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                    className={`shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
-                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
-                    <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
-                    <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
+                  <div>
+                    <p className="font-black text-[#0F172A] text-sm text-left">Lead Capture</p>
+                    <p className="text-[10px] font-medium text-slate-400 text-left">Collect visitor info</p>
                   </div>
                 </div>
 
                 {/* Show Preview Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-white rounded-2xl border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
+                <div className="flex items-center gap-5 p-6 skeu-input !rounded-2xl hover:bg-white hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/preview_toggle cursor-pointer" onClick={() => {
+                  const newPreviewState = !wizard.show_preview;
+                  setWizard({ ...wizard, show_preview: newPreviewState });
+                  setPhonePreviewMode(newPreviewState ? 'ui' : 'qr');
+                }}>
                   <button
                     type="button"
-                    onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}
-                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626] shadow-lg shadow-red-500/20' : 'bg-white border-slate-200'}`}
+                    className={`shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.show_preview && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
-                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}>
-                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Show Preview Page</p>
-                    <p className="text-[10px] font-medium text-slate-400">Directly link if disabled</p>
+                  <div>
+                    <p className="font-black text-[#0F172A] text-sm tracking-tight text-left">Show Preview Page</p>
+                    <p className="text-[10px] font-medium text-slate-400 text-left">Directly link if disabled</p>
                   </div>
                 </div>
               </div>
@@ -1783,6 +1833,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             viewMode={previewViewMode}
                             setViewMode={setPreviewViewMode as any}
                             isPreview={true}
+                            activeSection={activeDesignSection}
                           />
                         </div>
                       ) : (
