@@ -27,6 +27,7 @@ export interface GatekeeperProps {
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
     activeSection?: string | null;
+    isMobile?: boolean;
 }
 
 export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
@@ -46,7 +47,8 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     viewMode,
     setViewMode,
     isPreview = false,
-    activeSection
+    activeSection,
+    isMobile = false
 }) => {
     switch (category) {
         case 'website':
@@ -83,6 +85,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     viewMode={viewMode}
                     setViewMode={setViewMode}
                     isPreview={isPreview}
+                    isMobile={isMobile}
                 />
             );
 

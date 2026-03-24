@@ -17,10 +17,12 @@
     "jsbarcode": "^3.11.6",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.463.0",
+    "pdfjs-dist": "^4.0.379",
     "qr-code-styling": "^1.6.0-rc.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-pdf": "^9.2.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

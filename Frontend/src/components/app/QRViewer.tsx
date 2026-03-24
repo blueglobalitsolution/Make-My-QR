@@ -11,8 +11,15 @@ interface QRViewerProps {
     isFileMode?: boolean;
 }
 
+const isMobileDevice = () => {
+    if (typeof window === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth < 768;
+};
+
 const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }) => {
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [qrData, setQrData] = useState<any>(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
@@ -20,6 +27,16 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
     const [isPasswordVerified, setIsPasswordVerified] = useState(false);
     const [leadForm, setLeadForm] = useState({ name: '', email: '' });
     const [viewMode, setViewMode] = useState<'landing' | 'preview'>('landing');
+
+    useEffect(() => {
+        setIsMobile(isMobileDevice());
+        
+        const handleResize = () => {
+            setIsMobile(isMobileDevice());
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const fetchCode = async () => {
@@ -208,6 +225,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     onLeadSubmit={handleLeadSubmit}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
+                    isMobile={isMobile}
                 />
             ) : (
                 <GatekeeperPreview
@@ -226,6 +244,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     onPasswordSubmit={handlePasswordSubmit}
                     viewMode={viewMode}
                     setViewMode={setViewMode}
+                    isMobile={isMobile}
                 />
             )}
         </>

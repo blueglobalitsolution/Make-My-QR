@@ -1,7 +1,98 @@
-import React from 'react';
-import { Download, ChevronLeft, Eye, Globe, Clock, BarChart2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, ChevronLeft, Eye, Globe, Clock, BarChart2, FileText, Loader2 } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
 import { PasswordWall } from './PasswordWall';
+import * as pdfjsLib from 'pdfjs-dist';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+
+const PdfPagePreview: React.FC<{ url: string; onViewPdf: () => void }> = ({ url, onViewPdf }) => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [pageImage, setPageImage] = useState<string | null>(null);
+
+    useEffect(() => {
+        const renderPdfPage = async () => {
+            try {
+                setLoading(true);
+                setError(false);
+                
+                const loadingTask = pdfjsLib.getDocument(url);
+                const pdf = await loadingTask.promise;
+                const page = await pdf.getPage(1);
+                
+                const scale = 1.5;
+                const viewport = page.getViewport({ scale });
+                
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                await page.render({
+                    canvasContext: context!,
+                    viewport: viewport
+                }).promise;
+                
+                const imageUrl = canvas.toDataURL('image/png');
+                setPageImage(imageUrl);
+            } catch (err) {
+                console.error('Error rendering PDF:', err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (url) {
+            renderPdfPage();
+        }
+    }, [url]);
+
+    if (loading) {
+        return (
+            <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-red-500 mx-auto mb-2" />
+                    <p className="text-xs text-slate-500">Loading preview...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !pageImage) {
+        return (
+            <div 
+                className="absolute inset-0 bg-slate-50 flex items-center justify-center cursor-pointer"
+                onClick={onViewPdf}
+            >
+                <div className="text-center p-4">
+                    <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                        <FileText className="w-8 h-8 text-red-600" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-600">PDF Document</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Tap to view</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div 
+            className="absolute inset-0 bg-white cursor-pointer overflow-hidden"
+            onClick={onViewPdf}
+        >
+            <img 
+                src={pageImage} 
+                alt="PDF Preview" 
+                className="w-full h-full object-contain"
+            />
+            <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-[10px] font-medium">
+                Tap to view full PDF
+            </div>
+        </div>
+    );
+};
 
 interface PdfPreviewProps {
     name: string;
@@ -22,6 +113,7 @@ interface PdfPreviewProps {
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
+    isMobile?: boolean;
 }
 
 export const PdfPreview: React.FC<PdfPreviewProps> = ({
@@ -39,7 +131,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     isPasswordVerified = true,
     viewMode,
     setViewMode,
-    isPreview = false
+    isPreview = false,
+    isMobile = false
 }) => {
     const titleFont = businessData?.fontTitle || 'Poppins';
     const textFont = businessData?.fontText || 'Inter';
@@ -66,17 +159,24 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                     </div>
                 </header>
                 <div className="flex-1 w-full relative bg-slate-100">
-                    <object
-                        data={fullValue}
-                        type="application/pdf"
-                        className="w-full h-full"
-                    >
-                        <iframe
-                            src={fullValue}
-                            className="w-full h-full border-none"
-                            title="PDF Viewer"
+                    {isMobile ? (
+                        <PdfPagePreview 
+                            url={fullValue} 
+                            onViewPdf={() => window.open(fullValue, '_blank')} 
                         />
-                    </object>
+                    ) : (
+                        <object
+                            data={fullValue}
+                            type="application/pdf"
+                            className="w-full h-full"
+                        >
+                            <iframe
+                                src={fullValue}
+                                className="w-full h-full border-none"
+                                title="PDF Viewer"
+                            />
+                        </object>
+                    )}
                 </div>
             </div>
         );
@@ -134,15 +234,22 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                         <div className="w-full relative bg-white h-[250px] pt-4 px-4 pb-2">
                             <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
                                 {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
-                                    <div className="absolute inset-0 bg-white overflow-hidden">
-                                        <iframe
-                                            src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
-                                            className="h-full border-none pointer-events-none bg-white"
-                                            title="PDF First Page Preview"
-                                            scrolling="no"
-                                            style={{ overflow: 'hidden', background: 'white', width: 'calc(100% + 20px)' }}
+                                    isMobile ? (
+                                        <PdfPagePreview 
+                                            url={fullValue} 
+                                            onViewPdf={() => isFileMode ? window.open(fullValue, '_blank') : setViewMode('preview')} 
                                         />
-                                    </div>
+                                    ) : (
+                                        <div className="absolute inset-0 bg-white overflow-hidden">
+                                            <iframe
+                                                src={`${fullValue}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
+                                                className="h-full border-none pointer-events-none bg-white"
+                                                title="PDF First Page Preview"
+                                                scrolling="no"
+                                                style={{ overflow: 'hidden', background: 'white', width: 'calc(100% + 20px)' }}
+                                            />
+                                        </div>
+                                    )
                                 ) : (
                                     <img
                                         src={businessData?.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"}
