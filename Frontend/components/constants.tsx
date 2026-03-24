@@ -60,10 +60,11 @@ export const INITIAL_HOURS: OpeningHours = DAYS.reduce((acc, day) => ({
 
 export const INITIAL_LOCATION: LocationConfig = {
   searchAddress: '123 Main St, New York, NY 10001',
+  address: '123 Main St, New York, NY 10001',
   streetNumberFirst: true,
   street: 'Main St',
   number: '123',
-  postalCode: '10001',
+  zipCode: '10001',
   city: 'New York',
   state: 'NY',
   country: 'USA'
@@ -77,12 +78,12 @@ export const INITIAL_CONTACT: ContactInfo = {
 };
 
 export const DEFAULT_BUSINESS_PRESETS: Palette[] = [
-  { primary: '#156295', secondary: '#9DB3C2' },
-  { primary: '#E5E7EB', secondary: '#1F2937' },
-  { primary: '#DBF1F8', secondary: '#156295' },
-  { primary: '#B19CD9', secondary: '#1F2937' },
-  { primary: '#9DB3C2', secondary: '#1F2937' },
-  { primary: '#F5D17E', secondary: '#1F2937' },
+  { primary: '#156295', secondary: '#000000' }, // Deep Ocean
+  { primary: '#1F2937', secondary: '#000000' }, // Midnight
+  { primary: '#064e3b', secondary: '#000000' }, // Forest
+  { primary: '#7f1d1d', secondary: '#000000' }, // Crimson Red
+  { primary: '#581c87', secondary: '#000000' }, // Royal Purple
+  { primary: '#334155', secondary: '#000000' }, // Slate Blue
 ];
 
 export const LINKS_DESIGN_PRESETS = [
@@ -131,11 +132,10 @@ export const CORNER_SQUARE_OPTIONS = [
   { id: 'square', icon: <div className="w-6 h-6 border-2 border-current" /> },
   { id: 'dot', icon: <div className="w-6 h-6 border-2 border-current rounded-full" /> },
   { id: 'extra-rounded', icon: <div className="w-6 h-6 border-2 border-current rounded-md" /> },
-  { id: 'rounded-square', icon: <div className="w-6 h-6 border-[3px] border-current rounded-sm" /> },
 ];
 
 export const CORNER_DOT_OPTIONS = [
   { id: 'square', icon: <div className="w-4 h-4 bg-current" /> },
   { id: 'dot', icon: <div className="w-4 h-4 bg-current rounded-full" /> },
-  { id: 'rounded-square', icon: <div className="w-4 h-4 bg-current rounded-sm" /> },
+  { id: 'extra-rounded', icon: <div className="w-4 h-4 bg-current rounded-sm" /> },
 ];

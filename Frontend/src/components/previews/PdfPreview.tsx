@@ -16,24 +16,24 @@ const PdfPagePreview: React.FC<{ url: string; onViewPdf: () => void }> = ({ url,
             try {
                 setLoading(true);
                 setError(false);
-                
+
                 const loadingTask = pdfjsLib.getDocument(url);
                 const pdf = await loadingTask.promise;
                 const page = await pdf.getPage(1);
-                
+
                 const scale = 1.5;
                 const viewport = page.getViewport({ scale });
-                
+
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-                
+
                 await page.render({
                     canvasContext: context!,
                     viewport: viewport
                 }).promise;
-                
+
                 const imageUrl = canvas.toDataURL('image/png');
                 setPageImage(imageUrl);
             } catch (err) {
@@ -62,7 +62,7 @@ const PdfPagePreview: React.FC<{ url: string; onViewPdf: () => void }> = ({ url,
 
     if (error || !pageImage) {
         return (
-            <div 
+            <div
                 className="absolute inset-0 bg-slate-50 flex items-center justify-center cursor-pointer"
                 onClick={onViewPdf}
             >
@@ -78,13 +78,13 @@ const PdfPagePreview: React.FC<{ url: string; onViewPdf: () => void }> = ({ url,
     }
 
     return (
-        <div 
+        <div
             className="absolute inset-0 bg-white cursor-pointer overflow-hidden"
             onClick={onViewPdf}
         >
-            <img 
-                src={pageImage} 
-                alt="PDF Preview" 
+            <img
+                src={pageImage}
+                alt="PDF Preview"
                 className="w-full h-full object-contain"
             />
             <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-[10px] font-medium">
@@ -160,9 +160,9 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 </header>
                 <div className="flex-1 w-full relative bg-slate-100">
                     {isMobile ? (
-                        <PdfPagePreview 
-                            url={fullValue} 
-                            onViewPdf={() => window.open(fullValue, '_blank')} 
+                        <PdfPagePreview
+                            url={fullValue}
+                            onViewPdf={() => window.open(fullValue, '_blank')}
                         />
                     ) : (
                         <object
@@ -235,9 +235,9 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                             <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-slate-100 mx-auto relative group bg-slate-50 flex items-center justify-center">
                                 {(fullValue && (fullValue.toLowerCase().includes('.pdf') || fullValue.startsWith('blob:'))) ? (
                                     isMobile ? (
-                                        <PdfPagePreview 
-                                            url={fullValue} 
-                                            onViewPdf={() => isFileMode ? window.open(fullValue, '_blank') : setViewMode('preview')} 
+                                        <PdfPagePreview
+                                            url={fullValue}
+                                            onViewPdf={() => isFileMode ? window.open(fullValue, '_blank') : setViewMode('preview')}
                                         />
                                     ) : (
                                         <div className="absolute inset-0 bg-white overflow-hidden">
@@ -290,7 +290,11 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                                 ) : (
                                     <button
                                         onClick={handleAction}
-                                        className="w-full max-w-[200px] bg-[#1e3a8a] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] border-none outline-none "
+                                        className="w-full max-w-[200px] py-[10px] rounded-xl flex items-center justify-center gap-2.5 font-bold text-[13px] text-white transition-all active:scale-[0.98] border-none outline-none shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                                        style={{
+                                            backgroundColor: businessData?.secondaryColor || '#1e3a8a',
+                                            boxShadow: `0 10px 15px -3px ${businessData?.secondaryColor ? businessData.secondaryColor + '40' : 'rgba(30, 58, 138, 0.2)'}`
+                                        }}
                                     >
                                         <Eye className="w-5 h-5" strokeWidth={3} /> {businessData?.buttons?.[0]?.text || "View PDF"}
                                     </button>
@@ -301,9 +305,9 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                 </div>
             </div>
 
-            <div className="mt-40 mb-6 flex flex-col items-center">
-                {/* Footer URL */}
-                {businessData?.buttons?.[0]?.url && businessData?.buttons?.[0]?.url !== '#' && (
+            {businessData?.buttons?.[0]?.url && businessData?.buttons?.[0]?.url !== '#' && (
+                <div className="mt-32 mb-12 flex flex-col items-center">
+                    {/* Footer URL */}
                     <a
                         href={businessData.buttons[0].url.startsWith('http') ? businessData.buttons[0].url : `https://${businessData.buttons[0].url}`}
                         target="_blank"
@@ -315,8 +319,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                             {businessData.buttons[0].url.replace(/^https?:\/\//, '')}
                         </span>
                     </a>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

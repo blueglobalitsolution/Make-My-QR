@@ -325,7 +325,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                     )}
 
                     {/* Bottom spacer */}
-                    <div className="h-12" />
+                    <div className="h-6" />
                 </div>
             </div>
         </div>

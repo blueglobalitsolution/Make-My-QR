@@ -129,9 +129,9 @@ export const Wizard: React.FC<WizardProps> = ({
     if (wizard.step === 3) {
       setPhonePreviewMode('qr');
     } else if (wizard.step === 2) {
-      setPhonePreviewMode('ui');
+      setPhonePreviewMode(wizard.show_preview ? 'ui' : 'qr');
     }
-  }, [wizard.step, setPhonePreviewMode]);
+  }, [wizard.step, wizard.show_preview, setPhonePreviewMode]);
 
 
   const renderStepper = ({ step }: { step: number }) => {
@@ -495,16 +495,6 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="space-y-4">
                     <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Description</label>
                     <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Website</label>
-                      <input type="text" placeholder="https://..." value={wizard.business?.buttons?.[0]?.url || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'url', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
-                    </div>
-                    <div className="space-y-4">
-                      <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Button Name</label>
-                      <input type="text" placeholder="My Website" value={wizard.business?.buttons?.[0]?.text || ''} onChange={(e) => updateLink(wizard.business?.buttons?.[0]?.id || '1', 'text', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
-                    </div>
                   </div>
                 </div>
               )}
@@ -1879,14 +1869,12 @@ export const Wizard: React.FC<WizardProps> = ({
                       ) : (
                         <div className="h-full flex flex-col items-center justify-center space-y-12 p-8 animate-in zoom-in-95 duration-700">
                           <div className="flex flex-col items-center gap-6">
-                            <div className="relative group p-4 border border-[#E0EAF2] rounded-[3rem] bg-transparent shadow-xl transition-transform duration-500 hover:scale-[1.02]">
-                              <div className="bg-white p-3 rounded-[2.5rem] shadow-inner border border-white">
-                                <QRFrameWrapper frame={wizard.config.frame}>
-                                  <div className="relative">
-                                    <StyledQRCode options={qrStylingOptions} size={180} />
-                                  </div>
-                                </QRFrameWrapper>
-                              </div>
+                            <div className="relative flex items-center justify-center">
+                              <QRFrameWrapper frame={wizard.config.frame}>
+                                <div className="relative">
+                                  <StyledQRCode options={qrStylingOptions} size={180} />
+                                </div>
+                              </QRFrameWrapper>
                             </div>
                             {wizard.name && (
                               <h2
@@ -1932,27 +1920,37 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
 
                     <div className="flex-1 overflow-hidden relative">
-                      <div className="h-full flex flex-col animate-in fade-in duration-500">
-                        <GatekeeperPreview
-                          category={hoveredType || wizard.type}
-                          name={wizard.name}
-                          brandColor={wizard.business?.primaryColor || '#dc2626'}
-                          fullValue={pdfUrl || getQRValue()}
-                          businessData={wizard.business}
-                          is_lead_capture={wizard.is_lead_capture}
-                          isAuthorized={previewIsAuthorized}
-                          isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
-                          isFileMode={wizard.type === 'pdf'}
-                          leadForm={leadForm}
-                          setLeadForm={setLeadForm as any}
-                          onLeadSubmit={handlePreviewLeadSubmit}
-                          onPasswordSubmit={handlePreviewPasswordSubmit}
-                          viewMode={previewViewMode}
-                          setViewMode={setPreviewViewMode as any}
-                          isPreview={true}
-                          activeSection={activeDesignSection}
-                        />
-                      </div>
+                      {phonePreviewMode === 'ui' ? (
+                        <div className="h-full flex flex-col animate-in fade-in duration-500">
+                          <GatekeeperPreview
+                            category={hoveredType || wizard.type}
+                            name={wizard.name}
+                            brandColor={wizard.business?.primaryColor || '#dc2626'}
+                            fullValue={pdfUrl || getQRValue()}
+                            businessData={wizard.business}
+                            is_lead_capture={wizard.is_lead_capture}
+                            isAuthorized={previewIsAuthorized}
+                            isPasswordVerified={previewIsPasswordVerified || !wizard.is_protected}
+                            isFileMode={wizard.type === 'pdf'}
+                            leadForm={leadForm}
+                            setLeadForm={setLeadForm as any}
+                            onLeadSubmit={handlePreviewLeadSubmit}
+                            onPasswordSubmit={handlePreviewPasswordSubmit}
+                            viewMode={previewViewMode}
+                            setViewMode={setPreviewViewMode as any}
+                            isPreview={true}
+                            activeSection={activeDesignSection}
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-full flex flex-col items-center justify-center p-6 animate-in zoom-in-95 duration-700">
+                          <QRFrameWrapper frame={wizard.config.frame}>
+                            <div className="relative">
+                              <StyledQRCode options={qrStylingOptions} size={150} />
+                            </div>
+                          </QRFrameWrapper>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
