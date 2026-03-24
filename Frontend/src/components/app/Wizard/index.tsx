@@ -12,6 +12,7 @@ import phoneFrame from './Phone.png';
 interface WizardProps {
   wizard: WizardState;
   setWizard: React.Dispatch<React.SetStateAction<WizardState>>;
+  currentUser: import('../../../../types').User | null;
   folders: Folder[];
   activeDesignSection: string | null;
   setActiveDesignSection: (section: string | null) => void;
@@ -99,6 +100,7 @@ export const Wizard: React.FC<WizardProps> = ({
   setPhonePreviewMode,
   createNewFolder,
   getQRValue,
+  currentUser,
 }) => {
   const [hoveredType, setHoveredType] = React.useState<WizardState['type'] | null>(null);
   const [leadForm, setLeadForm] = React.useState({ name: '', email: '' });
@@ -170,6 +172,15 @@ export const Wizard: React.FC<WizardProps> = ({
           <button
             key={type.id}
             onClick={() => {
+              const details = currentUser?.subscription?.plan_details;
+              if (type.id === 'pdf' && details && !details.can_create_pdf) {
+                alert("Upgrade to use PDF QR Codes");
+                return;
+              }
+              if (type.id === 'business' && details && !details.can_create_business) {
+                alert("Upgrade to use Business Profiles");
+                return;
+              }
               setWizard(prev => ({ ...prev, type: type.id as any, step: 2 }));
               setPhonePreviewMode('ui');
             }}
@@ -383,7 +394,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           </div>
                           <div className="text-left">
                             <p className="font-medium skeu-text-primary text-sm">Drop your PDF or browse</p>
-                            <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: 20MB</p>
+                            <p className="text-xs font-medium skeu-text-muted mt-0.5">Maximum file size: {currentUser?.subscription?.plan_details?.upload_limit_mb || 5}MB</p>
                           </div>
                         </div>
                       )}
@@ -1317,12 +1328,26 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="flex items-center gap-5">
                     <button
                       type="button"
-                      onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}
+                      onClick={() => {
+                        const details = currentUser?.subscription?.plan_details;
+                        if (details && !details.can_password_protect) {
+                          alert("Upgrade to use Password Protection");
+                          return;
+                        }
+                        setWizard({ ...wizard, is_protected: !wizard.is_protected });
+                      }}
                       className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                     >
                       {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                     </button>
-                    <div className="cursor-pointer flex-1" onClick={() => setWizard({ ...wizard, is_protected: !wizard.is_protected })}>
+                    <div className="cursor-pointer flex-1" onClick={() => {
+                        const details = currentUser?.subscription?.plan_details;
+                        if (details && !details.can_password_protect) {
+                          alert("Upgrade to use Password Protection");
+                          return;
+                        }
+                        setWizard({ ...wizard, is_protected: !wizard.is_protected });
+                    }}>
                       <p className="font-black text-[#0F172A] text-sm tracking-tight">Password Protection</p>
                       <p className="text-[10px] font-medium text-slate-400">Ask for password to open document</p>
                     </div>
@@ -1345,12 +1370,26 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
                   <button
                     type="button"
-                    onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}
+                    onClick={() => {
+                      const details = currentUser?.subscription?.plan_details;
+                      if (details && !details.can_lead_capture) {
+                        alert("Upgrade to use Lead Capture");
+                        return;
+                      }
+                      setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
+                    }}
                     className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
-                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture })}>
+                  <div className="cursor-pointer" onClick={() => {
+                    const details = currentUser?.subscription?.plan_details;
+                    if (details && !details.can_lead_capture) {
+                      alert("Upgrade to use Lead Capture");
+                      return;
+                    }
+                    setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
+                  }}>
                     <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
                     <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
                   </div>

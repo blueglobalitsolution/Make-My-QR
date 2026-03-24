@@ -27,9 +27,27 @@ export interface User {
   lastName?: string;
   plan: PlanType;
   isAdmin: boolean;
+  isStaff?: boolean;
   createdAt: string;
   daysRemaining: number;
   savedPalettes?: Palette[];
+  subscription?: {
+    plan: string;
+    expiry_date: string | null;
+    is_active: boolean;
+    plan_details: {
+      name: string;
+      qr_limit: number;
+      can_create_dynamic: boolean;
+      can_create_pdf: boolean;
+      can_create_business: boolean;
+      can_password_protect: boolean;
+      can_lead_capture: boolean;
+      can_access_analytics: boolean;
+      upload_limit_mb: number;
+      is_lifetime: boolean;
+    };
+  };
 }
 
 export interface Folder {

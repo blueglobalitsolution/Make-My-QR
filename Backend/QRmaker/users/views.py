@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
+from django.utils import timezone
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
@@ -10,22 +11,82 @@ import random
 from .email_utils import send_welcome_email, send_otp_email
 from rest_framework.permissions import IsAuthenticated
 
-
+def get_user_subscription_data(user):
+    from payments.models import UserSubscription
+    try:
+        sub = UserSubscription.objects.get(user=user)
+        if sub.is_active and (not sub.expiry_date or sub.expiry_date > timezone.now()):
+            plan = sub.plan
+            if plan:
+                return {
+                    'plan': plan.name.lower(),
+                    'plan_details': {
+                        'name': plan.name,
+                        'qr_limit': plan.qr_limit,
+                        'can_create_dynamic': plan.can_create_dynamic,
+                        'can_create_pdf': plan.can_create_pdf,
+                        'can_create_business': plan.can_create_business,
+                        'can_password_protect': plan.can_password_protect,
+                        'can_lead_capture': plan.can_lead_capture,
+                        'can_access_analytics': plan.can_access_analytics,
+                        'upload_limit_mb': plan.upload_limit_mb,
+                    },
+                    'expiry_date': sub.expiry_date.isoformat() if sub.expiry_date else None,
+                    'is_active': True
+                }
+    except UserSubscription.DoesNotExist:
+        pass
+    
+    return {
+        'plan': 'free',
+        'plan_details': {
+            'name': 'Free',
+            'qr_limit': 5,
+            'can_create_dynamic': False,
+            'can_create_pdf': False,
+            'can_create_business': False,
+            'can_password_protect': False,
+            'can_lead_capture': False,
+            'can_access_analytics': False,
+            'upload_limit_mb': 5,
+        },
+        'expiry_date': None,
+        'is_active': False
+    }
 class CustomObtainAuthToken(ObtainAuthToken):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
-        print(f"DEBUG: Login request data: {request.data}")
-        serializer = self.serializer_class(data=request.data,
+        data = request.data.copy()
+        username_or_email = data.get('username')
+        
+        # If the provided username looks like an email, try to find the user by email
+        if username_or_email and '@' in username_or_email:
+            try:
+                user = User.objects.get(email=username_or_email)
+                data['username'] = user.username
+            except User.DoesNotExist:
+                pass
+            except User.MultipleObjectsReturned:
+                # If there are multiple users with the same email, pick the first one
+                user = User.objects.filter(email=username_or_email).first()
+                data['username'] = user.username
+
+        serializer = self.serializer_class(data=data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'user_id': user.pk,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_staff': user.is_staff,
+                'is_superuser': user.is_superuser
+            }
         })
 
 class RegisterView(APIView):
@@ -65,7 +126,9 @@ class RegisterView(APIView):
             'user_id': user.pk,
             'email': user.email,
             'first_name': user.first_name,
-            'last_name': user.last_name
+            'last_name': user.last_name,
+            'subscription': get_user_subscription_data(user),
+            'is_staff': user.is_staff
         })
 
 class UserProfileView(APIView):
@@ -78,6 +141,8 @@ class UserProfileView(APIView):
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
+            'subscription': get_user_subscription_data(user),
+            'is_staff': user.is_staff
         })
 
     def put(self, request):

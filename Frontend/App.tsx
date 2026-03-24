@@ -78,7 +78,14 @@ const App: React.FC = () => {
   const [isFileMode, setIsFileMode] = useState<boolean>((initialState as any).fileMode || false);
   const [businessProfiles, setBusinessProfiles] = useState<any[]>([]);
 
-  const [viewData, setViewData] = useState<any>(null);
+  const [viewData, setViewData] = useState<any>(() => {
+    const saved = localStorage.getItem('makemyqr_view_data');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -123,8 +130,17 @@ const App: React.FC = () => {
 
 
   const handleSetView = (v: ViewState, data?: any) => {
+    if (data) {
+      setViewData(data);
+      localStorage.setItem('makemyqr_view_data', JSON.stringify(data));
+    } else {
+      // Clear data only when switching to views that don't need it
+      if (v !== 'payment') {
+        setViewData(null);
+        localStorage.removeItem('makemyqr_view_data');
+      }
+    }
     setView(v);
-    if (data) setViewData(data);
   };
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -140,7 +156,7 @@ const App: React.FC = () => {
 
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert);
+  const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert, auth.currentUser);
   const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, handleDeleteCoverImage, getQRValue, startQrFromAsset, resetWizard } = wizardProps;
 
   const filteredHistory = history.filter(item => {
@@ -515,7 +531,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto pb-32 lg:pb-0 ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? `skeu-main-content ${view === 'wizard' ? '' : 'px-responsive'}` : 'w-full'}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto pb-32 lg:pb-0 ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? `skeu-main-content ${view === 'wizard' || view === 'payment' ? '' : 'px-responsive'}` : 'w-full'}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
         {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
@@ -589,6 +605,7 @@ const App: React.FC = () => {
         {view === 'wizard' && (
           <Wizard
             {...wizardProps}
+            currentUser={auth.currentUser}
             folders={foldersWithQRCounts}
             isCreatingFolder={isCreatingFolder}
             setIsCreatingFolder={setIsCreatingFolder}

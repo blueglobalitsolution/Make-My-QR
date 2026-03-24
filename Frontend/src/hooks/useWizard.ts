@@ -146,7 +146,8 @@ export const useWizard = (
   editingId: string | null,
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>,
   setView: React.Dispatch<React.SetStateAction<any>>,
-  showAlert?: (title: string, message: string, type?: 'info' | 'danger') => void
+  showAlert?: (title: string, message: string, type?: 'info' | 'danger') => void,
+  currentUser?: import('../../types').User | null
 ): UseWizardReturn => {
   const [wizard, setWizard] = useState<WizardState>(getInitialWizardState());
   const [activeDesignSection, setActiveDesignSection] = useState<string | null>(null);
@@ -220,6 +221,16 @@ export const useWizard = (
   const selectedTypeConfig = QR_TYPES_CONFIG.find(t => t.id === wizard.type) || QR_TYPES_CONFIG[0];
 
   const handleNextStep = async () => {
+    // Check QR limit if creating new code
+    if (!editingId && currentUser?.subscription?.plan_details) {
+        if (history.length >= currentUser.subscription.plan_details.qr_limit) {
+            const msg = `You have reached your limit of ${currentUser.subscription.plan_details.qr_limit} QR codes. Upgrade your plan to create more.`;
+            if (showAlert) showAlert("Limit Reached", msg, "danger");
+            else alert(msg);
+            return;
+        }
+    }
+
     // 1. Calculate the final value (destination) based on current wizard state
     let finalValue = '';
 
@@ -496,6 +507,13 @@ export const useWizard = (
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `Image is too large. Your plan allows up to ${limitMb}MB.`;
+        if (showAlert) showAlert("Upload Limit", msg, "danger");
+        else alert(msg);
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setWizard({ ...wizard, config: { ...wizard.config, logoUrl: reader.result as string } });
@@ -507,6 +525,13 @@ export const useWizard = (
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `File is too large. Your plan allows up to ${limitMb}MB uploads. Upgrade your plan for higher limits.`;
+        if (showAlert) showAlert("Upload Limit Reached", msg, "danger");
+        else alert(msg);
+        return;
+      }
       setPdfFileName(file.name);
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
       setPdfUrl(URL.createObjectURL(file));
@@ -539,6 +564,13 @@ export const useWizard = (
   const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const limitMb = currentUser?.subscription?.plan_details?.upload_limit_mb || 5;
+      if (file.size > limitMb * 1024 * 1024) {
+        const msg = `Image is too large. Your plan allows up to ${limitMb}MB.`;
+        if (showAlert) showAlert("Upload Limit", msg, "danger");
+        else alert(msg);
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setWizard(prev => ({

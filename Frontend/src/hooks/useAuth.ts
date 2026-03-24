@@ -131,11 +131,15 @@ export const useAuth = (
         name: `${data.first_name} ${data.last_name}`.trim() || data.email.split('@')[0],
         firstName: data.first_name,
         lastName: data.last_name,
-        plan: 'free',
+        plan: (data.subscription?.plan || 'free') as any,
         isAdmin: false,
+        isStaff: data.is_staff,
         createdAt: new Date().toISOString(),
-        daysRemaining: 14,
-        savedPalettes: []
+        daysRemaining: data.subscription?.expiry_date 
+          ? Math.ceil((new Date(data.subscription.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+          : 0,
+        savedPalettes: [],
+        subscription: data.subscription
       };
       setCurrentUser(user);
       localStorage.setItem('makemyqr_user', JSON.stringify(user));
