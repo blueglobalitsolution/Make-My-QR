@@ -13,7 +13,6 @@ const INITIAL_HOURS: OpeningHours = DAYS.reduce((acc, day) => ({
 }), {} as OpeningHours);
 
 const INITIAL_LOCATION: LocationConfig = {
-  searchAddress: '',
   address: '',
   streetNumberFirst: false,
   street: '',
@@ -122,7 +121,6 @@ const getInitialWizardState = (): WizardState => ({
     fontText: 'Inter',
     fontTitleColor: '#ffffff',
     fontTextColor: '#ffffff',
-    welcomeScreenImage: undefined,
   },
   config: {
     fgColor: '#000000',
@@ -230,12 +228,12 @@ export const useWizard = (
   const handleNextStep = async () => {
     // Check QR limit if creating new code
     if (!editingId && currentUser?.subscription?.plan_details) {
-        if (history.length >= currentUser.subscription.plan_details.qr_limit) {
-            const msg = `You have reached your limit of ${currentUser.subscription.plan_details.qr_limit} QR codes. Upgrade your plan to create more.`;
-            if (showAlert) showAlert("Limit Reached", msg, "danger");
-            else alert(msg);
-            return;
-        }
+      if (history.length >= currentUser.subscription.plan_details.qr_limit) {
+        const msg = `You have reached your limit of ${currentUser.subscription.plan_details.qr_limit} QR codes. Upgrade your plan to create more.`;
+        if (showAlert) showAlert("Limit Reached", msg, "danger");
+        else alert(msg);
+        return;
+      }
     }
 
     // 1. Calculate the final value (destination) based on current wizard state

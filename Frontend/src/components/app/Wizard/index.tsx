@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella, Lock, ShieldCheck, ScanEye } from 'lucide-react';
 import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } from '../../../../types';
-import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS } from '../../../../components/constants';
+import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS, COUNTRY_CODES } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
 import { GatekeeperPreview } from '../../previews/gatekeeper';
@@ -105,6 +105,7 @@ export const Wizard: React.FC<WizardProps> = ({
   currentUser,
 }) => {
   const [hoveredType, setHoveredType] = React.useState<WizardState['type'] | null>(null);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = React.useState(false);
   const [leadForm, setLeadForm] = React.useState({ name: '', email: '' });
   const [previewIsAuthorized, setPreviewIsAuthorized] = React.useState(false);
   const [previewIsPasswordVerified, setPreviewIsPasswordVerified] = React.useState(false);
@@ -291,11 +292,36 @@ export const Wizard: React.FC<WizardProps> = ({
               <div className="space-y-6">
                 <div className="space-y-3 text-left">
                   <label className="text-[11px] font-bold skeu-text-muted capitalize  pl-1">Phone number *</label>
-                  <div className="flex items-center skeu-input overflow-hidden">
-                    <div className="px-4 py-3 flex items-center gap-2 border-r border-black/5 skeu-mid">
-                      <img src="https://flagcdn.com/in.svg" className="w-5 h-3 rounded-[2px] object-cover" alt="IN" />
-                      <ChevronDown className="w-3.5 h-3.5 skeu-text-muted" />
-                    </div>
+                  <div className="flex items-center skeu-input overflow-hidden relative">
+                    <button 
+                      type="button"
+                      onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                      className="px-4 py-3 flex items-center gap-2 border-r border-black/5 skeu-mid hover:bg-black/5 transition-colors"
+                    >
+                      <img src={`https://flagcdn.com/${COUNTRY_CODES.find(c => c.code === whatsappCountryCode)?.iso || 'in'}.svg`} className="w-5 h-3 rounded-[2px] object-cover" alt="Flag" />
+                      <ChevronDown className={`w-3.5 h-3.5 skeu-text-muted transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {isCountryDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 rounded-xl shadow-2xl z-[100] max-h-60 overflow-y-auto skeu-scroll animate-in fade-in zoom-in-95 duration-200">
+                        {COUNTRY_CODES.map(country => (
+                          <button
+                            key={country.iso}
+                            type="button"
+                            onClick={() => {
+                              setWhatsappCountryCode(country.code);
+                              setIsCountryDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors border-b border-black/5 last:border-0"
+                          >
+                            <img src={`https://flagcdn.com/${country.iso}.svg`} className="w-5 h-3 rounded-[2px] object-cover" alt={country.name} />
+                            <span className="text-xs font-bold text-slate-600 truncate flex-1 text-left">{country.name}</span>
+                            <span className="text-xs font-black text-[#dc2626]">+{country.code}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="flex-1 px-4 py-3 flex items-center gap-2">
                       <div className="flex items-center gap-0.5">
                         <span className="font-bold skeu-text-secondary text-sm">+</span>
@@ -310,7 +336,10 @@ export const Wizard: React.FC<WizardProps> = ({
                         type="text"
                         placeholder="84606 87490"
                         value={whatsappPhone}
-                        onChange={(e) => setWhatsappPhone(e.target.value.replace(/[^0-9 ]/g, ''))}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                          setWhatsappPhone(val);
+                        }}
                         className="flex-1 bg-transparent outline-none font-bold skeu-text-primary text-sm"
                       />
                     </div>
@@ -817,13 +846,6 @@ export const Wizard: React.FC<WizardProps> = ({
               </button>
               {activeDesignSection === 'location' && (
                 <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Search Address</label>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input type="text" placeholder="Search a location..." className="w-full pl-11 pr-5 py-4 skeu-input text-sm font-bold placeholder:opacity-40" />
-                    </div>
-                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3 md:col-span-2">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Address</label>
@@ -1098,38 +1120,6 @@ export const Wizard: React.FC<WizardProps> = ({
               )}
             </div>
 
-            {/* Welcome Screen Accordion */}
-            <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-              <button onClick={() => toggleSection('welcomeScreen')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
-                    <ScanEye className="w-5 h-5" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-base font-medium skeu-text-primary ">Welcome Screen</h3>
-                    <p className="text-[10px] font-medium skeu-text-muted">Splash screen image shown while loading.</p>
-                  </div>
-                </div>
-                <ChevronDown className={`w-4 h-4 skeu-text-muted transition-all duration-500 ${activeDesignSection === 'welcomeScreen' ? 'rotate-180 skeu-text-accent' : 'group-hover:skeu-text-secondary'}`} />
-              </button>
-              {activeDesignSection === 'welcomeScreen' && (
-                <div className="p-6 border-t border-black/5 space-y-6 animate-in slide-in-from-top-4 duration-500 origin-top">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Splash Image</label>
-                    <div className="w-full h-32 border-2 border-dashed border-[#dc2626]/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
-                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const url = URL.createObjectURL(e.target.files[0]);
-                          updateBusinessField('welcomeScreenImage', url);
-                        }
-                      }} />
-                      <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
-                      <span className="text-xs font-bold text-[#dc2626] opacity-70 group-hover/img:opacity-100">Click or drag image here</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
           </div>
         )}

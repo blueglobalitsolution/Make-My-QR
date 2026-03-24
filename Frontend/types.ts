@@ -132,7 +132,6 @@ export interface OpeningHours {
 }
 
 export interface LocationConfig {
-  searchAddress: string;
   address: string;
   streetNumberFirst: boolean;
   street: string;
@@ -186,7 +185,6 @@ export interface BusinessConfig {
   fontText: string;
   fontTitleColor?: string;
   fontTextColor?: string;
-  welcomeScreenImage?: string;
 }
 
 export interface WizardState {
@@ -249,7 +247,6 @@ export interface BusinessProfile {
   openingHours: OpeningHours;
   socialNetworks: SocialNetwork[];
   facilities?: string[];
-  welcomeScreenImage?: string;
   primaryColor: string;
   secondaryColor: string;
   fontTitle: string;

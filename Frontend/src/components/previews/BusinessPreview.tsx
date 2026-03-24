@@ -44,7 +44,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     const textFont = businessData?.fontText || 'Lato';
     const titleColor = businessData?.fontTitleColor || '#ffffff';
     const textColor = businessData?.fontTextColor || '#ffffff';
-    const heroImg = businessData?.images?.[0] || businessData?.welcomeScreenImage;
+    const heroImg = businessData?.images?.[0];
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
@@ -54,7 +54,6 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                 'content': 'business_design',
                 'about': 'aboutCompany',
                 'hours': 'openingHours',
-                'welcomeScreen': 'business_design',
                 'location': 'location',
                 'facilities': 'facilities',
                 'contactInfo': 'contactInfo',
@@ -160,7 +159,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                 </div>
 
                 {/* ── SCROLLABLE CONTENT ─────────────────────────── */}
-                <div className="flex-1 px-3 pt-36 pb-6 space-y-3 relative w-full scrollbar-hide">
+                <div className="flex-1 px-6 pt-36 pb-6 space-y-4 relative w-full scrollbar-hide">
 
                     {/* Opening Hours */}
                     <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2" id="section-openingHours">
@@ -261,7 +260,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                             </div>
                             <div className="space-y-2">
                                 {businessData.socialNetworks.map((social: any, idx: number) => (
-                                    <div key={idx} className="bg-slate-50 rounded-xl p-2.5 flex items-center gap-3 group cursor-pointer hover:bg-slate-100 transition-all">
+                                    <a key={idx} href={social.url?.startsWith('http') ? social.url : `https://${social.url}`} target="_blank" rel="noopener noreferrer" className="bg-slate-50 rounded-xl p-2.5 flex items-center gap-3 group cursor-pointer hover:bg-slate-100 transition-all">
                                         <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-blue-50 text-blue-500 shrink-0">
                                             {getSocialIcon(social.platform || social.network || '')}
                                         </div>
@@ -270,7 +269,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                             <p className="text-[9px] font-bold text-slate-400 uppercase ">{social.text || social.label || 'Social Account'}</p>
                                         </div>
                                         <ChevronRight className="w-3 h-3 text-slate-300 group-hover:translate-x-0.5 transition-transform shrink-0" />
-                                    </div>
+                                    </a>
                                 ))}
                             </div>
                         </div>
@@ -299,7 +298,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
                                         <p className="text-[8px] font-black text-slate-300 uppercase ">{phone.label || 'Phone'}</p>
-                                        <p className="text-[11px] font-bold text-slate-700 truncate">{phone.value}</p>
+                                        <a href={`tel:${phone.value}`} className="text-[11px] font-bold text-slate-700 truncate hover:text-red-500 transition-colors transition-colors">{phone.value}</a>
                                     </div>
                                 </div>
                             ))}
@@ -308,7 +307,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Mail className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
                                         <p className="text-[8px] font-black text-slate-300 uppercase ">{email.label || 'Email'}</p>
-                                        <p className="text-[11px] font-bold text-slate-700 truncate">{email.value}</p>
+                                        <a href={`mailto:${email.value}`} className="text-[11px] font-bold text-slate-700 truncate hover:text-red-500 transition-colors">{email.value}</a>
                                     </div>
                                 </div>
                             ))}
@@ -317,7 +316,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Globe className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-[8px] font-black text-slate-300 uppercase ">{web.label || 'Website'}</p>
-                                        <p className="text-[11px] font-bold text-cyan-600 underline truncate">{web.value}</p>
+                                        <a href={web.value?.startsWith('http') ? web.value : `https://${web.value}`} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-cyan-600 underline truncate hover:text-cyan-700 transition-colors">{web.value}</a>
                                     </div>
                                 </div>
                             ))}

@@ -59,7 +59,6 @@ export const INITIAL_HOURS: OpeningHours = DAYS.reduce((acc, day) => ({
 }), {} as OpeningHours);
 
 export const INITIAL_LOCATION: LocationConfig = {
-  searchAddress: '123 Main St, New York, NY 10001',
   address: '123 Main St, New York, NY 10001',
   streetNumberFirst: true,
   street: 'Main St',
@@ -138,4 +137,22 @@ export const CORNER_DOT_OPTIONS = [
   { id: 'square', icon: <div className="w-4 h-4 bg-current" /> },
   { id: 'dot', icon: <div className="w-4 h-4 bg-current rounded-full" /> },
   { id: 'extra-rounded', icon: <div className="w-4 h-4 bg-current rounded-sm" /> },
+];
+export const COUNTRY_CODES = [
+  { name: 'India', code: '91', iso: 'in' },
+  { name: 'United States', code: '1', iso: 'us' },
+  { name: 'United Kingdom', code: '44', iso: 'gb' },
+  { name: 'United Arab Emirates', code: '971', iso: 'ae' },
+  { name: 'Saudi Arabia', code: '966', iso: 'sa' },
+  { name: 'Canada', code: '1', iso: 'ca' },
+  { name: 'Australia', code: '61', iso: 'au' },
+  { name: 'Germany', code: '49', iso: 'de' },
+  { name: 'France', code: '33', iso: 'fr' },
+  { name: 'Italy', code: '39', iso: 'it' },
+  { name: 'Spain', code: '34', iso: 'es' },
+  { name: 'Brazil', code: '55', iso: 'br' },
+  { name: 'Mexico', code: '52', iso: 'mx' },
+  { name: 'Singapore', code: '65', iso: 'sg' },
+  { name: 'Japan', code: '81', iso: 'jp' },
+  { name: 'South Korea', code: '82', iso: 'kr' },
 ];

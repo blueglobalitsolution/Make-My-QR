@@ -28,12 +28,12 @@ export const PasswordWall: React.FC<PasswordWallProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className={`space-y-4 p-6 rounded-3xl border transition-all duration-300 ${error ? 'bg-red-50 border-red-200 shadow-lg shadow-red-200/20' : 'bg-slate-50/50 border-slate-100 shadow-inner'}`}>
                 <div className="flex flex-col items-center gap-2 mb-2">
-                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-1 ${error ? 'bg-red-100' : 'bg-white shadow-sm border border-slate-100'}`}>
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-1 ${error ? 'bg-red-100' : 'bg-white shadow-sm border border-slate-100'}`}>
                         <Lock className={`w-5 h-5 ${error ? 'text-red-600' : 'text-slate-400'}`} />
-                   </div>
-                   <p className={`text-[10px] font-black uppercase tracking-wider ${error ? 'text-red-600' : 'text-slate-500'}`}>
-                       {error ? 'Invalid Password' : 'Password Required'}
-                   </p>
+                    </div>
+                    <p className={`text-[10px] font-black uppercase tracking-wider ${error ? 'text-red-600' : 'text-slate-500'}`}>
+                        {error ? 'Invalid Password' : 'Password Required'}
+                    </p>
                 </div>
 
                 <div className="relative group">
@@ -50,7 +50,7 @@ export const PasswordWall: React.FC<PasswordWallProps> = ({
                         }}
                     />
                 </div>
-                
+
                 {error && (
                     <p className="text-[9px] text-red-500 font-bold text-center animate-bounce flex items-center justify-center gap-1">
                         <AlertCircle className="w-3 h-3" /> The password is not correct

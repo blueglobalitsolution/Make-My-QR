@@ -75,9 +75,9 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
         return (
             <div className="h-full flex flex-col items-center justify-center p-6 bg-[#e5ddd5]">
                 {!isPasswordVerified && onPasswordSubmit ? (
-                    <PasswordWall 
-                        brandColor="#075E54" 
-                        onSubmit={onPasswordSubmit} 
+                    <PasswordWall
+                        brandColor="#075E54"
+                        onSubmit={onPasswordSubmit}
                     />
                 ) : (
                     <LeadCaptureForm
