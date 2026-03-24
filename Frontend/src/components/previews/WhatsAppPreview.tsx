@@ -44,26 +44,32 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
         // Extracts the number part from wa.me/12345
         const rawPhone = url.pathname.replace('/', '').trim();
         if (rawPhone) {
-            // Basic formatting: if starts with 91 (2 digits) or other, add a space after CC
-            // Default to showing CC + space + number if it's long enough
-            if (rawPhone.length > 3) {
-                // Attempt to separate country code (assuming 1-3 digits)
-                // Since CC is dynamic, we'll just show it as is or try to match common lengths
-                phone = rawPhone;
-            } else {
-                phone = rawPhone;
-            }
+            phone = rawPhone;
         }
 
         const textParam = url.searchParams.get('text');
         if (textParam) message = textParam;
     } catch {
-        // Fallback for non-URL values
+        // Fallback for non-URL values (raw numbers)
         phone = fullValue.replace(/\D/g, '');
     }
 
-    // Format phone for display (e.g. +91 8460687490)
-    const displayPhone = phone ? `+${phone}` : (name || 'Contact');
+    // Format phone for display (e.g. +91 84606 87490)
+    const formatPhone = (num: string) => {
+        if (!num) return '';
+        // If it looks like it has a CC (e.g. 91...)
+        // This is a naive formatter but covers the user's specific case
+        if (num.startsWith('91')) {
+            return `+91 ${num.slice(2, 7)} ${num.slice(7)}`;
+        }
+        if (num.length > 10) {
+            // General case for long numbers: CC + Number
+            return `+${num.slice(0, num.length - 10)} ${num.slice(num.length - 10, num.length - 5)} ${num.slice(num.length - 5)}`;
+        }
+        return `+${num}`;
+    };
+
+    const displayPhone = phone ? formatPhone(phone) : (name || 'Contact');
 
     if (!isAuthorized && (is_lead_capture || !isPasswordVerified)) {
         return (
@@ -98,25 +104,24 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
                 className="flex items-center gap-3 px-3 pt-16 pb-2.5 shrink-0"
                 style={{ backgroundColor: '#075E54' }}
             >
-                <ChevronLeft className="w-5 h-5 text-white opacity-90 shrink-0" />
 
                 {/* Avatar */}
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-100">
-                    <User className="w-5 h-5 text-slate-300" />
+                <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-100">
+                    <User className="w-4 h-4 text-slate-300" />
                 </div>
 
                 {/* Name */}
                 <div className="min-w-0">
-                    <p className="text-white text-[13px] font-normal leading-tight">
+                    <p className="text-white text-[11px] font-medium leading-tight whitespace-nowrap">
                         {displayPhone}
                     </p>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-4 text-white/90 shrink-0 ml-auto">
-                    <Video className="w-[18px] h-[18px]" />
-                    <Phone className="w-[18px] h-[18px]" />
-                    <MoreVertical className="w-[18px] h-[18px]" />
+                <div className="flex items-center gap-2.5 text-white/90 shrink-0 ml-auto">
+                    <Video className="w-4 h-4" />
+                    <Phone className="w-4 h-4" />
+                    <MoreVertical className="w-4 h-4" />
                 </div>
             </div>
 

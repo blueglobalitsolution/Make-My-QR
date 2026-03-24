@@ -54,6 +54,7 @@ interface WizardProps {
   setPhonePreviewMode: (mode: 'ui' | 'qr') => void;
   createNewFolder: () => Promise<void>;
   getQRValue: () => string;
+  getPreviewValue: () => string;
 }
 
 export const Wizard: React.FC<WizardProps> = ({
@@ -100,6 +101,7 @@ export const Wizard: React.FC<WizardProps> = ({
   setPhonePreviewMode,
   createNewFolder,
   getQRValue,
+  getPreviewValue,
   currentUser,
 }) => {
   const [hoveredType, setHoveredType] = React.useState<WizardState['type'] | null>(null);
@@ -1850,7 +1852,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             category={hoveredType || wizard.type}
                             name={wizard.name}
                             brandColor={wizard.business?.primaryColor || '#dc2626'}
-                            fullValue={pdfUrl || getQRValue()}
+                            fullValue={pdfUrl || getPreviewValue()}
                             businessData={wizard.business}
                             is_lead_capture={wizard.is_lead_capture}
                             isAuthorized={previewIsAuthorized}
@@ -1926,7 +1928,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             category={hoveredType || wizard.type}
                             name={wizard.name}
                             brandColor={wizard.business?.primaryColor || '#dc2626'}
-                            fullValue={pdfUrl || getQRValue()}
+                            fullValue={pdfUrl || getPreviewValue()}
                             businessData={wizard.business}
                             is_lead_capture={wizard.is_lead_capture}
                             isAuthorized={previewIsAuthorized}

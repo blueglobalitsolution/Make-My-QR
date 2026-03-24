@@ -72,6 +72,7 @@ export interface UseWizardReturn {
   startQrFromAsset: (file: FileRecord) => void;
   resetWizard: () => void;
   getQRValue: () => string;
+  getPreviewValue: () => string;
   qrStylingOptions: any;
   selectedTypeConfig: any;
   whatsappCountryCode: string;
@@ -173,6 +174,18 @@ export const useWizard = (
     }
   }, [wizard.step, wizard.type]);
 
+  const getPreviewValue = () => {
+    const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
+
+    if (wizard.type === 'whatsapp') {
+      const cleanPhone = whatsappPhone.replace(/\s+/g, '').replace(/\+/g, '');
+      const cleanCC = whatsappCountryCode.replace(/\s+/g, '').replace(/\+/g, '');
+      return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+    }
+    const val = wizard.value || `${window.location.origin}/preview`;
+    return val.startsWith('/') ? backendUrl + val : val;
+  };
+
   const getQRValue = () => {
     const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
 
@@ -186,13 +199,7 @@ export const useWizard = (
       }
     }
 
-    if (wizard.type === 'whatsapp') {
-      const cleanPhone = whatsappPhone.replace(/\s+/g, '');
-      const cleanCC = whatsappCountryCode.replace(/\+/g, '');
-      return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
-    }
-    const val = wizard.value || `${window.location.origin}/preview`;
-    return val.startsWith('/') ? backendUrl + val : val;
+    return getPreviewValue();
   };
 
   const qrStylingOptions = {
@@ -658,6 +665,7 @@ export const useWizard = (
     startQrFromAsset,
     resetWizard,
     getQRValue,
+    getPreviewValue,
     qrStylingOptions,
     selectedTypeConfig,
     whatsappCountryCode,
