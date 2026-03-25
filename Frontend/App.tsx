@@ -5,9 +5,12 @@ import { ViewState, WizardState, GeneratedCode, Folder, Palette } from './types'
 import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
 import BusinessProfileViewer from './components/BusinessProfileViewer';
-import { getCodes } from './src/api/qrcodes';
-import { getFolders } from './src/api/folders';
-import { getInitialBusinessProfile } from './src/services/businessProfile';
+import { getCodes, deleteCode as apiDeleteCode } from './src/api/qrcodes';
+import { getFolders, deleteFolder as apiDeleteFolder, createFolder as apiCreateFolder } from './src/api/folders';
+import { getInitialBusinessProfile, initBusinessProfilesDB, getAllBusinessProfiles } from './src/services/businessProfile';
+import { generateQRWithFrame } from './src/utils/qrCaptureUtils';
+import { getFile } from './src/services/fileStorage';
+import html2canvas from 'html2canvas';
 
 import { Sidebar } from './src/components/app/Sidebar';
 import { BottomNav } from './src/components/app/BottomNav';
@@ -218,7 +221,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const init = async () => {
-      const { initBusinessProfilesDB, getAllBusinessProfiles } = await import('./src/services/businessProfile');
       await initBusinessProfilesDB();
 
       const profiles = await getAllBusinessProfiles();
@@ -268,7 +270,6 @@ const App: React.FC = () => {
         const id = rawPath.replace('/view/file/', '').split('?')[0];
         // Check if id is numeric (file ID) vs alphanumeric (QR slug)
         if (/^\d+$/.test(id)) {
-          const { getFile } = await import('./src/services/fileStorage');
           const fileData = await getFile(id);
           if (fileData?.record.filePath) {
             window.location.href = fileData.record.filePath;
@@ -297,7 +298,6 @@ const App: React.FC = () => {
       'Delete QR Code',
       `Are you sure you want to delete "${code.name}"? This action cannot be undone.`,
       async () => {
-        const { deleteCode: apiDeleteCode } = await import('./src/api/qrcodes');
         try {
           await apiDeleteCode(id);
           setHistory(prev => prev.filter(h => h.id !== id));
@@ -314,7 +314,6 @@ const App: React.FC = () => {
     if (captureElement) {
       try {
         const targetElement = captureElement.firstElementChild as HTMLElement || captureElement;
-        const html2canvas = (await import('html2canvas')).default;
         const canvas = await html2canvas(targetElement, {
           backgroundColor: code.settings?.bgColor || '#ffffff',
           scale: 2,
@@ -336,7 +335,6 @@ const App: React.FC = () => {
     const frame = code.settings?.frame || 'none';
     if (frame !== 'none' && format === 'png') {
       try {
-        const { generateQRWithFrame } = await import('./src/utils/qrCaptureUtils');
         const slug = code.shortSlug || (code as any).short_slug;
         const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
         let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
@@ -455,7 +453,6 @@ const App: React.FC = () => {
       'Delete Folder',
       message,
       async () => {
-        const { deleteFolder: apiDeleteFolder } = await import('./src/api/folders');
         try {
           await apiDeleteFolder(id);
           setFolders(prev => prev.filter(f => f.id !== id));
@@ -493,7 +490,6 @@ const App: React.FC = () => {
 
   const createNewFolder = async () => {
     if (!newFolderName.trim()) return;
-    const { createFolder: apiCreateFolder } = await import('./src/api/folders');
     try {
       const folderData = await apiCreateFolder(newFolderName.trim());
       const newFolder: Folder = { ...folderData, id: folderData.id.toString(), count: 0 };

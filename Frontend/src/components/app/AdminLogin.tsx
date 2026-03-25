@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldAlert, ArrowRight } from 'lucide-react';
+import { login } from '../../api/auth';
 
 interface AdminLoginProps {
     setView: React.Dispatch<React.SetStateAction<any>>;
@@ -14,8 +15,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView }) => {
         
         // Use the auth login logic for superuser
         try {
-            const response = await import('../../api/auth');
-            const data = await response.login(email, password);
+            const data = await login(email, password);
             
             if (data.user && data.user.is_staff) {
                 localStorage.setItem('makemyqr_token', data.token);

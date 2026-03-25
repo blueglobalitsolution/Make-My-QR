@@ -1,7 +1,8 @@
 from django.urls import path, include
 from .views import (
     RegisterView, CustomObtainAuthToken, PasswordResetRequestView, 
-    PasswordResetVerifyView, PasswordResetConfirmView, UserProfileView, UserPasswordChangeView
+    PasswordResetVerifyView, PasswordResetConfirmView, UserProfileView, UserPasswordChangeView,
+    AdminUserListView
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('password-reset-request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('password-reset-verify/', PasswordResetVerifyView.as_view(), name='password_reset_verify'),
     path('password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('admin/users/', AdminUserListView.as_view(), name='admin_user_list'),
 ]

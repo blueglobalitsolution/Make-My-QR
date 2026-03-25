@@ -29,3 +29,13 @@ export const getAdminStats = async () => {
   const response = await client.get('/payments/admin/stats/');
   return response.data;
 };
+
+export const getAdminUsers = async () => {
+  const response = await client.get('/users/admin/users/');
+  return response.data;
+};
+
+export const manageAdminUser = async (userId: number, action: 'toggle_active' | 'delete') => {
+  const response = await client.post('/users/admin/users/', { user_id: userId, action });
+  return response.data;
+};

@@ -20,10 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
     "SECRET_KEY", "django-insecure-%+e3_wjwb3=9d-o(#wa2cm89vd6yoh604-fm*2z02pptnbn!s^"
 )
+
+# App URLs from ENV
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost")
+DOMAIN = os.getenv("DOMAIN", "localhost")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
@@ -131,10 +135,12 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3010",
-    "http://127.0.0.1:3010",
-    "http://0.0.0.0:3010",
-    "http://192.168.1.208:3010",
+    FRONTEND_URL,
+    BACKEND_URL,
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://0.0.0.0",
+    "http://192.168.1.208", # Machine IP
 ]
 
 SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
@@ -142,12 +148,30 @@ SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() == "
 CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").lower() == "true"
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+)
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "blueglobalcloud@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "pjooewfxcxhtldod")
+
+# Redis Cache Settings
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "KEY_PREFIX": "qrmaker",
+        "TIMEOUT": 300,
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 
 # Internationalization
@@ -172,11 +196,34 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://192.168.1.208:3010")
-BACKEND_URL = os.getenv("BACKEND_URL", "http://192.168.1.208:8010")
+# Moved to top: FRONTEND_URL, BACKEND_URL, DOMAIN
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 # Razorpay Settings
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_YOUR_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "YOUR_KEY_SECRET")
+
+# MinIO / S3 Storage Settings
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
+MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
+MINIO_REGION = os.getenv("MINIO_REGION", "us-east-1")
+
+AWS_S3_ENDPOINT_URL = f"http://{MINIO_ENDPOINT}"
+AWS_S3_REGION_NAME = MINIO_REGION
+AWS_ACCESS_KEY_ID = MINIO_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
+AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # Set to True if you want private/signed URLs
+
+DOMAIN = os.getenv("DOMAIN", "localhost")
+AWS_S3_CUSTOM_DOMAIN = f"{DOMAIN}/minio/{MINIO_BUCKET_NAME}"
+AWS_S3_URL_PROTOCOL = "https" if MINIO_SECURE else "http"
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+MEDIA_URL = f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/"

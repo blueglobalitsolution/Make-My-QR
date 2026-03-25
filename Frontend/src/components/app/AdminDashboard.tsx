@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, Users, Database, LogOut, Settings, CreditCard, Plus, Trash2, Edit, Check, X, Calendar, ArrowRight, ShieldCheck, Clock, TrendingUp } from 'lucide-react';
-import { getAdminStats, getAdminPlans, createAdminPlan, updateAdminPlan, deleteAdminPlan, getAdminUserSubscriptions } from '../../api/admin';
+import { getAdminStats, getAdminPlans, createAdminPlan, updateAdminPlan, deleteAdminPlan, getAdminUserSubscriptions, getAdminUsers, manageAdminUser } from '../../api/admin';
 
 interface AdminDashboardProps {
     setView: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
-    const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'subscriptions'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'subscriptions' | 'users'>('overview');
     const [stats, setStats] = useState<any>(null);
     const [plans, setPlans] = useState<any[]>([]);
     const [userSubs, setUserSubs] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Plan Editing State
@@ -47,6 +48,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
             } else if (activeTab === 'subscriptions') {
                 const data = await getAdminUserSubscriptions();
                 setUserSubs(data);
+            } else if (activeTab === 'users') {
+                const data = await getAdminUsers();
+                setUsers(data);
             }
         } catch (err) {
             console.error("Failed to fetch admin data", err);
@@ -80,6 +84,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
             fetchData();
         } catch (err) {
             alert("Error deleting plan");
+        }
+    };
+
+    const handleManageUser = async (userId: number, action: 'toggle_active' | 'delete') => {
+        if (action === 'delete' && !window.confirm("Are you sure you want to delete this user? This is permanent!")) return;
+        try {
+            await manageAdminUser(userId, action);
+            fetchData();
+        } catch (err) {
+            alert("Error managing user");
         }
     };
 
@@ -155,6 +169,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                         >
                             Subscriptions
                         </button>
+                        <button 
+                            onClick={() => setActiveTab('users')}
+                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'users' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                        >
+                            Users
+                        </button>
                     </nav>
 
                     <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
@@ -179,11 +199,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 {activeTab === 'overview' && 'System Overview'}
                                 {activeTab === 'plans' && 'Subscription Plans'}
                                 {activeTab === 'subscriptions' && 'User Subscriptions Tracker'}
+                                {activeTab === 'users' && 'User Management'}
                             </h2>
                             <p className="text-slate-500 text-sm font-medium mt-1">
                                 {activeTab === 'overview' && 'Monitor all platform metrics and users globally.'}
                                 {activeTab === 'plans' && 'Create and edit pricing plans for your users.'}
                                 {activeTab === 'subscriptions' && 'Track user purchases, renewals, and expiry dates.'}
+                                {activeTab === 'users' && 'Manage registered users, their accounts and data.'}
                             </p>
                         </div>
                         
@@ -238,11 +260,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                                         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
                                             <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shadow-inner">
-                                                <LayoutDashboard className="w-7 h-7" />
+                                                <TrendingUp className="w-7 h-7" />
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">System Health</p>
-                                                <p className="text-3xl font-black text-emerald-600">{stats?.system_health || '100%'}</p>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Total Subscriptions</p>
+                                                <p className="text-3xl font-black text-slate-800 tabular-nums">{stats?.total_subscriptions || 0}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -560,6 +582,84 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                         <td colSpan={6} className="px-8 py-20 text-center">
                                                             <Users className="w-12 h-12 text-slate-200 mx-auto mb-4" />
                                                             <p className="text-slate-400 font-black text-[11px] uppercase tracking-wider">No user subscriptions records found</p>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'users' && (
+                                <div className="bg-white rounded-[2.5rem] p-1 shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-slate-50">
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">User Details</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Join Date</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Plan</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">QRs</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Status</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400 text-right">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {users.map((user) => (
+                                                    <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black text-xs">
+                                                                    {user.username.substring(0, 2).toUpperCase()}
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-bold text-slate-800 text-sm leading-tight">{user.username}</p>
+                                                                    <p className="text-[10px] font-medium text-slate-400">{user.email}</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-xs font-bold text-slate-500">
+                                                            {new Date(user.date_joining || user.date_joined).toLocaleDateString()}
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">
+                                                                {user.plan_name}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-8 py-6 font-black text-slate-700 text-sm">
+                                                            {user.qr_count}
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider ${user.is_active ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                                                                {user.is_active ? 'Active' : 'Banned'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center justify-end gap-2">
+                                                                <button 
+                                                                    onClick={() => handleManageUser(user.id, 'toggle_active')}
+                                                                    title={user.is_active ? "Deactivate User" : "Activate User"}
+                                                                    className={`p-2 rounded-lg transition-all ${user.is_active ? 'text-slate-400 hover:text-red-500 hover:bg-red-50' : 'text-emerald-500 hover:bg-emerald-50'}`}
+                                                                >
+                                                                    {user.is_active ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => handleManageUser(user.id, 'delete')}
+                                                                    title="Delete User Forever"
+                                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {users.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={6} className="px-8 py-20 text-center">
+                                                            <Users className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                                                            <p className="text-slate-400 font-black text-[11px] uppercase tracking-wider">No users found</p>
                                                         </td>
                                                     </tr>
                                                 )}

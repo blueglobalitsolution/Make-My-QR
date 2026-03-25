@@ -1,7 +1,7 @@
 def get_email_client():
     import yagmail
 
-    return yagmail.SMTP("makemyqr.official@gmail.com", password="qshs dvzh tqlj wxmh")
+    return yagmail.SMTP("blueglobalcloud@gmail.com", password="pjooewfxcxhtldod")
 
 
 def send_welcome_email(to_email, name):
