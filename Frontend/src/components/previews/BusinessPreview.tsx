@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Globe, Mail, Phone, MapPin, Clock, Facebook, Instagram, Twitter,
-    Linkedin, Youtube, MessageCircle, Share2, ChevronRight, User, Info, ChevronLeft
+    Linkedin, Youtube, MessageCircle, Share2, ChevronRight, User, Info, ChevronLeft, Image
 } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
 import { PasswordWall } from './PasswordWall';
@@ -89,7 +89,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     return (
         <div className={`bg-[#f8fafc] flex justify-center scrollbar-hide ${isPreview ? 'h-full' : 'min-h-screen'}`}>
             {/* Main constrained container for desktop/mobile look */}
-            <div ref={scrollContainerRef} className={`w-full max-w-[420px] bg-white flex flex-col relative sm:shadow-2xl sm:border sm:border-slate-100 overflow-y-auto scrollbar-hide ${isPreview ? 'h-full' : 'min-h-screen'}`}>
+            <div ref={scrollContainerRef} className={`w-full max-w-[420px] bg-[#f0f0f0] flex flex-col relative sm:shadow-2xl sm:border sm:border-slate-100 overflow-y-auto scrollbar-hide ${isPreview ? 'h-full' : 'min-h-screen'}`}>
 
                 {/* ── TOP CURVED SECTION ───────────────────────── */}
                 <div className="relative w-full flex-shrink-0" id="section-business_design">
@@ -147,7 +147,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                     />
                                 ) : (
                                     <div className="flex flex-col items-center gap-2 opacity-30">
-                                        <Globe className="w-12 h-12 text-slate-400" />
+                                        <Image className="w-12 h-12 text-slate-400" />
                                         <span className="text-[10px] font-bold text-slate-400 uppercase ">No image</span>
                                     </div>
                                 )}
@@ -159,7 +159,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                 </div>
 
                 {/* ── SCROLLABLE CONTENT ─────────────────────────── */}
-                <div className="flex-1 px-6 pt-36 pb-6 space-y-4 relative w-full scrollbar-hide">
+                <div className="flex-1 px-6 pt-24 pb-6 space-y-4 relative w-full scrollbar-hide">
 
                     {/* Opening Hours */}
                     <div className="bg-white rounded-2xl p-4 shadow-sm space-y-2" id="section-openingHours">

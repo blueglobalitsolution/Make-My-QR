@@ -293,7 +293,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="space-y-3 text-left">
                   <label className="text-[11px] font-bold skeu-text-muted capitalize  pl-1">Phone number *</label>
                   <div className="flex items-center skeu-input overflow-hidden relative">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
                       className="px-4 py-3 flex items-center gap-2 border-r border-black/5 skeu-mid hover:bg-black/5 transition-colors"
@@ -1323,12 +1323,12 @@ export const Wizard: React.FC<WizardProps> = ({
                       {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                     </button>
                     <div className="cursor-pointer flex-1" onClick={() => {
-                        const details = currentUser?.subscription?.plan_details;
-                        if (details && !details.can_password_protect) {
-                          alert("Upgrade to use Password Protection");
-                          return;
-                        }
-                        setWizard({ ...wizard, is_protected: !wizard.is_protected });
+                      const details = currentUser?.subscription?.plan_details;
+                      if (details && !details.can_password_protect) {
+                        alert("Upgrade to use Password Protection");
+                        return;
+                      }
+                      setWizard({ ...wizard, is_protected: !wizard.is_protected });
                     }}>
                       <p className="font-black text-[#0F172A] text-sm tracking-tight">Password Protection</p>
                       <p className="text-[10px] font-medium text-slate-400">Ask for password to open document</p>
