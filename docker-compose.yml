@@ -12,7 +12,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3309:3306"
+      - "3307:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
@@ -21,8 +21,6 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    ports:
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -48,33 +46,32 @@ services:
       retries: 3
 
   backend:
-    build:
-      context: ..
-      dockerfile: Docker-Production/Dockerfile.backend
+    image: bgtuser/make-my-qr-backend:latest
     restart: always
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=3306
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}
-      - MINIO_SECURE=${MINIO_SECURE}
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - FRONTEND_URL=${FRONTEND_URL}
-      - BACKEND_URL=${BACKEND_URL}
-      - DOMAIN=${DOMAIN}
-      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
-      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - DATABASE_NAME=qrmaker
+      - DATABASE_USER=qrmaker
+      - DATABASE_PASSWORD=qrmakerpassword
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_SERVER_URL=https://qrstorage.makemyqrcode.com
+      - MINIO_PUBLIC_URL=https://qrstorage.makemyqrcode.com/file
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET_NAME=qrmaker-files
+      - MINIO_SECURE=True
+      - SECRET_KEY=your_django_secret_key_change_in_production
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,app.makemyqrcode.com,qrstorage.makemyqrcode.com
+      - EMAIL_HOST_USER=blueglobalcloud@gmail.com
+      - EMAIL_HOST_PASSWORD=pjooewfxcxhtldod
+      - FRONTEND_URL=https://app.makemyqrcode.com
+      - BACKEND_URL=https://app.makemyqrcode.com
+    ports:
+      - "8010:8010"
     depends_on:
       db:
         condition: service_healthy
@@ -83,16 +80,13 @@ services:
       redis:
         condition: service_healthy
 
-  nginx:
-    build:
-      context: ..
-      dockerfile: Docker-Production/Dockerfile.frontend
+  frontend:
+    image: bgtuser/make-my-qr-frontend:latest
     restart: always
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
-      - minio
 
 volumes:
   mysql_data:

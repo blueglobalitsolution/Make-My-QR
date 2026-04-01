@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText, BarChart3, X } from 'lucide-react';
+import { User } from '../../../types';
 
 interface SidebarProps {
   view: string;
@@ -10,6 +11,7 @@ interface SidebarProps {
   handleLogout: () => void;
   isOpen?: boolean;
   setIsOpen?: (open: boolean) => void;
+  currentUser: User | null;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -20,9 +22,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setPhonePreviewMode,
   handleLogout,
   isOpen,
-  setIsOpen
+  setIsOpen,
+  currentUser
 }) => {
   const handleNavClick = (itemId: string) => {
+    if (isExpired && itemId !== 'billing' && itemId !== 'account') {
+      setView('billing');
+      setIsOpen?.(false);
+      return;
+    }
     if (itemId === 'wizard') {
       setEditingId(null);
       resetWizard();
@@ -31,11 +39,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setView(itemId as any);
   };
 
+  const isTrial = currentUser?.subscription?.plan === 'trial';
+  const isExpired = currentUser?.subscription?.plan === 'expired' ||
+    (currentUser?.subscription?.expiry_date && new Date(currentUser.subscription.expiry_date) < new Date());
+
+  const daysLeft = currentUser?.subscription?.days_remaining ?? 0;
+
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-[60] lg:hidden backdrop-blur-sm animate-in fade-in duration-300"
           onClick={() => setIsOpen?.(false)}
         />
@@ -44,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside className={`fixed top-0 left-0 w-64 h-screen flex flex-col z-[70] skeu-sidebar p-6 border-r border-[#fee2e2] transform transition-transform duration-500 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full space-y-10 relative">
           {/* Close Button for Mobile */}
-          <button 
+          <button
             onClick={() => setIsOpen?.(false)}
             className="lg:hidden absolute top-0 -right-2 p-2 text-slate-400 hover:text-slate-600 transition-colors"
           >
@@ -62,7 +76,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
 
           {/* Navigation */}
-          <nav className="space-y-3 flex-1">
+          <nav className="space-y-2 flex-1">
+            {/* Trial expired banner */}
+            {isExpired && (
+              <div className="mx-2 mb-6 p-5 rounded-2xl bg-red-50/50 border border-red-100/50 shadow-sm animate-in zoom-in duration-500 text-center">
+                <h4 className="text-[14px] font-black text-red-600 mb-4">Free Trial Expired</h4>
+                <button
+                  onClick={() => setView('billing')}
+                  className="w-full py-3 bg-[#dc2626] text-white rounded-xl text-[13px] font-black shadow-lg shadow-red-500/30 hover:bg-red-700 transition-all active:scale-95 transform"
+                >
+                  Upgrade
+                </button>
+              </div>
+            )}
 
             {[
               { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
@@ -73,9 +99,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-semibold transition-all font-poppins group ${view === item.id
-                  ? 'skeu-tag-active scale-[1.02]'
-                  : 'skeu-tag hover:bg-[#3eb5a9] hover:text-white'
+                disabled={isExpired && item.id !== 'billing' && item.id !== 'account'}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-semibold transition-all font-poppins group ${isExpired && item.id !== 'billing' && item.id !== 'account' ? 'opacity-40 grayscale cursor-not-allowed' : ''
+                  } ${view === item.id
+                    ? 'skeu-tag-active scale-[1.02]'
+                    : 'skeu-tag hover:bg-[#dc2626] hover:text-white'
                   }`}
               >
                 <item.icon className={`w-5 h-5 transition-colors ${view === item.id ? 'text-white' : 'skeu-text-accent group-hover:text-white'}`} />
@@ -83,6 +111,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             ))}
           </nav>
+
+          {/* Trial Badge bottom */}
+          {isTrial && !isExpired && (
+            <div className="mx-2 mb-2 p-4 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 border border-red-100 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-red-600">7-Day Free Trial</span>
+              </div>
+              <p className="text-[11px] font-bold text-red-800 leading-tight mb-1">
+                {daysLeft} days remaining in your premium trial.
+              </p>
+              {currentUser?.subscription?.expiry_date && (
+                <p className="text-[9px] font-medium text-red-600/60">
+                  Ends on {new Date(currentUser.subscription.expiry_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Logout */}
           <div className="pt-6 border-t border-[#fee2e2]">

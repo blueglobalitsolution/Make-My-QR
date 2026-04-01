@@ -165,7 +165,70 @@ def send_otp_email(to_email, otp):
 """
         yag.send(to_email, subject, html)
         return True
-
     except Exception as e:
         print(f"Error sending OTP email: {e}")
+        return False
+
+
+def send_signup_otp_email(to_email, otp):
+    try:
+        yag = get_email_client()
+        subject = "Verify your email for MakeMyQR"
+
+        html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Email Verification</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f4f6;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f3f4f6">
+  <tr>
+    <td align="center">
+      <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
+        <tr>
+          <td align="center" style="padding:40px 10px;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border-radius:8px;">
+              <tr>
+                <td align="center" style="padding:30px 20px 10px 20px; font-family:Arial, sans-serif; font-size:22px; font-weight:bold; color:#333;">
+                  Verify Your Email
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:10px 20px; font-family:Arial, sans-serif; font-size:15px; color:#555;">
+                  Welcome to MakeMyQR! Please use the following 6-digit code to verify your email and complete your registration:
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:20px 20px;">
+                  <span style="font-family:Arial, sans-serif; font-size:36px; font-weight:bold; color:#dc2626; letter-spacing:4px;">
+                    {otp}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding-top:10px; font-family:Arial, sans-serif; font-size:12px; color:#888;">
+                  This code is valid for 10 minutes.
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:10px 20px 30px 20px; font-family:Arial, sans-serif; font-size:12px; color:#888;">
+                  If you didn't request this, you can safely ignore this email.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+"""
+        yag.send(to_email, subject, html)
+        return True
+    except Exception as e:
+        print(f"Error sending signup OTP: {e}")
         return False

@@ -41,6 +41,10 @@ interface AuthViewsProps {
   handleResetVerify: (e: React.FormEvent) => Promise<void>;
   handleResetConfirm: (e: React.FormEvent) => Promise<void>;
   isProcessing: boolean;
+  signupStep: 1 | 2;
+  setSignupStep: (step: 1 | 2) => void;
+  regOtp: string;
+  setRegOtp: (otp: string) => void;
 }
 
 const inputClass = "w-full pl-12 pr-6 py-4 skeu-input transition-all";
@@ -87,9 +91,13 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
   handleResetVerify,
   handleResetConfirm,
   isProcessing,
+  signupStep,
+  setSignupStep,
+  regOtp,
+  setRegOtp,
 }) => {
   /* ─── LOGIN ─── */
-  if (view === 'auth') {
+  if (view === 'login') {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center py-12">
         <div className="max-w-md w-full skeu-auth-card p-10">
@@ -160,41 +168,68 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           </div>
 
           <form className="space-y-4" onSubmit={handleRegister}>
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
-              <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className={inputClass} placeholder="Enter your full name" />
-            </div>
+            {signupStep === 1 ? (
+              <>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><UserIcon className="w-5 h-5" /></div>
+                  <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)} className={inputClass} placeholder="Enter your full name" />
+                </div>
 
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
-              <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className={inputClass} placeholder="Enter your email here" />
-            </div>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Mail className="w-5 h-5" /></div>
+                  <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className={inputClass} placeholder="Enter your email here" />
+                </div>
 
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Phone className="w-5 h-5" /></div>
-              <input type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className={inputClass} placeholder="Enter your phone number" />
-            </div>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Phone className="w-5 h-5" /></div>
+                  <input type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className={inputClass} placeholder="Enter your phone number" />
+                </div>
 
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-              <input type={showRegPassword ? "text" : "password"} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className={inputPasswordClass} placeholder="Enter your password here" />
-              <button type="button" onClick={() => setShowRegPassword(!showRegPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-                {showRegPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                  <input type={showRegPassword ? "text" : "password"} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className={inputPasswordClass} placeholder="Enter your password here" />
+                  <button type="button" onClick={() => setShowRegPassword(!showRegPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showRegPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
 
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
-              <input type={showRegConfirmPassword ? "text" : "password"} required value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} className={inputPasswordClass} placeholder="Confirm your password" />
-              <button type="button" onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-                {showRegConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Lock className="w-5 h-5" /></div>
+                  <input type={showRegConfirmPassword ? "text" : "password"} required value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} className={inputPasswordClass} placeholder="Confirm your password" />
+                  <button type="button" onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                    {showRegConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="animate-in fade-in slide-in-from-right-4 duration-300 space-y-6">
+                <p className="text-sm font-bold skeu-text-secondary text-center">
+                  Enter the 6-digit verification code sent to <br />
+                  <span className="text-[#dc2626]">{regEmail}</span>
+                </p>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={regOtp}
+                    onChange={(e) => setRegOtp(e.target.value)}
+                    className="w-full text-center tracking-[1em] text-2xl font-black skeu-input py-5 rounded-2xl"
+                    placeholder="000000"
+                  />
+                </div>
+                <button type="button" onClick={() => setSignupStep(1)} className="w-full text-xs font-bold text-slate-400 hover:text-[#dc2626] transition-colors">
+                  Wrong email? Go back
+                </button>
+              </div>
+            )}
 
-            <button type="submit" className={btnPrimary}>Sign up</button>
+            <button disabled={isProcessing} type="submit" className={btnPrimary}>
+              {isProcessing ? 'Please wait...' : signupStep === 1 ? 'Verify Email' : 'Complete Registration'}
+            </button>
 
             <p className="text-center text-sm text-slate-500">
-              Already have an account? <button type="button" onClick={() => setView('auth')} className="font-bold text-[#dc2626] hover:underline">Log In</button>
+              Already have an account? <button type="button" onClick={() => setView('login')} className="font-bold text-[#dc2626] hover:underline">Log In</button>
             </p>
 
             <p className="text-center text-xs text-slate-400 pt-4 leading-relaxed">
@@ -236,8 +271,8 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
                   <input type="email" required value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} className="appearance-none relative block w-full px-5 py-4 skeu-input rounded-xl sm:text-sm" placeholder="name@company.com" />
                 </div>
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isProcessing}
                 className={`skeu-btn w-full flex justify-center py-4 px-4 text-sm rounded-xl transition-all duration-300 ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
@@ -284,7 +319,7 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
           )}
 
           <div className="text-center pt-2">
-            <button type="button" onClick={() => { setView('auth'); setResetStep(1); }} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
+            <button type="button" onClick={() => { setView('login'); setResetStep(1); }} className="text-xs font-bold skeu-text-muted hover:skeu-text-primary transition-colors">
               <ChevronLeft className="w-3 h-3 inline-block items-center" /> Back to Login
             </button>
           </div>

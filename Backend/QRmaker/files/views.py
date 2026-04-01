@@ -20,10 +20,21 @@ class FileViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self):
+        from users.subscription_utils import is_subscription_active
+        if not is_subscription_active(self.request.user):
+            return File.objects.none()
         return File.objects.filter(user=self.request.user).order_by("-created_at")
 
     def perform_create(self, serializer):
+        from users.subscription_utils import can_upload_file, is_subscription_active
         uploaded_file = self.request.FILES.get("file")
+        if not is_subscription_active(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Trial period expired. Please upgrade your subscription.")
+        if not can_upload_file(self.request.user, uploaded_file.size if uploaded_file else 0):
+             from rest_framework.exceptions import ValidationError
+             raise ValidationError("Upload limit reached for your current plan. Please upgrade your subscription.")
+
         file_type = ""
         if uploaded_file:
             # Simple way to get file type from extension

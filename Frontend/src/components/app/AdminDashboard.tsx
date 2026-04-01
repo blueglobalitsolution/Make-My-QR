@@ -13,13 +13,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     const [userSubs, setUserSubs] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        type: 'danger' | 'info';
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        type: 'info'
+    });
 
     // Plan Editing State
     const [isEditingPlan, setIsEditingPlan] = useState<any>(null); // null means not editing/creating
-    const [planForm, setPlanForm] = useState({ 
-        name: '', 
-        price: '', 
-        duration_months: 1, 
+    const [planForm, setPlanForm] = useState({
+        name: '',
+        price: '',
+        duration_months: 1,
         features: [] as string[],
         qr_limit: 5,
         can_create_dynamic: false,
@@ -78,17 +91,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     };
 
     const handleDeletePlan = async (id: number) => {
-        if (!window.confirm("Are you sure you want to delete this plan?")) return;
-        try {
-            await deleteAdminPlan(id);
-            fetchData();
-        } catch (err) {
-            alert("Error deleting plan");
-        }
+        setConfirmModal({
+            isOpen: true,
+            title: 'Delete Plan?',
+            message: 'Are you sure you want to delete this subscription plan? Existing users of this plan will remain but no new users can join.',
+            type: 'danger',
+            onConfirm: async () => {
+                try {
+                    await deleteAdminPlan(id);
+                    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                    fetchData();
+                } catch (err) {
+                    alert("Error deleting plan");
+                }
+            }
+        });
     };
 
     const handleManageUser = async (userId: number, action: 'toggle_active' | 'delete') => {
-        if (action === 'delete' && !window.confirm("Are you sure you want to delete this user? This is permanent!")) return;
+        if (action === 'delete') {
+            setConfirmModal({
+                isOpen: true,
+                title: 'Delete User?',
+                message: 'Are you sure you want to delete this user forever? This action is permanent and all their data will be wiped!',
+                type: 'danger',
+                onConfirm: async () => {
+                    try {
+                        await manageAdminUser(userId, action);
+                        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                        fetchData();
+                    } catch (err) {
+                        alert("Error deleting user");
+                    }
+                }
+            });
+            return;
+        }
+
         try {
             await manageAdminUser(userId, action);
             fetchData();
@@ -100,9 +139,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     const openPlanForm = (plan?: any) => {
         if (plan) {
             setIsEditingPlan(plan);
-            setPlanForm({ 
-                name: plan.name, 
-                price: plan.price.toString(), 
+            setPlanForm({
+                name: plan.name,
+                price: plan.price.toString(),
                 duration_months: plan.duration_months,
                 features: Array.isArray(plan.features) ? plan.features : [],
                 qr_limit: plan.qr_limit || 5,
@@ -117,10 +156,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
             });
         } else {
             setIsEditingPlan({ isNew: true });
-            setPlanForm({ 
-                name: '', 
-                price: '', 
-                duration_months: 1, 
+            setPlanForm({
+                name: '',
+                price: '',
+                duration_months: 1,
                 features: [],
                 qr_limit: 5,
                 can_create_dynamic: false,
@@ -151,25 +190,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                 <div className="flex items-center gap-6">
                     <nav className="hidden md:flex items-center bg-slate-100 p-1 rounded-xl">
-                        <button 
+                        <button
                             onClick={() => setActiveTab('overview')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'overview' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                             Overview
                         </button>
-                        <button 
+                        <button
                             onClick={() => setActiveTab('plans')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'plans' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                             Manage Plans
                         </button>
-                        <button 
+                        <button
                             onClick={() => setActiveTab('subscriptions')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'subscriptions' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                             Subscriptions
                         </button>
-                        <button 
+                        <button
                             onClick={() => setActiveTab('users')}
                             className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'users' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                         >
@@ -178,8 +217,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     </nav>
 
                     <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
-                        <button 
-                            onClick={() => setView('admin_login')}
+                        <button
+                            onClick={() => setView('superadmin_login')}
                             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-red-600 transition-colors"
                         >
                             <LogOut className="w-4 h-4" /> Sign Out
@@ -208,9 +247,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 {activeTab === 'users' && 'Manage registered users, their accounts and data.'}
                             </p>
                         </div>
-                        
+
                         {activeTab === 'plans' && !isEditingPlan && (
-                            <button 
+                            <button
                                 onClick={() => openPlanForm()}
                                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow-lg shadow-red-600/20 transition-all font-black text-[11px] uppercase tracking-wider flex items-center gap-2"
                             >
@@ -271,15 +310,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                                     {/* Stats Table / Charts could go here */}
                                     <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
-                                         <div className="flex items-center gap-3 mb-8">
+                                        <div className="flex items-center gap-3 mb-8">
                                             <div className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
                                                 <TrendingUp className="w-4 h-4 text-red-600" />
                                             </div>
                                             <h3 className="text-lg font-black text-slate-800">Platform activity</h3>
-                                         </div>
-                                         <div className="h-64 flex items-center justify-center border-2 border-slate-50 border-dashed rounded-[2rem] text-slate-400 font-medium">
-                                             Activity chart will be visible after more data collection
-                                         </div>
+                                        </div>
+                                        <div className="h-64 flex items-center justify-center border-2 border-slate-50 border-dashed rounded-[2rem] text-slate-400 font-medium">
+                                            Activity chart will be visible after more data collection
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -301,8 +340,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                 <div className="grid grid-cols-2 gap-6">
                                                     <div className="space-y-2">
                                                         <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Plan Name</label>
-                                                        <input 
-                                                            type="text" 
+                                                        <input
+                                                            type="text"
                                                             value={planForm.name}
                                                             onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
                                                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all"
@@ -311,8 +350,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     </div>
                                                     <div className="space-y-2">
                                                         <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Total Price for Duration (INR)</label>
-                                                        <input 
-                                                            type="number" 
+                                                        <input
+                                                            type="number"
                                                             value={planForm.price}
                                                             onChange={(e) => setPlanForm({ ...planForm, price: e.target.value })}
                                                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all"
@@ -323,7 +362,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Duration (Months)</label>
-                                                    <select 
+                                                    <select
                                                         value={planForm.duration_months}
                                                         onChange={(e) => setPlanForm({ ...planForm, duration_months: parseInt(e.target.value) })}
                                                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
@@ -340,8 +379,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="space-y-3">
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_create_dynamic"
                                                                     checked={planForm.can_create_dynamic}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_create_dynamic: e.target.checked })}
@@ -350,8 +389,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 <label htmlFor="can_create_dynamic" className="text-xs font-bold text-slate-700">Dynamic QR Codes</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_create_pdf"
                                                                     checked={planForm.can_create_pdf}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_create_pdf: e.target.checked })}
@@ -360,8 +399,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 <label htmlFor="can_create_pdf" className="text-xs font-bold text-slate-700">PDF QR Codes</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_create_business"
                                                                     checked={planForm.can_create_business}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_create_business: e.target.checked })}
@@ -372,8 +411,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                         </div>
                                                         <div className="space-y-3">
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_password_protect"
                                                                     checked={planForm.can_password_protect}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_password_protect: e.target.checked })}
@@ -382,8 +421,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 <label htmlFor="can_password_protect" className="text-xs font-bold text-slate-700">Password Protect</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_lead_capture"
                                                                     checked={planForm.can_lead_capture}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_lead_capture: e.target.checked })}
@@ -392,8 +431,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 <label htmlFor="can_lead_capture" className="text-xs font-bold text-slate-700">Lead Capture</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="can_access_analytics"
                                                                     checked={planForm.can_access_analytics}
                                                                     onChange={(e) => setPlanForm({ ...planForm, can_access_analytics: e.target.checked })}
@@ -402,8 +441,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                 <label htmlFor="can_access_analytics" className="text-xs font-bold text-slate-700">Full Analytics</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <input 
-                                                                    type="checkbox" 
+                                                                <input
+                                                                    type="checkbox"
                                                                     id="is_lifetime"
                                                                     checked={planForm.is_lifetime}
                                                                     onChange={(e) => setPlanForm({ ...planForm, is_lifetime: e.target.checked })}
@@ -417,8 +456,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">QR Code Limit</label>
-                                                    <input 
-                                                        type="number" 
+                                                    <input
+                                                        type="number"
                                                         value={planForm.qr_limit}
                                                         onChange={(e) => setPlanForm({ ...planForm, qr_limit: parseInt(e.target.value) })}
                                                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all"
@@ -428,8 +467,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-1">Upload Limit (MB)</label>
-                                                    <input 
-                                                        type="number" 
+                                                    <input
+                                                        type="number"
                                                         value={planForm.upload_limit_mb}
                                                         onChange={(e) => setPlanForm({ ...planForm, upload_limit_mb: parseInt(e.target.value) })}
                                                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-red-500/20 focus:outline-none font-bold text-slate-700 transition-all"
@@ -437,7 +476,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     />
                                                 </div>
                                                 <div className="pt-6">
-                                                    <button 
+                                                    <button
                                                         onClick={handleSavePlan}
                                                         className="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-[1.25rem] font-black text-[12px] uppercase tracking-[0.1em] shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-3"
                                                     >
@@ -451,13 +490,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                             {plans.map((plan) => (
                                                 <div key={plan.id} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 hover:shadow-xl transition-all group relative overflow-hidden">
                                                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                                                        <button 
+                                                        <button
                                                             onClick={() => openPlanForm(plan)}
                                                             className="p-2 bg-slate-50 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors shadow-sm"
                                                         >
                                                             <Edit className="w-4 h-4" />
                                                         </button>
-                                                        <button 
+                                                        <button
                                                             onClick={() => handleDeletePlan(plan.id)}
                                                             className="p-2 bg-slate-50 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors shadow-sm"
                                                         >
@@ -468,12 +507,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
                                                         <CreditCard className="w-6 h-6" />
                                                     </div>
-                                                    
+
                                                     <h4 className="text-xl font-black text-slate-800 mb-1">{plan.name}</h4>
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
                                                         {plan.is_lifetime ? 'LIFETIME ACCESS' : `Duration: ${plan.duration_months} Month(s)`}
                                                     </p>
-                                                    
+
                                                     <div className="flex items-baseline gap-1 mb-6">
                                                         <span className="text-3xl font-black text-slate-800">₹{plan.price}</span>
                                                         <span className="text-slate-400 text-xs font-bold">{plan.is_lifetime ? '/ lifetime' : '/ period'}</span>
@@ -498,7 +537,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                     </div>
                                                 </div>
                                             ))}
-                                            
+
                                             {plans.length === 0 && (
                                                 <div className="col-span-full py-20 bg-white rounded-[2.5rem] border-2 border-slate-100 border-dashed flex flex-col items-center justify-center text-center">
                                                     <CreditCard className="w-12 h-12 text-slate-200 mb-4" />
@@ -558,10 +597,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                             </span>
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <div className={`flex items-center gap-2 text-xs font-bold ${
-                                                                sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 
+                                                            <div className={`flex items-center gap-2 text-xs font-bold ${sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000
                                                                 ? 'text-red-500' : 'text-slate-500'
-                                                            }`}>
+                                                                }`}>
                                                                 <Calendar className="w-3.5 h-3.5" />
                                                                 {sub.expiry_date ? new Date(sub.expiry_date).toLocaleDateString() : (sub.plan_name?.toLowerCase().includes('lifetime') ? 'LIFETIME' : 'N/A')}
                                                                 {sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 && (
@@ -637,14 +675,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                         </td>
                                                         <td className="px-8 py-6">
                                                             <div className="flex items-center justify-end gap-2">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleManageUser(user.id, 'toggle_active')}
                                                                     title={user.is_active ? "Deactivate User" : "Activate User"}
                                                                     className={`p-2 rounded-lg transition-all ${user.is_active ? 'text-slate-400 hover:text-red-500 hover:bg-red-50' : 'text-emerald-500 hover:bg-emerald-50'}`}
                                                                 >
                                                                     {user.is_active ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
                                                                 </button>
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleManageUser(user.id, 'delete')}
                                                                     title="Delete User Forever"
                                                                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -671,6 +709,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                         </>
                     )}
 
+                    {/* Custom Confirm Modal */}
+                    {confirmModal.isOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+                            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))} />
+                            <div className="bg-white rounded-[3rem] p-10 max-w-sm w-full relative shadow-2xl border border-slate-100 flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+                                <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center mb-8 shadow-inner ${confirmModal.type === 'danger' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+                                    {confirmModal.type === 'danger' ? <Trash2 className="w-10 h-10" /> : <ShieldCheck className="w-10 h-10" />}
+                                </div>
+
+                                <h3 className="text-2xl font-black text-slate-800 mb-3">{confirmModal.title}</h3>
+                                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">
+                                    {confirmModal.message}
+                                </p>
+
+                                <div className="grid grid-cols-2 gap-4 w-full">
+                                    <button
+                                        onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                                        className="px-6 py-4 rounded-2xl bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-95"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={confirmModal.onConfirm}
+                                        className={`px-6 py-4 rounded-2xl text-white font-black text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg ${confirmModal.type === 'danger' ? 'bg-red-600 hover:bg-red-700 shadow-red-600/20' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'}`}
+                                    >
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

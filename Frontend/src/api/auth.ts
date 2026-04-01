@@ -8,13 +8,18 @@ export const login = async (username, password) => {
     return response.data;
 };
 
-export const register = async (username, email, password, first_name = '', last_name = '') => {
+export const register = async (username, email, password, otp, first_name = '', last_name = '') => {
     const response = await apiClient.post('/users/register/', {
-        username, email, password, first_name, last_name
+        username, email, password, first_name, last_name, otp
     });
     if (response.data.token) {
         localStorage.setItem('makemyqr_token', response.data.token);
     }
+    return response.data;
+};
+
+export const sendSignupOTP = async (email: string) => {
+    const response = await apiClient.post('/users/send-signup-otp/', { email });
     return response.data;
 };
 
@@ -35,6 +40,11 @@ export const logout = () => {
 
 export const requestPasswordReset = async (email: string) => {
     const response = await apiClient.post('/users/password-reset-request/', { email });
+    return response.data;
+};
+
+export const requestAdminPasswordReset = async (email: string) => {
+    const response = await apiClient.post('/users/admin-password-reset-request/', { email });
     return response.data;
 };
 

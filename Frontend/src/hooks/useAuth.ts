@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../../types';
-import { login, register, logout, requestPasswordReset, verifyOTP, confirmPasswordReset, updateProfile, changePassword } from '../api/auth';
+import { login, register, logout, requestPasswordReset, requestAdminPasswordReset, verifyOTP, confirmPasswordReset, updateProfile, changePassword, sendSignupOTP } from '../api/auth';
 
 export interface UseAuthReturn {
   currentUser: User | null;
@@ -43,6 +43,7 @@ export interface UseAuthReturn {
   newPasswordReset: string;
   setNewPasswordReset: React.Dispatch<React.SetStateAction<string>>;
   handleResetRequest: (e: React.FormEvent) => Promise<void>;
+  handleAdminResetRequest: (e: React.FormEvent) => Promise<void>;
   handleResetVerify: (e: React.FormEvent) => Promise<void>;
   handleResetConfirm: (e: React.FormEvent) => Promise<void>;
   accFirstName: string;
@@ -58,6 +59,10 @@ export interface UseAuthReturn {
   accConfirmPassword: string;
   setAccConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
   isProcessing: boolean;
+  signupStep: 1 | 2;
+  setSignupStep: React.Dispatch<React.SetStateAction<1 | 2>>;
+  regOtp: string;
+  setRegOtp: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const useAuth = (
@@ -92,6 +97,8 @@ export const useAuth = (
   const [accPassword, setAccPassword] = useState('');
   const [accConfirmPassword, setAccConfirmPassword] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [signupStep, setSignupStep] = useState<1 | 2>(1);
+  const [regOtp, setRegOtp] = useState('');
 
   const triggerAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
     if (showAlert) {
@@ -135,7 +142,7 @@ export const useAuth = (
         isAdmin: false,
         isStaff: data.is_staff,
         createdAt: new Date().toISOString(),
-        daysRemaining: data.subscription?.expiry_date 
+        daysRemaining: data.subscription?.expiry_date
           ? Math.ceil((new Date(data.subscription.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
           : 0,
         savedPalettes: [],
@@ -171,26 +178,34 @@ export const useAuth = (
       return;
     }
     try {
-      const data = await register(regEmail, regEmail, regPassword, regName, regLastName);
-      const user: User = {
-        id: data.user_id.toString(),
-        email: data.email,
-        name: `${regName} ${regLastName}`.trim() || data.email.split('@')[0],
-        firstName: regName,
-        lastName: regLastName,
-        plan: 'free',
-        isAdmin: false,
-        createdAt: new Date().toISOString(),
-        daysRemaining: 14,
-        savedPalettes: []
-      };
-      setCurrentUser(user);
-      localStorage.setItem('makemyqr_user', JSON.stringify(user));
-      setView('my_codes');
+      setIsProcessing(true);
+      if (signupStep === 1) {
+        await sendSignupOTP(regEmail);
+        triggerAlert("Success", "Verification code sent to your email!", "info");
+        setSignupStep(2);
+      } else {
+        const username = regEmail.split('@')[0] + Math.floor(Math.random() * 1000);
+        const data = await register(username, regEmail, regPassword, regOtp, regName, regLastName);
+        const user: User = {
+          id: data.user_id.toString(),
+          email: data.email,
+          name: `${regName} ${regLastName}`.trim() || data.email.split('@')[0],
+          firstName: regName,
+          lastName: regLastName,
+          plan: 'free',
+          isAdmin: false,
+          createdAt: new Date().toISOString(),
+          daysRemaining: 14,
+          savedPalettes: []
+        };
+        setCurrentUser(user);
+        localStorage.setItem('makemyqr_user', JSON.stringify(user));
+        window.location.reload();
+      }
     } catch (err: any) {
       const data = err.response?.data;
       let errorMsg = "Registration failed. Please try again.";
-      
+
       if (typeof data === 'string') {
         errorMsg = data;
       } else if (data) {
@@ -198,7 +213,6 @@ export const useAuth = (
         else if (data.message) errorMsg = data.message;
         else if (data.non_field_errors?.[0]) errorMsg = data.non_field_errors[0];
         else {
-          // Try to get the first field-specific error
           const fields = Object.keys(data);
           if (fields.length > 0) {
             const firstField = fields[0];
@@ -208,6 +222,8 @@ export const useAuth = (
         }
       }
       triggerAlert("Registration Failed", errorMsg, "danger");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -215,9 +231,9 @@ export const useAuth = (
     e.preventDefault();
     try {
       await updateProfile({
-          first_name: accFirstName,
-          last_name: accLastName,
-          email: accEmail
+        first_name: accFirstName,
+        last_name: accLastName,
+        email: accEmail
       });
       if (currentUser) {
         const updatedUser = {
@@ -269,6 +285,21 @@ export const useAuth = (
     }
   };
 
+  const handleAdminResetRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    try {
+      await requestAdminPasswordReset(resetEmail);
+      setResetStep(2);
+      setResetTimer(180);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || "Failed to request password reset.";
+      triggerAlert("Reset Failed", errorMsg, "danger");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleResetVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -286,7 +317,7 @@ export const useAuth = (
     try {
       await confirmPasswordReset(resetEmail, newPasswordReset);
       triggerAlert("Success", "Password reset successfully! Please login with your new password.", "info");
-      setView('auth');
+      setView('login');
       setResetStep(1);
       setResetEmail('');
       setResetOTP('');
@@ -338,6 +369,7 @@ export const useAuth = (
     newPasswordReset,
     setNewPasswordReset,
     handleResetRequest,
+    handleAdminResetRequest,
     handleResetVerify,
     handleResetConfirm,
     accFirstName,
@@ -353,5 +385,9 @@ export const useAuth = (
     accConfirmPassword,
     setAccConfirmPassword,
     isProcessing,
+    signupStep,
+    setSignupStep,
+    regOtp,
+    setRegOtp,
   };
 };

@@ -47,6 +47,7 @@ export interface User {
       upload_limit_mb: number;
       is_lifetime: boolean;
     };
+    days_remaining?: number;
   };
 }
 
@@ -81,7 +82,7 @@ export interface GeneratedCode {
 
 export type ViewState =
   | 'landing'
-  | 'auth'
+  | 'login'
   | 'wizard'
   | 'dashboard'
   | 'analytics'
@@ -100,9 +101,10 @@ export type ViewState =
   | 'qr_viewer'
   | 'forgot_password'
   | 'register'
-  | 'admin_login'
   | 'admin_dashboard'
-  | 'payment';
+  | 'superadmin_login'
+  | 'payment'
+  | '404';
 
 export interface BusinessButton {
   id: string;

@@ -15,7 +15,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setView('auth')}
+            onClick={() => setView('login')}
             className="px-6 py-2 rounded-xl text-sm font-bold text-[#dc2626] border-2 border-[#dc2626]/10 hover:border-[#dc2626] transition-all"
           >
             Login
@@ -53,7 +53,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
         </p>
 
         <button
-          onClick={() => setView('auth')}
+          onClick={() => setView('login')}
           className="px-12 py-4 bg-[#dc2626] text-white rounded-[2rem] text-xl font-black  hover:bg-[#991b1b] shadow-2xl shadow-red-500/40 transition-all transform hover:scale-105 active:scale-95"
         >
           Launch Studio

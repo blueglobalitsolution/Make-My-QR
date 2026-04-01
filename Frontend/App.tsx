@@ -30,6 +30,7 @@ import { PublicScan } from './src/components/app/PublicScan';
 import QRViewer from './src/components/app/QRViewer';
 import { AdminLogin } from './src/components/app/AdminLogin';
 import { AdminDashboard } from './src/components/app/AdminDashboard';
+import { NotFound } from './src/components/app/NotFound';
 
 const App: React.FC = () => {
   // Initialize view and IDs directly from URL to avoid mount race conditions and sync loops
@@ -38,12 +39,22 @@ const App: React.FC = () => {
     const searchParams = new URLSearchParams(window.location.search);
 
     const id = searchParams.get('id');
+    // Normalize path: remove multiple slashes and trailing slashes
+    let path = rawPath.replace(/\/+/g, '/').replace(/\/$/, '');
+    if (path.startsWith('/')) path = path.slice(1);
+
+    path = path.split('?')[0] || 'landing';
+
+    // If path is old admin_login, mark it as 404
+    if (path === 'admin_login') {
+      return { view: '404' as ViewState, businessId: null, fileMode: false };
+    }
+
     // Handles /view/business or //view/business
-    if (/^\/*view\/business/.test(rawPath.slice(1)) || id) {
+    if (path.startsWith('view/business') || id) {
       return { view: 'business_profile' as ViewState, businessId: id || 'url-data' };
     }
 
-    const path = rawPath.slice(1).split('?')[0] || 'landing';
     if (path === 'public/scan') return { view: 'public_scan' as ViewState, businessId: null };
 
     // Handle /view/:slug and /view/file/:slug for QR code landing pages
@@ -61,9 +72,9 @@ const App: React.FC = () => {
     }
 
     const validViews: ViewState[] = [
-      'landing', 'auth', 'wizard', 'my_codes', 'account', 'billing', 'payment',
+      'landing', 'login', 'wizard', 'my_codes', 'account', 'billing', 'payment',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
-      'qr_viewer', 'admin_login', 'admin_dashboard'
+      'qr_viewer', 'superadmin_login', 'admin_dashboard', '404'
     ];
 
     return {
@@ -102,7 +113,7 @@ const App: React.FC = () => {
     isOpen: false,
     title: '',
     message: '',
-    onConfirm: () => {},
+    onConfirm: () => { },
   });
 
   const showAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
@@ -113,7 +124,7 @@ const App: React.FC = () => {
       type,
       confirmText: 'OK',
       showCancel: false,
-      onConfirm: () => {},
+      onConfirm: () => { },
     });
   };
 
@@ -162,10 +173,10 @@ const App: React.FC = () => {
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert, auth.currentUser);
   const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappCountryCode, setWhatsappCountryCode, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, handleDeleteCoverImage, getQRValue, getPreviewValue, startQrFromAsset, resetWizard } = wizardProps;
   const filteredHistory = history.filter(item => {
-    const matchesFolder = activeFolderId === 'all' || 
-                         (activeFolderId === 'general' 
-                           ? !folders.some(f => f.id === item.folderId) 
-                           : item.folderId === activeFolderId);
+    const matchesFolder = activeFolderId === 'all' ||
+      (activeFolderId === 'general'
+        ? !folders.some(f => f.id === item.folderId)
+        : item.folderId === activeFolderId);
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.value.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFolder && matchesSearch;
   });
@@ -240,7 +251,12 @@ const App: React.FC = () => {
           const currentPath = window.location.pathname;
           const isViewPath = currentPath.startsWith('/view/');
 
-          if (!isViewPath && (currentPath === '/' || currentPath === '/landing' || currentPath === '/auth')) {
+          const isExpired = user.subscription?.plan === 'expired' ||
+            (user.subscription?.expiry_date && new Date(user.subscription.expiry_date) < new Date());
+
+          if (!isViewPath && isExpired) {
+            setView('billing');
+          } else if (!isViewPath && (currentPath === '/' || currentPath === '/landing' || currentPath === '/login')) {
             setView('my_codes');
           }
 
@@ -502,7 +518,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (
+      {view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
         <Sidebar
           view={view}
           setView={(v) => { setView(v); setIsSidebarOpen(false); }}
@@ -512,24 +528,26 @@ const App: React.FC = () => {
           handleLogout={auth.handleLogout}
           isOpen={isSidebarOpen}
           setIsOpen={setIsSidebarOpen}
+          currentUser={auth.currentUser}
         />
       )}
 
       {/* Bottom Navigation for Mobile */}
-      {view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (
+      {view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
         <BottomNav
           view={view}
           setView={handleSetView}
           resetWizard={resetWizard}
           setEditingId={setEditingId}
           setPhonePreviewMode={setPhonePreviewMode}
+          currentUser={auth.currentUser}
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' ? 'pb-32 lg:pb-0 skeu-main-content' : 'w-full'} ${view !== 'landing' && view !== 'auth' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'admin_login' && view !== 'admin_dashboard' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' ? 'pb-32 lg:pb-0 skeu-main-content' : 'w-full'} ${view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
         {view === 'landing' && <Landing setView={setView} />}
 
-        {(view === 'auth' || view === 'register' || view === 'forgot_password') && (
+        {(view === 'login' || view === 'register' || view === 'forgot_password') && (
           <AuthViews
             view={view}
             setView={setView}
@@ -570,6 +588,10 @@ const App: React.FC = () => {
             handleResetVerify={auth.handleResetVerify}
             handleResetConfirm={auth.handleResetConfirm}
             isProcessing={auth.isProcessing}
+            signupStep={auth.signupStep}
+            setSignupStep={auth.setSignupStep}
+            regOtp={auth.regOtp}
+            setRegOtp={auth.setRegOtp}
           />
         )}
 
@@ -643,8 +665,9 @@ const App: React.FC = () => {
 
         {view === 'analytics' && <Analytics />}
         {view === 'payment' && <Payment setView={handleSetView} selectedPlan={viewData} />}
-        {view === 'admin_login' && <AdminLogin setView={handleSetView} />}
+        {view === 'superadmin_login' && <AdminLogin setView={handleSetView} auth={auth} />}
         {view === 'admin_dashboard' && <AdminDashboard setView={handleSetView} />}
+        {view === '404' && <NotFound setView={handleSetView} />}
       </main>
 
       <ConfirmModal

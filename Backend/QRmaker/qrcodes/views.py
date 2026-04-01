@@ -20,6 +20,9 @@ class QRCodeViewSet(viewsets.ModelViewSet):
     serializer_class = QRCodeSerializer
 
     def get_queryset(self):
+        from users.subscription_utils import is_subscription_active
+        if not is_subscription_active(self.request.user):
+            return QRCode.objects.none()
         return QRCode.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -44,6 +47,12 @@ class QRCodeViewSet(viewsets.ModelViewSet):
         instance.save(update_fields=["short_slug"])
 
     def create(self, request, *args, **kwargs):
+        from users.subscription_utils import can_create_qr, is_subscription_active
+        if not is_subscription_active(request.user):
+             return Response({"error": "Trial period expired. Please upgrade your subscription to continue using the platform and access your work."}, status=status.HTTP_402_PAYMENT_REQUIRED)
+        if not can_create_qr(request.user):
+             return Response({"error": "QR code limit reached for your current plan. Please upgrade your subscription to create more QR codes."}, status=status.HTTP_402_PAYMENT_REQUIRED)
+             
         # Override create to ensure response has the slug
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

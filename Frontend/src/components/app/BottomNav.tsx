@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid3X3, BarChart3, Plus, UserCircle, CreditCard, LogOut } from 'lucide-react';
+import { Grid3X3, BarChart3, Plus, UserCircle, CreditCard } from 'lucide-react';
+import { User } from '../../../types';
 
 interface BottomNavProps {
   view: string;
@@ -7,6 +8,7 @@ interface BottomNavProps {
   resetWizard: () => void;
   setEditingId: (id: string | null) => void;
   setPhonePreviewMode: (mode: 'ui' | 'qr') => void;
+  currentUser: User | null;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
@@ -14,9 +16,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   setView,
   resetWizard,
   setEditingId,
-  setPhonePreviewMode
+  setPhonePreviewMode,
+  currentUser
 }) => {
+  const isExpired = currentUser?.subscription?.plan === 'expired' ||
+    (currentUser?.subscription?.expiry_date && new Date(currentUser.subscription.expiry_date) < new Date());
+
   const handleNavClick = (itemId: string) => {
+    if (isExpired && itemId !== 'billing' && itemId !== 'account') {
+      setView('billing');
+      return;
+    }
     if (itemId === 'wizard') {
       setEditingId(null);
       resetWizard();
@@ -39,11 +49,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         <button
           key={item.id}
           onClick={() => handleNavClick(item.id)}
-          className={`flex flex-col items-center gap-1.5 transition-all relative ${
-            item.centerpiece 
-              ? 'bg-[#dc2626] text-white p-4 rounded-full -mt-12 shadow-2xl shadow-red-500/20 border-[5px] border-white active:scale-90 scale-110' 
-              : `active:scale-95 ${view === item.id ? 'text-[#dc2626] scale-105' : 'text-slate-400'}`
-          }`}
+          className={`flex flex-col items-center gap-1.5 transition-all relative ${item.centerpiece
+            ? 'bg-[#dc2626] text-white p-4 rounded-full -mt-12 shadow-2xl shadow-red-500/20 border-[5px] border-white active:scale-90 scale-110'
+            : `active:scale-95 ${view === item.id ? 'text-[#dc2626] scale-105' : 'text-slate-400'}`
+            }`}
         >
           <item.icon className={`${item.centerpiece ? 'w-6 h-6' : 'w-[22px] h-[22px]'} ${view === item.id && !item.centerpiece ? 'stroke-[2.5px]' : 'stroke-2'}`} />
           {!item.centerpiece && (
@@ -52,7 +61,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             </span>
           )}
           {view === item.id && !item.centerpiece && (
-             <div className="absolute -top-1 right-0 w-1 h-1 bg-[#dc2626] rounded-full animate-pulse" />
+            <div className="absolute -top-1 right-0 w-1 h-1 bg-[#dc2626] rounded-full animate-pulse" />
           )}
         </button>
       ))}
