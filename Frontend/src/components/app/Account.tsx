@@ -126,7 +126,7 @@ export const Account: React.FC<AccountProps> = ({
     // Header
     doc.setFontSize(22);
     doc.setTextColor(220, 38, 38); // Red-600
-    doc.text('MakeMyQR', 105, 40, { align: 'center' });
+    doc.text('Make My QR Code', 105, 40, { align: 'center' });
 
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -159,8 +159,8 @@ export const Account: React.FC<AccountProps> = ({
     // Footer
     doc.setFontSize(9);
     doc.setTextColor(150);
-    doc.text('Thank you for choosing MakeMyQR. Your subscription is now active.', 105, 160, { align: 'center' });
-    doc.text('www.makemyqr.com | support@makemyqr.com', 105, 166, { align: 'center' });
+    doc.text('Thank you for choosing Make My QR Code. Your subscription is now active.', 105, 160, { align: 'center' });
+    doc.text('www.makemyqrcode.com | support@makemyqrcode.com', 105, 166, { align: 'center' });
 
     doc.save(`Invoice_${planName.replace(/\s+/g, '_')}.pdf`);
   };

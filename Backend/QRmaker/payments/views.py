@@ -48,7 +48,7 @@ class CreateOrderView(APIView):
             "amount": amount,
             "currency": currency,
             "key": settings.RAZORPAY_KEY_ID,
-            "name": "MakeMyQR",
+            "name": "Make My QR Code",
             "description": f"Subscription for {plan.name}",
         })
 

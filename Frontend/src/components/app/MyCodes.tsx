@@ -84,7 +84,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
     const slug = code.shortSlug || (code as any).short_slug;
     let qrValue = slug ? `${backendUrl}/r/${slug}` : code.value;
     if (qrValue?.startsWith('/')) qrValue = backendUrl + qrValue;
-    return qrValue || 'https://makemyqr.com';
+    return qrValue || 'https://makemyqrcode.com/';
   };
 
   const getQROptions = (code: GeneratedCode, size: number = 1000) => {

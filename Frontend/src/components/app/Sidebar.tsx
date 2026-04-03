@@ -107,7 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="flex items-center gap-3 cursor-pointer group px-2"
             onClick={() => { setView('my_codes'); setIsOpen?.(false); }}
           >
-            <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-10 group-hover:scale-105 transition-transform" />
+            <img src="/src/assets/logo-full.png" alt="Make My QR Code Logo" className="h-10 group-hover:scale-105 transition-transform" />
           </div>
 
 

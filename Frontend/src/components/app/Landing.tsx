@@ -10,7 +10,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
     <div className="min-h-screen flex flex-col bg-red-50/30 font-lato">
       <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-red-100/50">
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setView('landing')}>
-          <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-8 group-hover:scale-105 transition-transform" />
+          <img src="/src/assets/logo-full.png" alt="Make My QR Code Logo" className="h-8 group-hover:scale-105 transition-transform" />
         </div>
 
         <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ export const Landing: React.FC<LandingProps> = ({ setView }) => {
 
         <div className="relative mb-8 animate-in zoom-in-50 duration-700">
           <div className="transform -rotate-6 relative z-10 transition-transform hover:rotate-0 duration-500">
-            <img src="/src/assets/logo-icon.png" alt="MakeMyQR Icon" className="w-24 h-24 object-contain drop-shadow-2xl" />
+            <img src="/src/assets/logo-icon.png" alt="Make My QR Code Icon" className="w-24 h-24 object-contain drop-shadow-2xl" />
           </div>
           <div className="absolute inset-0 bg-red-500/10 rounded-full blur-3xl transform scale-150" />
         </div>
