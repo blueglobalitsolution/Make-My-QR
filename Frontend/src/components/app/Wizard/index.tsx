@@ -136,6 +136,15 @@ export const Wizard: React.FC<WizardProps> = ({
     }
   }, [wizard.step, wizard.show_preview, setPhonePreviewMode]);
 
+  const isNextStepDisabled = () => {
+    if (wizard.step === 2) {
+      if (wizard.type === 'website') {
+        return !wizard.value;
+      }
+    }
+    return false;
+  };
+
 
   const renderStepper = ({ step }: { step: number }) => {
     const steps = [
@@ -166,7 +175,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
   const renderStep1TypeSelection = () => (
     <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 w-full lg:space-y-16 py-2 lg:py-0">
-      <div className="hidden lg:block text-left px-2">
+      <div className="hidden lg:block text-left px-1 mb-8">
         <h2 className="skeu-step-header">1. Select a type of QR code</h2>
       </div>
 
@@ -192,7 +201,7 @@ export const Wizard: React.FC<WizardProps> = ({
             type="button"
             className={`group relative p-4 lg:p-8 flex-none w-[140px] lg:w-full lg:aspect-square rounded-[1.8rem] transition-all duration-500 flex flex-col items-center justify-center text-center gap-2 lg:gap-6 snap-center ${wizard.type === type.id ? 'bg-white border-2 border-[#dc2626] shadow-xl shadow-red-500/10' : 'bg-white border-2 border-slate-50 hover:border-slate-200 shadow-sm'}`}
           >
-            <div className={`w-11 h-11 lg:w-16 lg:h-16 rounded-2xl flex items-center justify-center transition-all duration-500 relative shrink-0 ${wizard.type === type.id ? 'bg-[#dc2626] text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-red-50 group-hover:text-[#dc2626]'}`}>
+            <div className={`w-11 h-11 lg:w-16 lg:h-16 rounded-[15px] flex items-center justify-center transition-all duration-500 relative shrink-0 ${wizard.type === type.id ? 'bg-[#dc2626] text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-red-50 group-hover:text-[#dc2626]'}`}>
               <div className="flex items-center justify-center transition-transform duration-500">
                 {type.id === 'website' && <Globe className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
                 {type.id === 'pdf' && <FileText className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
@@ -215,8 +224,8 @@ export const Wizard: React.FC<WizardProps> = ({
 
   const renderStep2Content = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="text-left mb-10">
-        <h2 className="skeu-step-header ml-1">2. Add content to your QR code</h2>
+      <div className="text-left px-1 mb-10">
+        <h2 className="skeu-step-header">2. Add content to your QR code</h2>
       </div>
 
       <div className="space-y-6">
@@ -229,7 +238,7 @@ export const Wizard: React.FC<WizardProps> = ({
               type="button"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss">
                   <Globe className="w-5 h-5" />
                 </div>
                 <div className="text-left">
@@ -261,12 +270,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   />
                 </div>
 
-                <div className="bg-[#f0f0f0] p-6 rounded-2xl border border-black/5 flex gap-4 animate-in fade-in duration-700">
-                  <Info className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                  <p className="text-[13px] font-medium text-red-600/80 leading-relaxed">
-                    Make sure to include <span className="font-black">https://</span> for a secure connection. Your QR code will redirect users instantly when scanned.
-                  </p>
-                </div>
+
               </div>
             )}
           </div>
@@ -278,7 +282,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="p-5 space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss">
                     <MessageCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -303,7 +307,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </button>
 
                     {isCountryDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 rounded-xl shadow-2xl z-[100] max-h-60 overflow-y-auto skeu-scroll animate-in fade-in zoom-in-95 duration-200">
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black/5 rounded-[15px] shadow-2xl z-[100] max-h-60 overflow-y-auto skeu-scroll animate-in fade-in zoom-in-95 duration-200">
                         {COUNTRY_CODES.map(country => (
                           <button
                             key={country.iso}
@@ -368,7 +372,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
               <button onClick={() => toggleSection('upload')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss">
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -385,7 +389,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       {!pdfUrl && <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="application/pdf" onChange={handlePdfUpload} />}
                       {pdfUrl ? (
                         <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
-                          <div className="w-14 h-14 skeu-hero-icon text-white rounded-2xl flex items-center justify-center relative skeu-gloss shrink-0">
+                          <div className="w-14 h-14 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss shrink-0">
                             <FileText className="w-7 h-7" />
                           </div>
                           <div className="text-left min-w-0 flex-1">
@@ -397,7 +401,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <div className="flex items-center gap-2 ml-auto relative z-20">
                             <button
                               type="button"
-                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-[15px] transition-all shadow-sm hover:shadow-md active:scale-90"
                               title="Delete PDF"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -408,7 +412,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               <Trash2 className="w-4 h-4" />
                             </button>
                             <label
-                              className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                              className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-[15px] transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
                               title="Change PDF"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -420,7 +424,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         </div>
                       ) : (
                         <div className="flex items-center gap-5 w-full justify-start">
-                          <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                          <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-[15px] flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
                             <Upload className="w-7 h-7" />
                           </div>
                           <div className="text-left">
@@ -439,7 +443,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -462,7 +466,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             updateBusinessField('primaryColor', preset.primary);
                             updateBusinessField('secondaryColor', preset.secondary);
                           }}
-                          className={`w-16 h-10 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
+                          className={`w-16 h-10 rounded-[5px] overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
                         >
                           <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.primary }} />
                           <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.secondary }} />
@@ -473,8 +477,8 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="flex items-center gap-8">
                     <div className="flex-1 space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
-                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
-                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-[5px] border-2 border-black/5">
+                        <div className="w-10 h-10 rounded-[5px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-sm">{wizard.business?.primaryColor}</span>
@@ -485,8 +489,8 @@ export const Wizard: React.FC<WizardProps> = ({
                     </button>
                     <div className="flex-1 space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
-                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
-                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-[5px] border-2 border-black/5">
+                        <div className="w-10 h-10 rounded-[5px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-sm">{wizard.business?.secondaryColor}</span>
@@ -501,7 +505,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
               <button onClick={() => toggleSection('pdf_info')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -516,16 +520,16 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Company Name</label>
-                      <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="My Company" value={wizard.business?.company || ''} onChange={(e) => updateBusinessField('company', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">PDF Title</label>
-                      <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
+                      <input type="text" placeholder="Find me on social networks" value={wizard.business?.title || ''} onChange={(e) => updateBusinessField('title', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all" />
                     </div>
                   </div>
                   <div className="space-y-4">
                     <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Description</label>
-                    <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
+                    <textarea rows={3} placeholder="New content every week in the links below" value={wizard.business?.description || ''} onChange={(e) => updateBusinessField('description', e.target.value)} className="w-full px-8 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all resize-none" />
                   </div>
                 </div>
               )}
@@ -535,7 +539,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
               <button onClick={() => toggleSection('fonts')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <i className="font-serif text-lg font-black">T</i>
                   </div>
                   <div className="text-left">
@@ -564,8 +568,8 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Title Color</label>
-                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
-                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTitleColor || '#ffffff' }}>
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-[15px] border-2 border-black/5">
+                        <div className="w-10 h-10 rounded-[15px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTitleColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTitleColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTitleColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-sm">{wizard.business?.fontTitleColor || '#ffffff'}</span>
@@ -573,8 +577,8 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                     <div className="space-y-4">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Text Color</label>
-                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-2xl border-2 border-black/5">
-                        <div className="w-10 h-10 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTextColor || '#ffffff' }}>
+                      <div className="flex items-center gap-4 p-2.5 bg-[#f0f0f0] rounded-[15px] border-2 border-black/5">
+                        <div className="w-10 h-10 rounded-[15px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.fontTextColor || '#ffffff' }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.fontTextColor || '#ffffff'} onChange={(e) => updateBusinessField('fontTextColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-sm">{wizard.business?.fontTextColor || '#ffffff'}</span>
@@ -595,7 +599,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
               <button onClick={() => toggleSection('design')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <PaletteIcon className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -618,7 +622,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             updateBusinessField('primaryColor', preset.primary);
                             updateBusinessField('secondaryColor', preset.secondary);
                           }}
-                          className={`w-14 h-8 rounded-[10px] overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
+                          className={`w-14 h-8 rounded-[5px] overflow-hidden shadow-sm hover:shadow-md transition-all border-2 ${wizard.business?.primaryColor === preset.primary && wizard.business?.secondaryColor === preset.secondary ? 'border-slate-400 scale-105' : 'border-transparent'}`}
                         >
                           <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.primary }} />
                           <div className="w-1/2 h-full float-left" style={{ backgroundColor: preset.secondary }} />
@@ -629,8 +633,8 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="flex items-center gap-6">
                     <div className="flex-1 space-y-3">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Primary Color</label>
-                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-xl border-2 border-black/5">
-                        <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-[5px] border-2 border-black/5">
+                        <div className="w-8 h-8 rounded-[5px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.primaryColor} onChange={(e) => updateBusinessField('primaryColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-[11px] capitalize">{wizard.business?.primaryColor}</span>
@@ -641,8 +645,8 @@ export const Wizard: React.FC<WizardProps> = ({
                     </button>
                     <div className="flex-1 space-y-3">
                       <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Secondary Color</label>
-                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-xl border-2 border-black/5">
-                        <div className="w-8 h-8 rounded-full shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
+                      <div className="flex items-center gap-3 p-2.5 bg-[#f0f0f0] rounded-[5px] border-2 border-black/5">
+                        <div className="w-8 h-8 rounded-[5px] shadow-sm relative overflow-hidden" style={{ backgroundColor: wizard.business?.secondaryColor }}>
                           <input type="color" className="absolute inset-0 opacity-0 cursor-pointer scale-[2]" value={wizard.business?.secondaryColor} onChange={(e) => updateBusinessField('secondaryColor', e.target.value)} />
                         </div>
                         <span className="font-bold text-slate-700  text-[11px] capitalize">{wizard.business?.secondaryColor}</span>
@@ -657,7 +661,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <button onClick={() => toggleSection('businessInfo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -672,19 +676,19 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="space-y-3">
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1 flex items-center gap-1">Image <span className="opacity-50 inline-flex items-center justify-center w-3 h-3 rounded-full border border-slate-400">?</span></label>
                     {wizard.business?.images?.[0] ? (
-                      <div className="relative group/img w-full max-w-[200px] aspect-square rounded-2xl overflow-hidden border-2 border-black/5 shadow-sm">
+                      <div className="relative group/img w-full max-w-[200px] aspect-square rounded-[15px] overflow-hidden border-2 border-black/5 shadow-sm">
                         <img src={wizard.business.images[0]} alt="Preview" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-3">
                           <button
                             type="button"
                             onClick={handleDeleteCoverImage}
-                            className="p-2 bg-white text-red-500 hover:bg-red-50 rounded-xl transition-all shadow-md active:scale-90"
+                            className="p-2 bg-white text-red-500 hover:bg-red-50 rounded-[15px] transition-all shadow-md active:scale-90"
                             title="Delete Image"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                           <label
-                            className="p-2 bg-[#dc2626] text-white hover:bg-red-700 rounded-xl transition-all shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                            className="p-2 bg-[#dc2626] text-white hover:bg-red-700 rounded-[15px] transition-all shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
                             title="Change Image"
                           >
                             <Upload className="w-4 h-4" />
@@ -694,7 +698,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         </div>
                       </div>
                     ) : (
-                      <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-xl flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
+                      <div className="w-20 h-20 border-2 border-dashed border-[#dc2626]/30 rounded-[15px] flex items-center justify-center hover:bg-red-50/50 transition-colors cursor-pointer relative group/img">
                         <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*" onChange={handleCoverImageUpload} />
                         <ImageIcon className="w-8 h-8 text-[#dc2626] opacity-50 group-hover/img:opacity-100 transition-opacity" />
                       </div>
@@ -717,9 +721,9 @@ export const Wizard: React.FC<WizardProps> = ({
 
                     <div className="pt-2">
                       {wizard.business?.buttons?.map((btn) => (
-                        <div key={btn.id} className="flex flex-col gap-3 mb-4 p-4 rounded-xl border-2 border-slate-100 bg-slate-50/50 relative group/btnitem">
+                        <div key={btn.id} className="flex flex-col gap-3 mb-4 p-4 rounded-[15px] border-2 border-slate-100 bg-slate-50/50 relative group/btnitem">
                           <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover/btnitem:opacity-100 transition-opacity">
-                            <button type="button" onClick={() => removeLink(btn.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                            <button type="button" onClick={() => removeLink(btn.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[15px]"><Trash2 className="w-4 h-4" /></button>
                           </div>
                           <input type="text" placeholder="Button Label" value={btn.text} onChange={(e) => updateLink(btn.id, 'text', e.target.value)} className="w-full bg-transparent border-b border-slate-200 focus:border-[#dc2626] outline-none font-bold text-sm text-slate-800 pb-2" />
                           <div className="flex items-center gap-3">
@@ -738,7 +742,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
               <button onClick={() => toggleSection('openingHours')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -753,7 +757,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
                     const dayData = wizard.business?.openingHours?.[day as keyof OpeningHours] || { isOpen: false, slots: [] };
                     return (
-                      <div key={day} className="flex flex-col gap-3 p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                      <div key={day} className="flex flex-col gap-3 p-4 bg-slate-50/50 rounded-[15px] border border-slate-100">
                         <div className="flex items-center justify-between">
                           <label className="flex items-center gap-3 cursor-pointer">
                             <input
@@ -794,7 +798,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                 newHours[day] = { ...dayData, slots: newSlots };
                                 updateBusinessField('openingHours', newHours);
                               }}
-                              className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 focus:border-[#dc2626] outline-none"
+                              className="px-3 py-2 bg-white border border-slate-200 rounded-[15px] text-sm font-bold text-slate-700 focus:border-[#dc2626] outline-none"
                             />
                             <span className="text-slate-400 font-bold">-</span>
                             <input
@@ -807,7 +811,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                 newHours[day] = { ...dayData, slots: newSlots };
                                 updateBusinessField('openingHours', newHours);
                               }}
-                              className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 focus:border-[#dc2626] outline-none"
+                              className="px-3 py-2 bg-white border border-slate-200 rounded-[15px] text-sm font-bold text-slate-700 focus:border-[#dc2626] outline-none"
                             />
                             <button
                               type="button"
@@ -817,7 +821,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                 newHours[day] = { ...dayData, slots: newSlots };
                                 updateBusinessField('openingHours', newHours);
                               }}
-                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-[15px] transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -834,7 +838,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
               <button onClick={() => toggleSection('location')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -876,7 +880,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
               <button onClick={() => toggleSection('contactInfo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <UserCircle className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -919,7 +923,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               const newArr = wizard.business?.contact?.[field]?.filter((_, i) => i !== idx);
                               updateBusinessField('contact', { ...wizard.business?.contact, [field]: newArr });
                             }}
-                            className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0"
+                            className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-[15px] transition-colors shrink-0"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -945,7 +949,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
               <button onClick={() => toggleSection('social')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <Share2 className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -961,8 +965,8 @@ export const Wizard: React.FC<WizardProps> = ({
                     <label className="text-[10px] font-black text-slate-400 capitalize  pl-1">Your Social Links</label>
                     <div className="space-y-4">
                       {wizard.business?.socialNetworks?.map((social, idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-[#f0f0f0] p-2 rounded-xl border border-black/5">
-                          <span className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#dc2626] font-black text-xs capitalize shrink-0">
+                        <div key={idx} className="flex items-center gap-3 bg-[#f0f0f0] p-2 rounded-[15px] border border-black/5">
+                          <span className="w-10 h-10 rounded-[15px] bg-white shadow-sm flex items-center justify-center text-[#dc2626] font-black text-xs capitalize shrink-0">
                             {social.network.slice(0, 2)}
                           </span>
                           <input
@@ -982,7 +986,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               const newArr = wizard.business?.socialNetworks?.filter((_, i) => i !== idx);
                               updateBusinessField('socialNetworks', newArr);
                             }}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-[15px] transition-colors shrink-0"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1017,7 +1021,7 @@ export const Wizard: React.FC<WizardProps> = ({
                               updateBusinessField('socialNetworks', newArr);
                             }
                           }}
-                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${wizard.business?.socialNetworks?.find(s => s.network === net.id) ? 'border-[#dc2626] bg-red-50 text-[#dc2626] scale-95 opacity-50' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-[15px] border-2 transition-all ${wizard.business?.socialNetworks?.find(s => s.network === net.id) ? 'border-[#dc2626] bg-red-50 text-[#dc2626] scale-95 opacity-50' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
                         >
                           {net.icon}
                         </button>
@@ -1032,7 +1036,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
               <button onClick={() => toggleSection('about')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <FileText className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -1062,7 +1066,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
               <button onClick={() => toggleSection('facilities')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                     <Coffee className="w-5 h-5" />
                   </div>
                   <div className="text-left">
@@ -1106,7 +1110,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             }
                             updateBusinessField('facilities', newArr);
                           }}
-                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all group/item ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
+                          className={`flex flex-col items-center justify-center gap-3 p-4 rounded-[15px] border-2 transition-all group/item ${isActive ? 'border-[#dc2626] bg-red-50 text-[#dc2626] shadow-inner' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-300 hover:shadow-md'}`}
                         >
                           <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#dc2626] text-white shadow-sm' : 'bg-slate-50 text-slate-400 group-hover/item:bg-slate-100 group-hover/item:text-[#dc2626]'}`}>
                             {fac.icon}
@@ -1134,7 +1138,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 type="button"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-red-50 text-[#dc2626] rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-red-50 text-[#dc2626] rounded-[15px] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <PaletteIcon className="w-7 h-7" />
                   </div>
                   <div className="text-left">
@@ -1150,8 +1154,8 @@ export const Wizard: React.FC<WizardProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="space-y-5">
                       <label className="text-[11px] font-black text-slate-400 capitalize  pl-1">Primary Brand Color</label>
-                      <div className="flex items-center gap-6 p-2 bg-[#f0f0f0] rounded-2xl border-2 border-black/5 transition-all hover:border-[#dc2626]/20 hover:bg-white hover:shadow-lg hover:shadow-red-500/5 group">
-                        <div className="w-16 h-12 rounded-xl border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.business?.primaryColor }}>
+                      <div className="flex items-center gap-6 p-2 bg-[#f0f0f0] rounded-[15px] border-2 border-black/5 transition-all hover:border-[#dc2626]/20 hover:bg-white hover:shadow-lg hover:shadow-red-500/5 group">
+                        <div className="w-16 h-12 rounded-[15px] border-2 border-white shadow-sm relative overflow-hidden ring-1 ring-slate-100" style={{ backgroundColor: wizard.business?.primaryColor }}>
                           <input
                             type="color"
                             className="absolute inset-0 opacity-0 cursor-pointer w-full h-full scale-[2]"
@@ -1169,7 +1173,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <select
                             value={wizard.business?.fontTitle}
                             onChange={(e) => updateBusinessField('fontTitle', e.target.value)}
-                            className="w-full pl-8 pr-12 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5"
+                            className="w-full pl-8 pr-12 py-3 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] appearance-none transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5"
                           >
                             {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                           </select>
@@ -1190,7 +1194,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 type="button"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 bg-green-50 text-green-600 rounded-[15px] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                     <Info className="w-7 h-7" />
                   </div>
                   <div className="text-left">
@@ -1217,7 +1221,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           placeholder="e.g. My Website"
                           value={wizard.business?.title || ''}
                           onChange={(e) => updateBusinessField('title', e.target.value)}
-                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
+                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
                         />
                       </div>
                       <div className="space-y-4">
@@ -1227,7 +1231,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           placeholder="e.g. Tech Solutions"
                           value={wizard.business?.company || ''}
                           onChange={(e) => updateBusinessField('company', e.target.value)}
-                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
+                          className="w-full px-8 py-5 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] outline-none focus:ring-8 focus:ring-red-500/5 focus:border-[#dc2626] focus:bg-white font-bold text-[#0F172A] transition-all shadow-inner focus:shadow-xl focus:shadow-red-500/5 placeholder:text-slate-200"
                         />
                       </div>
                     </div>
@@ -1238,14 +1242,14 @@ export const Wizard: React.FC<WizardProps> = ({
                         <button
                           type="button"
                           onClick={addLink}
-                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-2xl text-[11px] font-black capitalize  hover:bg-[#3eb5a9] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
+                          className="bg-red-50 text-[#dc2626] px-6 py-3 rounded-[15px] text-[11px] font-black capitalize  hover:bg-[#3eb5a9] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg hover:shadow-red-500/20 active:scale-95 translate-y-0 hover:-translate-y-0.5"
                         >
                           <Plus className="w-4 h-4" /> Add Link
                         </button>
                       </div>
                       <div className="grid grid-cols-1 gap-6">
                         {wizard.business?.buttons.map((link) => (
-                          <div key={link.id} className="group/item flex items-center gap-4 p-3 bg-[#f0f0f0] border-2 border-black/5 rounded-2xl hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
+                          <div key={link.id} className="group/item flex items-center gap-4 p-3 bg-[#f0f0f0] border-2 border-black/5 rounded-[15px] hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 animate-in zoom-in-95">
                             <div className="flex-1 space-y-5">
                               <input
                                 type="text"
@@ -1254,7 +1258,7 @@ export const Wizard: React.FC<WizardProps> = ({
                                 placeholder="Button Name"
                                 className="w-full bg-transparent border-none outline-none font-black text-[#0F172A] text-base p-0 focus:ring-0 placeholder:text-slate-200"
                               />
-                              <div className="flex items-center gap-4 group/input bg-[#f0f0f0]/50 p-4 rounded-xl border border-black/5 focus-within:border-[#dc2626]/30 focus-within:bg-white transition-all shadow-inner">
+                              <div className="flex items-center gap-4 group/input bg-[#f0f0f0]/50 p-4 rounded-[15px] border border-black/5 focus-within:border-[#dc2626]/30 focus-within:bg-white transition-all shadow-inner">
                                 <LinkIcon className="w-4 h-4 text-slate-300 group-focus-within/input:text-[#dc2626] transition-colors" />
                                 <input
                                   type="text"
@@ -1291,7 +1295,7 @@ export const Wizard: React.FC<WizardProps> = ({
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Lock className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1306,7 +1310,7 @@ export const Wizard: React.FC<WizardProps> = ({
             <div className="p-8 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Password Protection Toggle */}
-                <div className={`flex flex-col gap-5 p-6 rounded-2xl border-2 transition-all duration-500 group/gate ${wizard.is_protected ? 'bg-white border-red-50 shadow-xl shadow-red-500/5' : 'bg-slate-50/50 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200'}`}>
+                <div className={`flex flex-col gap-5 p-6 rounded-[15px] border-2 transition-all duration-500 group/gate ${wizard.is_protected ? 'bg-white border-red-50 shadow-xl shadow-red-500/5' : 'bg-slate-50/50 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200'}`}>
                   <div className="flex items-center gap-5">
                     <button
                       type="button"
@@ -1318,7 +1322,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         }
                         setWizard({ ...wizard, is_protected: !wizard.is_protected });
                       }}
-                      className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                      className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                     >
                       {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                     </button>
@@ -1349,7 +1353,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 </div>
 
                 {/* Lead Capture Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-2xl border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
+                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-[15px] border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
                   <button
                     type="button"
                     onClick={() => {
@@ -1360,7 +1364,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       }
                       setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
                     }}
-                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                    className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
@@ -1378,11 +1382,11 @@ export const Wizard: React.FC<WizardProps> = ({
                 </div>
 
                 {/* Show Preview Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-white rounded-2xl border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
+                <div className="flex items-center gap-5 p-6 bg-white rounded-[15px] border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
                   <button
                     type="button"
                     onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}
-                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626] shadow-lg shadow-red-500/20' : 'bg-white border-slate-200'}`}
+                    className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626] shadow-lg shadow-red-500/20' : 'bg-white border-slate-200'}`}
                   >
                     {wizard.show_preview && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
                   </button>
@@ -1401,8 +1405,8 @@ export const Wizard: React.FC<WizardProps> = ({
 
   const renderStep3Style = () => (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="text-left mb-10">
-        <h2 className="skeu-step-header ml-1">3. Design the QR</h2>
+      <div className="text-left px-1 mb-10">
+        <h2 className="skeu-step-header">3. Design the QR</h2>
       </div>
 
       <div className="space-y-6">
@@ -1410,7 +1414,7 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <button onClick={() => toggleSection('frame')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Layout className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1427,7 +1431,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   key={style.id}
                   type="button"
                   onClick={() => setWizard({ ...wizard, config: { ...wizard.config, frame: style.id } })}
-                  className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all group/item ${wizard.config.frame === style.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl font-black' : 'skeu-card skeu-text-muted translate-y-0'}`}
+                  className={`aspect-square flex flex-col items-center justify-center rounded-[15px] transition-all group/item ${wizard.config.frame === style.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl font-black' : 'skeu-card skeu-text-muted translate-y-0'}`}
                 >
                   <div className={`transition-transform duration-500 ${wizard.config.frame === style.id ? 'scale-150' : 'scale-125'}`}>{style.icon}</div>
                   <span className={`text-[9px] font-black capitalize mt-4  ${wizard.config.frame === style.id ? 'skeu-text-accent' : 'skeu-text-muted opacity-50'}`}>{style.label}</span>
@@ -1441,7 +1445,7 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
           <button onClick={() => toggleSection('pattern')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <PaletteIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1460,7 +1464,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     key={opt.id}
                     type="button"
                     onClick={() => setWizard({ ...wizard, config: { ...wizard.config, pattern: opt.id } })}
-                    className={`aspect-square flex items-center justify-center rounded-xl transition-all group/item ${wizard.config.pattern === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl' : 'skeu-card skeu-text-muted translate-y-0'}`}
+                    className={`aspect-square flex items-center justify-center rounded-[15px] transition-all group/item ${wizard.config.pattern === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl' : 'skeu-card skeu-text-muted translate-y-0'}`}
                   >
                     <div className={`p-1 transition-transform duration-500 ${wizard.config.pattern === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                   </button>
@@ -1471,7 +1475,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="space-y-3 px-1">
                   <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Foreground Color</label>
                   <div className="flex items-center gap-4 p-2.5 skeu-input group/color">
-                    <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.fgColor }}>
+                    <div className="w-16 h-12 rounded-[5px] skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.fgColor }}>
                       <input type="color" value={wizard.config.fgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, fgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
                     <span className="font-bold skeu-text-primary capitalize  text-sm">{wizard.config.fgColor}</span>
@@ -1480,7 +1484,7 @@ export const Wizard: React.FC<WizardProps> = ({
                 <div className="space-y-3 px-1">
                   <label className="text-[11px] font-black skeu-text-muted capitalize  pl-1">Background Color</label>
                   <div className="flex items-center gap-4 p-2.5 skeu-input group/color">
-                    <div className="w-16 h-12 rounded-xl skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.bgColor }}>
+                    <div className="w-16 h-12 rounded-[5px] skeu-mid border-2 border-black/5 shadow-inner relative overflow-hidden" style={{ backgroundColor: wizard.config.bgColor }}>
                       <input type="color" value={wizard.config.bgColor} onChange={(e) => setWizard({ ...wizard, config: { ...wizard.config, bgColor: e.target.value } })} className="absolute inset-0 opacity-0 cursor-pointer scale-[2.5]" />
                     </div>
                     <span className="font-bold skeu-text-primary capitalize  text-sm">{wizard.config.bgColor}</span>
@@ -1508,7 +1512,7 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
           <button onClick={() => toggleSection('corners')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <ScanEye className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1529,7 +1533,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={opt.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, config: { ...wizard.config, cornersSquareType: opt.id } })}
-                      className={`aspect-square flex items-center justify-center rounded-xl transition-all group/item ${wizard.config.cornersSquareType === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl border-red-500/20' : 'skeu-card skeu-text-muted translate-y-0'}`}
+                      className={`aspect-square flex items-center justify-center rounded-[15px] transition-all group/item ${wizard.config.cornersSquareType === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl border-red-500/20' : 'skeu-card skeu-text-muted translate-y-0'}`}
                     >
                       <div className={`transition-transform duration-500 ${wizard.config.cornersSquareType === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                     </button>
@@ -1545,7 +1549,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={opt.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, config: { ...wizard.config, cornersDotType: opt.id } })}
-                      className={`aspect-square flex items-center justify-center rounded-xl transition-all group/item ${wizard.config.cornersDotType === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl border-red-500/20' : 'skeu-card skeu-text-muted translate-y-0'}`}
+                      className={`aspect-square flex items-center justify-center rounded-[15px] transition-all group/item ${wizard.config.cornersDotType === opt.id ? 'skeu-card scale-105 skeu-text-accent shadow-xl border-red-500/20' : 'skeu-card skeu-text-muted translate-y-0'}`}
                     >
                       <div className={`transition-transform duration-500 ${wizard.config.cornersDotType === opt.id ? 'scale-125' : 'group-hover/item:scale-110'}`}>{opt.icon}</div>
                     </button>
@@ -1560,7 +1564,7 @@ export const Wizard: React.FC<WizardProps> = ({
         <div className="skeu-accordion overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
           <button onClick={() => toggleSection('logo')} className="w-full flex items-center justify-between p-5 skeu-accordion-header transition-colors group" type="button">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1578,7 +1582,7 @@ export const Wizard: React.FC<WizardProps> = ({
                   {!wizard.config.logoUrl && <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/png, image/jpeg" onChange={handleLogoUpload} />}
                   {wizard.config.logoUrl ? (
                     <div className="flex items-center gap-5 animate-in zoom-in duration-500 w-full justify-start">
-                      <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center relative shrink-0 p-2 overflow-hidden">
+                      <div className="w-14 h-14 bg-white rounded-[15px] shadow-sm border border-slate-100 flex items-center justify-center relative shrink-0 p-2 overflow-hidden">
                         <img src={wizard.config.logoUrl} className="w-full h-full object-contain" alt="Logo" />
                       </div>
                       <div className="text-left min-w-0 flex-1">
@@ -1590,7 +1594,7 @@ export const Wizard: React.FC<WizardProps> = ({
                       <div className="flex items-center gap-2 ml-auto relative z-20">
                         <button
                           type="button"
-                          className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-90"
+                          className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-[#3eb5a9] hover:bg-[#3eb5a9]/10 rounded-[15px] transition-all shadow-sm hover:shadow-md active:scale-90"
                           title="Delete Logo"
                           onClick={(e) => {
                             e.preventDefault();
@@ -1601,7 +1605,7 @@ export const Wizard: React.FC<WizardProps> = ({
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <label
-                          className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
+                          className="p-2.5 bg-[#dc2626] text-white hover:bg-[#3eb5a9] rounded-[15px] transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-90 flex items-center gap-1.5"
                           title="Change Logo"
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -1613,7 +1617,7 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                   ) : (
                     <div className="flex items-center gap-5 w-full justify-start">
-                      <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-2xl flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
+                      <div className="w-14 h-14 skeu-inset skeu-text-muted rounded-[15px] flex items-center justify-center group-hover/upload:bg-gradient-to-br group-hover/upload:from-[#3eb5a9] group-hover/upload:to-[#2d8a81] group-hover/upload:text-white group-hover/upload:scale-110 transition-all duration-500 shadow-inner group-hover/upload:shadow-xl shrink-0 group-hover/upload:border-2 group-hover/upload:border-white/20">
                         <Upload className="w-7 h-7" />
                       </div>
                       <div className="text-left">
@@ -1636,7 +1640,7 @@ export const Wizard: React.FC<WizardProps> = ({
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <Type className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1671,7 +1675,7 @@ export const Wizard: React.FC<WizardProps> = ({
             type="button"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 skeu-hero-icon text-white rounded-lg flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 skeu-hero-icon text-white rounded-[5px] flex items-center justify-center relative skeu-gloss group-hover:scale-105 transition-transform">
                 <FolderIcon className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -1702,10 +1706,10 @@ export const Wizard: React.FC<WizardProps> = ({
                       key={folder.id}
                       type="button"
                       onClick={() => setWizard({ ...wizard, folderId: folder.id })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
+                      className={`p-4 rounded-[15px] border-2 text-left transition-all relative group/folder ${wizard.folderId === folder.id ? 'border-[#dc2626] bg-white shadow-xl shadow-red-500/10 z-10 scale-102' : 'bg-white border-slate-50 hover:border-slate-200 hover:shadow-md hover:shadow-slate-200/50 shadow-sm'}`}
                     >
                       <div className="flex flex-col gap-2">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#dc2626] border border-transparent group-hover/folder:border-slate-100'}`}>
+                        <div className={`w-8 h-8 rounded-[15px] flex items-center justify-center transition-all duration-500 ${wizard.folderId === folder.id ? 'bg-[#dc2626] text-white shadow-md shadow-[#dc2626]/20' : 'bg-slate-50 text-slate-300 group-hover/folder:bg-white group-hover/folder:text-[#dc2626] border border-transparent group-hover/folder:border-slate-100'}`}>
                           <FolderIcon className="w-4 h-4" />
                         </div>
                         <div>
@@ -1729,12 +1733,12 @@ export const Wizard: React.FC<WizardProps> = ({
                       placeholder="Folder name..."
                       value={newFolderName}
                       onChange={(e) => setNewFolderName(e.target.value)}
-                      className="flex-1 px-5 py-3 rounded-xl border border-red-100 outline-none focus:ring-2 focus:ring-[#dc2626] font-bold"
+                      className="flex-1 px-5 py-3 rounded-[15px] border border-red-100 outline-none focus:ring-2 focus:ring-[#dc2626] font-bold"
                     />
                     <button
                       type="button"
                       onClick={createNewFolder}
-                      className="px-6 py-3 bg-[#dc2626] text-white rounded-xl font-bold hover:bg-[#3eb5a9]"
+                      className="px-6 py-3 bg-[#dc2626] text-white rounded-[15px] font-bold hover:bg-[#3eb5a9]"
                     >
                       Create
                     </button>
@@ -1782,16 +1786,16 @@ export const Wizard: React.FC<WizardProps> = ({
       </header>
 
       {/* Main Content Area - Split Pane Layout */}
-      <div className="flex-1 overflow-hidden relative px-0 lg:px-12 bg-[#F8FAFC]">
+      <div className="flex-1 overflow-hidden relative px-0 lg:px-12 bg-[#f0f0f0]">
         <div className="max-w-[1600px] mx-auto h-full px-4 lg:px-0">
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 lg:gap-16 h-full items-stretch">
 
             {/* Phone Preview Section - Priority 1 on mobile */}
-            <div className={`lg:col-span-4 order-1 lg:order-2 flex flex-col items-center justify-center py-4 lg:py-6 shrink transition-all duration-300 ${wizard.step === 1 ? 'flex-1' : 'h-auto'}`}>
+            <div className={`lg:col-span-4 order-1 lg:order-2 flex flex-col items-center py-4 lg:py-12 shrink transition-all duration-300 ${wizard.step === 1 ? 'flex-1' : 'h-auto'}`}>
               {/* Preview Toggle Pill - Hidden on mobile, visible on desktop */}
               <div className="w-full hidden lg:flex justify-center mb-4 shrink-0 px-4">
-                <div className="bg-white border border-slate-100 p-1.5 rounded-2xl flex items-center shadow-sm relative w-full max-w-[220px]">
-                  <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#dc2626] rounded-xl shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
+                <div className="bg-white border border-slate-100 p-1.5 rounded-[15px] flex items-center shadow-sm relative w-full max-w-[220px]">
+                  <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#dc2626] rounded-[15px] shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
@@ -1816,7 +1820,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                   {/* Inner Screen Area */}
                   <div className={`flex-1 rounded-[2.5rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
-                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
+                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f0f0f0]'
                     }`} style={{
                       backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
                         ? (wizard.business?.primaryColor || '#dc2626')
@@ -1892,7 +1896,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
                   {/* Inner Screen Area */}
                   <div className={`flex-1 rounded-[2.2rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
-                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f8fafc]'
+                    ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f0f0f0]'
                     }`} style={{
                       backgroundColor: ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string)
                         ? (wizard.business?.primaryColor || '#dc2626')
@@ -1957,15 +1961,15 @@ export const Wizard: React.FC<WizardProps> = ({
             </div>
 
             {/* Content/Selection Section - Priority 2 on mobile */}
-            <div className={`lg:col-span-8 order-2 lg:order-1 transition-all duration-300 ${wizard.step === 1 ? 'h-auto shrink-0 z-50 mb-6 pb-32 lg:mb-0 lg:pb-0 mt-[-2rem] lg:mt-0' : 'flex-1 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48'}`}>
+            <div className={`lg:col-span-8 order-2 lg:order-1 transition-all duration-300 ${wizard.step === 1 ? 'h-auto shrink-0 z-50 mb-6 pb-32 lg:mb-0 lg:pb-0 lg:py-12' : 'flex-1 overflow-y-auto scrollbar-hide py-4 lg:py-12 pb-48'}`}>
               {wizard.step === 1 ? (
                 renderStep1TypeSelection()
               ) : wizard.step === 2 ? (
-                <div className="space-y-12 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48">
+                <div className="space-y-12 pb-32">
                   {renderStep2Content()}
                 </div>
               ) : (
-                <div className="space-y-12 overflow-y-auto scrollbar-hide py-4 lg:py-16 pb-48">
+                <div className="space-y-12 pb-32">
                   {renderStep3Style()}
                 </div>
               )}
@@ -1982,15 +1986,16 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleBackStep}
             disabled={wizard.step === 1}
             type="button"
-            className="hidden lg:flex sm:w-48 py-3.5 skeu-btn-secondary text-[11px] font-medium capitalize items-center justify-center gap-2 rounded-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
+            className="hidden lg:flex sm:w-48 py-3.5 skeu-btn-secondary text-[11px] font-medium capitalize items-center justify-center gap-2 rounded-[15px] active:scale-95 disabled:opacity-30 disabled:grayscale transition-all shadow-md"
           >
             <ChevronLeft className="w-4 h-4" /> BACK
           </button>
 
           <button
             onClick={handleNextStep}
+            disabled={isNextStepDisabled()}
             type="button"
-            className={`${wizard.step === 1 ? 'hidden lg:flex' : 'flex'} w-full lg:w-48 py-4 lg:py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-2xl lg:rounded-xl active:scale-95 transition-all shadow-lg ml-0`}
+            className={`${wizard.step === 1 ? 'hidden lg:flex' : 'flex'} w-full lg:w-48 py-4 lg:py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-[15px] lg:rounded-[15px] active:scale-95 transition-all shadow-lg ml-0 disabled:opacity-30 disabled:grayscale`}
           >
             {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
             <ChevronRight className="w-4 h-4" />

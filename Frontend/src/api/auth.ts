@@ -4,6 +4,7 @@ export const login = async (username, password) => {
     const response = await apiClient.post('/users/login/', { username, password });
     if (response.data.token) {
         localStorage.setItem('makemyqr_token', response.data.token);
+        localStorage.setItem('makemyqr_login_time', Date.now().toString());
     }
     return response.data;
 };
@@ -14,6 +15,7 @@ export const register = async (username, email, password, otp, first_name = '', 
     });
     if (response.data.token) {
         localStorage.setItem('makemyqr_token', response.data.token);
+        localStorage.setItem('makemyqr_login_time', Date.now().toString());
     }
     return response.data;
 };
@@ -36,6 +38,7 @@ export const changePassword = async (new_password: string) => {
 export const logout = () => {
     localStorage.removeItem('makemyqr_token');
     localStorage.removeItem('makemyqr_user');
+    localStorage.removeItem('makemyqr_login_time');
 };
 
 export const requestPasswordReset = async (email: string) => {

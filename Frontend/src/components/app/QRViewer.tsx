@@ -13,8 +13,8 @@ interface QRViewerProps {
 
 const isMobileDevice = () => {
     if (typeof window === 'undefined') return false;
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-           window.innerWidth < 768;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth < 768;
 };
 
 const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }) => {
@@ -30,7 +30,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
 
     useEffect(() => {
         setIsMobile(isMobileDevice());
-        
+
         const handleResize = () => {
             setIsMobile(isMobileDevice());
         };
@@ -194,7 +194,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                         <p className="text-slate-500 font-medium">{error || "The link is broken or expired."}</p>
                     </div>
                     <button
-                        onClick={() => setView('landing')}
+                        onClick={() => setView('login')}
                         className="w-full py-4 skeu-btn text-[11px] capitalize "
                     >
                         Return Home

@@ -5,6 +5,7 @@ import { createOrder, verifyPayment } from '../../api/payments';
 interface PaymentProps {
     setView: (view: any) => void;
     selectedPlan?: any;
+    currentUser: any;
 }
 
 declare global {
@@ -13,11 +14,11 @@ declare global {
     }
 }
 
-export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
+export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, currentUser }) => {
     const [formData, setFormData] = useState({
-        fullName: '',
-        country: 'India',
-        address: ''
+        fullName: currentUser?.billingInfo?.name ? `${currentUser.billingInfo.name} ${currentUser.billingInfo.surname}` : (currentUser?.name || ''),
+        country: currentUser?.billingInfo?.country || 'India',
+        address: currentUser?.billingInfo?.address || ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -86,8 +87,8 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                 },
                 prefill: {
                     name: formData.fullName,
-                    email: "",
-                    contact: ""
+                    email: currentUser?.billingInfo?.email || currentUser?.email || "",
+                    contact: currentUser?.phone || ""
                 },
                 theme: {
                     color: "#dc2626"
@@ -128,7 +129,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                     <ChevronRight className="w-4 h-4 text-slate-200" />
                     <div className="flex items-center gap-2 opacity-40">
                         <div className="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-[11px] font-black text-slate-400">
-                           3
+                            3
                         </div>
                         <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Payment</span>
                     </div>
@@ -153,8 +154,8 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                         <div className="grid grid-cols-1 gap-10">
                             <div className="space-y-4">
                                 <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Full Name</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     value={formData.fullName}
                                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                     placeholder="Enter your full name"
@@ -165,7 +166,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                             <div className="space-y-4">
                                 <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Country or Region</label>
                                 <div className="relative">
-                                    <select 
+                                    <select
                                         value={formData.country}
                                         onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                         className="w-full bg-white border-2 border-slate-100 rounded-2xl px-7 py-5 text-[15px] font-bold shadow-sm focus:border-red-600/60 outline-none transition-all appearance-none cursor-pointer"
@@ -182,8 +183,8 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
 
                             <div className="space-y-4">
                                 <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Address Line 1</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     value={formData.address}
                                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                     placeholder="Street address, P.O. box, etc."
@@ -193,7 +194,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                         </div>
 
                         <div className="pt-10 flex justify-start">
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={loading}
                                 className="w-full md:w-[420px] py-5 bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white rounded-[1rem] font-black text-[15px] uppercase tracking-wider shadow-[0_15px_40px_-10px_rgba(220,38,38,0.4)] hover:shadow-[0_20px_50px_-8px_rgba(220,38,38,0.5)] hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed group"
@@ -266,7 +267,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan }) => {
                             {/* Terms Summary Section */}
                             <div className="p-10 lg:p-12 bg-slate-50/10 border-t border-slate-50">
                                 <p className="text-[10px] text-slate-400/80 font-semibold leading-loose uppercase tracking-wide">
-                                    {plan.is_lifetime 
+                                    {plan.is_lifetime
                                         ? "One-time payment. Permanent premium access. No recurring charges."
                                         : `Renews every ${plan.duration_months} ${plan.duration_months === 1 ? 'month' : 'months'} at ₹ ${plan.price}. Cancel anytime.`
                                     }

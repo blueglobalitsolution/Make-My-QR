@@ -10,8 +10,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('makemyqr_token');
     if (token) {
-        // Use set() for better compatibility with different axios versions
-        config.headers.set('Authorization', `Token ${token}`);
+        config.headers['Authorization'] = `Token ${token}`;
     }
     return config;
 });

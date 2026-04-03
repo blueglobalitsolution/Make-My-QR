@@ -145,7 +145,7 @@ export const Analytics: React.FC = () => {
     const devicesList = ['All', 'Mobile', 'PC', 'Tablet'];
 
     return (
-        <div className="flex-1 py-10 pb-16 space-y-8 font-lato">
+        <div className="flex-1 py-10 pb-16 space-y-8 font-lato px-10">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>

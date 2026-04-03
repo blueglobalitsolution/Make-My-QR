@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X, Lock } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X, Lock, Share2 } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 import { StyledQRCode } from '../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../components/QRFrameWrapper';
@@ -49,9 +49,18 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const captureRef = useRef<HTMLDivElement>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [downloadingCode, setDownloadingCode] = useState<GeneratedCode | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<'png' | 'svg'>('png');
   const [previewCode, setPreviewCode] = useState<GeneratedCode | null>(null);
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Trigger download when capturing area is ready
   useEffect(() => {
@@ -126,7 +135,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   };
 
   return (
-    <div className="flex-1 py-12 w-full space-y-6 animate-in fade-in duration-700 pb-24 skeu-text-primary px-responsive font-lato">
+    <div className="flex-1 py-12 w-full space-y-6 animate-in fade-in duration-700 pb-24 skeu-text-primary px-10 font-lato">
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div className="space-y-1">
@@ -168,7 +177,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         >
           <button
             onClick={() => setActiveFolderId('all')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
+            className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
             <Grid3X3 className={`w-4 h-4 transition-colors ${activeFolderId === 'all' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
             <span>All ({history.length})</span>
@@ -176,7 +185,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
 
           <button
             onClick={() => setActiveFolderId('general')}
-            className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
+            className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
             <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === 'general' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
             <span>General ({history.filter(c => !folders.some(f => f.id === c.folderId)).length})</span>
@@ -186,7 +195,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             <div key={folder.id} className="relative group/folder-tab">
               <button
                 onClick={() => setActiveFolderId(folder.id)}
-                className={`px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 min-w-[160px] whitespace-nowrap group/folder-tab ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
+                className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 min-w-[160px] whitespace-nowrap group/folder-tab ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
               >
                 <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
                 <span>{folder.name} ({history.filter(c => c.folderId === folder.id).length})</span>
@@ -196,7 +205,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   e.stopPropagation();
                   deleteFolder(folder.id);
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg group-hover/folder-tab:opacity-100 transition-all hover:bg-black/5 ${activeFolderId === folder.id ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-red-400/50 group-hover/folder-tab:text-white/60 hover:!text-white hover:bg-red-50'}`}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-[15px] group-hover/folder-tab:opacity-100 transition-all hover:bg-black/5 ${activeFolderId === folder.id ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-red-400/50 group-hover/folder-tab:text-white/60 hover:!text-white hover:bg-red-50'}`}
                 title="Delete Folder"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -225,7 +234,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           ) : (
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="px-6 py-3.5 rounded-2xl font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins min-w-[120px]"
+              className="px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 skeu-tag transition-all text-red-500/60 font-poppins min-w-[120px]"
             >
               <Plus className="w-4 h-4" />
               <span>New Folder</span>
@@ -255,26 +264,24 @@ export const MyCodes: React.FC<MyCodesProps> = ({
         {/* Codes List */}
         <div className="space-y-4">
           {filteredHistory.length === 0 ? (
-            <div className="skeu-card py-24 text-center">
+            <div className="skeu-card py-24 text-center shadow-2xl ring-1 ring-black/5">
               <div className="w-24 h-24 skeu-inset flex items-center justify-center mx-auto mb-6">
                 <Search className="w-10 h-10 skeu-text-muted" />
               </div>
               <h3 className="text-2xl font-black skeu-text-primary mb-2 ">No Results Found</h3>
               <p className="skeu-text-muted font-medium mb-10 max-w-sm mx-auto">We couldn't find any QR codes matching your search or filter criteria.</p>
-              <button onClick={() => setView('wizard')} className="skeu-btn px-8 py-4 text-xs capitalize ">
-                <Plus className="w-4 h-4 mr-2 inline" /> Create Your First Code
-              </button>
+
             </div>
           ) : (
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] items-center skeu-card px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] items-center skeu-card rounded-[5px] px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
                   {/* QR Thumbnail */}
                   <div>
                     <button
                       onClick={() => setPreviewCode(code)}
-                      className="w-20 h-20 skeu-inset flex items-center justify-center relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500 cursor-zoom-in group/thumb"
+                      className="w-20 h-20 skeu-inset flex items-center justify-center rounded-[5px] relative overflow-hidden bg-white group-hover:shadow-inner transition-all duration-500 cursor-zoom-in group/thumb"
                       title="Click to preview"
                     >
                       <CodeThumbnail code={code} />
@@ -329,7 +336,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                         setDownloadFormat('png');
                         setDownloadingCode(code);
                       }}
-                      className="py-1.5 px-3 skeu-btn-secondary text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
+                      className="py-1.5 px-3 skeu-btn-secondary rounded-[5px] text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
                       title="Download PNG"
                     >
                       <Download className="w-3 h-3" /> PNG
@@ -339,7 +346,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                         setDownloadFormat('svg');
                         setDownloadingCode(code);
                       }}
-                      className="py-1.5 px-3 skeu-btn-secondary text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
+                      className="py-1.5 px-3 skeu-btn-secondary rounded-[5px] text-[12px] font-black font-medium capitalize tracking-wider transition-all flex items-center justify-center gap-1 flex-1"
                       title="Download SVG"
                     >
                       <Download className="w-3 h-3" /> SVG
@@ -357,15 +364,28 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   {/* Actions */}
                   <div className="flex items-center justify-end gap-2 pr-1">
                     <button
+                      onClick={() => {
+                        const baseUrl = window.location.origin;
+                        const slug = code.shortSlug || (code as any).short_slug;
+                        const shareUrl = `${baseUrl}/s/${slug}`;
+                        navigator.clipboard.writeText(shareUrl);
+                        setToast('Link copied to clipboard!');
+                      }}
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary rounded-[5px] group-hover:shadow-md transition-all"
+                      title="Copy Share Link"
+                    >
+                      <Share2 className="w-4 h-4 opacity-70 group-hover:opacity-100" />
+                    </button>
+                    <button
                       onClick={() => startEditing(code)}
-                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary group-hover:shadow-md transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary rounded-[5px] group-hover:shadow-md transition-all"
                       title="Edit Code"
                     >
                       <Pencil className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
                     <button
                       onClick={() => deleteCode(code.id)}
-                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary hover:!bg-[#3eb5a9] hover:!text-white hover:!border-[#3eb5a9] transition-all"
+                      className="w-9 h-9 flex items-center justify-center skeu-btn-secondary rounded-[5px] hover:!bg-[#3eb5a9] hover:!text-white hover:!border-[#3eb5a9] transition-all"
                       title="Delete Code"
                     >
                       <Trash2 className="w-4 h-4 opacity-70 group-hover:opacity-100" />
@@ -381,14 +401,12 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       {/* Mobile View: Cards (Only visible on Phone) */}
       <div className="lg:hidden space-y-6">
         {filteredHistory.length === 0 ? (
-          <div className="skeu-card py-24 text-center">
+          <div className="skeu-card py-24 text-center shadow-2xl ring-1 ring-black/5">
             <div className="w-24 h-24 skeu-inset flex items-center justify-center mx-auto mb-6">
               <Search className="w-10 h-10 skeu-text-muted" />
             </div>
             <h3 className="text-2xl font-black skeu-text-primary mb-2 ">No Results Found</h3>
-            <button onClick={() => setView('wizard')} className="skeu-btn px-8 py-4 text-xs capitalize ">
-              <Plus className="w-4 h-4 mr-2 inline" /> Create Your First Code
-            </button>
+
           </div>
         ) : (
           filteredHistory.map(code => {
@@ -396,7 +414,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             return (
               <div key={code.id} className="skeu-card p-6 space-y-6 bg-white/50 backdrop-blur-sm relative overflow-hidden ring-1 ring-red-100/10">
                 <div className="flex gap-5">
-                  <button onClick={() => setPreviewCode(code)} className="w-24 h-24 skeu-inset flex items-center justify-center bg-white rounded-2xl shrink-0 overflow-hidden relative group">
+                  <button onClick={() => setPreviewCode(code)} className="w-24 h-24 skeu-inset flex items-center justify-center bg-white rounded-[5px] shrink-0 overflow-hidden relative group">
                     <CodeThumbnail code={code} />
                     <div className="absolute inset-0 bg-black/0 active:bg-black/5 transition-all flex items-center justify-center opacity-0 active:opacity-100">
                       <Search className="w-6 h-6 text-red-500/50" />
@@ -408,14 +426,14 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       <div className="text-[14px] font-bold text-[#444444]">{new Date(code.createdAt).toLocaleDateString('en-GB')}</div>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <span className="text-[11px] font-black capitalize bg-[#3eb5a9] text-white px-3 py-1.5 rounded-lg shadow-sm">{code.category}</span>
+                      <span className="text-[11px] font-black capitalize bg-[#3eb5a9] text-white px-3 py-1.5 rounded-[5px] shadow-sm">{code.category}</span>
                       {code.is_protected && (
-                        <span className="text-[11px] font-black uppercase bg-amber-50 text-amber-600 border border-amber-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                        <span className="text-[11px] font-black uppercase bg-amber-50 text-amber-600 border border-amber-100 px-3 py-1.5 rounded-[5px] flex items-center gap-1">
                           <Lock className="w-3 h-3" /> Protected
                         </span>
                       )}
                       {folder && (
-                        <span className="text-[11px] font-black capitalize text-red-600 bg-red-50 border border-red-100/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                        <span className="text-[11px] font-black capitalize text-red-600 bg-red-50 border border-red-100/30 px-3 py-1.5 rounded-[5px] flex items-center gap-1.5">
                           <FolderIcon className="w-3.5 h-3.5" /> {folder.name}
                         </span>
                       )}
@@ -431,24 +449,36 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={() => downloadCode(code, 'png')}
-                      className="flex-1 py-3 skeu-btn-secondary text-[11px] font-black capitalize flex items-center justify-center gap-2"
+                      className="flex-1 py-3 skeu-btn-secondary rounded-[5px] text-[11px] font-black capitalize flex items-center justify-center gap-2"
                     >
                       <Download className="w-3.5 h-3.5" /> PNG
                     </button>
                     <button
                       onClick={() => downloadCode(code, 'svg')}
-                      className="flex-1 py-3 skeu-btn-secondary text-[11px] font-black capitalize flex items-center justify-center gap-2"
+                      className="flex-1 py-3 skeu-btn-secondary rounded-[5px] text-[11px] font-black capitalize flex items-center justify-center gap-2"
                     >
                       <Download className="w-3.5 h-3.5" /> SVG
                     </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-black/5">
-                  <button onClick={() => startEditing(code)} className="py-4 skeu-btn-secondary text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
-                    <Pencil className="w-4 h-4" /> Edit Code
+                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-black/5">
+                  <button
+                    onClick={() => {
+                      const baseUrl = window.location.origin;
+                      const slug = code.shortSlug || (code as any).short_slug;
+                      const shareUrl = `${baseUrl}/s/${slug}`;
+                      navigator.clipboard.writeText(shareUrl);
+                      setToast('Link copied to clipboard!');
+                    }}
+                    className="py-4 skeu-btn-secondary rounded-[5px] text-[12px] font-black capitalize flex items-center justify-center gap-2.5"
+                  >
+                    <Share2 className="w-4 h-4" /> Share
                   </button>
-                  <button onClick={() => deleteCode(code.id)} className="py-4 skeu-btn-secondary !text-red-500 hover:!bg-[#3eb5a9] hover:!text-white transition-all text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
+                  <button onClick={() => startEditing(code)} className="py-4 skeu-btn-secondary rounded-[5px] text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
+                    <Pencil className="w-4 h-4" /> Edit
+                  </button>
+                  <button onClick={() => deleteCode(code.id)} className="py-4 skeu-btn-secondary rounded-[5px] !text-red-500 hover:!bg-[#3eb5a9] hover:!text-white transition-all text-[12px] font-black capitalize flex items-center justify-center gap-2.5">
                     <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
@@ -553,6 +583,19 @@ export const MyCodes: React.FC<MyCodesProps> = ({
           </div>
         )}
       </div>
+
+      {/* Modern Toast Notification */}
+      {toast && createPortal(
+        <div className="fixed bottom-8 right-8 z-[9999] animate-in fade-in slide-in-from-bottom-5 duration-300 pointer-events-none">
+          <div className="skeu-card px-6 py-4 rounded-[5px] flex items-center gap-3 shadow-2xl bg-white ring-1 ring-black/5 bg-gradient-to-tr from-white to-red-50/30">
+            <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+              <Share2 className="w-4 h-4 text-red-500" />
+            </div>
+            <p className="text-sm font-black skeu-text-primary uppercase tracking-wider">{toast}</p>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

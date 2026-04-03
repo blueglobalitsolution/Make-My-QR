@@ -63,6 +63,24 @@ export interface UseAuthReturn {
   setSignupStep: React.Dispatch<React.SetStateAction<1 | 2>>;
   regOtp: string;
   setRegOtp: React.Dispatch<React.SetStateAction<string>>;
+  billingCompany: string;
+  setBillingCompany: React.Dispatch<React.SetStateAction<string>>;
+  billingTaxId: string;
+  setBillingTaxId: React.Dispatch<React.SetStateAction<string>>;
+  billingName: string;
+  setBillingName: React.Dispatch<React.SetStateAction<string>>;
+  billingSurname: string;
+  setBillingSurname: React.Dispatch<React.SetStateAction<string>>;
+  billingEmail: string;
+  setBillingEmail: React.Dispatch<React.SetStateAction<string>>;
+  billingAddress: string;
+  setBillingAddress: React.Dispatch<React.SetStateAction<string>>;
+  billingPostalCode: string;
+  setBillingPostalCode: React.Dispatch<React.SetStateAction<string>>;
+  billingCity: string;
+  setBillingCity: React.Dispatch<React.SetStateAction<string>>;
+  billingCountry: string;
+  setBillingCountry: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const useAuth = (
@@ -100,6 +118,16 @@ export const useAuth = (
   const [signupStep, setSignupStep] = useState<1 | 2>(1);
   const [regOtp, setRegOtp] = useState('');
 
+  const [billingCompany, setBillingCompany] = useState('');
+  const [billingTaxId, setBillingTaxId] = useState('');
+  const [billingName, setBillingName] = useState('');
+  const [billingSurname, setBillingSurname] = useState('');
+  const [billingEmail, setBillingEmail] = useState('');
+  const [billingAddress, setBillingAddress] = useState('');
+  const [billingPostalCode, setBillingPostalCode] = useState('');
+  const [billingCity, setBillingCity] = useState('');
+  const [billingCountry, setBillingCountry] = useState('India');
+
   const triggerAlert = (title: string, message: string, type: 'danger' | 'info' = 'info') => {
     if (showAlert) {
       showAlert(title, message, type);
@@ -113,6 +141,19 @@ export const useAuth = (
       setAccFirstName(currentUser.firstName || currentUser.name?.split(' ')[0] || '');
       setAccLastName(currentUser.lastName || currentUser.name?.split(' ').slice(1).join(' ') || '');
       setAccEmail(currentUser.email || '');
+
+      // Initialize billing info
+      if (currentUser.billingInfo) {
+        setBillingCompany(currentUser.billingInfo.companyName || '');
+        setBillingTaxId(currentUser.billingInfo.taxId || '');
+        setBillingName(currentUser.billingInfo.name || '');
+        setBillingSurname(currentUser.billingInfo.surname || '');
+        setBillingEmail(currentUser.billingInfo.email || '');
+        setBillingAddress(currentUser.billingInfo.address || '');
+        setBillingPostalCode(currentUser.billingInfo.postalCode || '');
+        setBillingCity(currentUser.billingInfo.city || '');
+        setBillingCountry(currentUser.billingInfo.country || 'India');
+      }
     }
   }, [currentUser]);
 
@@ -168,7 +209,7 @@ export const useAuth = (
   const handleLogout = () => {
     logout();
     setCurrentUser(null);
-    setView('landing');
+    setView('login');
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -192,11 +233,12 @@ export const useAuth = (
           name: `${regName} ${regLastName}`.trim() || data.email.split('@')[0],
           firstName: regName,
           lastName: regLastName,
-          plan: 'free',
+          plan: (data.subscription?.plan || 'free') as any,
           isAdmin: false,
           createdAt: new Date().toISOString(),
-          daysRemaining: 14,
-          savedPalettes: []
+          daysRemaining: data.subscription?.days_remaining || 7,
+          savedPalettes: [],
+          subscription: data.subscription
         };
         setCurrentUser(user);
         localStorage.setItem('makemyqr_user', JSON.stringify(user));
@@ -241,7 +283,18 @@ export const useAuth = (
           firstName: accFirstName,
           lastName: accLastName,
           email: accEmail,
-          name: `${accFirstName} ${accLastName}`.trim()
+          name: `${accFirstName} ${accLastName}`.trim(),
+          billingInfo: {
+            companyName: billingCompany,
+            taxId: billingTaxId,
+            name: billingName,
+            surname: billingSurname,
+            email: billingEmail,
+            address: billingAddress,
+            postalCode: billingPostalCode,
+            city: billingCity,
+            country: billingCountry
+          }
         };
         setCurrentUser(updatedUser);
         localStorage.setItem('makemyqr_user', JSON.stringify(updatedUser));
@@ -389,5 +442,23 @@ export const useAuth = (
     setSignupStep,
     regOtp,
     setRegOtp,
+    billingCompany,
+    setBillingCompany,
+    billingTaxId,
+    setBillingTaxId,
+    billingName,
+    setBillingName,
+    billingSurname,
+    setBillingSurname,
+    billingEmail,
+    setBillingEmail,
+    billingAddress,
+    setBillingAddress,
+    billingPostalCode,
+    setBillingPostalCode,
+    billingCity,
+    setBillingCity,
+    billingCountry,
+    setBillingCountry
   };
 };

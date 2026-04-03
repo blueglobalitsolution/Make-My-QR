@@ -19,7 +19,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
       try {
         setLoading(true);
         const result = await getFile(fileId);
-        
+
         if (result) {
           setFileRecord(result.record);
           const url = URL.createObjectURL(result.blob);
@@ -46,7 +46,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
 
   const handleDownload = () => {
     if (!fileUrl || !fileRecord) return;
-    
+
     const link = document.createElement('a');
     link.href = fileUrl;
     link.download = fileRecord.name;
@@ -62,7 +62,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f0f0f0]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
           <p className="text-slate-500 font-medium">Loading file...</p>
@@ -73,13 +73,13 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f0f0f0]">
         <div className="flex flex-col items-center gap-4 bg-white p-10 rounded-3xl shadow-sm border border-slate-100">
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
             <X className="w-8 h-8 text-red-500" />
           </div>
           <h2 className="text-xl font-black text-slate-800">{error}</h2>
-          <button 
+          <button
             onClick={handleBack}
             className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-sm"
           >
@@ -91,11 +91,11 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    <div className="min-h-screen flex flex-col bg-[#f0f0f0]">
       <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={handleBack}
               className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-medium text-sm hover:bg-slate-200 transition-colors"
             >
@@ -114,7 +114,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ fileId, onBack }) => {
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
           >

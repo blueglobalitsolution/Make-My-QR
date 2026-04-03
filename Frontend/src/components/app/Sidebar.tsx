@@ -25,6 +25,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setIsOpen,
   currentUser
 }) => {
+  // Force a re-render at midnight to update the "days remaining" counter
+  const [, setMidnightRefresh] = React.useState(0);
+  React.useEffect(() => {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msToMidnight = tomorrow.getTime() - now.getTime();
+
+    const timer = setTimeout(() => {
+      setMidnightRefresh(prev => prev + 1);
+    }, msToMidnight);
+
+    return () => clearTimeout(timer);
+  }, [setMidnightRefresh]);
+
   const handleNavClick = (itemId: string) => {
     if (isExpired && itemId !== 'billing' && itemId !== 'account') {
       setView('billing');
@@ -39,11 +53,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setView(itemId as any);
   };
 
-  const isTrial = currentUser?.subscription?.plan === 'trial';
-  const isExpired = currentUser?.subscription?.plan === 'expired' ||
-    (currentUser?.subscription?.expiry_date && new Date(currentUser.subscription.expiry_date) < new Date());
+  const isTrial = currentUser?.subscription?.plan?.toLowerCase() === 'trial' ||
+    currentUser?.subscription?.plan?.toLowerCase() === 'free' ||
+    currentUser?.plan?.toLowerCase() === 'free';
+  const isExpired = currentUser?.subscription?.plan?.toLowerCase() === 'expired' ||
+    (currentUser?.subscription?.expiry_date && (() => {
+      const expiry = new Date(currentUser.subscription.expiry_date);
+      const today = new Date();
+      return new Date(today.getFullYear(), today.getMonth(), today.getDate()) >
+        new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+    })());
 
-  const daysLeft = currentUser?.subscription?.days_remaining ?? 0;
+  const getDaysRemaining = () => {
+    if (!currentUser?.subscription?.expiry_date) return 0;
+    const expiry = new Date(currentUser.subscription.expiry_date);
+    const now = new Date();
+
+    // Calculate difference based on calendar days
+    const expiryDate = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Add 1 to include the current day as "remaining"
+    return Math.max(0, diffDays + 1);
+  };
+
+  const daysLeft = getDaysRemaining();
 
   return (
     <>
@@ -68,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Logo */}
           <div
             className="flex items-center gap-3 cursor-pointer group px-2"
-            onClick={() => { setView('landing'); setIsOpen?.(false); }}
+            onClick={() => { setView('my_codes'); setIsOpen?.(false); }}
           >
             <img src="/src/assets/logo-full.png" alt="MakeMyQR Logo" className="h-10 group-hover:scale-105 transition-transform" />
           </div>
@@ -100,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 disabled={isExpired && item.id !== 'billing' && item.id !== 'account'}
-                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-semibold transition-all font-poppins group ${isExpired && item.id !== 'billing' && item.id !== 'account' ? 'opacity-40 grayscale cursor-not-allowed' : ''
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-[15px] text-[13px] font-semibold transition-all font-poppins group ${isExpired && item.id !== 'billing' && item.id !== 'account' ? 'opacity-40 grayscale cursor-not-allowed' : ''
                   } ${view === item.id
                     ? 'skeu-tag-active scale-[1.02]'
                     : 'skeu-tag hover:bg-[#dc2626] hover:text-white'

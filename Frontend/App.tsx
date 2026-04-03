@@ -14,7 +14,6 @@ import html2canvas from 'html2canvas';
 
 import { Sidebar } from './src/components/app/Sidebar';
 import { BottomNav } from './src/components/app/BottomNav';
-import { Landing } from './src/components/app/Landing';
 import { AuthViews } from './src/components/app/AuthViews';
 import { MyCodes } from './src/components/app/MyCodes';
 import { Wizard } from './src/components/app/Wizard';
@@ -43,10 +42,11 @@ const App: React.FC = () => {
     let path = rawPath.replace(/\/+/g, '/').replace(/\/$/, '');
     if (path.startsWith('/')) path = path.slice(1);
 
-    path = path.split('?')[0] || 'landing';
+    path = path.split('?')[0] || 'login';
 
-    // If path is old admin_login, mark it as 404
-    if (path === 'admin_login') {
+    // If path is old admin_login or landing, redirect or mark as 404
+    if (path === 'admin_login' || path === 'landing') {
+      if (path === 'landing') return { view: 'login' as ViewState, businessId: null, fileMode: false };
       return { view: '404' as ViewState, businessId: null, fileMode: false };
     }
 
@@ -72,13 +72,13 @@ const App: React.FC = () => {
     }
 
     const validViews: ViewState[] = [
-      'landing', 'login', 'wizard', 'my_codes', 'account', 'billing', 'payment',
+      'login', 'wizard', 'my_codes', 'account', 'billing', 'payment',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
       'qr_viewer', 'superadmin_login', 'admin_dashboard', '404'
     ];
 
     return {
-      view: (validViews.includes(path as any) ? path : 'landing') as ViewState,
+      view: (validViews.includes(path as any) ? path : 'login') as ViewState,
       businessId: null as string | null,
       fileMode: false,
     };
@@ -188,15 +188,15 @@ const App: React.FC = () => {
   // Sync view changes to URL history
   useEffect(() => {
     const rawPath = window.location.pathname;
-    const isSpecialPath = rawPath.startsWith('/view/business') || rawPath.startsWith('/public/scan') || rawPath.startsWith('/view/');
+    const isSpecialPath = window.location.pathname.startsWith('/view/business') || window.location.pathname.startsWith('/public/scan') || window.location.pathname.startsWith('/view/');
     const isSpecialView = view === 'business_profile' || view === 'public_scan' || view === 'qr_viewer';
 
     // Skip if we are on a special view path (deep linking) to avoid overriding with base view
     if (isSpecialPath && isSpecialView) return;
 
-    const currentPath = rawPath.slice(1).split('?')[0] || 'landing';
-    if (view !== currentPath && !isSpecialView) {
-      const newPath = view === 'landing' ? '/' : `/${view}`;
+    const targetPath = (import.meta as any).env?.VITE_BACKEND_URL ? '/' : window.location.pathname;
+    if (view && !['business_profile', 'qr_viewer', 'public_scan', 'superadmin_login', 'admin_dashboard'].includes(view)) {
+      const newPath = `/${view}`;
       window.history.pushState({ view }, '', newPath);
     }
   }, [view]);
@@ -240,6 +240,16 @@ const App: React.FC = () => {
       // Restore user state from local storage
       const savedUserStr = localStorage.getItem('makemyqr_user') || localStorage.getItem('barqr_user');
       const savedToken = localStorage.getItem('makemyqr_token');
+      const loginTime = localStorage.getItem('makemyqr_login_time');
+
+      // Check for session timeout (5 hours)
+      const FIVE_HOURS = 5 * 60 * 60 * 1000;
+      if (loginTime && (Date.now() - parseInt(loginTime)) > FIVE_HOURS) {
+        console.warn("Session expired after 5 hours");
+        auth.handleLogout();
+        showAlert("Session Expired", "Your session has expired after 5 hours for security. Please log in again.", "info");
+        return;
+      }
 
       if (savedUserStr && savedToken) {
         try {
@@ -269,6 +279,18 @@ const App: React.FC = () => {
       }
     };
     init();
+
+    // Check periodically for session expiration (every minute)
+    const sessionInterval = setInterval(() => {
+      const loginTime = localStorage.getItem('makemyqr_login_time');
+      const FIVE_HOURS = 5 * 60 * 60 * 1000;
+      if (loginTime && (Date.now() - parseInt(loginTime)) > FIVE_HOURS) {
+        auth.handleLogout();
+        showAlert("Session Expired", "Your session has expired. Please log in again for your security.", "info");
+      }
+    }, 60000);
+
+    return () => clearInterval(sessionInterval);
   }, []);
 
   // Trigger refresh when user changes (e.g., after login)
@@ -533,7 +555,7 @@ const App: React.FC = () => {
       )}
 
       {/* Bottom Navigation for Mobile */}
-      {view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
+      {view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
         <BottomNav
           view={view}
           setView={handleSetView}
@@ -544,8 +566,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' ? 'pb-32 lg:pb-0 skeu-main-content' : 'w-full'} ${view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
-        {view === 'landing' && <Landing setView={setView} />}
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' ? 'pb-32 lg:pb-0 skeu-main-content' : 'w-full'} ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
 
         {(view === 'login' || view === 'register' || view === 'forgot_password') && (
           <AuthViews
@@ -636,6 +657,8 @@ const App: React.FC = () => {
 
         {view === 'account' && (
           <Account
+            currentUser={auth.currentUser}
+            setView={handleSetView}
             accFirstName={auth.accFirstName}
             setAccFirstName={auth.setAccFirstName}
             accLastName={auth.accLastName}
@@ -650,6 +673,24 @@ const App: React.FC = () => {
             setAccConfirmPassword={auth.setAccConfirmPassword}
             handleUpdateProfile={auth.handleUpdateProfile}
             handleUpdatePassword={auth.handleUpdatePassword}
+            billingCompany={auth.billingCompany}
+            setBillingCompany={auth.setBillingCompany}
+            billingTaxId={auth.billingTaxId}
+            setBillingTaxId={auth.setBillingTaxId}
+            billingName={auth.billingName}
+            setBillingName={auth.setBillingName}
+            billingSurname={auth.billingSurname}
+            setBillingSurname={auth.setBillingSurname}
+            billingEmail={auth.billingEmail}
+            setBillingEmail={auth.setBillingEmail}
+            billingAddress={auth.billingAddress}
+            setBillingAddress={auth.setBillingAddress}
+            billingPostalCode={auth.billingPostalCode}
+            setBillingPostalCode={auth.setBillingPostalCode}
+            billingCity={auth.billingCity}
+            setBillingCity={auth.setBillingCity}
+            billingCountry={auth.billingCountry}
+            setBillingCountry={auth.setBillingCountry}
           />
         )}
 
@@ -664,7 +705,13 @@ const App: React.FC = () => {
         )}
 
         {view === 'analytics' && <Analytics />}
-        {view === 'payment' && <Payment setView={handleSetView} selectedPlan={viewData} />}
+        {view === 'payment' && (
+          <Payment
+            setView={handleSetView}
+            selectedPlan={viewData?.selectedPlan}
+            currentUser={auth.currentUser}
+          />
+        )}
         {view === 'superadmin_login' && <AdminLogin setView={handleSetView} auth={auth} />}
         {view === 'admin_dashboard' && <AdminDashboard setView={handleSetView} />}
         {view === '404' && <NotFound setView={handleSetView} />}

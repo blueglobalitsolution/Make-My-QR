@@ -49,6 +49,17 @@ export interface User {
     };
     days_remaining?: number;
   };
+  billingInfo?: {
+    companyName: string;
+    taxId: string;
+    name: string;
+    surname: string;
+    email: string;
+    address: string;
+    postalCode: string;
+    city: string;
+    country: string;
+  };
 }
 
 export interface Folder {

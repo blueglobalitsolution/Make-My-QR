@@ -226,6 +226,14 @@ export const useWizard = (
   const selectedTypeConfig = QR_TYPES_CONFIG.find(t => t.id === wizard.type) || QR_TYPES_CONFIG[0];
 
   const handleNextStep = async () => {
+    // Ensure user is authenticated before proceeding
+    if (!currentUser) {
+      const msg = "Authentication credentials were not provided. Please log in again to save your progress.";
+      if (showAlert) showAlert("Authentication Error", msg, "danger");
+      else alert(msg);
+      return;
+    }
+
     // Check QR limit if creating new code
     if (!editingId && currentUser?.subscription?.plan_details) {
       if (history.length >= currentUser.subscription.plan_details.qr_limit) {
@@ -295,106 +303,73 @@ export const useWizard = (
 
     // 2. Step-specific logic
     if (wizard.step === 2) {
-      console.log("Wizard: Saving progress at Step 2 to move to Step 3...");
-      try {
-        let savedData;
-        if (editingId) {
-          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
-          savedData = await updateCode(editingId, {
-            folder: sanitizedFolderId,
-            type: wizard.mode,
-            category: wizard.type,
-            is_dynamic: true,
-            name: wizard.name || `My ${selectedTypeConfig.name}`,
-            value: finalValue,
-            is_protected: wizard.is_protected,
-            password: wizard.password,
-            is_lead_capture: wizard.is_lead_capture,
-            show_preview: wizard.show_preview,
-            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
-          });
-
-          const mappedNewData = { ...savedData, id: savedData.id.toString(), folderId: savedData.folder?.toString() };
-          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedNewData } : h));
-        } else {
-          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
-          savedData = await saveCode({
-            folder: sanitizedFolderId,
-            type: wizard.mode,
-            category: wizard.type,
-            is_dynamic: true,
-            name: wizard.name || `My ${selectedTypeConfig.name}`,
-            value: finalValue,
-            is_protected: wizard.is_protected,
-            password: wizard.password,
-            is_lead_capture: wizard.is_lead_capture,
-            show_preview: wizard.show_preview,
-            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
-          });
-
-          const newCode: GeneratedCode = { ...savedData, id: savedData.id.toString(), folderId: savedData.folder?.toString() };
-          setHistory(prev => [newCode, ...prev]);
-          setEditingId(newCode.id);
-
-          if (wizard.folderId) {
-            setFolders(prev => prev.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f));
-          }
-
-          try {
-            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
-            const slug = savedData.shortSlug || savedData.short_slug;
-            const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
-            const qrImage = await generateQRWithFrame(qrValue, wizard.config);
-            if (qrImage) {
-              const imageUrl = await updateCodeImage(savedData.id.toString(), qrImage);
-              setHistory(prev => prev.map(h => h.id === savedData.id.toString() ? { ...h, imageUrl: imageUrl } : h));
-            }
-          } catch (imgErr) {
-            console.error('Failed to generate QR image:', imgErr);
-          }
-        }
-        setWizard(prev => ({ ...prev, step: 3 }));
-      } catch (err) {
-        const errorMsg = (err as any)?.response?.data?.detail || (err as any)?.response?.data?.error || (err as any).message || "Unknown error";
-        console.error("Failed to save progress", err);
-        if (showAlert) showAlert("Error", `Failed to save progress: ${errorMsg}`, "danger");
-        else alert(`Failed to save progress: ${errorMsg}`);
-      }
+      console.log("Wizard: Advancing to Step 3...");
+      setWizard(prev => ({ ...prev, step: 3 }));
     } else if (wizard.step === 3) {
       console.log("Wizard: Finalizing QR code styling...");
       try {
-        if (editingId) {
-          const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
-          const updatedCode = await updateCode(editingId, {
-            folder: sanitizedFolderId,
-            type: wizard.mode,
-            category: wizard.type,
-            is_dynamic: true,
-            name: wizard.name || `My ${selectedTypeConfig.name}`,
-            value: finalValue,
-            is_protected: wizard.is_protected,
-            password: wizard.password,
-            is_lead_capture: wizard.is_lead_capture,
-            show_preview: wizard.show_preview,
-            settings: { ...wizard.config, business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined }
-          });
+        let savedData;
+        const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
 
-          const mappedUpdatedData = { ...updatedCode, id: updatedCode.id.toString(), folderId: updatedCode.folder?.toString() };
-          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedUpdatedData } : h));
-
-          try {
-            const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
-            const existingCode = history.find(h => h.id === editingId);
-            const slug = existingCode?.shortSlug || existingCode?.short_slug || updatedCode.shortSlug || updatedCode.short_slug;
-            const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
-            const qrImage = await generateQRWithFrame(qrValue, wizard.config);
-            if (qrImage) {
-              const imageUrl = await updateCodeImage(editingId, qrImage);
-              setHistory(prev => prev.map(h => h.id === editingId ? { ...h, imageUrl: imageUrl } : h));
-            }
-          } catch (imgErr) {
-            console.error('Failed to generate QR image:', imgErr);
+        const codePayload = {
+          folder: sanitizedFolderId,
+          type: wizard.mode,
+          category: wizard.type,
+          is_dynamic: true,
+          name: wizard.name || `My ${selectedTypeConfig.name}`,
+          value: finalValue,
+          is_protected: wizard.is_protected,
+          password: wizard.password,
+          is_lead_capture: wizard.is_lead_capture,
+          show_preview: wizard.show_preview,
+          settings: {
+            ...wizard.config,
+            business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined
           }
+        };
+
+        if (editingId) {
+          savedData = await updateCode(editingId, codePayload);
+          const mappedUpdatedData: GeneratedCode = {
+            ...savedData,
+            id: savedData.id.toString(),
+            folderId: savedData.folder?.toString(),
+            shortSlug: savedData.short_slug || savedData.shortSlug,
+            isDynamic: savedData.is_dynamic || savedData.isDynamic,
+            isLeadCapture: savedData.is_lead_capture || savedData.isLeadCapture,
+            createdAt: savedData.created_at || savedData.createdAt || new Date().toISOString()
+          };
+          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedUpdatedData } : h));
+        } else {
+          savedData = await saveCode(codePayload);
+          const newCode: GeneratedCode = {
+            ...savedData,
+            id: savedData.id.toString(),
+            folderId: savedData.folder?.toString(),
+            shortSlug: savedData.short_slug || savedData.shortSlug,
+            isDynamic: savedData.is_dynamic || savedData.isDynamic,
+            isLeadCapture: savedData.is_lead_capture || savedData.isLeadCapture,
+            createdAt: savedData.created_at || savedData.createdAt || new Date().toISOString()
+          };
+          setHistory(prev => [newCode, ...prev]);
+          if (wizard.folderId) {
+            setFolders(prev => prev.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f));
+          }
+        }
+
+        const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
+        const currentCodeId = editingId || savedData.id.toString();
+        const slug = savedData.shortSlug || savedData.short_slug;
+        const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
+
+        try {
+          const qrImage = await generateQRWithFrame(qrValue, wizard.config);
+          if (qrImage) {
+            const imageUrl = await updateCodeImage(currentCodeId, qrImage);
+            setHistory(prev => prev.map(h => h.id === currentCodeId ? { ...h, imageUrl: imageUrl } : h));
+          }
+        } catch (imgErr) {
+          console.error('Failed to generate QR image:', imgErr);
         }
 
         setView('my_codes');

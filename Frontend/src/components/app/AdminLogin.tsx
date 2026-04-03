@@ -43,7 +43,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView, auth }) => {
             <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
                 <div className="w-full max-w-sm">
                     <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-amber-500/10 border border-slate-100">
-                        <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                        <div className="w-16 h-16 bg-amber-50 rounded-[15px] flex items-center justify-center mb-6 mx-auto">
                             <Lock className="w-8 h-8 text-amber-600" />
                         </div>
 
@@ -156,7 +156,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView, auth }) => {
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
             <div className="w-full max-w-sm">
                 <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-red-500/10 border border-slate-100">
-                    <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <div className="w-16 h-16 bg-red-50 rounded-[15px] flex items-center justify-center mb-6 mx-auto">
                         <ShieldAlert className="w-8 h-8 text-red-600" />
                     </div>
 
@@ -207,10 +207,10 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView, auth }) => {
 
                     <div className="mt-6 pt-4 border-t border-slate-100">
                         <button
-                            onClick={() => setView('landing')}
+                            onClick={() => setView('login')}
                             className="w-full text-[10px] font-bold text-slate-400 capitalize  hover:text-slate-600 transition-colors"
                         >
-                            Return to Public Site
+                            Return to Login
                         </button>
                     </div>
                 </div>

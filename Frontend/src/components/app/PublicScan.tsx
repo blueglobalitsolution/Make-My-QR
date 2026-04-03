@@ -96,17 +96,15 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
     return (
         <div className="min-h-screen flex flex-col skeu-app-bg">
             <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-red-100/50">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('landing')}>
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('login')}>
                     <div className="bg-[#dc2626] p-1.5 rounded-lg shadow-lg">
                         <Scan className="text-white w-5 h-5" />
                     </div>
                     <h1 className="skeu-page-title !text-lg">
                         Scanner <span className="text-[#dc2626]">Studio</span>
                     </h1>
-                    {/* The original content "Scanner <span className="text-[#dc2626]">Studio</span>" was replaced by "{code.name}" */}
-                    {/* The instruction had a malformed snippet, so I've corrected it to be syntactically valid */}
                 </div>
-                <button onClick={() => setView('landing')} className="text-slate-400 hover:text-[#dc2626] transition-colors">
+                <button onClick={() => setView('login')} className="text-slate-400 hover:text-[#dc2626] transition-colors">
                     <X className="w-6 h-6" />
                 </button>
             </header>

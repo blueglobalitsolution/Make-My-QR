@@ -20,7 +20,7 @@ export const NotFound: React.FC<NotFoundProps> = ({ setView }) => {
                 </p>
 
                 <button
-                    onClick={() => setView('landing')}
+                    onClick={() => setView('login')}
                     className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
                 >
                     <Home className="w-5 h-5" />

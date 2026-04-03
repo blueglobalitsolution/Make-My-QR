@@ -204,7 +204,7 @@ RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_YOUR_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "YOUR_KEY_SECRET")
 
 # MinIO / S3 Storage Settings
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "minio:9000")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
@@ -218,12 +218,13 @@ AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
 AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = False  # Set to True if you want private/signed URLs
+AWS_QUERYSTRING_AUTH = True  # Enabled for private MinIO buckets
 
 DOMAIN = os.getenv("DOMAIN", "localhost")
-AWS_S3_CUSTOM_DOMAIN = f"{DOMAIN}/minio/{MINIO_BUCKET_NAME}"
+AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", f"{DOMAIN}:9000/{MINIO_BUCKET_NAME}")
 AWS_S3_URL_PROTOCOL = "https" if MINIO_SECURE else "http"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
+# Construct MEDIA_URL for public access via browser
 MEDIA_URL = f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/"
