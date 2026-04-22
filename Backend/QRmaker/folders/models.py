@@ -8,5 +8,14 @@ class Folder(models.Model):
     is_root = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user'],
+                condition=models.Q(is_root=True),
+                name='unique_root_folder_per_user'
+            )
+        ]
+
     def __str__(self):
         return f"{self.user.username} - {self.name} (Root: {self.is_root})"

@@ -53,9 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setView(itemId as any);
   };
 
-  const isTrial = currentUser?.subscription?.plan?.toLowerCase() === 'trial' ||
-    currentUser?.subscription?.plan?.toLowerCase() === 'free' ||
-    currentUser?.plan?.toLowerCase() === 'free';
+  const isTrial = currentUser?.subscription?.plan?.toLowerCase() === 'trial';
   const isExpired = currentUser?.subscription?.plan?.toLowerCase() === 'expired' ||
     (currentUser?.subscription?.expiry_date && (() => {
       const expiry = new Date(currentUser.subscription.expiry_date);

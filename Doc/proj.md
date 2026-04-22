@@ -2,5 +2,5 @@ qrmaker
 X0QKcA%%P%P1ni
 
 qradmin
-blueglobalcloud@gmail.com
+makemyqrcodeapp@gmail.com
 Root@123

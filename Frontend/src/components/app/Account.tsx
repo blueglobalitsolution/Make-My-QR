@@ -78,9 +78,8 @@ export const Account: React.FC<AccountProps> = ({
 }) => {
   const [activeTab, setActiveTab] = React.useState<'profile' | 'billing'>('profile');
 
-  const isTrial = currentUser?.subscription?.plan?.toLowerCase() === 'trial' ||
-    currentUser?.subscription?.plan?.toLowerCase() === 'free' ||
-    currentUser?.plan?.toLowerCase() === 'free';
+  const isTrial = currentUser?.subscription?.plan?.toLowerCase() === 'trial';
+  const isFree = !isTrial && (currentUser?.subscription?.plan?.toLowerCase() === 'free' || currentUser?.plan?.toLowerCase() === 'free');
 
   const isExpired = currentUser?.subscription?.plan?.toLowerCase() === 'expired' ||
     (currentUser?.subscription?.expiry_date && (() => {
@@ -510,7 +509,7 @@ export const Account: React.FC<AccountProps> = ({
                   <span className="text-[10px] font-black text-slate-400 capitalize ">Plan Name</span>
                 </div>
                 <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight">
-                  {isTrial ? '7-Day Trial' : (currentUser?.subscription?.plan_details?.name || currentUser?.plan || 'Free Plan')}
+                  {isTrial ? '7-Day Trial' : (currentUser?.subscription?.plan_details?.name || currentUser?.plan || (isFree ? 'Free Plan' : 'Standard'))}
                 </h3>
               </div>
 
@@ -557,12 +556,12 @@ export const Account: React.FC<AccountProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
                   <span>Progress</span>
-                  <span>{100 - Math.min(100, Math.round((daysLeft / 30) * 100))}% Used</span>
+                  <span>{100 - Math.min(100, Math.round((daysLeft / (isTrial ? 7 : 30)) * 100))}% Used</span>
                 </div>
                 <div className="h-4 w-full bg-slate-50 border border-slate-200/50 rounded-full overflow-hidden shadow-inner p-1">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-red-500 to-rose-400 shadow-sm transition-all duration-1000"
-                    style={{ width: `${Math.min(100, Math.round((daysLeft / 30) * 100))}%` }}
+                    style={{ width: `${Math.min(100, Math.round((daysLeft / (isTrial ? 7 : 30)) * 100))}%` }}
                   />
                 </div>
               </div>

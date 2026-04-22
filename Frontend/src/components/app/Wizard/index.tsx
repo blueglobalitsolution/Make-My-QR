@@ -55,6 +55,7 @@ interface WizardProps {
   createNewFolder: () => Promise<void>;
   getQRValue: () => string;
   getPreviewValue: () => string;
+  isProcessing: boolean;
 }
 
 export const Wizard: React.FC<WizardProps> = ({
@@ -103,6 +104,7 @@ export const Wizard: React.FC<WizardProps> = ({
   getQRValue,
   getPreviewValue,
   currentUser,
+  isProcessing,
 }) => {
   const [hoveredType, setHoveredType] = React.useState<WizardState['type'] | null>(null);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = React.useState(false);
@@ -138,8 +140,17 @@ export const Wizard: React.FC<WizardProps> = ({
 
   const isNextStepDisabled = () => {
     if (wizard.step === 2) {
-      if (wizard.type === 'website') {
-        return !wizard.value;
+      switch (wizard.type) {
+        case 'website':
+          return !wizard.value;
+        case 'pdf':
+          return !pdfUrl;
+        case 'whatsapp':
+          return !whatsappPhone;
+        case 'business':
+          return !wizard.business?.company;
+        default:
+          return false;
       }
     }
     return false;
@@ -1993,15 +2004,24 @@ export const Wizard: React.FC<WizardProps> = ({
 
           <button
             onClick={handleNextStep}
-            disabled={isNextStepDisabled()}
+            disabled={isNextStepDisabled() || isProcessing}
             type="button"
             className={`${wizard.step === 1 ? 'hidden lg:flex' : 'flex'} w-full lg:w-48 py-4 lg:py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-[15px] lg:rounded-[15px] active:scale-95 transition-all shadow-lg ml-0 disabled:opacity-30 disabled:grayscale`}
           >
-            {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
-            <ChevronRight className="w-4 h-4" />
+            {isProcessing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                CREATING...
+              </>
+            ) : (
+              <>
+                {wizard.step === 3 ? 'FINISH' : 'NEXT STEP'}
+                <ChevronRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 };

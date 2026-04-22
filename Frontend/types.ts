@@ -89,10 +89,10 @@ export interface GeneratedCode {
   show_preview: boolean;
   settings: any;
   imageUrl?: string;
+  isOptimistic?: boolean;
 }
 
 export type ViewState =
-  | 'landing'
   | 'login'
   | 'wizard'
   | 'dashboard'

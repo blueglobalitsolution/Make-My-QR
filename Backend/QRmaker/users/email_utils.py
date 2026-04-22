@@ -1,7 +1,8 @@
 def get_email_client():
     import yagmail
+    from django.conf import settings
 
-    return yagmail.SMTP("blueglobalcloud@gmail.com", password="pjooewfxcxhtldod")
+    return yagmail.SMTP(settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD)
 
 
 def send_welcome_email(to_email, name):
@@ -41,4 +42,79 @@ def send_signup_otp_email(to_email, otp):
         return True
     except Exception as e:
         print(f"Error sending signup OTP: {e}")
+        return False
+
+
+def send_subscription_notification(to_email, name, plan_name, status, expiry_date=None):
+    try:
+        yag = get_email_client()
+        subject = f"Subscription Update: {plan_name}"
+        
+        from django.utils import timezone
+        if expiry_date:
+            # Ensure expiry_date is a date object for formatting
+            date_str = expiry_date.strftime('%Y-%m-%d')
+            expiry_text = f"expires on {date_str}"
+        else:
+            expiry_text = "is now active"
+            
+        html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Subscription Update</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f4f6;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f3f4f6">
+  <tr>
+    <td align="center">
+      <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
+        <tr>
+          <td align="center" style="padding:40px 10px;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border-radius:8px;">
+              <tr>
+                <td align="center" style="padding:30px 20px 10px 20px; font-family:Arial, sans-serif; font-size:22px; font-weight:bold; color:#333;">
+                  Subscription Updated
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:10px 20px; font-family:Arial, sans-serif; font-size:15px; color:#555;">
+                  Hi {name}, your subscription has been successfully updated.
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:20px 20px;">
+                    <div style="background-color:#f8fafc; padding:20px; border-radius:6px; border:1px solid #e2e8f0;">
+                        <p style="margin:0; font-family:Arial, sans-serif; font-size:16px; color:#334155;">
+                            <strong>Plan:</strong> {plan_name}
+                        </p>
+                        <p style="margin:10px 0 0 0; font-family:Arial, sans-serif; font-size:16px; color:#334155;">
+                            <strong>Status:</strong> {status.replace('_', ' ').title()}
+                        </p>
+                        <p style="margin:10px 0 0 0; font-family:Arial, sans-serif; font-size:14px; color:#64748b;">
+                            Your plan {expiry_text}.
+                        </p>
+                    </div>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding:10px 20px 30px 20px; font-family:Arial, sans-serif; font-size:12px; color:#888;">
+                  Thank you for using MakeMyQR!
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+"""
+        yag.send(to_email, subject, html)
+        return True
+    except Exception as e:
+        print(f"Error sending subscription notification: {e}")
         return False

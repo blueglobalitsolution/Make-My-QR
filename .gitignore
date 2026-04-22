@@ -31,3 +31,4 @@ dist-ssr
 *.sln
 *.sw?
 Backend/makemyqr/
+Backend/QRmaker/payments/management/commands/seed_plans.py

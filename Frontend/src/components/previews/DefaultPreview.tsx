@@ -16,8 +16,9 @@ interface DefaultPreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit?: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
+    is_protected?: boolean;
 }
 
 export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
@@ -31,7 +32,8 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
     setLeadForm,
     onLeadSubmit,
     onPasswordSubmit,
-    isPasswordVerified = true
+    isPasswordVerified = true,
+    is_protected
 }) => {
     const handleAction = () => {
         window.location.href = fullValue;
@@ -81,9 +83,9 @@ export const DefaultPreview: React.FC<DefaultPreviewProps> = ({
 
                             {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
                                 (!isPasswordVerified && onPasswordSubmit) ? (
-                                    <PasswordWall 
-                                        brandColor={brandColor} 
-                                        onSubmit={onPasswordSubmit} 
+                                    <PasswordWall
+                                        brandColor={brandColor}
+                                        onSubmit={onPasswordSubmit}
                                     />
                                 ) : (
                                     <LeadCaptureForm

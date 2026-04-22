@@ -7,7 +7,10 @@ from .models import Scan
 from django.conf import settings
 import os
 import json
+import logging
 from django.views.decorators.csrf import csrf_exempt
+
+logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
@@ -37,7 +40,7 @@ def redirect_scan(request, slug):
     country = "Unknown"
     city = "Unknown"
 
-    # Minimal GeoIP Check (ip-api.com is free and doesn't require keys for low volume)
+    # Minimal GeoIP Check
     if ip_address and ip_address not in ["127.0.0.1", "localhost"] and not ip_address.startswith("192.168."):
         import requests
         try:
@@ -45,22 +48,37 @@ def redirect_scan(request, slug):
             if geo_response.get("status") == "success":
                 country = geo_response.get("country", "Unknown")
                 city = geo_response.get("city", "Unknown")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error(f"GeoIP Lookup failed for IP {ip_address}: {str(e)}")
 
-    # Save Scan record
-    Scan.objects.create(
-        qrcode=qrcode,
-        device_type=device_type,
-        os_family=user_agent.os.family,
-        browser=user_agent.browser.family,
-        ip_address=ip_address,
-        country=f"{city}, {country}" if city != "Unknown" else country,
-    )
+    # Bug 6 Fix: Deduplication (1-minute cooldown per IP/QR pair)
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    last_scan = Scan.objects.filter(
+        qrcode=qrcode, 
+        ip_address=ip_address, 
+        timestamp__gte=timezone.now() - timedelta(minutes=1)
+    ).exists()
 
-    # Increment total scan count in QRCode model
-    qrcode.scans += 1
-    qrcode.save(update_fields=["scans"])
+    if not last_scan:
+        # Save Scan record
+        Scan.objects.create(
+            user=qrcode.user,
+            qrcode=qrcode,
+            device_type=device_type,
+            os_family=user_agent.os.family,
+            browser=user_agent.browser.family,
+            ip_address=ip_address,
+            country=f"{city}, {country}" if city != "Unknown" else country,
+        )
+
+        # Bug 7 Fix: Atomic Increment using F()
+        from django.db.models import F
+        qrcode.scans = F('scans') + 1
+        qrcode.save(update_fields=["scans"])
+    else:
+        print(f"DEBUG: Deduplicated scan for QR {qrcode.id} from IP {ip_address}")
 
     # Check if this is a file-type QR code or has a file URL in value
     file_id = None
@@ -120,9 +138,9 @@ def redirect_scan(request, slug):
                 target_url = f"https://{target_url}"
             return HttpResponseRedirect(target_url)
         
-        # For file/pdf, redirect directly to the file URL
-        if file_obj and file_obj.file:
-            return HttpResponseRedirect(file_obj.file.url)
+        # For file/pdf, redirect to the backend proxy URL to handle internal S3 resolution
+        if file_obj:
+            return HttpResponseRedirect(f"{settings.BACKEND_URL}/api/files/public/{file_obj.id}/")
         elif file_url:
             return HttpResponseRedirect(file_url)
 
@@ -158,6 +176,7 @@ def capture_lead(request, slug):
             
             # Create a scan record with lead data
             scan = Scan.objects.create(
+                user=qrcode.user,
                 qrcode=qrcode,
                 visitor_name=visitor_name,
                 visitor_email=visitor_email,

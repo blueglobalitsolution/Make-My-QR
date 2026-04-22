@@ -9,7 +9,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.core.cache import cache
 import random
 from .email_utils import send_welcome_email, send_otp_email, send_signup_otp_email
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
 def get_user_subscription_data(user):
@@ -344,6 +344,19 @@ class UserPasswordChangeView(APIView):
         return Response({"message": "Password changed successfully"})
 
 
+class TokenRefreshView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Delete old token and create a new one
+        Token.objects.filter(user=request.user).delete()
+        new_token = Token.objects.create(user=request.user)
+        return Response({
+            "token": new_token.key,
+            "message": "Token refreshed successfully"
+        })
+
+
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
 
@@ -502,21 +515,56 @@ class PasswordResetConfirmView(APIView):
 
 
 class AdminUserListView(APIView):
-    permission_classes = [
-        IsAuthenticated
-    ]  # Simplified for now, frontnd checks staff too
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
-        if not request.user.is_staff:
-            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
-
         from qrcodes.models import QRCode
         from payments.models import UserSubscription
+        from django.db.models import Count, OuterRef, Subquery
 
-        users = User.objects.all().order_by("-date_joined")
+        # Get pagination parameters
+        try:
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 20))
+        except ValueError:
+            page = 1
+            page_size = 20
+
+        # Optimization: Use annotation for QR count and select_related for subscription
+        # This solves the N+1 query problem (#9)
+        users_queryset = User.objects.all().order_by("-date_joined").annotate(
+            qr_count_anno=Count('qrcodes')
+        ).prefetch_related('subscription__plan')
+
+        # Apply search if provided (#15)
+        search_query = request.query_params.get('search', '')
+        if search_query:
+            from django.db.models import Q
+            users_queryset = users_queryset.filter(
+                Q(username__icontains=search_query) | 
+                Q(email__icontains=search_query) |
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query)
+            )
+
+        total_users = users_queryset.count()
+        
+        # Apply pagination (#8)
+        start = (page - 1) * page_size
+        end = start + page_size
+        paginated_users = users_queryset[start:end]
+
         data = []
-        for user in users:
-            sub = UserSubscription.objects.filter(user=user).first()
+        for user in paginated_users:
+            # Try to get subscription data safely
+            try:
+                sub = user.subscription
+                plan_name = sub.plan.name if sub.plan else "Trial/Free"
+                plan_id = sub.plan.id if sub.plan else None
+            except:
+                plan_name = "Free"
+                plan_id = None
+
             data.append(
                 {
                     "id": user.id,
@@ -527,11 +575,19 @@ class AdminUserListView(APIView):
                     "is_active": user.is_active,
                     "is_staff": user.is_staff,
                     "date_joined": user.date_joined,
-                    "qr_count": QRCode.objects.filter(user=user).count(),
-                    "plan_name": sub.plan.name if sub and sub.plan else "Free",
+                    "qr_count": user.qr_count_anno,
+                    "plan_id": plan_id,
+                    "plan_name": plan_name,
                 }
             )
-        return Response(data)
+
+        return Response({
+            "users": data,
+            "total_count": total_users,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total_users + page_size - 1) // page_size
+        })
 
     def post(self, request):
         if not request.user.is_staff:

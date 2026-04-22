@@ -108,12 +108,12 @@ interface PdfPreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit?: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
-    isMobile?: boolean;
+    is_protected?: boolean;
 }
 
 export const PdfPreview: React.FC<PdfPreviewProps> = ({
@@ -132,7 +132,8 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
     viewMode,
     setViewMode,
     isPreview = false,
-    isMobile = false
+    isMobile = false,
+    is_protected
 }) => {
     const titleFont = businessData?.fontTitle || 'Poppins';
     const textFont = businessData?.fontText || 'Inter';

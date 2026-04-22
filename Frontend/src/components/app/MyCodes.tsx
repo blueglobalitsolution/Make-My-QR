@@ -53,6 +53,15 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   const [downloadingCode, setDownloadingCode] = useState<GeneratedCode | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<'png' | 'svg'>('png');
   const [previewCode, setPreviewCode] = useState<GeneratedCode | null>(null);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  // Debounced search logic (#4)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(localSearch);
+    }, 400); // 400ms delay
+    return () => clearTimeout(timer);
+  }, [localSearch, setSearchQuery]);
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -61,6 +70,19 @@ export const MyCodes: React.FC<MyCodesProps> = ({
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // Sync folder counts reliably (#1)
+  const folderCounts = React.useMemo(() => {
+    const counts: Record<string, number> = { all: history.length, general: 0 };
+    history.forEach(code => {
+      if (code.folderId && folders.some(f => f.id === code.folderId)) {
+        counts[code.folderId] = (counts[code.folderId] || 0) + 1;
+      } else {
+        counts.general++;
+      }
+    });
+    return counts;
+  }, [history, folders]);
 
   // Trigger download when capturing area is ready
   useEffect(() => {
@@ -111,17 +133,26 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   };
 
   const CodeThumbnail = React.memo(({ code }: { code: GeneratedCode }) => {
-    const options = React.useMemo(() => getQROptions(code, 300), [code]);
+    try {
+      const options = React.useMemo(() => getQROptions(code, 300), [code]);
 
-    return (
-      <div className="absolute inset-0 flex items-center justify-center scale-[0.55] origin-center pointer-events-none">
-        <div className="w-40 h-40 flex-shrink-0 flex items-center justify-center">
-          <QRFrameWrapper frame={code.settings?.frame || 'none'}>
-            <StyledQRCode options={options} size={150} />
-          </QRFrameWrapper>
+      return (
+        <div className="absolute inset-0 flex items-center justify-center scale-[0.55] origin-center pointer-events-none">
+          <div className="w-40 h-40 flex-shrink-0 flex items-center justify-center">
+            <QRFrameWrapper frame={code.settings?.frame || 'none'}>
+              <StyledQRCode options={options} size={150} />
+            </QRFrameWrapper>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } catch (error) {
+      console.error("QR Render Error", error);
+      return (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-50 text-[10px] font-bold text-slate-400">
+          Render Error
+        </div>
+      );
+    }
   });
 
   const scrollFolders = (direction: 'left' | 'right') => {
@@ -149,8 +180,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             <input
               type="text"
               placeholder="Search by name or URL..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
               className="w-full pl-14 pr-8 py-4 skeu-search font-medium text-[14px] outline-none hover:border-[#3eb5a9] focus:border-[#3eb5a9] transition-colors"
             />
           </div>
@@ -180,7 +211,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'all' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
             <Grid3X3 className={`w-4 h-4 transition-colors ${activeFolderId === 'all' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
-            <span>All ({history.length})</span>
+            <span>All ({folderCounts.all})</span>
           </button>
 
           <button
@@ -188,7 +219,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins min-w-[120px] group/folder-tab ${activeFolderId === 'general' ? 'skeu-tag-active' : 'skeu-tag'}`}
           >
             <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === 'general' ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
-            <span>General ({history.filter(c => !folders.some(f => f.id === c.folderId)).length})</span>
+            <span>General ({folderCounts.general})</span>
           </button>
 
           {folders.map(folder => (
@@ -198,7 +229,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                 className={`px-6 py-3.5 rounded-[15px] font-bold text-[14px] capitalize flex items-center justify-center gap-2 flex-shrink-0 transition-all font-poppins pr-12 min-w-[160px] whitespace-nowrap group/folder-tab ${activeFolderId === folder.id ? 'skeu-tag-active' : 'skeu-tag'}`}
               >
                 <FolderIcon className={`w-4 h-4 transition-colors ${activeFolderId === folder.id ? 'text-white' : 'text-red-400/40 group-hover/folder-tab:text-white'}`} />
-                <span>{folder.name} ({history.filter(c => c.folderId === folder.id).length})</span>
+                <span>{folder.name} ({folderCounts[folder.id] || 0})</span>
               </button>
               <button
                 onClick={(e) => {
@@ -276,7 +307,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
             filteredHistory.map(code => {
               const folder = folders.find(f => f.id === code.folderId);
               return (
-                <div key={code.id} className="grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] items-center skeu-card rounded-[5px] px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20">
+                <div key={code.id} className={`grid grid-cols-[160px_1.2fr_1fr_1fr_1.2fr_1fr_140px] items-center skeu-card rounded-[5px] px-8 py-4 gap-6 group hover:translate-y-[-1px] transition-all duration-300 bg-white/50 backdrop-blur-sm ring-1 ring-red-100/20 ${code.isOptimistic ? 'opacity-50 pointer-events-none' : ''}`}>
                   {/* QR Thumbnail */}
                   <div>
                     <button
@@ -367,7 +398,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                       onClick={() => {
                         const baseUrl = window.location.origin;
                         const slug = code.shortSlug || (code as any).short_slug;
-                        const shareUrl = `${baseUrl}/s/${slug}`;
+                        const isFile = code.category === 'file' || code.category === 'pdf';
+                        const shareUrl = `${baseUrl}/view/${isFile ? 'file/' : ''}${slug}`;
                         navigator.clipboard.writeText(shareUrl);
                         setToast('Link copied to clipboard!');
                       }}
@@ -467,7 +499,8 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     onClick={() => {
                       const baseUrl = window.location.origin;
                       const slug = code.shortSlug || (code as any).short_slug;
-                      const shareUrl = `${baseUrl}/s/${slug}`;
+                      const isFile = code.category === 'file' || code.category === 'pdf';
+                      const shareUrl = `${baseUrl}/view/${isFile ? 'file/' : ''}${slug}`;
                       navigator.clipboard.writeText(shareUrl);
                       setToast('Link copied to clipboard!');
                     }}

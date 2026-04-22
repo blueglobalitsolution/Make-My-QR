@@ -35,7 +35,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0").split(",")
 if DEBUG:
     ALLOWED_HOSTS.append("*")
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Application definition
 
@@ -140,7 +140,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1",
     "http://0.0.0.0",
-    "http://192.168.1.208", # Machine IP
+    "http://192.168.1.208",  # Machine IP
 ]
 
 SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
@@ -154,8 +154,8 @@ EMAIL_BACKEND = os.getenv(
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "blueglobalcloud@gmail.com")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "pjooewfxcxhtldod")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "makemyqrcodeapp@gmail.com")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "yfxmqmjlfuclyntw")
 
 # Redis Cache Settings
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
@@ -211,7 +211,7 @@ MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
 MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
 MINIO_REGION = os.getenv("MINIO_REGION", "us-east-1")
 
-AWS_S3_ENDPOINT_URL = f"http://{MINIO_ENDPOINT}"
+AWS_S3_ENDPOINT_URL = f"http://{MINIO_ENDPOINT}"  # Internal Docker communication is always HTTP
 AWS_S3_REGION_NAME = MINIO_REGION
 AWS_ACCESS_KEY_ID = MINIO_ACCESS_KEY
 AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
@@ -219,12 +219,51 @@ AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = True  # Enabled for private MinIO buckets
+AWS_S3_AUTO_CREATE_BUCKET = True # Ensure bucket exists
 
 DOMAIN = os.getenv("DOMAIN", "localhost")
-AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", f"{DOMAIN}:9000/{MINIO_BUCKET_NAME}")
+# AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", f"{DOMAIN}:9000/{MINIO_BUCKET_NAME}")
+MINIO_PUBLIC_URL = os.getenv("MINIO_PUBLIC_URL", "qrstorage.makemyqrcode.com/file")
+AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", "qrstorage.makemyqrcode.com")
 AWS_S3_URL_PROTOCOL = "https" if MINIO_SECURE else "http"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # Construct MEDIA_URL for public access via browser
-MEDIA_URL = f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/"
+# MEDIA_URL = f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = os.getenv("MEDIA_URL", f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/")
+
+
+# Custom URL function for MinIO
+def custom_get_file_url(self, name):
+    protocol = "https" if MINIO_SECURE else "http"
+    return f"{protocol}://qrstorage.makemyqrcode.com/file/{name}"
+
+
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+# Monkey patch the storage
+from storages.backends.s3boto3 import S3Boto3Storage
+
+S3Boto3Storage.url = custom_get_file_url

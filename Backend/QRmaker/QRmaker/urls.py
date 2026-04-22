@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/folders/', include('folders.urls')),
     path('api/files/', include('files.urls')),
     path('api/payments/', include('payments.urls')),
-    path('r/<str:slug>/', include('scans.urls')),
+    path('r/<slug:slug>/', include('scans.urls')),
 ]
 
 from django.conf import settings

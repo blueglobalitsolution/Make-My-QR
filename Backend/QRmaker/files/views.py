@@ -21,19 +21,29 @@ class FileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         from users.subscription_utils import is_subscription_active
+
         if not is_subscription_active(self.request.user):
             return File.objects.none()
         return File.objects.filter(user=self.request.user).order_by("-created_at")
 
     def perform_create(self, serializer):
         from users.subscription_utils import can_upload_file, is_subscription_active
+
         uploaded_file = self.request.FILES.get("file")
         if not is_subscription_active(self.request.user):
             from rest_framework.exceptions import PermissionDenied
-            raise PermissionDenied("Trial period expired. Please upgrade your subscription.")
-        if not can_upload_file(self.request.user, uploaded_file.size if uploaded_file else 0):
-             from rest_framework.exceptions import ValidationError
-             raise ValidationError("Upload limit reached for your current plan. Please upgrade your subscription.")
+
+            raise PermissionDenied(
+                "Trial period expired. Please upgrade your subscription."
+            )
+        if not can_upload_file(
+            self.request.user, uploaded_file.size if uploaded_file else 0
+        ):
+            from rest_framework.exceptions import ValidationError
+
+            raise ValidationError(
+                "Upload limit reached for your current plan. Please upgrade your subscription."
+            )
 
         file_type = ""
         if uploaded_file:
@@ -42,14 +52,11 @@ class FileViewSet(viewsets.ModelViewSet):
             file_type = ext.replace(".", "").lower()
 
         # Find or ensure root folder exists
-        root_folder = Folder.objects.filter(
-            user=self.request.user, is_root=True
-        ).first()
-        if not root_folder:
-            # Fallback if somehow it doesn't exist
-            root_folder = Folder.objects.create(
-                user=self.request.user, name=self.request.user.username, is_root=True
-            )
+        root_folder, created = Folder.objects.get_or_create(
+            user=self.request.user,
+            is_root=True,
+            defaults={"name": self.request.user.username},
+        )
 
         serializer.save(
             user=self.request.user,
@@ -67,15 +74,30 @@ class FileViewSet(viewsets.ModelViewSet):
 
 def public_file_view(request, file_id):
     """
-    Public endpoint to serve files without authentication.
-    Used by QR code scans to display PDFs and other files.
-    Redirects to the S3/MinIO URL for direct access.
+    Public endpoint to serve files through a backend proxy.
+    This avoids direct exposure of S3/MinIO URLs and handles internal network resolution.
     """
     file_obj = get_object_or_404(File, id=file_id)
 
     if not file_obj.file:
         raise Http404("File not found")
 
-    # Get the S3/MinIO URL and redirect to it
-    file_url = file_obj.file.url
-    return HttpResponseRedirect(file_url)
+    # Access Control:
+    # 1. Allow if the file is explicitly marked as public
+    # 2. Allow if the current requester is the owner of the file
+    is_owner = request.user.is_authenticated and request.user == file_obj.user
+    
+    if not file_obj.is_public and not is_owner:
+        raise Http404("File not found")
+
+    # Check if the owner's subscription is still active (only for public access)
+    if not is_owner:
+        from users.subscription_utils import is_subscription_active
+        if not is_subscription_active(file_obj.user):
+            raise Http404("Subscription expired or account inactive")
+
+    try:
+        return HttpResponseRedirect(file_obj.file.url)
+    except Exception as e:
+        print(f"Error serving file {file_id}: {e}")
+        raise Http404("Unable to serve file")

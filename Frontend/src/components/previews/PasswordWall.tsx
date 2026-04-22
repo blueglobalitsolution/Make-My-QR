@@ -3,7 +3,7 @@ import { Lock, ArrowRight, AlertCircle } from 'lucide-react';
 
 interface PasswordWallProps {
     brandColor: string;
-    onSubmit: (password: string) => boolean;
+    onSubmit: (password: string) => Promise<boolean> | boolean;
     infoText?: string;
 }
 
@@ -15,9 +15,9 @@ export const PasswordWall: React.FC<PasswordWallProps> = ({
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const success = onSubmit(password);
+        const success = await onSubmit(password);
         if (!success) {
             setError(true);
             setTimeout(() => setError(false), 3000);

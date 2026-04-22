@@ -30,8 +30,8 @@ export const getAdminStats = async () => {
   return response.data;
 };
 
-export const getAdminUsers = async () => {
-  const response = await client.get('/users/admin/users/');
+export const getAdminUsers = async (page: number = 1, search: string = '') => {
+  const response = await client.get(`/users/admin/users/?page=${page}&search=${encodeURIComponent(search)}`);
   return response.data;
 };
 

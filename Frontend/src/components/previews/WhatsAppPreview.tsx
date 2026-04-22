@@ -15,8 +15,9 @@ interface WhatsAppPreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit?: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
+    is_protected?: boolean;
 }
 
 // WhatsApp-style chat background pattern (SVG as data URL)
@@ -32,7 +33,8 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
     setLeadForm,
     onLeadSubmit,
     onPasswordSubmit,
-    isPasswordVerified = true
+    isPasswordVerified = true,
+    is_protected
 }) => {
     const handleOpen = () => { window.open(fullValue, '_blank'); };
 

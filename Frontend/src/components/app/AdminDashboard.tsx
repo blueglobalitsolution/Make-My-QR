@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Users, Database, LogOut, Settings, CreditCard, Plus, Trash2, Edit, Check, X, Calendar, ArrowRight, ShieldCheck, Clock, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Users, Database, LogOut, Settings, CreditCard, Plus, Trash2, Edit, Check, X, Calendar, ArrowRight, ShieldCheck, Clock, TrendingUp, Search, QrCode } from 'lucide-react';
 import { getAdminStats, getAdminPlans, createAdminPlan, updateAdminPlan, deleteAdminPlan, getAdminUserSubscriptions, getAdminUsers, manageAdminUser } from '../../api/admin';
 
 interface AdminDashboardProps {
@@ -12,7 +12,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     const [plans, setPlans] = useState<any[]>([]);
     const [userSubs, setUserSubs] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
+    const [userPagination, setUserPagination] = useState({
+        page: 1,
+        totalCount: 0,
+        totalPages: 1
+    });
+    const [userSearch, setUserSearch] = useState('');
+    const [userSearchQuery, setUserSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [savingPlan, setSavingPlan] = useState(false);
     const [confirmModal, setConfirmModal] = useState<{
         isOpen: boolean;
         title: string;
@@ -47,7 +55,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
     useEffect(() => {
         fetchData();
-    }, [activeTab]);
+    }, [activeTab, userPagination.page, userSearchQuery]);
+
+    // Debounce user search (#15)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setUserSearchQuery(userSearch);
+            setUserPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 on search
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [userSearch]);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -62,8 +79,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 const data = await getAdminUserSubscriptions();
                 setUserSubs(data);
             } else if (activeTab === 'users') {
-                const data = await getAdminUsers();
-                setUsers(data);
+                const response = await getAdminUsers(userPagination.page, userSearchQuery);
+                setUsers(response.users);
+                setUserPagination({
+                    page: response.page,
+                    totalCount: response.total_count,
+                    totalPages: response.total_pages
+                });
             }
         } catch (err) {
             console.error("Failed to fetch admin data", err);
@@ -73,6 +95,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     };
 
     const handleSavePlan = async () => {
+        setSavingPlan(true);
         try {
             const dataToSave = {
                 ...planForm,
@@ -84,17 +107,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 await createAdminPlan(dataToSave);
             }
             setIsEditingPlan(null);
+            setPlanForm({ name: '', price: '', duration_months: 1, features: [], qr_limit: 5, can_create_dynamic: false, can_create_pdf: false, can_create_business: false, can_password_protect: false, can_lead_capture: false, can_access_analytics: false, upload_limit_mb: 5, is_lifetime: false });
             fetchData();
         } catch (err) {
             alert("Error saving plan");
+        } finally {
+            setSavingPlan(false);
         }
     };
 
     const handleDeletePlan = async (id: number) => {
+        // Fetch users if not already loaded to check usage
+        let currentUsers = users;
+        if (currentUsers.length === 0) {
+            try {
+                currentUsers = await getAdminUsers();
+                setUsers(currentUsers);
+            } catch (err) {
+                console.error("Failed to fetch users for plan check", err);
+            }
+        }
+
+        const planUsers = currentUsers.filter(u => u.plan_id === id);
+        if (planUsers.length > 0) {
+            setConfirmModal({
+                isOpen: true,
+                title: 'Cannot Delete Plan',
+                message: `This plan is currently assigned to ${planUsers.length} user(s). You must move these users to another plan before deleting this one.`,
+                type: 'info',
+                onConfirm: () => setConfirmModal(prev => ({ ...prev, isOpen: false }))
+            });
+            return;
+        }
+
         setConfirmModal({
             isOpen: true,
             title: 'Delete Plan?',
-            message: 'Are you sure you want to delete this subscription plan? Existing users of this plan will remain but no new users can join.',
+            message: 'Are you sure you want to delete this subscription plan? This action cannot be undone.',
             type: 'danger',
             onConfirm: async () => {
                 try {
@@ -122,6 +171,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                         fetchData();
                     } catch (err) {
                         alert("Error deleting user");
+                    }
+                }
+            });
+            return;
+        }
+
+        if (action === 'toggle_active') {
+            const user = users.find(u => u.id === userId);
+            const statusLabel = user?.is_active ? 'Deactivate' : 'Activate';
+
+            setConfirmModal({
+                isOpen: true,
+                title: `${statusLabel} User?`,
+                message: `Are you sure you want to ${statusLabel.toLowerCase()} ${user?.username}'s account?`,
+                type: 'info',
+                onConfirm: async () => {
+                    try {
+                        await manageAdminUser(userId, action);
+                        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                        fetchData();
+                    } catch (err) {
+                        alert("Error toggling user status");
                     }
                 }
             });
@@ -176,54 +247,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-inter">
-            {/* Top Navigation */}
-            <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-md shadow-red-600/20">
-                        <ShieldCheck className="w-5 h-5 text-white" />
+            {/* Header (#20 fix for mobile) */}
+            <header className="bg-white/80 backdrop-blur-md border-b border-slate-50 sticky top-0 z-30 px-4 md:px-8 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 skeu-logo-container flex items-center justify-center">
+                        <QrCode className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="skeu-page-title !text-lg leading-none">MakeMyQR <span className="text-red-600">Admin</span></h1>
-                        <p className="skeu-page-subtitle !text-[9px] capitalize ">Subscription Control Panel</p>
+                        <h1 className="text-lg font-black uppercase tracking-tighter text-slate-800 leading-none">Console</h1>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin Control</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-6">
-                    <nav className="hidden md:flex items-center bg-slate-100 p-1 rounded-xl">
-                        <button
-                            onClick={() => setActiveTab('overview')}
-                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'overview' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                        >
-                            Overview
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('plans')}
-                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'plans' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                        >
-                            Manage Plans
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('subscriptions')}
-                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'subscriptions' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                        >
-                            Subscriptions
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('users')}
-                            className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'users' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                        >
-                            Users
-                        </button>
-                    </nav>
+                <nav className="flex overflow-x-auto no-scrollbar max-w-[60%] md:max-w-none md:flex gap-1 md:gap-2 bg-slate-100/50 p-1 md:p-1.5 rounded-2xl border border-slate-50">
+                    <button
+                        onClick={() => setActiveTab('overview')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'overview' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Overview
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('plans')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'plans' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Manage Plans
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('subscriptions')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'subscriptions' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Subscriptions
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'users' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Users
+                    </button>
+                </nav>
 
-                    <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
-                        <button
-                            onClick={() => setView('superadmin_login')}
-                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-red-600 transition-colors"
-                        >
-                            <LogOut className="w-4 h-4" /> Sign Out
-                        </button>
-                    </div>
+                <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
+                    <button
+                        onClick={() => setView('superadmin_login')}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-red-600 transition-colors"
+                    >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
                 </div>
             </header>
 
@@ -478,9 +547,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                 <div className="pt-6">
                                                     <button
                                                         onClick={handleSavePlan}
-                                                        className="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-[1.25rem] font-black text-[12px] uppercase tracking-[0.1em] shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-3"
+                                                        disabled={savingPlan}
+                                                        className="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-[1.25rem] font-black text-[12px] uppercase tracking-[0.1em] shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                                                     >
-                                                        <Check className="w-5 h-5" /> Save Plan Configuration
+                                                        {savingPlan ? (
+                                                            <>
+                                                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                                Processing...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Check className="w-5 h-5" /> Save Plan Configuration
+                                                            </>
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>
@@ -597,12 +676,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                             </span>
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <div className={`flex items-center gap-2 text-xs font-bold ${sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000
-                                                                ? 'text-red-500' : 'text-slate-500'
-                                                                }`}>
+                                                            <div className={`flex items-center gap-2 text-xs font-bold ${(() => {
+                                                                if (!sub.expiry_date) return 'text-slate-500';
+                                                                const diff = new Date(sub.expiry_date).getTime() - new Date().getTime();
+                                                                if (diff < 0) return 'text-slate-300';
+                                                                if (diff < 7 * 24 * 60 * 60 * 1000) return 'text-red-500';
+                                                                return 'text-slate-500';
+                                                            })()}`}>
                                                                 <Calendar className="w-3.5 h-3.5" />
                                                                 {sub.expiry_date ? new Date(sub.expiry_date).toLocaleDateString() : (sub.plan_name?.toLowerCase().includes('lifetime') ? 'LIFETIME' : 'N/A')}
-                                                                {sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000 && (
+                                                                {sub.expiry_date && (new Date(sub.expiry_date).getTime() - new Date().getTime() < 7 * 24 * 60 * 60 * 1000) && (new Date(sub.expiry_date).getTime() > new Date().getTime()) && (
                                                                     <span className="bg-red-50 text-[8px] px-1.5 py-0.5 rounded ml-1 animate-pulse">EXPIRING SOON</span>
                                                                 )}
                                                             </div>
@@ -631,6 +714,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
                             {activeTab === 'users' && (
                                 <div className="bg-white rounded-[2.5rem] p-1 shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-8 border-b border-slate-50 bg-slate-50/20 flex flex-wrap items-center justify-between gap-4">
+                                        <div className="relative group">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#3eb5a9] transition-colors" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search users..."
+                                                value={userSearch}
+                                                onChange={(e) => setUserSearch(e.target.value)}
+                                                className="pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold outline-none focus:border-[#3eb5a9] transition-all w-64 shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300 transition-colors">
+                                                Export Users
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-left border-collapse">
                                             <thead>

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class SubscriptionPlan(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration_months = models.IntegerField()
     features = models.JSONField(default=list)
@@ -107,8 +107,6 @@ class UserSubscription(models.Model):
         if self.status != old_status:
             self.log_transition(old_status, self.status)
             self.save()
-        else:
-            self.save(update_fields=['is_active']) # Always ensure activity bit is synced
 
     def update_subscription(self, plan):
         from django.utils import timezone
@@ -135,6 +133,19 @@ class UserSubscription(models.Model):
         self.purchase_count += 1
         self.log_transition(old_status, self.status)
         self.save()
+
+        # Notify user of subscription update
+        try:
+            from users.email_utils import send_subscription_notification
+            send_subscription_notification(
+                to_email=self.user.email,
+                name=f"{self.user.first_name} {self.user.last_name}".strip() or self.user.username,
+                plan_name=self.plan.name,
+                status=self.status,
+                expiry_date=self.expiry_date
+            )
+        except Exception as e:
+            print(f"Failed to send subscription notification: {e}")
 
 class SubscriptionAuditLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscription_logs')

@@ -11,6 +11,26 @@ class Command(BaseCommand):
         # 12 Months: 7 (Starter), 8 (Pro), 9 (Enterprise)
         
         plans = [
+             # Standard Free & Trial Plans
+            {
+                'id': 100,
+                'name': 'Trial',
+                'price': 0.00,
+                'duration_months': 0,
+                'features': ['All pro features for 7 days', 'Test drive and enjoy our service'],
+                'can_create_pdf': True,
+                'can_create_business': True,
+                'can_create_dynamic': True,
+                'can_access_analytics': True,
+                'qr_limit': 100,
+            },
+            {
+                'id': 101,
+                'name': 'Free',
+                'price': 0.00,
+                'duration_months': 0,
+                'features': ['10 Dynamic Codes', 'Standard Analytics']
+            },
             # 3 Months Billing
             {
                 'id': 1,
@@ -79,16 +99,23 @@ class Command(BaseCommand):
             }
         ]
 
-        # First clean up old plans if needed or just update
-        for plan_data in plans:
-            plan, created = SubscriptionPlan.objects.update_or_create(
-                id=plan_data['id'],
-                defaults=plan_data
-            )
-            if created:
-                self.stdout.write(self.style.SUCCESS(f'Successfully created plan: {plan.name}'))
-            else:
+        current_ids = []
+        for p_data in plans:
+            pid = p_data.pop('id')
+            current_ids.append(pid)
+            plan = SubscriptionPlan.objects.filter(id=pid).first()
+            if plan:
+                # Update existing
+                for key, value in p_data.items():
+                    setattr(plan, key, value)
+                plan.save()
                 self.stdout.write(self.style.SUCCESS(f'Successfully updated plan: {plan.name}'))
+            else:
+                # Create new
+                plan = SubscriptionPlan.objects.create(id=pid, **p_data)
+                self.stdout.write(self.style.SUCCESS(f'Successfully created plan: {plan.name}'))
         
-        # Remove the old test plan if it exists and isn't in IDs 1-9
-        SubscriptionPlan.objects.exclude(id__in=[p['id'] for p in plans]).delete()
+        # Cleanup
+        deleted_count, _ = SubscriptionPlan.objects.exclude(id__in=current_ids).delete()
+        if deleted_count:
+             self.stdout.write(self.style.WARNING(f'Deleted {deleted_count} obsolete plans'))

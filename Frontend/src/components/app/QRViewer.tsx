@@ -4,6 +4,7 @@ import { Shield, Lock } from 'lucide-react';
 import { GatekeeperPreview } from '../previews/gatekeeper';
 import { PdfPreview } from '../previews/PdfPreview';
 import { FontLoader } from '../FontLoader';
+import apiClient from '../../api/client';
 
 interface QRViewerProps {
     slug: string;
@@ -40,6 +41,17 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
 
     useEffect(() => {
         const fetchCode = async () => {
+            if (!slug) return;
+
+            // Check if slug looks like a URL (happens if relative links break)
+            if (slug.includes('.') || slug.startsWith('http')) {
+                let target = slug;
+                if (!target.startsWith('http')) target = `https://${target}`;
+                console.log("Malformed slug detected, redirecting to target:", target);
+                window.location.replace(target);
+                return;
+            }
+
             try {
                 setLoading(true);
                 setIsAuthorized(false);
@@ -48,14 +60,9 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 setQrData(data);
 
                 // Check if user is logged in
-                const savedUser = localStorage.getItem('makemyqr_user') || localStorage.getItem('barqr_user');
+                const savedUser = localStorage.getItem('makemyqr_user');
                 const hasSession = !!savedUser;
                 setIsLoggedIn(hasSession);
-
-                // Authorization logic:
-                // 1. Password Must be verified if enabled
-                // 2. Lead capture must be submitted if enabled
-                // 3. Otherwise authorized immediately
 
                 if (!data.is_protected && !data.is_lead_capture) {
                     setIsAuthorized(true);
@@ -72,20 +79,21 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
             }
         };
 
-        if (slug) {
-            fetchCode();
-        }
+        fetchCode();
     }, [slug, setView]);
 
-    const handlePasswordSubmit = (password: string) => {
-        if (password === qrData.password) {
+    const handlePasswordSubmit = async (password: string) => {
+        try {
+            await apiClient.post(`/qrcodes/${slug}/verify-password/`, { password });
             setIsPasswordVerified(true);
             if (!qrData.is_lead_capture) {
                 setIsAuthorized(true);
             }
             return true;
+        } catch (err) {
+            console.error("Password Verification Error:", err);
+            return false;
         }
-        return false;
     };
 
     const handleLeadSubmit = async (e: React.FormEvent) => {
@@ -97,16 +105,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     return;
                 }
 
-                const response = await fetch(`/r/${slug}/capture-lead/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(leadForm)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to capture lead: ${response.status}`);
-                }
-
+                await apiClient.post(`/qrcodes/${slug}/capture-lead/`, leadForm);
                 console.log("Lead captured successfully");
                 setIsAuthorized(true);
             } catch (err) {
@@ -127,26 +126,26 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
     const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
     let fullValue = '';
     if (qrData) {
-        // For PDF type, prefer file_url from backend, otherwise construct from value
-        if (file_url) {
-            fullValue = file_url;
-        } else if (category === 'pdf') {
-            // For PDF category, use value as the file path
-            if (value?.startsWith('http')) {
-                fullValue = value;
-            } else if (value?.startsWith('/media/')) {
-                fullValue = `${backendUrl}${value}`;
-            } else if (value?.startsWith('/')) {
-                fullValue = `${backendUrl}${value}`;
+        // Source selection logic:
+        // 1. file_url from backend (highest priority, should be the proxied endpoint)
+        // 2. value if it's a direct URL
+        let rawUrl = file_url || value;
+
+        if (rawUrl) {
+            if (rawUrl.startsWith('http')) {
+                fullValue = rawUrl;
+            } else if (rawUrl.startsWith('/')) {
+                // Ensure it doesn't double slash if backendUrl has trailing slash
+                const base = backendUrl.endsWith('/') ? backendUrl.slice(0, -1) : backendUrl;
+                fullValue = `${base}${rawUrl}`;
             } else {
-                fullValue = value;
+                fullValue = rawUrl;
             }
-        } else if (value?.startsWith('/media/')) {
-            fullValue = `${backendUrl}${value}`;
-        } else if (value?.startsWith('/')) {
-            fullValue = `${backendUrl}${value}`;
-        } else {
-            fullValue = value;
+
+            // Final protocol check for website category
+            if (category === 'website' && fullValue && !fullValue.startsWith('http')) {
+                fullValue = `https://${fullValue}`;
+            }
         }
     }
 
@@ -219,6 +218,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     fullValue={fullValue}
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
+                    is_protected={is_protected}
                     isFileMode={effectiveIsFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
@@ -237,6 +237,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
+                    is_protected={is_protected}
                     isFileMode={effectiveIsFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}

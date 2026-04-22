@@ -173,24 +173,9 @@ export const useAuth = (
   const handleAuth = async () => {
     try {
       const data = await login(loginEmail, loginPassword);
-      const user: User = {
-        id: data.user_id.toString(),
-        email: data.email,
-        name: `${data.first_name} ${data.last_name}`.trim() || data.email.split('@')[0],
-        firstName: data.first_name,
-        lastName: data.last_name,
-        plan: (data.subscription?.plan || 'free') as any,
-        isAdmin: false,
-        isStaff: data.is_staff,
-        createdAt: new Date().toISOString(),
-        daysRemaining: data.subscription?.expiry_date
-          ? Math.ceil((new Date(data.subscription.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-          : 0,
-        savedPalettes: [],
-        subscription: data.subscription
-      };
+      const { mapUserData } = await import('../api/mappers');
+      const user = mapUserData(data);
       setCurrentUser(user);
-      localStorage.setItem('makemyqr_user', JSON.stringify(user));
 
       const searchParams = new URLSearchParams(window.location.search);
       const next = searchParams.get('next');
@@ -209,7 +194,7 @@ export const useAuth = (
   const handleLogout = () => {
     logout();
     setCurrentUser(null);
-    setView('login');
+    window.location.href = '/';
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -226,23 +211,9 @@ export const useAuth = (
         setSignupStep(2);
       } else {
         const username = regEmail.split('@')[0] + Math.floor(Math.random() * 1000);
-        const data = await register(username, regEmail, regPassword, regOtp, regName, regLastName);
-        const user: User = {
-          id: data.user_id.toString(),
-          email: data.email,
-          name: `${regName} ${regLastName}`.trim() || data.email.split('@')[0],
-          firstName: regName,
-          lastName: regLastName,
-          plan: (data.subscription?.plan || 'free') as any,
-          isAdmin: false,
-          createdAt: new Date().toISOString(),
-          daysRemaining: data.subscription?.days_remaining || 7,
-          savedPalettes: [],
-          subscription: data.subscription
-        };
-        setCurrentUser(user);
-        localStorage.setItem('makemyqr_user', JSON.stringify(user));
-        window.location.reload();
+        await register(username, regEmail, regPassword, regOtp, regName, regLastName);
+        triggerAlert("Success", "Account created successfully! Please log in to your account.", "info");
+        setView('login');
       }
     } catch (err: any) {
       const data = err.response?.data;

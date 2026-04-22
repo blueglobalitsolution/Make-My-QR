@@ -20,8 +20,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ setView, auth }) => {
             const data = await login(email, password);
 
             if (data.user && (data.user.is_staff || data.user.is_superuser)) {
-                localStorage.setItem('makemyqr_token', data.token);
-                localStorage.setItem('makemyqr_user', JSON.stringify(data.user));
                 setView('admin_dashboard');
             } else {
                 alert("Unauthorized: Admin access required.");

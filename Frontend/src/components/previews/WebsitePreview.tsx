@@ -15,9 +15,10 @@ interface WebsitePreviewProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit?: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
     isPreview?: boolean;
+    is_protected?: boolean;
 }
 
 export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
@@ -31,11 +32,16 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
     onLeadSubmit,
     onPasswordSubmit,
     isPasswordVerified = true,
-    isPreview = false
+    isPreview = false,
+    is_protected
 }) => {
     const handleAction = () => {
         if (isPreview) return;
-        window.location.href = fullValue;
+        let url = fullValue;
+        if (url && !url.startsWith('http') && !url.startsWith('/') && !url.startsWith('mailto:')) {
+            url = `https://${url}`;
+        }
+        window.location.href = url;
     };
 
     return (
@@ -93,9 +99,9 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({
 
                         {(!isAuthorized && (is_lead_capture || !isPasswordVerified)) ? (
                             (!isPasswordVerified && onPasswordSubmit) ? (
-                                <PasswordWall 
-                                    brandColor={brandColor} 
-                                    onSubmit={onPasswordSubmit} 
+                                <PasswordWall
+                                    brandColor={brandColor}
+                                    onSubmit={onPasswordSubmit}
                                 />
                             ) : (
                                 <LeadCaptureForm

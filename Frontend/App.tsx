@@ -44,9 +44,8 @@ const App: React.FC = () => {
 
     path = path.split('?')[0] || 'login';
 
-    // If path is old admin_login or landing, redirect or mark as 404
-    if (path === 'admin_login' || path === 'landing') {
-      if (path === 'landing') return { view: 'login' as ViewState, businessId: null, fileMode: false };
+    // If path is old admin_login, mark as 404
+    if (path === 'admin_login') {
       return { view: '404' as ViewState, businessId: null, fileMode: false };
     }
 
@@ -67,6 +66,13 @@ const App: React.FC = () => {
       // Handle /view/:slug (regular QR viewer)
       const slug = parts[1];
       if (slug && slug !== 'business' && slug !== 'file') {
+        // Guard against slug being a full URL (happens if relative links break)
+        if (slug.includes('.') || slug.startsWith('http')) {
+          let target = slug;
+          if (!target.startsWith('http')) target = `https://${target}`;
+          window.location.replace(target);
+          return { view: '404' as ViewState, businessId: null, fileMode: false };
+        }
         return { view: 'qr_viewer' as ViewState, businessId: slug, fileMode: false };
       }
     }
@@ -171,7 +177,7 @@ const App: React.FC = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const wizardProps = useWizard(history, setHistory, folders, setFolders, editingId, setEditingId, setView, showAlert, auth.currentUser);
-  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappCountryCode, setWhatsappCountryCode, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, handleDeleteCoverImage, getQRValue, getPreviewValue, startQrFromAsset, resetWizard } = wizardProps;
+  const { wizard, setWizard, whatsappPhone, setWhatsappPhone, whatsappCountryCode, setWhatsappCountryCode, whatsappMessage, setWhatsappMessage, pdfFileName, pdfUrl, setPdfUrl, setPdfFileName, activeDesignSection, setActiveDesignSection, isTransparent, setIsTransparent, useFgGradient, setUseFgGradient, qrStylingOptions, selectedTypeConfig, handleNextStep, handleBackStep, toggleSection, updateBusinessField, updateBusinessButton, addLink, addLinkByIcon, updateLink, removeLink, reorderLink, swapColors, handleLogoUpload, handlePdfUpload, handleCoverImageUpload, handleDeleteCoverImage, getQRValue, getPreviewValue, startQrFromAsset, resetWizard, isProcessing } = wizardProps;
   const filteredHistory = history.filter(item => {
     const matchesFolder = activeFolderId === 'all' ||
       (activeFolderId === 'general'
@@ -206,17 +212,8 @@ const App: React.FC = () => {
       const [historyData, foldersData] = await Promise.all([getCodes(), getFolders()]);
 
       // Map backend data (snake_case) to frontend types (camelCase)
-      const mappedHistory = (Array.isArray(historyData) ? historyData : []).map((code: any) => ({
-        ...code,
-        id: code.id.toString(),
-        folderId: code.folder?.toString(),
-        shortSlug: code.short_slug,
-        isDynamic: code.is_dynamic,
-        isLeadCapture: code.is_lead_capture,
-        password: code.password,
-        createdAt: code.created_at,
-        userId: code.user?.toString()
-      }));
+      const { mapQRCodeData } = await import('./src/api/mappers');
+      const mappedHistory = (Array.isArray(historyData) ? historyData : []).map(mapQRCodeData);
 
       setHistory(mappedHistory);
       if (Array.isArray(foldersData)) {
@@ -238,7 +235,7 @@ const App: React.FC = () => {
       setBusinessProfiles(profiles);
 
       // Restore user state from local storage
-      const savedUserStr = localStorage.getItem('makemyqr_user') || localStorage.getItem('barqr_user');
+      const savedUserStr = localStorage.getItem('makemyqr_user');
       const savedToken = localStorage.getItem('makemyqr_token');
       const loginTime = localStorage.getItem('makemyqr_login_time');
 
@@ -266,7 +263,7 @@ const App: React.FC = () => {
 
           if (!isViewPath && isExpired) {
             setView('billing');
-          } else if (!isViewPath && (currentPath === '/' || currentPath === '/landing' || currentPath === '/login')) {
+          } else if (!isViewPath && (currentPath === '/' || currentPath === '/login' || currentPath === '/register' || currentPath === '/forgot_password')) {
             setView('my_codes');
           }
 
@@ -281,12 +278,29 @@ const App: React.FC = () => {
     init();
 
     // Check periodically for session expiration (every minute)
-    const sessionInterval = setInterval(() => {
+    const sessionInterval = setInterval(async () => {
       const loginTime = localStorage.getItem('makemyqr_login_time');
       const FIVE_HOURS = 5 * 60 * 60 * 1000;
-      if (loginTime && (Date.now() - parseInt(loginTime)) > FIVE_HOURS) {
-        auth.handleLogout();
-        showAlert("Session Expired", "Your session has expired. Please log in again for your security.", "info");
+      const FOUR_HOURS_45_MINS = 4.75 * 60 * 60 * 1000;
+
+      if (loginTime) {
+        const timeElapsed = Date.now() - parseInt(loginTime);
+
+        // Auto-refresh token if it's older than 4 hours and 45 mins
+        if (timeElapsed > FOUR_HOURS_45_MINS && timeElapsed < FIVE_HOURS) {
+          try {
+            const { refreshToken } = await import('./src/api/auth');
+            await refreshToken();
+            console.log("Token refreshed automatically");
+          } catch (err) {
+            console.error("Auto-refresh failed", err);
+          }
+        }
+        // Force logout if definitely expired
+        else if (timeElapsed > FIVE_HOURS) {
+          auth.handleLogout();
+          showAlert("Session Expired", "Your session has expired. Please log in again for your security.", "info");
+        }
       }
     }, 60000);
 
@@ -336,13 +350,25 @@ const App: React.FC = () => {
       'Delete QR Code',
       `Are you sure you want to delete "${code.name}"? This action cannot be undone.`,
       async () => {
+        // Optimistic UI Update: Local rollback state
+        const backupHistory = [...history];
+        const backupFolders = [...folders];
+
         try {
-          await apiDeleteCode(id);
+          // 1. Update UI Immediately
           setHistory(prev => prev.filter(h => h.id !== id));
           if (code.folderId) {
             setFolders(prev => prev.map(f => f.id === code.folderId ? { ...f, count: Math.max(0, (f.count || 0) - 1) } : f));
           }
-        } catch (err) { showAlert("Error", "Failed to delete QR code.", "danger"); }
+
+          // 2. Perform API Call
+          await apiDeleteCode(id);
+        } catch (err) {
+          // 3. Rollback on failure
+          setHistory(backupHistory);
+          setFolders(backupFolders);
+          showAlert("Error", "Failed to delete QR code. Please try again.", "danger");
+        }
       }
     );
   };
@@ -540,7 +566,7 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen flex skeu-app-bg overflow-hidden font-inter">
-      {view !== 'landing' && view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
+      {view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (
         <Sidebar
           view={view}
           setView={(v) => { setView(v); setIsSidebarOpen(false); }}
@@ -652,6 +678,7 @@ const App: React.FC = () => {
             createNewFolder={createNewFolder}
             phonePreviewMode={phonePreviewMode}
             setPhonePreviewMode={setPhonePreviewMode}
+            isProcessing={isProcessing}
           />
         )}
 

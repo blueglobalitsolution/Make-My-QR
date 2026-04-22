@@ -76,6 +76,7 @@ export interface UseWizardReturn {
   selectedTypeConfig: any;
   whatsappCountryCode: string;
   setWhatsappCountryCode: React.Dispatch<React.SetStateAction<string>>;
+  isProcessing: boolean;
 }
 
 const getInitialWizardState = (): WizardState => ({
@@ -159,6 +160,7 @@ export const useWizard = (
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfFileRecord, setPdfFileRecord] = useState<any>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (wizard.step === 2) {
@@ -172,6 +174,20 @@ export const useWizard = (
     }
   }, [wizard.step, wizard.type]);
 
+  // Bug Fix: Reset context-specific content when type changes in Step 1 to prevent data carry-over
+  useEffect(() => {
+    if (wizard.step === 1) {
+      setPdfFileName(null);
+      setPdfUrl(null);
+      setPdfFileRecord(null);
+      setWizard(prev => ({
+        ...prev,
+        value: '',
+        business: getInitialWizardState().business
+      }));
+    }
+  }, [wizard.type]);
+
   const getPreviewValue = () => {
     const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
 
@@ -180,7 +196,10 @@ export const useWizard = (
       const cleanCC = whatsappCountryCode.replace(/\s+/g, '').replace(/\+/g, '');
       return `https://wa.me/${cleanCC}${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
     }
-    const val = wizard.value || `${window.location.origin}/preview`;
+    let val = wizard.value || `${window.location.origin}/preview`;
+    if (wizard.type === 'website' && val && !val.startsWith('http') && !val.startsWith('/') && !val.startsWith('mailto:')) {
+      val = `https://${val}`;
+    }
     return val.startsWith('/') ? backendUrl + val : val;
   };
 
@@ -226,6 +245,8 @@ export const useWizard = (
   const selectedTypeConfig = QR_TYPES_CONFIG.find(t => t.id === wizard.type) || QR_TYPES_CONFIG[0];
 
   const handleNextStep = async () => {
+    if (isProcessing) return;
+
     // Ensure user is authenticated before proceeding
     if (!currentUser) {
       const msg = "Authentication credentials were not provided. Please log in again to save your progress.";
@@ -250,25 +271,23 @@ export const useWizard = (
     if (wizard.type === 'business') {
       const businessData = wizard.business;
       const businessProfileData = {
-        company: businessData?.company || '',
+        ...businessData,
+        id: 'temp',
+        company: businessData?.company || 'My Company',
         logo: businessData?.images?.[0] || '',
         headline: businessData?.title || '',
         title: businessData?.title || '',
         subtitle: businessData?.subtitle || '',
-        aboutCompany: businessData?.aboutCompany || '',
-        phones: businessData?.contact?.phones?.filter(p => p.value) || [],
-        emails: businessData?.contact?.emails?.filter(e => e.value) || [],
-        websites: businessData?.contact?.websites?.filter(w => w.value) || [],
-        address: businessData?.location?.searchAddress || '',
-        openingHours: businessData?.openingHours || INITIAL_HOURS,
-        socialNetworks: businessData?.socialNetworks?.filter(s => s.url) || [],
-        facilities: businessData?.facilities || [],
-        welcomeScreenImage: businessData?.welcomeScreenImage || '',
         primaryColor: businessData?.primaryColor || '#dc2626',
         secondaryColor: businessData?.secondaryColor || '#9DB3C2',
         fontTitle: businessData?.fontTitle || 'Inter',
         fontText: businessData?.fontText || 'Inter',
         buttons: businessData?.buttons || [],
+        phones: businessData?.contact?.phones?.filter(p => p.value) || [],
+        emails: businessData?.contact?.emails?.filter(e => e.value) || [],
+        websites: businessData?.contact?.websites?.filter(w => w.value) || [],
+        address: businessData?.location?.searchAddress || '',
+        openingHours: businessData?.openingHours || INITIAL_HOURS,
       };
 
       // Reuse existing profile ID if we're editing a code that already points to one
@@ -284,7 +303,6 @@ export const useWizard = (
         profileId = 'b' + Date.now().toString(36);
       }
 
-      // Business Profile Specific Persistence - Move inside try/catch but calculate finalValue here
       try {
         localStorage.setItem('business_' + profileId, JSON.stringify(businessProfileData));
       } catch (storageErr) {
@@ -302,64 +320,101 @@ export const useWizard = (
     }
 
     // 2. Step-specific logic
-    if (wizard.step === 2) {
-      console.log("Wizard: Advancing to Step 3...");
+    if (wizard.step === 1) {
+      setWizard(prev => ({ ...prev, step: 2 }));
+    } else if (wizard.step === 2) {
+      // Validate Step 2 content before proceeding
+      const isWebsiteInvalid = wizard.type === 'website' && !wizard.value;
+      const isPdfInvalid = wizard.type === 'pdf' && !pdfUrl;
+      const isWhatsappInvalid = wizard.type === 'whatsapp' && !whatsappPhone;
+      const isBusinessInvalid = wizard.type === 'business' && !wizard.business?.company;
+
+      if (isWebsiteInvalid || isPdfInvalid || isWhatsappInvalid || isBusinessInvalid) {
+        const msg = "Please provide the required content before moving to the next step.";
+        if (showAlert) showAlert("Validation Error", msg, "danger");
+        else alert(msg);
+        return;
+      }
+
       setWizard(prev => ({ ...prev, step: 3 }));
     } else if (wizard.step === 3) {
-      console.log("Wizard: Finalizing QR code styling...");
+      setIsProcessing(true);
+
+      const { mapQRCodeData } = await import('../api/mappers');
+      const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
+      const codePayload = {
+        folder: sanitizedFolderId,
+        type: wizard.mode,
+        category: wizard.type,
+        is_dynamic: true,
+        name: wizard.name || `My ${selectedTypeConfig.name}`,
+        value: finalValue,
+        is_protected: wizard.is_protected,
+        password: wizard.password,
+        is_lead_capture: wizard.is_lead_capture,
+        show_preview: wizard.show_preview,
+        settings: {
+          ...wizard.config,
+          business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined
+        }
+      };
+
+      // --- Optimistic UI Update ---
+      const optimisticId = editingId || `temp_${Date.now()}`;
+      const optimisticCode: GeneratedCode = {
+        id: optimisticId,
+        userId: currentUser?.id || '0',
+        name: codePayload.name,
+        value: codePayload.value,
+        category: wizard.type,
+        type: wizard.mode,
+        status: 'active',
+        scans: editingId ? (history.find(h => h.id === editingId)?.scans || 0) : 0,
+        createdAt: new Date().toISOString(),
+        isDynamic: true,
+        show_preview: wizard.show_preview,
+        settings: codePayload.settings,
+        imageUrl: editingId ? (history.find(h => h.id === editingId)?.imageUrl) : undefined,
+        isOptimistic: true
+      };
+
+      const backupHistory = [...history];
+      const backupFolders = [...folders];
+
+      // Update UI and switch view immediately
+      if (editingId) {
+        setHistory(prev => prev.map(h => h.id === editingId ? optimisticCode : h));
+      } else {
+        setHistory(prev => [optimisticCode, ...prev]);
+        if (wizard.folderId) {
+          setFolders(prev => prev.map(f => f.id === wizard.folderId ? { ...f, count: (f.count || 0) + 1 } : f));
+        }
+      }
+
+      setView('my_codes');
+      setWizard(prev => ({ ...prev, step: 1, value: '', name: '', folderId: undefined }));
+      setEditingId(null);
+
       try {
         let savedData;
-        const sanitizedFolderId = (wizard.folderId && !String(wizard.folderId).startsWith('f')) ? wizard.folderId : undefined;
-
-        const codePayload = {
-          folder: sanitizedFolderId,
-          type: wizard.mode,
-          category: wizard.type,
-          is_dynamic: true,
-          name: wizard.name || `My ${selectedTypeConfig.name}`,
-          value: finalValue,
-          is_protected: wizard.is_protected,
-          password: wizard.password,
-          is_lead_capture: wizard.is_lead_capture,
-          show_preview: wizard.show_preview,
-          settings: {
-            ...wizard.config,
-            business: (wizard.type === 'business' || wizard.type === 'pdf' || wizard.type === 'links') ? wizard.business : undefined
-          }
-        };
-
         if (editingId) {
           savedData = await updateCode(editingId, codePayload);
-          const mappedUpdatedData: GeneratedCode = {
-            ...savedData,
-            id: savedData.id.toString(),
-            folderId: savedData.folder?.toString(),
-            shortSlug: savedData.short_slug || savedData.shortSlug,
-            isDynamic: savedData.is_dynamic || savedData.isDynamic,
-            isLeadCapture: savedData.is_lead_capture || savedData.isLeadCapture,
-            createdAt: savedData.created_at || savedData.createdAt || new Date().toISOString()
-          };
-          setHistory(prev => prev.map(h => h.id === editingId ? { ...h, ...mappedUpdatedData } : h));
         } else {
           savedData = await saveCode(codePayload);
-          const newCode: GeneratedCode = {
-            ...savedData,
-            id: savedData.id.toString(),
-            folderId: savedData.folder?.toString(),
-            shortSlug: savedData.short_slug || savedData.shortSlug,
-            isDynamic: savedData.is_dynamic || savedData.isDynamic,
-            isLeadCapture: savedData.is_lead_capture || savedData.isLeadCapture,
-            createdAt: savedData.created_at || savedData.createdAt || new Date().toISOString()
-          };
-          setHistory(prev => [newCode, ...prev]);
-          if (wizard.folderId) {
-            setFolders(prev => prev.map(f => f.id === wizard.folderId ? { ...f, count: f.count + 1 } : f));
-          }
         }
 
+        const realCode = mapQRCodeData(savedData);
+
+        // Success: Replace optimistic item with server data
+        setHistory(prev => {
+          const targetId = editingId || optimisticId;
+          return prev.map(h => h.id === targetId ? realCode : h);
+        });
+
+        // Background: Generate higher-fidelity QR image
+        const currentCodeId = realCode.id;
+        const slug = realCode.shortSlug;
         const backendUrl = (import.meta as any).env?.VITE_BACKEND_URL || window.location.origin;
-        const currentCodeId = editingId || savedData.id.toString();
-        const slug = savedData.shortSlug || savedData.short_slug;
         const qrValue = slug ? `${backendUrl}/r/${slug}` : finalValue;
 
         try {
@@ -371,19 +426,16 @@ export const useWizard = (
         } catch (imgErr) {
           console.error('Failed to generate QR image:', imgErr);
         }
-
-        setView('my_codes');
-        setWizard(prev => ({ ...prev, step: 1, value: '', name: '', folderId: undefined }));
-        setEditingId(null);
       } catch (err) {
+        // Error: Rollback state
+        setHistory(backupHistory);
+        setFolders(backupFolders);
         const errorMsg = (err as any)?.response?.data?.detail || (err as any)?.response?.data?.error || (err as any).message || "Unknown error";
-        console.error("Finalization failed", err);
-        if (showAlert) showAlert("Error", `Failed to finalize QR code: ${errorMsg}`, "danger");
-        else alert(`Failed to finalize QR code: ${errorMsg}`);
+        console.error("Save failed", err);
+        if (showAlert) showAlert("Error", `Failed to save QR code: ${errorMsg}`, "danger");
+      } finally {
+        setIsProcessing(false);
       }
-    } else {
-      const nextStep = (wizard.step + 1) as 1 | 2 | 3;
-      setWizard(prev => ({ ...prev, step: nextStep }));
     }
   };
 
@@ -643,5 +695,6 @@ export const useWizard = (
     selectedTypeConfig,
     whatsappCountryCode,
     setWhatsappCountryCode,
+    isProcessing,
   };
 };

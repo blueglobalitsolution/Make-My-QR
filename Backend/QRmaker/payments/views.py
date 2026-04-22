@@ -3,6 +3,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, viewsets
+from django.db import transaction
 from .models import PaymentOrder, SubscriptionPlan, UserSubscription
 from .serializers import PaymentOrderSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer
 import json
@@ -75,16 +76,17 @@ class VerifyPaymentView(APIView):
                 # Verify the payment signature with Razorpay
                 client.utility.verify_payment_signature(params_dict)
             
-            # Update order status
-            order = PaymentOrder.objects.get(razorpay_order_id=razorpay_order_id)
-            order.razorpay_payment_id = razorpay_payment_id or "fake-payment-id"
-            order.razorpay_signature = razorpay_signature or "fake-signature"
-            order.status = 'success'
-            order.save()
+            with transaction.atomic():
+                # Lock the order for update
+                order = PaymentOrder.objects.select_for_update().get(razorpay_order_id=razorpay_order_id)
+                order.razorpay_payment_id = razorpay_payment_id or "fake-payment-id"
+                order.razorpay_signature = razorpay_signature or "fake-signature"
+                order.status = 'success'
+                order.save()
 
-            # Update UserSubscription
-            user_sub, created = UserSubscription.objects.get_or_create(user=order.user)
-            user_sub.update_subscription(order.plan)
+                # Update UserSubscription
+                user_sub, created = UserSubscription.objects.get_or_create(user=order.user)
+                user_sub.update_subscription(order.plan)
 
             return Response({"status": "Payment verified successfully (Dev Mock)"}, status=status.HTTP_200_OK)
         except (razorpay.errors.SignatureVerificationError, Exception) as e:
@@ -93,7 +95,13 @@ class VerifyPaymentView(APIView):
             if order:
                 order.status = 'failed'
                 order.save()
+                
+                # Reset user subscription status from 'payment_pending' back to its correct state
+                user_sub = UserSubscription.objects.filter(user=order.user).first()
+                if user_sub:
+                    user_sub.refresh_status()
             return Response({"error": f"Payment verification failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
 class AdminSubscriptionPlanViewSet(viewsets.ModelViewSet):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer
@@ -121,8 +129,12 @@ class RazorpayWebhookView(APIView):
         payload = request.body.decode("utf-8")
 
         try:
-            # Only verify signature if not in DEBUG or if secret is provided
-            if not settings.DEBUG and webhook_signature:
+            # Enforce signature verification if a secret is properly configured
+            # We skip only if using the default placeholder and in DEBUG mode for local convenience
+            is_placeholder = webhook_secret == "YOUR_WEBHOOK_SECRET"
+            if not (settings.DEBUG and is_placeholder):
+                if not webhook_signature:
+                    raise razorpay.errors.SignatureVerificationError("Missing X-Razorpay-Signature header")
                 client.utility.verify_webhook_signature(payload, webhook_signature, webhook_secret)
             
             data = json.loads(payload)
@@ -132,15 +144,16 @@ class RazorpayWebhookView(APIView):
                 payment_id = data["payload"]["payment"]["entity"]["id"]
                 order_id = data["payload"]["payment"]["entity"]["order_id"]
                 
-                # Update order and subscription
-                order = PaymentOrder.objects.filter(razorpay_order_id=order_id).first()
-                if order and order.status != 'success':
-                    order.status = 'success'
-                    order.razorpay_payment_id = payment_id
-                    order.save()
-                    
-                    user_sub, _ = UserSubscription.objects.get_or_create(user=order.user)
-                    user_sub.update_subscription(order.plan)
+                with transaction.atomic():
+                    # Update order and subscription
+                    order = PaymentOrder.objects.filter(razorpay_order_id=order_id).select_for_update().first()
+                    if order and order.status != 'success':
+                        order.status = 'success'
+                        order.razorpay_payment_id = payment_id
+                        order.save()
+                        
+                        user_sub, _ = UserSubscription.objects.get_or_create(user=order.user)
+                        user_sub.update_subscription(order.plan)
             
             return Response({"status": "ok"}, status=status.HTTP_200_OK)
         except Exception as e:

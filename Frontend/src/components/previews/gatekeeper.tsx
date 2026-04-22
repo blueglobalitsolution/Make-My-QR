@@ -22,12 +22,13 @@ export interface GatekeeperProps {
     };
     setLeadForm: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     viewMode: 'landing' | 'preview';
     setViewMode: React.Dispatch<React.SetStateAction<'landing' | 'preview'>>;
     isPreview?: boolean;
     activeSection?: string | null;
     isMobile?: boolean;
+    is_protected: boolean;
 }
 
 export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
@@ -48,7 +49,8 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     setViewMode,
     isPreview = false,
     activeSection,
-    isMobile = false
+    isMobile = false,
+    is_protected
 }) => {
     switch (category) {
         case 'website':
@@ -62,9 +64,9 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
-                    onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
                     isPreview={isPreview}
+                    is_protected={is_protected}
                 />
             );
 
@@ -81,11 +83,10 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     isFileMode={isFileMode}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
-                    onPasswordSubmit={onPasswordSubmit}
-                    viewMode={viewMode}
                     setViewMode={setViewMode}
                     isPreview={isPreview}
                     isMobile={isMobile}
+                    is_protected={is_protected}
                 />
             );
 
@@ -102,6 +103,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
+                    is_protected={is_protected}
                 />
             );
 
@@ -114,10 +116,9 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     is_lead_capture={is_lead_capture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
-                    onLeadSubmit={onLeadSubmit}
-                    onPasswordSubmit={onPasswordSubmit}
                     isPreview={isPreview}
                     activeSection={activeSection}
+                    is_protected={is_protected}
                 />
             );
 
@@ -135,6 +136,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
+                    is_protected={is_protected}
                 />
             );
     }

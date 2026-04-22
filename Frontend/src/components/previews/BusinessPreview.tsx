@@ -15,12 +15,13 @@ interface BusinessPreviewProps {
     leadForm?: { name: string; email: string };
     setLeadForm?: React.Dispatch<React.SetStateAction<{ name: string; email: string }>>;
     onLeadSubmit: (e: React.FormEvent) => void;
-    onPasswordSubmit?: (password: string) => boolean;
+    onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
     viewMode?: 'landing' | 'preview';
     setViewMode?: (mode: 'landing' | 'preview') => void;
     isPreview?: boolean;
     activeSection?: string | null;
+    is_protected?: boolean;
 }
 
 export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
@@ -37,7 +38,8 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     viewMode,
     setViewMode,
     isPreview,
-    activeSection
+    activeSection,
+    is_protected
 }) => {
     const primaryColor = businessData?.primaryColor || brandColor || '#6366f1';
     const titleFont = businessData?.fontTitle || 'Poppins';
