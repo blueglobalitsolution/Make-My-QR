@@ -14,4 +14,4 @@ razorpay
 django-storages
 boto3
 gunicorn
-django-redis
+

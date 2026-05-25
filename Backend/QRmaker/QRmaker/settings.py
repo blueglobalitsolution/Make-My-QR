@@ -20,9 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY", "django-insecure-%+e3_wjwb3=9d-o(#wa2cm89vd6yoh604-fm*2z02pptnbn!s^"
-)
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError(
+        "SECRET_KEY environment variable is required and must not be empty."
+    )
 
 # App URLs from ENV
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost")
@@ -157,21 +159,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "makemyqrcodeapp@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "yfxmqmjlfuclyntw")
 
-# Redis Cache Settings
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
-
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "KEY_PREFIX": "qrmaker",
         "TIMEOUT": 300,
     }
 }
-
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
 
 
 # Internationalization
@@ -211,7 +205,9 @@ MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
 MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
 MINIO_REGION = os.getenv("MINIO_REGION", "us-east-1")
 
-AWS_S3_ENDPOINT_URL = f"http://{MINIO_ENDPOINT}"  # Internal Docker communication is always HTTP
+AWS_S3_ENDPOINT_URL = (
+    f"http://{MINIO_ENDPOINT}"  # Internal Docker communication is always HTTP
+)
 AWS_S3_REGION_NAME = MINIO_REGION
 AWS_ACCESS_KEY_ID = MINIO_ACCESS_KEY
 AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
@@ -219,7 +215,7 @@ AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = True  # Enabled for private MinIO buckets
-AWS_S3_AUTO_CREATE_BUCKET = True # Ensure bucket exists
+AWS_S3_AUTO_CREATE_BUCKET = True  # Ensure bucket exists
 
 DOMAIN = os.getenv("DOMAIN", "localhost")
 # AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", f"{DOMAIN}:9000/{MINIO_BUCKET_NAME}")
@@ -240,25 +236,24 @@ def custom_get_file_url(self, name):
     return f"{protocol}://qrstorage.makemyqrcode.com/file/{name}"
 
 
-
 # Logging Configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }

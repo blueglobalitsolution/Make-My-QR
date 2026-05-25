@@ -17,6 +17,32 @@ def get_user_subscription_data(user):
     from django.utils import timezone
     from datetime import timedelta
 
+    # Superadmin override: always give lifetime free plan
+    if user.is_superuser:
+        superadmin_plan = SubscriptionPlan.objects.filter(
+            name="SuperAdmin Lifetime"
+        ).first()
+        if superadmin_plan:
+            return {
+                "plan": "superadmin",
+                "status": "paid_active",
+                "expiry_date": None,
+                "is_active": True,
+                "plan_details": {
+                    "name": superadmin_plan.name,
+                    "qr_limit": superadmin_plan.qr_limit,
+                    "can_create_dynamic": superadmin_plan.can_create_dynamic,
+                    "can_create_pdf": superadmin_plan.can_create_pdf,
+                    "can_create_business": superadmin_plan.can_create_business,
+                    "can_password_protect": superadmin_plan.can_password_protect,
+                    "can_lead_capture": superadmin_plan.can_lead_capture,
+                    "can_access_analytics": superadmin_plan.can_access_analytics,
+                    "upload_limit_mb": superadmin_plan.upload_limit_mb,
+                    "is_lifetime": superadmin_plan.is_lifetime,
+                },
+                "days_remaining": -1,  # indicates lifetime
+            }
+
     try:
         subscription = UserSubscription.objects.get(user=user)
         plan = subscription.plan
@@ -39,13 +65,14 @@ def get_user_subscription_data(user):
                     "upload_limit_mb": plan.upload_limit_mb,
                     "is_lifetime": plan.is_lifetime,
                 },
-                "days_remaining": 0
+                "days_remaining": 0,
             }
 
         # Refresh status on every check to ensure accuracy
         subscription.refresh_status()
-        
+
         import math
+
         time_left = subscription.expiry_date - timezone.now()
         days_remaining = max(0, math.ceil(time_left.total_seconds() / 86400))
         is_trial = "trial" in plan.name.lower()
@@ -68,18 +95,18 @@ def get_user_subscription_data(user):
                 "is_lifetime": plan.is_lifetime,
             },
             "days_remaining": days_remaining,
-            "trial_end_date": subscription.expiry_date if is_trial else None
+            "trial_end_date": subscription.expiry_date if is_trial else None,
         }
 
     except UserSubscription.DoesNotExist:
         # Automatically grant 7-day trial to existing users who don't have a plan
-        trial_plan = SubscriptionPlan.objects.filter(name__icontains='Trial').first()
+        trial_plan = SubscriptionPlan.objects.filter(name__icontains="Trial").first()
         if trial_plan:
             subscription = UserSubscription.objects.create(
                 user=user,
                 plan=trial_plan,
                 expiry_date=timezone.now() + timedelta(days=7),
-                is_active=True
+                is_active=True,
             )
             return {
                 "plan": "trial",
@@ -97,7 +124,7 @@ def get_user_subscription_data(user):
                     "upload_limit_mb": trial_plan.upload_limit_mb,
                     "is_lifetime": trial_plan.is_lifetime,
                 },
-                "days_remaining": 7
+                "days_remaining": 7,
             }
 
         # Fallback if Trial plan doesn't exist (should not happen after setup)
@@ -117,7 +144,7 @@ def get_user_subscription_data(user):
                 "upload_limit_mb": 1,
                 "is_lifetime": False,
             },
-            "days_remaining": 0
+            "days_remaining": 0,
         }
 
 
@@ -161,10 +188,11 @@ class CustomObtainAuthToken(ObtainAuthToken):
         # 3. Handle Session/Token
         # Clear existing session if any (prevents 400 errors in incognito/multi-tab)
         from django.contrib.auth import logout
+
         logout(request)
 
         token, created = Token.objects.get_or_create(user=authenticated_user)
-        
+
         return Response(
             {
                 "token": token.key,
@@ -195,23 +223,35 @@ class SendSignupOTPView(APIView):
     def post(self, request):
         email = request.data.get("email")
         if not email:
-            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(
+                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         if User.objects.filter(email=email).exists():
-            return Response({"error": "This email is already registered"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "This email is already registered"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         otp = str(random.randint(100000, 999999))
         cache_key = f"signup_otp_{email}"
-        
+
         try:
             cache.set(cache_key, otp, timeout=600)  # 10 minutes
             success = send_signup_otp_email(email, otp)
             if not success:
                 raise Exception("Email failed to send")
-            return Response({"message": "Verification code sent to your email"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Verification code sent to your email"},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             print(f"SIGNUP OTP FAIL: {e}")
-            return Response({"error": "Failed to send verification code. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": "Failed to send verification code. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -234,11 +274,13 @@ class RegisterView(APIView):
         # Verify OTP
         cache_key = f"signup_otp_{email}"
         cached_otp = cache.get(cache_key)
-        
+
         if not cached_otp or str(cached_otp) != str(otp):
             return Response(
-                {"error": "Invalid or expired verification code. Please request a new one."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Invalid or expired verification code. Please request a new one."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         if User.objects.filter(username=username).exists():
@@ -261,13 +303,13 @@ class RegisterView(APIView):
         Folder.objects.create(user=user, name=username, is_root=True)
 
         # Create 7-day Trial subscription for new users
-        trial_plan = SubscriptionPlan.objects.filter(name__icontains='Trial').first()
+        trial_plan = SubscriptionPlan.objects.filter(name__icontains="Trial").first()
         if trial_plan:
-             UserSubscription.objects.create(
+            UserSubscription.objects.create(
                 user=user,
                 plan=trial_plan,
                 expiry_date=timezone.now() + timedelta(days=7),
-                is_active=True
+                is_active=True,
             )
 
         token, _ = Token.objects.get_or_create(user=user)
@@ -287,7 +329,7 @@ class RegisterView(APIView):
                 "last_name": user.last_name,
                 "subscription": get_user_subscription_data(user),
                 "is_staff": user.is_staff,
-                "message": "Welcome! You have been granted a 7-day free trial with premium features."
+                "message": "Welcome! You have been granted a 7-day free trial with premium features.",
             }
         )
 
@@ -351,10 +393,9 @@ class TokenRefreshView(APIView):
         # Delete old token and create a new one
         Token.objects.filter(user=request.user).delete()
         new_token = Token.objects.create(user=request.user)
-        return Response({
-            "token": new_token.key,
-            "message": "Token refreshed successfully"
-        })
+        return Response(
+            {"token": new_token.key, "message": "Token refreshed successfully"}
+        )
 
 
 class PasswordResetRequestView(APIView):
@@ -375,7 +416,7 @@ class PasswordResetRequestView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
         except Exception as e:
-             return Response(
+            return Response(
                 {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
@@ -388,12 +429,14 @@ class PasswordResetRequestView(APIView):
             # Handle Redis connection errors gracefully
             print(f"Redis Cache Error: {e}")
             return Response(
-                {"error": "Server temporary storage error (Redis). Please ensure the Redis server is running."},
+                {
+                    "error": "Server temporary storage error (Redis). Please ensure the Redis server is running."
+                },
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
         if send_otp_email(email, otp):
-             return Response({"message": "OTP sent successfully"})
+            return Response({"message": "OTP sent successfully"})
         else:
             return Response(
                 {"error": "Failed to send OTP"},
@@ -524,31 +567,35 @@ class AdminUserListView(APIView):
 
         # Get pagination parameters
         try:
-            page = int(request.query_params.get('page', 1))
-            page_size = int(request.query_params.get('page_size', 20))
+            page = int(request.query_params.get("page", 1))
+            page_size = int(request.query_params.get("page_size", 20))
         except ValueError:
             page = 1
             page_size = 20
 
         # Optimization: Use annotation for QR count and select_related for subscription
         # This solves the N+1 query problem (#9)
-        users_queryset = User.objects.all().order_by("-date_joined").annotate(
-            qr_count_anno=Count('qrcodes')
-        ).prefetch_related('subscription__plan')
+        users_queryset = (
+            User.objects.all()
+            .order_by("-date_joined")
+            .annotate(qr_count_anno=Count("qrcodes"))
+            .prefetch_related("subscription__plan")
+        )
 
         # Apply search if provided (#15)
-        search_query = request.query_params.get('search', '')
+        search_query = request.query_params.get("search", "")
         if search_query:
             from django.db.models import Q
+
             users_queryset = users_queryset.filter(
-                Q(username__icontains=search_query) | 
-                Q(email__icontains=search_query) |
-                Q(first_name__icontains=search_query) |
-                Q(last_name__icontains=search_query)
+                Q(username__icontains=search_query)
+                | Q(email__icontains=search_query)
+                | Q(first_name__icontains=search_query)
+                | Q(last_name__icontains=search_query)
             )
 
         total_users = users_queryset.count()
-        
+
         # Apply pagination (#8)
         start = (page - 1) * page_size
         end = start + page_size
@@ -581,13 +628,15 @@ class AdminUserListView(APIView):
                 }
             )
 
-        return Response({
-            "users": data,
-            "total_count": total_users,
-            "page": page,
-            "page_size": page_size,
-            "total_pages": (total_users + page_size - 1) // page_size
-        })
+        return Response(
+            {
+                "users": data,
+                "total_count": total_users,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": (total_users + page_size - 1) // page_size,
+            }
+        )
 
     def post(self, request):
         if not request.user.is_staff:

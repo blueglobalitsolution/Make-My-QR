@@ -236,10 +236,10 @@ export const Account: React.FC<AccountProps> = ({
                   </div>
                   <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
                 </div>
-                <div className="flex justify-start">
-                  <button type="submit" onClick={handleUpdateProfile} className="px-10 py-3.5 skeu-btn text-[14px] font-black uppercase tracking-wider active:scale-95 transition-all">Save Changes</button>
-                </div>
               </div>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button type="submit" onClick={handleUpdateProfile} className="px-10 py-3.5 skeu-btn text-[14px] font-black uppercase tracking-wider active:scale-95 transition-all">Save Changes</button>
             </div>
           </div>
 
@@ -434,7 +434,7 @@ export const Account: React.FC<AccountProps> = ({
                 </div>
               </div>
 
-              <div className="flex justify-start">
+              <div className="flex justify-end">
                 <button type="submit" className="px-10 py-3.5 skeu-btn text-[14px] font-black uppercase tracking-wider active:scale-95 transition-all">Save Billing Info</button>
               </div>
             </form>
@@ -471,9 +471,11 @@ export const Account: React.FC<AccountProps> = ({
               </div>
             </div>
 
-            <button onClick={handleUpdatePassword} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
-              Update Password
-            </button>
+            <div className="flex justify-end mt-4">
+              <button onClick={handleUpdatePassword} className="px-5 py-2.5 skeu-btn text-[13px] font-medium capitalize active:scale-95 transition-all">
+                Update Password
+              </button>
+            </div>
           </div>
         </>
       ) : (
