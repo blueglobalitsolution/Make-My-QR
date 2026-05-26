@@ -735,7 +735,7 @@ const App: React.FC = () => {
         {view === 'payment' && (
           <Payment
             setView={handleSetView}
-            selectedPlan={viewData?.selectedPlan}
+            selectedPlan={viewData}
             currentUser={auth.currentUser}
           />
         )}

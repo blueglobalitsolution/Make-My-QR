@@ -11,6 +11,9 @@ from .serializers import (
     UserSubscriptionSerializer,
 )
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
@@ -23,6 +26,7 @@ class CreateOrderView(APIView):
         try:
             plan = SubscriptionPlan.objects.get(id=plan_id)
         except SubscriptionPlan.DoesNotExist:
+            logger.warning(f"Plan not found: plan_id={plan_id}, user={request.user.id}")
             return Response(
                 {"error": "Plan not found"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -30,10 +34,23 @@ class CreateOrderView(APIView):
         amount = int(plan.price * 100)  # Amount in paise
         currency = "INR"
 
-        # Create Razorpay Order
-        razorpay_order = client.order.create(
-            {"amount": amount, "currency": currency, "payment_capture": "1"}
-        )
+        try:
+            # Create Razorpay Order
+            razorpay_order = client.order.create(
+                {"amount": amount, "currency": currency, "payment_capture": "1"}
+            )
+        except razorpay.errors.BadRequestError as e:
+            logger.error(f"Razorpay order creation failed: {str(e)}")
+            return Response(
+                {"error": f"Payment gateway error: {str(e)}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+        except Exception as e:
+            logger.error(f"Unexpected error creating Razorpay order: {str(e)}")
+            return Response(
+                {"error": "Payment service unavailable. Please try again later."},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
 
         # Save Order in DB
         order = PaymentOrder.objects.create(

@@ -16,7 +16,7 @@ declare global {
 
 export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, currentUser }) => {
     const [formData, setFormData] = useState({
-        fullName: currentUser?.billingInfo?.name ? `${currentUser.billingInfo.name} ${currentUser.billingInfo.surname}` : (currentUser?.name || ''),
+        fullName: currentUser?.billingInfo?.name ? [currentUser.billingInfo.name, currentUser.billingInfo.surname].filter(Boolean).join(' ') : (currentUser?.name || ''),
         country: currentUser?.billingInfo?.country || 'India',
         address: currentUser?.billingInfo?.address || ''
     });
@@ -29,7 +29,6 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
         name: 'Pro Annual',
         price: '9999.00',
         duration_months: 12,
-        total: '9,999',
         features: [
             'Unlimited QRs',
             'Analytics',
@@ -38,6 +37,9 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
         ],
         is_lifetime: false
     };
+
+    const formatPrice = (price: string | number) =>
+        Number(price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     // Load Razorpay Script
     useEffect(() => {
@@ -56,6 +58,14 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
         e.preventDefault();
         if (!formData.fullName) {
             setError("Full name is required");
+            return;
+        }
+        if (!formData.country) {
+            setError("Country is required");
+            return;
+        }
+        if (!formData.address) {
+            setError("Address is required");
             return;
         }
 
@@ -85,6 +95,10 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                         setError("Payment verification failed. Please contact support.");
                     }
                 },
+                method: {
+                    netbanking: false,
+                    wallet: false,
+                },
                 prefill: {
                     name: formData.fullName,
                     email: currentUser?.billingInfo?.email || currentUser?.email || "",
@@ -102,7 +116,9 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
             rzp.open();
 
         } catch (err: any) {
-            setError("Could not initiate payment. Please try again.");
+            const msg = err?.response?.data?.error || err?.message || "Could not initiate payment. Please try again.";
+            console.error("Payment error:", err?.response?.data || err);
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -164,7 +180,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Country or Region</label>
+                                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Country</label>
                                 <div className="relative">
                                     <select
                                         value={formData.country}
@@ -230,11 +246,11 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-slate-900 leading-none mb-2.5">{plan.name}</h3>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{plan.is_lifetime ? 'LIFETIME' : (plan.duration_months === 12 ? 'ANNUAL' : 'MONTHLY')} ACCESS</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{plan.is_lifetime ? 'LIFETIME ACCESS' : 'ACCESS'}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-lg font-black text-slate-900 tracking-tight">₹ {parseFloat(plan.price).toFixed(2)}</p>
+                                        <p className="text-lg font-black text-slate-900 tracking-tight">₹ {formatPrice(plan.price)}</p>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase">{plan.is_lifetime ? 'Once' : (plan.duration_months === 12 ? 'Yearly' : 'Monthly')}</p>
                                     </div>
                                 </div>
@@ -244,7 +260,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter">Total</span>
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter flex items-baseline gap-1.5">
                                         <span className="text-2xl">₹</span>
-                                        {plan.total}
+                                        {formatPrice(plan.price)}
                                     </span>
                                 </div>
 
@@ -269,7 +285,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                                 <p className="text-[10px] text-slate-400/80 font-semibold leading-loose uppercase tracking-wide">
                                     {plan.is_lifetime
                                         ? "One-time payment. Permanent premium access. No recurring charges."
-                                        : `Renews every ${plan.duration_months} ${plan.duration_months === 1 ? 'month' : 'months'} at ₹ ${plan.price}. Cancel anytime.`
+                                        : `Renews every ${plan.duration_months} ${plan.duration_months === 1 ? 'month' : 'months'} at ₹ ${formatPrice(plan.price)}. Cancel anytime.`
                                     }
                                 </p>
                             </div>

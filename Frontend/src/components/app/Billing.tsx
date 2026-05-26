@@ -32,12 +32,7 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   };
 
   const handleSelectPlan = (plan: any) => {
-    const totalPrice = Number(plan.price);
-    const selectedPlan = {
-      ...plan,
-      total: totalPrice.toLocaleString('en-IN'),
-    };
-    setView?.('payment', selectedPlan);
+    setView?.('payment', { ...plan });
   };
 
   const isLifetimeVisible = cycle === 0;
