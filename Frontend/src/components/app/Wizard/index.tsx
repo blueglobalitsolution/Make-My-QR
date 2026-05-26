@@ -5,6 +5,8 @@ import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, 
 import { StyledQRCode } from '../../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../../components/QRFrameWrapper';
 import { GatekeeperPreview } from '../../previews/gatekeeper';
+import type { GatekeeperConfigMap } from '../../previews/gatekeeper';
+import { getGatekeeperConfig } from '../../../api/qrcodes';
 import { FontLoader } from '../../FontLoader';
 // @ts-ignore
 import phoneFrame from './Phone.png';
@@ -112,6 +114,11 @@ export const Wizard: React.FC<WizardProps> = ({
   const [previewIsAuthorized, setPreviewIsAuthorized] = React.useState(false);
   const [previewIsPasswordVerified, setPreviewIsPasswordVerified] = React.useState(false);
   const [previewViewMode, setPreviewViewMode] = React.useState<'landing' | 'preview'>('landing');
+  const [gatekeeperConfig, setGatekeeperConfig] = React.useState<GatekeeperConfigMap>(null);
+
+  React.useEffect(() => {
+    getGatekeeperConfig().then(setGatekeeperConfig).catch(() => {});
+  }, []);
 
   const handlePreviewPasswordSubmit = (password: string) => {
     if (password === wizard.password) {
@@ -1320,92 +1327,81 @@ export const Wizard: React.FC<WizardProps> = ({
           {activeDesignSection === 'gatekeeper' && (
             <div className="p-8 border-t border-slate-50/50 space-y-8 animate-in slide-in-from-top-4 duration-500 origin-top">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Password Protection Toggle */}
-                <div className={`flex flex-col gap-5 p-6 rounded-[15px] border-2 transition-all duration-500 group/gate ${wizard.is_protected ? 'bg-white border-red-50 shadow-xl shadow-red-500/5' : 'bg-slate-50/50 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200'}`}>
-                  <div className="flex items-center gap-5">
-                    <button
-                      type="button"
-                      onClick={() => {
+                {(gatekeeperConfig?.[hoveredType || wizard.type]?.password_enabled ?? true) && (
+                  /* Password Protection Toggle */
+                  <div className={`flex flex-col gap-5 p-6 rounded-[15px] border-2 transition-all duration-500 group/gate ${wizard.is_protected ? 'bg-white border-red-50 shadow-xl shadow-red-500/5' : 'bg-slate-50/50 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200'}`}>
+                    <div className="flex items-center gap-5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const details = currentUser?.subscription?.plan_details;
+                          if (details && !details.can_password_protect) {
+                            alert("Upgrade to use Password Protection");
+                            return;
+                          }
+                          setWizard({ ...wizard, is_protected: !wizard.is_protected });
+                        }}
+                        className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                      >
+                        {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                      </button>
+                      <div className="cursor-pointer flex-1" onClick={() => {
                         const details = currentUser?.subscription?.plan_details;
                         if (details && !details.can_password_protect) {
                           alert("Upgrade to use Password Protection");
                           return;
                         }
                         setWizard({ ...wizard, is_protected: !wizard.is_protected });
-                      }}
-                      className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_protected ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
-                    >
-                      {wizard.is_protected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
-                    </button>
-                    <div className="cursor-pointer flex-1" onClick={() => {
-                      const details = currentUser?.subscription?.plan_details;
-                      if (details && !details.can_password_protect) {
-                        alert("Upgrade to use Password Protection");
-                        return;
-                      }
-                      setWizard({ ...wizard, is_protected: !wizard.is_protected });
-                    }}>
-                      <p className="font-black text-[#0F172A] text-sm tracking-tight">Password Protection</p>
-                      <p className="text-[10px] font-medium text-slate-400">Ask for password to open document</p>
+                      }}>
+                        <p className="font-black text-[#0F172A] text-sm tracking-tight">Password Protection</p>
+                        <p className="text-[10px] font-medium text-slate-400">Ask for password to open document</p>
+                      </div>
                     </div>
+                    {wizard.is_protected && (
+                      <div className="pl-11 animate-in slide-in-from-top-2 duration-300">
+                        <input
+                          type="text"
+                          placeholder="Assign a password"
+                          value={wizard.password || ''}
+                          onChange={(e) => setWizard({ ...wizard, password: e.target.value })}
+                          className="w-full px-4 py-2.5 skeu-input text-xs font-bold font-mono placeholder:opacity-30"
+                          autoFocus
+                        />
+                      </div>
+                    )}
                   </div>
-                  {wizard.is_protected && (
-                    <div className="pl-11 animate-in slide-in-from-top-2 duration-300">
-                      <input
-                        type="text"
-                        placeholder="Assign a password"
-                        value={wizard.password || ''}
-                        onChange={(e) => setWizard({ ...wizard, password: e.target.value })}
-                        className="w-full px-4 py-2.5 skeu-input text-xs font-bold font-mono placeholder:opacity-30"
-                        autoFocus
-                      />
-                    </div>
-                  )}
-                </div>
+                )}
 
-                {/* Lead Capture Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-[15px] border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
-                  <button
-                    type="button"
-                    onClick={() => {
+                {(gatekeeperConfig?.[hoveredType || wizard.type]?.lead_capture_enabled ?? true) && (
+                  /* Lead Capture Toggle */
+                  <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-[15px] border-2 border-slate-50 hover:bg-white hover:border-white hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 group/lead">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const details = currentUser?.subscription?.plan_details;
+                        if (details && !details.can_lead_capture) {
+                          alert("Upgrade to use Lead Capture");
+                          return;
+                        }
+                        setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
+                      }}
+                      className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                    >
+                      {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                    </button>
+                    <div className="cursor-pointer" onClick={() => {
                       const details = currentUser?.subscription?.plan_details;
                       if (details && !details.can_lead_capture) {
                         alert("Upgrade to use Lead Capture");
                         return;
                       }
                       setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
-                    }}
-                    className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.is_lead_capture ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
-                  >
-                    {wizard.is_lead_capture && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
-                  </button>
-                  <div className="cursor-pointer" onClick={() => {
-                    const details = currentUser?.subscription?.plan_details;
-                    if (details && !details.can_lead_capture) {
-                      alert("Upgrade to use Lead Capture");
-                      return;
-                    }
-                    setWizard({ ...wizard, is_lead_capture: !wizard.is_lead_capture });
-                  }}>
-                    <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
-                    <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
+                    }}>
+                      <p className="font-black text-[#0F172A] text-sm ">Lead Capture</p>
+                      <p className="text-[10px] font-medium text-slate-400">Collect visitor info</p>
+                    </div>
                   </div>
-                </div>
-
-                {/* Show Preview Toggle */}
-                <div className="flex items-center gap-5 p-6 bg-white rounded-[15px] border-2 border-slate-50 hover:border-red-100 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500 group/preview_toggle">
-                  <button
-                    type="button"
-                    onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}
-                    className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.show_preview ? 'bg-[#dc2626] border-[#dc2626] shadow-lg shadow-red-500/20' : 'bg-white border-slate-200'}`}
-                  >
-                    {wizard.show_preview && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
-                  </button>
-                  <div className="cursor-pointer" onClick={() => setWizard({ ...wizard, show_preview: !wizard.show_preview })}>
-                    <p className="font-black text-[#0F172A] text-sm tracking-tight">Show Preview Page</p>
-                    <p className="text-[10px] font-medium text-slate-400">Directly link if disabled</p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           )}
@@ -1789,7 +1785,7 @@ export const Wizard: React.FC<WizardProps> = ({
               </button>
             </div>
             <div className="flex-1 flex justify-center">
-              <img src="/src/assets/logo-full.png" alt="Logo" className="h-8 object-contain" />
+              <img src="/assets/logo-full.png" alt="Logo" className="h-8 object-contain" />
             </div>
             <div className="w-20" /> {/* Right Spacer for centering */}
           </div>
@@ -1871,6 +1867,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             setViewMode={setPreviewViewMode as any}
                             isPreview={true}
                             activeSection={activeDesignSection}
+                            gatekeeperConfig={gatekeeperConfig}
                           />
                         </div>
                       ) : (
@@ -1947,6 +1944,7 @@ export const Wizard: React.FC<WizardProps> = ({
                             setViewMode={setPreviewViewMode as any}
                             isPreview={true}
                             activeSection={activeDesignSection}
+                            gatekeeperConfig={gatekeeperConfig}
                           />
                         </div>
                       ) : (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronLeft, Video, Phone, MoreVertical, Smile, Paperclip, Mic, User } from 'lucide-react';
 import { LeadCaptureForm } from './LeadCaptureForm';
 import { PasswordWall } from './PasswordWall';
@@ -18,6 +18,7 @@ interface WhatsAppPreviewProps {
     onPasswordSubmit?: (password: string) => Promise<boolean> | boolean;
     isPasswordVerified?: boolean;
     is_protected?: boolean;
+    timerEnabled?: boolean;
 }
 
 // WhatsApp-style chat background pattern (SVG as data URL)
@@ -34,9 +35,28 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
     onLeadSubmit,
     onPasswordSubmit,
     isPasswordVerified = true,
-    is_protected
+    is_protected,
+    timerEnabled = false,
 }) => {
-    const handleOpen = () => { window.open(fullValue, '_blank'); };
+    const [countdown, setCountdown] = useState(3);
+    const [redirecting, setRedirecting] = useState(false);
+
+    const handleOpen = () => {
+        if (redirecting) return;
+        setRedirecting(true);
+        window.open(fullValue, '_blank');
+    };
+
+    // Auto-redirect timer
+    useEffect(() => {
+        if (!isAuthorized || !timerEnabled || redirecting) return;
+        if (countdown <= 0) {
+            handleOpen();
+            return;
+        }
+        const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+        return () => clearTimeout(timer);
+    }, [isAuthorized, timerEnabled, countdown, redirecting]);
 
     // Parse phone number and message from WhatsApp URL (https://wa.me/<phone>?text=<msg>)
     let phone = '';
@@ -164,6 +184,25 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
                     <Mic className="w-4 h-4 text-white" />
                 </div>
             </div>
+
+            {/* ── REDIRECT BAR ────────────────────────────── */}
+            {isAuthorized && (
+                <div className="shrink-0 px-4 py-2.5 bg-white border-t border-slate-100 flex items-center justify-center gap-3">
+                    {timerEnabled ? (
+                        <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                            <div className="w-5 h-5 rounded-full border-2 border-[#25D366] border-t-transparent animate-spin" />
+                            Opening WhatsApp in {countdown}s...
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleOpen}
+                            className="px-6 py-2 bg-[#25D366] text-white text-xs font-bold rounded-full hover:bg-[#1da851] transition-colors shadow"
+                        >
+                            Skip →
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

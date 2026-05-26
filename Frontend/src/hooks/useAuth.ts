@@ -210,7 +210,7 @@ export const useAuth = (
         triggerAlert("Success", "Verification code sent to your email!", "info");
         setSignupStep(2);
       } else {
-        const username = regEmail.split('@')[0] + Math.floor(Math.random() * 1000);
+        let username = regEmail.split('@')[0];
         await register(username, regEmail, regPassword, regOtp, regName, regLastName);
         triggerAlert("Success", "Account created successfully! Please log in to your account.", "info");
         setView('login');

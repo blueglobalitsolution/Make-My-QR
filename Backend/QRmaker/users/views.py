@@ -17,10 +17,10 @@ def get_user_subscription_data(user):
     from django.utils import timezone
     from datetime import timedelta
 
-    # Superadmin override: always give lifetime free plan
+    # Superadmin override: always give Godmode plan
     if user.is_superuser:
         superadmin_plan = SubscriptionPlan.objects.filter(
-            name="SuperAdmin Lifetime"
+            name="Godmode"
         ).first()
         if superadmin_plan:
             return {
@@ -100,7 +100,7 @@ def get_user_subscription_data(user):
 
     except UserSubscription.DoesNotExist:
         # Automatically grant 7-day trial to existing users who don't have a plan
-        trial_plan = SubscriptionPlan.objects.filter(name__icontains="Trial").first()
+        trial_plan = SubscriptionPlan.objects.filter(name="Trial").first()
         if trial_plan:
             subscription = UserSubscription.objects.create(
                 user=user,
@@ -283,10 +283,11 @@ class RegisterView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if User.objects.filter(username=username).exists():
-            return Response(
-                {"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        base_username = username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
 
         user = User.objects.create_user(
             username=username,
@@ -303,7 +304,7 @@ class RegisterView(APIView):
         Folder.objects.create(user=user, name=username, is_root=True)
 
         # Create 7-day Trial subscription for new users
-        trial_plan = SubscriptionPlan.objects.filter(name__icontains="Trial").first()
+        trial_plan = SubscriptionPlan.objects.filter(name="Trial").first()
         if trial_plan:
             UserSubscription.objects.create(
                 user=user,

@@ -2,6 +2,50 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password
 from folders.models import Folder
+from functools import lru_cache
+
+
+class GatekeeperConfig(models.Model):
+    CATEGORY_CHOICES = [
+        ('website', 'Website'),
+        ('whatsapp', 'WhatsApp'),
+        ('pdf', 'PDF'),
+        ('business', 'Business'),
+        ('file', 'File'),
+        ('default', 'Default'),
+    ]
+
+    category = models.CharField(max_length=50, unique=True, choices=CATEGORY_CHOICES)
+    password_enabled = models.BooleanField(default=True, help_text="Allow password protection for this category")
+    lead_capture_enabled = models.BooleanField(default=True, help_text="Allow lead capture for this category")
+    timer_enabled = models.BooleanField(default=False, help_text="Auto-redirect timer for categories without a button")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Gatekeeper Config"
+        verbose_name_plural = "Gatekeeper Configs"
+
+    def __str__(self):
+        return f"{self.get_category_display()} - Pass:{self.password_enabled} Lead:{self.lead_capture_enabled} Timer:{self.timer_enabled}"
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def get_config(cls, category):
+        """Get config for a category, returns dict with defaults if not found."""
+        try:
+            config = cls.objects.get(category=category)
+            return {
+                'password_enabled': config.password_enabled,
+                'lead_capture_enabled': config.lead_capture_enabled,
+                'timer_enabled': config.timer_enabled,
+            }
+        except cls.DoesNotExist:
+            return {
+                'password_enabled': True,
+                'lead_capture_enabled': True,
+                'timer_enabled': False,
+            }
 
 
 class QRCode(models.Model):

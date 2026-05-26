@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import QRCode
-from .serializers import QRCodeSerializer
+from .models import QRCode, GatekeeperConfig
+from .serializers import QRCodeSerializer, GatekeeperConfigSerializer
 from folders.models import Folder
 from files.models import File
 from scans.models import Scan
@@ -437,7 +437,15 @@ class CaptureLeadView(generics.GenericAPIView):
         """Capture lead information for a QR code."""
         qrcode = get_object_or_404(QRCode, short_slug=short_slug, status="active")
         
-        # Bug 6 Fix: Check if lead capture is enabled
+        # Check GatekeeperConfig: is lead capture allowed for this category?
+        config = GatekeeperConfig.get_config(qrcode.category)
+        if not config.get('lead_capture_enabled', True):
+            return Response(
+                {"error": "Lead capture is not available for this QR code category."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if lead capture is enabled for this specific QR code
         if not qrcode.is_lead_capture:
             return Response(
                 {"error": "Lead capture is not enabled for this QR code."},
@@ -487,6 +495,14 @@ class VerifyPasswordView(generics.GenericAPIView):
         """Verify password for a protected QR code."""
         qrcode = get_object_or_404(QRCode, short_slug=short_slug, status="active")
 
+        # Check GatekeeperConfig: is password protection allowed for this category?
+        config = GatekeeperConfig.get_config(qrcode.category)
+        if not config.get('password_enabled', True):
+            return Response(
+                {"error": "Password protection is not available for this QR code category."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if not qrcode.is_protected:
             return Response(
                 {"error": "This QR code is not password protected."},
@@ -507,3 +523,9 @@ class VerifyPasswordView(generics.GenericAPIView):
                 {"error": "Incorrect password. Please try again."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+class GatekeeperConfigListView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = GatekeeperConfigSerializer
+    queryset = GatekeeperConfig.objects.all()

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getPublicCode } from '../../api/qrcodes';
+import { getPublicCode, getGatekeeperConfig } from '../../api/qrcodes';
 import { Shield, Lock } from 'lucide-react';
 import { GatekeeperPreview } from '../previews/gatekeeper';
 import { PdfPreview } from '../previews/PdfPreview';
 import { FontLoader } from '../FontLoader';
 import apiClient from '../../api/client';
+import type { GatekeeperConfigMap } from '../previews/gatekeeper';
 
 interface QRViewerProps {
     slug: string;
@@ -28,6 +29,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
     const [isPasswordVerified, setIsPasswordVerified] = useState(false);
     const [leadForm, setLeadForm] = useState({ name: '', email: '' });
     const [viewMode, setViewMode] = useState<'landing' | 'preview'>('landing');
+    const [gatekeeperConfig, setGatekeeperConfig] = useState<GatekeeperConfigMap | null>(null);
 
     useEffect(() => {
         setIsMobile(isMobileDevice());
@@ -71,6 +73,9 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 if (!data.is_protected) {
                     setIsPasswordVerified(true);
                 }
+
+                // Fetch gatekeeper config (fire-and-forget, uses cache)
+                getGatekeeperConfig().then(setGatekeeperConfig).catch(() => {});
             } catch (err) {
                 console.error("Error fetching QR data:", err);
                 setError("This QR code could not be found or is no longer active.");
@@ -153,22 +158,9 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
     const effectiveIsFileMode = isFileMode || category === 'pdf';
 
     useEffect(() => {
-        // Only auto-redirect if preview is DISABLED and we are authorized
-        if (isAuthorized && fullValue && !show_preview) {
-            if (category === 'whatsapp' || category === 'website') {
-                console.log(`Redirecting to ${category}:`, fullValue);
-                // Ensure URL has protocol for website
-                let redirectUrl = fullValue;
-                if (category === 'website' && !redirectUrl.startsWith('http') && !redirectUrl.startsWith('https')) {
-                    redirectUrl = `https://${redirectUrl}`;
-                }
-                window.location.replace(redirectUrl);
-            } else if (category === 'pdf' || category === 'file' || category === 'links') {
-                // For files and links, jump directly to the target
-                window.location.replace(fullValue);
-            }
-        }
-    }, [isAuthorized, category, fullValue, show_preview]);
+        // No auto-redirect — preview is always shown.
+        // WhatsApp timer, password walls, lead capture are handled in GatekeeperPreview.
+    }, [isAuthorized]);
 
     if (loading) {
         return (
@@ -203,10 +195,8 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
         );
     }
 
-    // Hide everything if we are about to redirect
-    if (isAuthorized && !show_preview && (category === 'website' || category === 'whatsapp' || category === 'pdf')) {
-        return null;
-    }
+    // No early return for redirects anymore — preview is always shown
+    // Gateway checks (password, lead capture, timer) are handled inside GatekeeperPreview
 
     return (
         <>
@@ -246,6 +236,7 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                     viewMode={viewMode}
                     setViewMode={setViewMode}
                     isMobile={isMobile}
+                    gatekeeperConfig={gatekeeperConfig}
                 />
             )}
         </>

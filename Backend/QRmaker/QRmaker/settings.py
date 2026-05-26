@@ -12,10 +12,18 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import pymysql
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv("childhood-purging-bankable-climate-zap-coerce")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -27,8 +35,8 @@ if not SECRET_KEY:
     )
 
 # App URLs from ENV
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost")
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://app.makemyqrcode.com")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://app.makemyqrcode.com")
 DOMAIN = os.getenv("DOMAIN", "localhost")
 
 # SECURITY WARNING: don't run with debug turned on in production!

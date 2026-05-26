@@ -38,6 +38,16 @@ export const getPublicCode = async (slug: string) => {
     return response.data;
 };
 
+export const getGatekeeperConfig = async (): Promise<Record<string, { password_enabled: boolean; lead_capture_enabled: boolean; timer_enabled: boolean }>> => {
+    const response = await apiClient.get('/qrcodes/gatekeeper-config/');
+    const data = response.data;
+    const configMap: Record<string, any> = {};
+    for (const item of data) {
+        configMap[item.category] = item;
+    }
+    return configMap;
+};
+
 export const getSummaryAnalytics = async (params: any = {}) => {
     const response = await apiClient.get('/qrcodes/summary-analytics/', { params });
     return response.data;

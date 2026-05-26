@@ -3,13 +3,25 @@ from payments.models import UserSubscription
 
 
 def get_subscription(user):
-    # Superadmin override
+    # Superadmin: assign/return Godmode plan
     if user.is_superuser:
-        return type(
-            "SuperAdminSubscription",
-            (),
-            {"plan": None, "is_active": True, "__bool__": lambda self: True},
-        )()
+        from payments.models import SubscriptionPlan
+
+        godmode = SubscriptionPlan.objects.filter(name="Godmode").first()
+        if godmode:
+            sub, _ = UserSubscription.objects.get_or_create(
+                user=user,
+                defaults={
+                    "plan": godmode,
+                    "expiry_date": None,
+                    "is_active": True,
+                    "status": "paid_active",
+                },
+            )
+            if sub.plan != godmode:
+                sub.plan = godmode
+                sub.save(update_fields=["plan"])
+            return sub
     try:
         return UserSubscription.objects.get(user=user)
     except UserSubscription.DoesNotExist:
@@ -27,7 +39,7 @@ def is_subscription_active(user):
         # Auto-grant trial for normal users without subscription
         from payments.models import SubscriptionPlan
 
-        trial_plan = SubscriptionPlan.objects.filter(name__icontains="Trial").first()
+        trial_plan = SubscriptionPlan.objects.filter(name="Trial").first()
         if trial_plan:
             UserSubscription.objects.create(
                 user=user,

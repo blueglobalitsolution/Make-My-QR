@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from .models import QRCode
+from .models import QRCode, GatekeeperConfig
 from files.models import File
 from django.conf import settings
 import json
 import os
+
+
+class GatekeeperConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GatekeeperConfig
+        fields = ['category', 'password_enabled', 'lead_capture_enabled', 'timer_enabled']
 
 
 class QRCodeSerializer(serializers.ModelSerializer):

@@ -49,6 +49,24 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     const heroImg = businessData?.images?.[0];
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
+    // Gatekeeper enforcement
+    if (!isAuthorized && (is_lead_capture || !isPasswordVerified)) {
+        return (
+            <div className="h-full flex flex-col items-center justify-center p-6 bg-[#f8fafc]">
+                {!isPasswordVerified && onPasswordSubmit ? (
+                    <PasswordWall brandColor={primaryColor} onSubmit={onPasswordSubmit} />
+                ) : (
+                    <LeadCaptureForm
+                        brandColor={primaryColor}
+                        leadForm={leadForm || { name: '', email: '' }}
+                        setLeadForm={setLeadForm || (() => {})}
+                        onSubmit={onLeadSubmit}
+                    />
+                )}
+            </div>
+        );
+    }
+
     React.useEffect(() => {
         if (activeSection && scrollContainerRef.current) {
             // Map Wizard section IDs to Preview element IDs
@@ -300,7 +318,7 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
                                     <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-3.5 h-3.5 text-slate-300" /></div>
                                     <div className="min-w-0">
                                         <p className="text-[8px] font-black text-slate-300 uppercase ">{phone.label || 'Phone'}</p>
-                                        <a href={`tel:${phone.value}`} className="text-[11px] font-bold text-slate-700 truncate hover:text-red-500 transition-colors transition-colors">{phone.value}</a>
+                                        <a href={`tel:${phone.value}`} className="text-[11px] font-bold text-slate-700 truncate hover:text-red-500 transition-colors">{phone.value}</a>
                                     </div>
                                 </div>
                             ))}

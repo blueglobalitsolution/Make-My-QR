@@ -36,3 +36,17 @@ Backend/QRmaker/payments/management/commands/seed_plans.py
 # Python compiled files
 __pycache__/
 *.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+
+# Django static files
+staticfiles/
+
+# Kilo editor
+.kilo/
+
+# Build artifacts
+Frontend/public/assets/

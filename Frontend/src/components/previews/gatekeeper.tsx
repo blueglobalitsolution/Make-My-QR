@@ -6,6 +6,13 @@ import { DefaultPreview } from './DefaultPreview';
 import { BusinessPreview } from './BusinessPreview';
 import { QRType } from '../../../types';
 
+export type GatekeeperConfigMap = Record<string, {
+    category: string;
+    password_enabled: boolean;
+    lead_capture_enabled: boolean;
+    timer_enabled: boolean;
+}> | null;
+
 export interface GatekeeperProps {
     category: QRType | string;
     name: string;
@@ -29,6 +36,7 @@ export interface GatekeeperProps {
     activeSection?: string | null;
     isMobile?: boolean;
     is_protected: boolean;
+    gatekeeperConfig?: GatekeeperConfigMap;
 }
 
 export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
@@ -50,8 +58,19 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
     isPreview = false,
     activeSection,
     isMobile = false,
-    is_protected
+    is_protected,
+    gatekeeperConfig,
 }) => {
+    // Resolve effective gate state based on admin config + model flags
+    const categoryConfig = gatekeeperConfig?.[category];
+    const effectivePasswordEnabled = categoryConfig?.password_enabled ?? true;
+    const effectiveLeadCaptureEnabled = categoryConfig?.lead_capture_enabled ?? true;
+    const effectiveTimerEnabled = categoryConfig?.timer_enabled ?? false;
+
+    // Show gates only if the model flag AND admin config allow it
+    const showPassword = is_protected && effectivePasswordEnabled;
+    const showLeadCapture = is_lead_capture && effectiveLeadCaptureEnabled;
+
     switch (category) {
         case 'website':
             return (
@@ -59,14 +78,14 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     name={name}
                     brandColor={brandColor}
                     fullValue={fullValue}
-                    is_lead_capture={is_lead_capture}
+                    is_lead_capture={showLeadCapture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onPasswordSubmit={onPasswordSubmit}
                     isPreview={isPreview}
-                    is_protected={is_protected}
+                    is_protected={showPassword}
                 />
             );
 
@@ -77,7 +96,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     brandColor={brandColor}
                     fullValue={fullValue}
                     businessData={businessData}
-                    is_lead_capture={is_lead_capture}
+                    is_lead_capture={showLeadCapture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
                     isFileMode={isFileMode}
@@ -86,7 +105,7 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     setViewMode={setViewMode}
                     isPreview={isPreview}
                     isMobile={isMobile}
-                    is_protected={is_protected}
+                    is_protected={showPassword}
                 />
             );
 
@@ -96,14 +115,15 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     name={name}
                     brandColor={brandColor}
                     fullValue={fullValue}
-                    is_lead_capture={is_lead_capture}
+                    is_lead_capture={showLeadCapture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
-                    is_protected={is_protected}
+                    is_protected={showPassword}
+                    timerEnabled={effectiveTimerEnabled}
                 />
             );
 
@@ -113,12 +133,18 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     name={name}
                     brandColor={brandColor}
                     businessData={businessData}
-                    is_lead_capture={is_lead_capture}
+                    is_lead_capture={showLeadCapture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
                     isPreview={isPreview}
                     activeSection={activeSection}
-                    is_protected={is_protected}
+                    is_protected={showPassword}
+                    leadForm={leadForm}
+                    setLeadForm={setLeadForm}
+                    onLeadSubmit={onLeadSubmit}
+                    onPasswordSubmit={onPasswordSubmit}
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
                 />
             );
 
@@ -129,14 +155,14 @@ export const GatekeeperPreview: React.FC<GatekeeperProps> = ({
                     category={category}
                     brandColor={brandColor}
                     fullValue={fullValue}
-                    is_lead_capture={is_lead_capture}
+                    is_lead_capture={showLeadCapture}
                     isAuthorized={isAuthorized}
                     isPasswordVerified={isPasswordVerified}
                     leadForm={leadForm}
                     setLeadForm={setLeadForm}
                     onLeadSubmit={onLeadSubmit}
                     onPasswordSubmit={onPasswordSubmit}
-                    is_protected={is_protected}
+                    is_protected={showPassword}
                 />
             );
     }

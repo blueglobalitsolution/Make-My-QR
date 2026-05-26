@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect, FileResponse, Http404
 from hashids import Hashids
-from qrcodes.models import QRCode
+from qrcodes.models import QRCode, GatekeeperConfig
 from files.models import File
 from .models import Scan
 from django.conf import settings
@@ -80,76 +80,16 @@ def redirect_scan(request, slug):
     else:
         print(f"DEBUG: Deduplicated scan for QR {qrcode.id} from IP {ip_address}")
 
-    # Check if this is a file-type QR code or has a file URL in value
-    file_id = None
-    file_url = None
+    # Preview page hamesha dikhega — redirect to frontend
+    # File-type QR codes go to file viewer, everything else goes to standard viewer
+    category = qrcode.category
+    is_file_category = category in ["file", "pdf", "document"]
 
-    # First check if it's a file category
-    is_file_category = qrcode.category in ["file", "pdf", "document"]
-
-    # Also check if value contains a file URL (regardless of category)
-    has_file_url = qrcode.value and (
-        "/media/" in qrcode.value or qrcode.value.startswith("http")
-    )
-
-    file_obj = None
-    if is_file_category or has_file_url:
-        file_obj = None
-        try:
-            # Try to parse as JSON first (new format)
-            value_data = json.loads(qrcode.value)
-            if isinstance(value_data, dict):
-                file_id = value_data.get("file_id")
-        except (json.JSONDecodeError, TypeError):
-            # If not JSON, check if value is just a file ID
-            if qrcode.value and qrcode.value.isdigit():
-                file_id = int(qrcode.value)
-            elif has_file_url:
-                # Value contains a URL like http://.../media/... or /media/...
-                file_url = qrcode.value
-
-        # Try to find file by ID first
-        file_obj = None
-        if file_id:
-            try:
-                file_obj = File.objects.get(id=file_id)
-            except File.DoesNotExist:
-                pass
-
-        # If no file by ID, try to find by URL (old QR codes)
-        if not file_obj and file_url:
-            # Extract filename from URL and try to match
-            try:
-                # Handle URLs like http://.../media/user_files/2025/03/04/file.pdf
-                # or just /media/user_files/2025/03/04/file.pdf
-                filename = file_url.split("/")[-1]
-                if filename:
-                    # Try to find file by name (might match multiple, take first)
-                    file_obj = File.objects.filter(name=filename).first()
-            except Exception:
-                pass
-
-    # If preview is disabled AND no gatekeepers (lead capture/protected) are active, redirect directly to content
-    if not qrcode.show_preview and not qrcode.is_lead_capture and not qrcode.is_protected:
-        # For website and whatsapp, redirect to the target URL
-        if qrcode.category in ['website', 'whatsapp']:
-            target_url = qrcode.value
-            if qrcode.category == 'website' and not target_url.startswith('http'):
-                target_url = f"https://{target_url}"
-            return HttpResponseRedirect(target_url)
-        
-        # For file/pdf, redirect to the backend proxy URL to handle internal S3 resolution
-        if file_obj:
-            return HttpResponseRedirect(f"{settings.BACKEND_URL}/api/files/public/{file_obj.id}/")
-        elif file_url:
-            return HttpResponseRedirect(file_url)
-
-    # For file-type QR codes, redirect to Frontend file viewer page
-    if file_obj or file_url or is_file_category or has_file_url:
+    if is_file_category:
         redirect_url = f"{settings.FRONTEND_URL}/view/file/{slug}"
     else:
         redirect_url = f"{settings.FRONTEND_URL}/view/{slug}"
-    
+
     return HttpResponseRedirect(redirect_url)
 
 @csrf_exempt

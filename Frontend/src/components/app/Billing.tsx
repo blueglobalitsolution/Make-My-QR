@@ -41,8 +41,8 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   };
 
   const isLifetimeVisible = cycle === 0;
-  const currentPlans = plans.filter(p => isLifetimeVisible ? p.is_lifetime : (p.duration_months === cycle && !p.is_lifetime));
-  const availableCycles = [...new Set(plans.map(p => p.is_lifetime ? 0 : p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
+  const currentPlans = plans.filter(p => !p.is_trial && p.name !== 'Godmode').filter(p => isLifetimeVisible ? p.is_lifetime : (p.duration_months === cycle && !p.is_lifetime));
+  const availableCycles = [...new Set(plans.filter(p => !p.is_trial && p.name !== 'Godmode').map(p => p.is_lifetime ? 0 : p.duration_months))].sort((a: any, b: any) => Number(a) - Number(b));
 
   const brandRed = 'text-[#ef4444]';
   const bgBrandRed = 'bg-[#ef4444]';
