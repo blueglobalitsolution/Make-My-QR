@@ -12,7 +12,7 @@ class PaymentsConfig(AppConfig):
         SubscriptionPlan.objects.filter(id__in=old_seed_ids).delete()
 
         # Trial Plan — for new customer users
-        SubscriptionPlan.objects.get_or_create(
+        SubscriptionPlan.objects.update_or_create(
             name="Trial",
             defaults={
                 "price": 0,
