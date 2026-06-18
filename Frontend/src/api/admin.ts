@@ -39,3 +39,18 @@ export const manageAdminUser = async (userId: number, action: 'toggle_active' | 
   const response = await client.post('/users/admin/users/', { user_id: userId, action });
   return response.data;
 };
+
+export const getAdminLeads = async (page: number = 1, search: string = '') => {
+  const response = await client.get(`/leads/admin/?page=${page}&page_size=20&search=${encodeURIComponent(search)}`);
+  return response.data;
+};
+
+export const getAdminVisitStats = async () => {
+  const response = await client.get('/visits/admin/stats/');
+  return response.data;
+};
+
+export const getAdminVisits = async (page: number = 1, search: string = '') => {
+  const response = await client.get(`/visits/admin/list/?page=${page}&page_size=20&search=${encodeURIComponent(search)}`);
+  return response.data;
+};

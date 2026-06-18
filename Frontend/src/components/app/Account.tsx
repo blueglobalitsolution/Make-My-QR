@@ -207,7 +207,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <UserIcon className="w-4 h-4" />
                   </div>
-                  <input type="text" value={accFirstName} onChange={(e) => setAccFirstName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="text" required value={accFirstName} onChange={(e) => setAccFirstName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" minLength={2} maxLength={100} />
                 </div>
               </div>
               <div className="space-y-1">
@@ -216,7 +216,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <UserIcon className="w-4 h-4" />
                   </div>
-                  <input type="text" value={accLastName} onChange={(e) => setAccLastName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="text" value={accLastName} onChange={(e) => setAccLastName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" maxLength={100} />
                 </div>
               </div>
               <div className="space-y-1">
@@ -225,7 +225,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <input type="email" value={accEmail} onChange={(e) => setAccEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="email" required value={accEmail} onChange={(e) => setAccEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Enter a valid email address" />
                 </div>
               </div>
               <div className="space-y-1">
@@ -234,7 +234,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <Phone className="w-4 h-4" />
                   </div>
-                  <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="tel" value={accPhone} onChange={(e) => setAccPhone(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full pl-12 pr-4 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" minLength={7} maxLength={15} pattern="[\d\s\-\(\)\+]{7,15}" title="Enter a valid phone number (7-15 digits)" />
                 </div>
               </div>
             </div>
@@ -271,6 +271,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingCompany(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="e.g. Acme Corp"
+                        maxLength={200}
                       />
                     </div>
                   </div>
@@ -290,6 +291,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingTaxId(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="e.g. GSTIN123456789"
+                        maxLength={50}
                       />
                     </div>
                   </div>
@@ -309,6 +311,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingName(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Enter first name"
+                        maxLength={100}
                       />
                     </div>
                   </div>
@@ -328,6 +331,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingSurname(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Enter last name"
+                        maxLength={100}
                       />
                     </div>
                   </div>
@@ -347,6 +351,8 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingEmail(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Enter billing email"
+                        pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                        title="Enter a valid email address"
                       />
                     </div>
                   </div>
@@ -366,6 +372,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingAddress(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Street address"
+                        maxLength={300}
                       />
                     </div>
                   </div>
@@ -385,6 +392,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingPostalCode(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Enter postal code"
+                        maxLength={20}
                       />
                     </div>
                   </div>
@@ -404,6 +412,7 @@ export const Account: React.FC<AccountProps> = ({
                         onChange={(e) => setBillingCity(e.target.value)}
                         className="flex-1 bg-transparent border-none outline-none text-slate-700 font-bold text-sm h-full"
                         placeholder="Enter city"
+                        maxLength={100}
                       />
                     </div>
                   </div>
@@ -455,7 +464,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input type="password" value={accPassword} onChange={(e) => setAccPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8_px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="password" value={accPassword} onChange={(e) => setAccPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8_px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" minLength={8} maxLength={128} />
                   <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 skeu-text-muted hover:skeu-text-primary transition-colors"><Eye className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
@@ -465,7 +474,7 @@ export const Account: React.FC<AccountProps> = ({
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-slate-100 rounded-[5px] shadow-sm flex items-center justify-center text-[#dc2626] transition-colors">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input type="password" value={accConfirmPassword} onChange={(e) => setAccConfirmPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8_px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" />
+                  <input type="password" value={accConfirmPassword} onChange={(e) => setAccConfirmPassword(e.target.value)} placeholder="••••••••" className="w-full pl-12 pr-10 py-4 bg-white rounded-[6px] text-[13px] font-bold text-slate-800 outline-none border border-slate-100 shadow-[0_2px_8_px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-red-500/10 transition-shadow" minLength={8} maxLength={128} />
                   <button type="button" className="absolute right-4 top-1/2 -translate-y-1/2 skeu-text-muted hover:skeu-text-primary transition-colors"><Eye className="w-3.5 h-3.5" /></button>
                 </div>
               </div>

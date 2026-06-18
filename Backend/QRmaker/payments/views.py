@@ -52,6 +52,11 @@ class CreateOrderView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
+        # Void any previous pending orders for this user
+        PaymentOrder.objects.filter(user=request.user, status="pending").update(
+            status="failed"
+        )
+
         # Save Order in DB
         order = PaymentOrder.objects.create(
             user=request.user,

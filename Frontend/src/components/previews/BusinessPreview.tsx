@@ -49,24 +49,6 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
     const heroImg = businessData?.images?.[0];
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
-    // Gatekeeper enforcement
-    if (!isAuthorized && (is_lead_capture || !isPasswordVerified)) {
-        return (
-            <div className="h-full flex flex-col items-center justify-center p-6 bg-[#f8fafc]">
-                {!isPasswordVerified && onPasswordSubmit ? (
-                    <PasswordWall brandColor={primaryColor} onSubmit={onPasswordSubmit} />
-                ) : (
-                    <LeadCaptureForm
-                        brandColor={primaryColor}
-                        leadForm={leadForm || { name: '', email: '' }}
-                        setLeadForm={setLeadForm || (() => {})}
-                        onSubmit={onLeadSubmit}
-                    />
-                )}
-            </div>
-        );
-    }
-
     React.useEffect(() => {
         if (activeSection && scrollContainerRef.current) {
             // Map Wizard section IDs to Preview element IDs
@@ -92,6 +74,24 @@ export const BusinessPreview: React.FC<BusinessPreviewProps> = ({
             }
         }
     }, [activeSection]);
+
+    // Gatekeeper enforcement
+    if (!isAuthorized && (is_lead_capture || !isPasswordVerified)) {
+        return (
+            <div className="h-full flex flex-col items-center justify-center p-6 bg-[#f8fafc]">
+                {!isPasswordVerified && onPasswordSubmit ? (
+                    <PasswordWall brandColor={primaryColor} onSubmit={onPasswordSubmit} />
+                ) : (
+                    <LeadCaptureForm
+                        brandColor={primaryColor}
+                        leadForm={leadForm || { name: '', email: '' }}
+                        setLeadForm={setLeadForm || (() => {})}
+                        onSubmit={onLeadSubmit}
+                    />
+                )}
+            </div>
+        );
+    }
 
     const getSocialIcon = (network: string) => {
         const n = (network || '').toLowerCase();

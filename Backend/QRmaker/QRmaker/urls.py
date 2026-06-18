@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/folders/', include('folders.urls')),
     path('api/files/', include('files.urls')),
     path('api/payments/', include('payments.urls')),
+    path('api/leads/', include('leads.urls')),
+    path('api/visits/', include('visits.urls')),
     path('r/<slug:slug>/', include('scans.urls')),
 ]
 

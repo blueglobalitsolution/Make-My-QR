@@ -201,7 +201,7 @@ const App: React.FC = () => {
     if (isSpecialPath && isSpecialView) return;
 
     const targetPath = (import.meta as any).env?.VITE_BACKEND_URL ? '/' : window.location.pathname;
-    if (view && !['business_profile', 'qr_viewer', 'public_scan', 'superadmin_login', 'admin_dashboard'].includes(view)) {
+    if (view && !['business_profile', 'qr_viewer', 'public_scan', 'superadmin_login'].includes(view)) {
       const newPath = `/${view}`;
       window.history.pushState({ view }, '', newPath);
     }
@@ -265,6 +265,8 @@ const App: React.FC = () => {
             setView('billing');
           } else if (!isViewPath && (currentPath === '/' || currentPath === '/login' || currentPath === '/register' || currentPath === '/forgot_password')) {
             setView('my_codes');
+          } else if (!isViewPath && (currentPath === '/superadmin_login') && user.is_superuser) {
+            setView('admin_dashboard');
           }
 
           await refreshData();

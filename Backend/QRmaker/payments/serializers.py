@@ -78,6 +78,7 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
             "user_email",
             "plan",
             "plan_name",
+            "status",
             "start_date",
             "expiry_date",
             "is_active",

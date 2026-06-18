@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     "scans",
     "files",
     "payments",
+    "leads",
+    "visits",
     "django_user_agents",
 ]
 

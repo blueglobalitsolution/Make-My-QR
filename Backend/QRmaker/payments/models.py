@@ -80,6 +80,9 @@ class UserSubscription(models.Model):
 
     def refresh_status(self):
         """Update status based on current time, expiry date, and grace period."""
+        if self.status == "payment_pending":
+            return
+
         from django.utils import timezone
         from datetime import timedelta
 

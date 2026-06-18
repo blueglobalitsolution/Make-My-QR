@@ -170,9 +170,27 @@ export const useAuth = (
     return () => clearInterval(interval);
   }, [resetTimer, resetStep]);
 
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    if (password.length < 8) return 'Password must be at least 8 characters';
+    if (password.length > 128) return 'Password must be under 128 characters';
+    return null;
+  };
+
   const handleAuth = async () => {
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      triggerAlert('Validation Error', 'Email and password are required.', 'danger');
+      return;
+    }
+    if (!validateEmail(loginEmail.trim())) {
+      triggerAlert('Validation Error', 'Please enter a valid email address.', 'danger');
+      return;
+    }
     try {
-      const data = await login(loginEmail, loginPassword);
+      const data = await login(loginEmail.trim(), loginPassword);
       const { mapUserData } = await import('../api/mappers');
       const user = mapUserData(data);
       setCurrentUser(user);
@@ -199,19 +217,39 @@ export const useAuth = (
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (regPassword !== regConfirmPassword) {
-      triggerAlert("Validation Error", "Passwords don't match!", "danger");
-      return;
+    if (signupStep === 1) {
+      if (!regName.trim() || !regEmail.trim() || !regPhone.trim() || !regPassword.trim() || !regConfirmPassword.trim()) {
+        triggerAlert("Validation Error", "All fields are required.", "danger");
+        return;
+      }
+      if (!validateEmail(regEmail.trim())) {
+        triggerAlert("Validation Error", "Please enter a valid email address.", "danger");
+        return;
+      }
+      const cleanPhone = regPhone.replace(/[\s\-\(\)]/g, '');
+      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+        triggerAlert("Validation Error", "Please enter a valid phone number (7-15 digits).", "danger");
+        return;
+      }
+      const passwordErr = validatePassword(regPassword);
+      if (passwordErr) {
+        triggerAlert("Validation Error", passwordErr, "danger");
+        return;
+      }
+      if (regPassword !== regConfirmPassword) {
+        triggerAlert("Validation Error", "Passwords don't match!", "danger");
+        return;
+      }
     }
     try {
       setIsProcessing(true);
       if (signupStep === 1) {
-        await sendSignupOTP(regEmail);
+        await sendSignupOTP(regEmail.trim());
         triggerAlert("Success", "Verification code sent to your email!", "info");
         setSignupStep(2);
       } else {
         let username = regEmail.split('@')[0];
-        await register(username, regEmail, regPassword, regOtp, regName, regLastName);
+        await register(username, regEmail, regPassword, regOtp, regName.trim(), regLastName);
         triggerAlert("Success", "Account created successfully! Please log in to your account.", "info");
         setView('login');
       }
@@ -242,11 +280,39 @@ export const useAuth = (
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!accFirstName.trim()) {
+      triggerAlert("Validation Error", "First name is required.", "danger");
+      return;
+    }
+    if (accFirstName.trim().length < 2 || accFirstName.trim().length > 100) {
+      triggerAlert("Validation Error", "First name must be between 2 and 100 characters.", "danger");
+      return;
+    }
+    if (accLastName.trim().length > 100) {
+      triggerAlert("Validation Error", "Last name must be under 100 characters.", "danger");
+      return;
+    }
+    if (!accEmail.trim()) {
+      triggerAlert("Validation Error", "Email is required.", "danger");
+      return;
+    }
+    if (!validateEmail(accEmail.trim())) {
+      triggerAlert("Validation Error", "Please enter a valid email address.", "danger");
+      return;
+    }
+    if (billingEmail && !validateEmail(billingEmail.trim())) {
+      triggerAlert("Validation Error", "Please enter a valid billing email address.", "danger");
+      return;
+    }
+    if (billingPostalCode && billingPostalCode.length > 20) {
+      triggerAlert("Validation Error", "Postal code must be under 20 characters.", "danger");
+      return;
+    }
     try {
       await updateProfile({
-        first_name: accFirstName,
-        last_name: accLastName,
-        email: accEmail
+        first_name: accFirstName.trim(),
+        last_name: accLastName.trim(),
+        email: accEmail.trim()
       });
       if (currentUser) {
         const updatedUser = {
@@ -279,6 +345,15 @@ export const useAuth = (
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!accPassword || !accConfirmPassword) {
+      triggerAlert("Validation Error", "Both password fields are required.", "danger");
+      return;
+    }
+    const passwordErr = validatePassword(accPassword);
+    if (passwordErr) {
+      triggerAlert("Validation Error", passwordErr, "danger");
+      return;
+    }
     if (accPassword !== accConfirmPassword) {
       triggerAlert("Validation Error", "Passwords don't match!", "danger");
       return;
@@ -296,9 +371,17 @@ export const useAuth = (
 
   const handleResetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resetEmail.trim()) {
+      triggerAlert("Validation Error", "Email is required.", "danger");
+      return;
+    }
+    if (!validateEmail(resetEmail.trim())) {
+      triggerAlert("Validation Error", "Please enter a valid email address.", "danger");
+      return;
+    }
     setIsProcessing(true);
     try {
-      await requestPasswordReset(resetEmail);
+      await requestPasswordReset(resetEmail.trim());
       setResetStep(2);
       setResetTimer(180);
     } catch (err: any) {
@@ -311,9 +394,17 @@ export const useAuth = (
 
   const handleAdminResetRequest = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resetEmail.trim()) {
+      triggerAlert("Validation Error", "Email is required.", "danger");
+      return;
+    }
+    if (!validateEmail(resetEmail.trim())) {
+      triggerAlert("Validation Error", "Please enter a valid email address.", "danger");
+      return;
+    }
     setIsProcessing(true);
     try {
-      await requestAdminPasswordReset(resetEmail);
+      await requestAdminPasswordReset(resetEmail.trim());
       setResetStep(2);
       setResetTimer(180);
     } catch (err: any) {
@@ -326,8 +417,12 @@ export const useAuth = (
 
   const handleResetVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resetOTP.trim() || resetOTP.trim().length !== 6 || !/^\d{6}$/.test(resetOTP.trim())) {
+      triggerAlert("Validation Error", "Please enter a valid 6-digit OTP.", "danger");
+      return;
+    }
     try {
-      await verifyOTP(resetEmail, resetOTP);
+      await verifyOTP(resetEmail, resetOTP.trim());
       setResetStep(3);
       setResetTimer(0);
     } catch (err: any) {
@@ -338,6 +433,15 @@ export const useAuth = (
 
   const handleResetConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newPasswordReset.trim()) {
+      triggerAlert("Validation Error", "New password is required.", "danger");
+      return;
+    }
+    const passwordErr = validatePassword(newPasswordReset);
+    if (passwordErr) {
+      triggerAlert("Validation Error", passwordErr, "danger");
+      return;
+    }
     try {
       await confirmPasswordReset(resetEmail, newPasswordReset);
       triggerAlert("Success", "Password reset successfully! Please login with your new password.", "info");

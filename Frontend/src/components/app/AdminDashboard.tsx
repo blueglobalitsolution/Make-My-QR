@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Users, Database, LogOut, Settings, CreditCard, Plus, Trash2, Edit, Check, X, Calendar, ArrowRight, ShieldCheck, Clock, TrendingUp, Search, QrCode } from 'lucide-react';
-import { getAdminStats, getAdminPlans, createAdminPlan, updateAdminPlan, deleteAdminPlan, getAdminUserSubscriptions, getAdminUsers, manageAdminUser } from '../../api/admin';
+import { LayoutDashboard, Users, Database, LogOut, Settings, CreditCard, Plus, Trash2, Edit, Check, X, Calendar, ArrowRight, ShieldCheck, Clock, TrendingUp, Search, QrCode, Phone, Mail, Eye, Globe } from 'lucide-react';
+import { getAdminStats, getAdminPlans, createAdminPlan, updateAdminPlan, deleteAdminPlan, getAdminUserSubscriptions, getAdminUsers, manageAdminUser, getAdminLeads, getAdminVisitStats, getAdminVisits } from '../../api/admin';
 
 interface AdminDashboardProps {
     setView: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
-    const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'subscriptions' | 'users'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'subscriptions' | 'users' | 'leads' | 'visits'>('overview');
     const [stats, setStats] = useState<any>(null);
     const [plans, setPlans] = useState<any[]>([]);
     const [userSubs, setUserSubs] = useState<any[]>([]);
@@ -19,6 +19,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
     });
     const [userSearch, setUserSearch] = useState('');
     const [userSearchQuery, setUserSearchQuery] = useState('');
+    const [leads, setLeads] = useState<any[]>([]);
+    const [leadsPagination, setLeadsPagination] = useState({
+        page: 1,
+        total: 0,
+        totalPages: 1,
+    });
+    const [leadsSearch, setLeadsSearch] = useState('');
+    const [leadsSearchQuery, setLeadsSearchQuery] = useState('');
+    const [visits, setVisits] = useState<any[]>([]);
+    const [visitsPagination, setVisitsPagination] = useState({
+        page: 1,
+        total: 0,
+        totalPages: 1,
+    });
+    const [visitsSearch, setVisitsSearch] = useState('');
+    const [visitsSearchQuery, setVisitsSearchQuery] = useState('');
+    const [visitStats, setVisitStats] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [savingPlan, setSavingPlan] = useState(false);
     const [confirmModal, setConfirmModal] = useState<{
@@ -55,7 +72,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
 
     useEffect(() => {
         fetchData();
-    }, [activeTab, userPagination.page, userSearchQuery]);
+    }, [activeTab, userPagination.page, userSearchQuery, leadsPagination.page, leadsSearchQuery, visitsPagination.page, visitsSearchQuery]);
 
     // Debounce user search (#15)
     useEffect(() => {
@@ -66,12 +83,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
         return () => clearTimeout(timer);
     }, [userSearch]);
 
+    // Debounce visits search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setVisitsSearchQuery(visitsSearch);
+            setVisitsPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [visitsSearch]);
+
+    // Debounce leads search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLeadsSearchQuery(leadsSearch);
+            setLeadsPagination(prev => ({ ...prev, page: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [leadsSearch]);
+
     const fetchData = async () => {
         setIsLoading(true);
         try {
             if (activeTab === 'overview') {
-                const data = await getAdminStats();
+                const [data, visitsData] = await Promise.all([
+                    getAdminStats(),
+                    getAdminVisitStats()
+                ]);
                 setStats(data);
+                setVisitStats(visitsData);
             } else if (activeTab === 'plans') {
                 const data = await getAdminPlans();
                 setPlans(data);
@@ -85,6 +124,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     page: response.page,
                     totalCount: response.total_count,
                     totalPages: response.total_pages
+                });
+            } else if (activeTab === 'leads') {
+                const [leadsResponse, visitsResponse] = await Promise.all([
+                    getAdminLeads(leadsPagination.page, leadsSearchQuery),
+                    getAdminVisitStats()
+                ]);
+                setLeads(leadsResponse.results);
+                setLeadsPagination({
+                    page: leadsResponse.page,
+                    total: leadsResponse.total,
+                    totalPages: leadsResponse.total_pages,
+                });
+                setVisitStats(visitsResponse);
+            } else if (activeTab === 'visits') {
+                const response = await getAdminVisits(visitsPagination.page, visitsSearchQuery);
+                setVisits(response.results);
+                setVisitsPagination({
+                    page: response.page,
+                    total: response.total,
+                    totalPages: response.total_pages,
                 });
             }
         } catch (err) {
@@ -284,6 +343,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                     >
                         Users
                     </button>
+                    <button
+                        onClick={() => setActiveTab('leads')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'leads' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Leads
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('visits')}
+                        className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTab === 'visits' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    >
+                        Visits
+                    </button>
                 </nav>
 
                 <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
@@ -308,12 +379,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                 {activeTab === 'plans' && 'Subscription Plans'}
                                 {activeTab === 'subscriptions' && 'User Subscriptions Tracker'}
                                 {activeTab === 'users' && 'User Management'}
+                                {activeTab === 'leads' && 'Website Leads'}
+                                {activeTab === 'visits' && 'Visitor Log'}
                             </h2>
                             <p className="text-slate-500 text-sm font-medium mt-1">
                                 {activeTab === 'overview' && 'Monitor all platform metrics and users globally.'}
                                 {activeTab === 'plans' && 'Create and edit pricing plans for your users.'}
                                 {activeTab === 'subscriptions' && 'Track user purchases, renewals, and expiry dates.'}
                                 {activeTab === 'users' && 'Manage registered users, their accounts and data.'}
+                                {activeTab === 'leads' && 'View leads captured from the marketing site QR builder.'}
+                                {activeTab === 'visits' && 'Detailed log of all visitors to the marketing site.'}
                             </p>
                         </div>
 
@@ -376,6 +451,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {visitStats && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                                                <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <Eye className="w-7 h-7" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Total Visitors</p>
+                                                    <p className="text-3xl font-black text-slate-800 tabular-nums">{visitStats.total_count?.toLocaleString() || 0}</p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                                                <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <TrendingUp className="w-7 h-7" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Today's Visitors</p>
+                                                    <p className="text-3xl font-black text-slate-800 tabular-nums">{visitStats.today_count?.toLocaleString() || 0}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Stats Table / Charts could go here */}
                                     <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
@@ -709,6 +807,235 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'leads' && (
+                                <div className="space-y-6">
+                                    {visitStats && (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                                                <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <Eye className="w-7 h-7" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Total Visitors</p>
+                                                    <p className="text-3xl font-black text-slate-800 tabular-nums">{visitStats.total_count?.toLocaleString() || 0}</p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                                                <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <TrendingUp className="w-7 h-7" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Today's Visitors</p>
+                                                    <p className="text-3xl font-black text-slate-800 tabular-nums">{visitStats.today_count?.toLocaleString() || 0}</p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+                                                <div className="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <Users className="w-7 h-7" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-2">Total Leads</p>
+                                                    <p className="text-3xl font-black text-slate-800 tabular-nums">{leadsPagination.total}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                <div className="bg-white rounded-[2.5rem] p-1 shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-8 border-b border-slate-50 bg-slate-50/20 flex flex-wrap items-center justify-between gap-4">
+                                        <div className="relative group">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-red-500 transition-colors" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search by name, email or phone..."
+                                                value={leadsSearch}
+                                                onChange={(e) => setLeadsSearch(e.target.value)}
+                                                className="pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold outline-none focus:border-red-500 transition-all w-72 shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="text-xs font-bold text-slate-400">
+                                            Total: {leadsPagination.total} leads
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-slate-50">
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Name</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Email</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Phone</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">QR Type</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">IP Address</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {leads.map((lead) => (
+                                                    <tr key={lead.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black text-xs">
+                                                                    {lead.name.substring(0, 2).toUpperCase()}
+                                                                </div>
+                                                                <span className="font-bold text-slate-800 text-sm">{lead.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-2">
+                                                                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                                                <span className="text-xs font-bold text-slate-600">{lead.email}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-2">
+                                                                <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                                                <span className="text-xs font-bold text-slate-600">{lead.phone}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black uppercase">
+                                                                {lead.qr_type || 'N/A'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-[10px] font-bold text-slate-400 font-mono">{lead.ip_address || '-'}</span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-xs font-bold text-slate-500">
+                                                                {new Date(lead.created_at).toLocaleDateString('en-US', {
+                                                                    year: 'numeric', month: 'short', day: 'numeric',
+                                                                    hour: '2-digit', minute: '2-digit'
+                                                                })}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {leads.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={6} className="px-8 py-20 text-center">
+                                                            <Users className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                                                            <p className="text-slate-400 font-black text-[11px] uppercase tracking-wider">No leads captured yet</p>
+                                                            <p className="text-slate-300 text-xs font-medium mt-2">Leads will appear here when users download QR codes from the marketing site.</p>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {leadsPagination.totalPages > 1 && (
+                                        <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
+                                            <button
+                                                disabled={leadsPagination.page <= 1}
+                                                onClick={() => setLeadsPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="text-[10px] font-bold text-slate-400">
+                                                Page {leadsPagination.page} of {leadsPagination.totalPages}
+                                            </span>
+                                            <button
+                                                disabled={leadsPagination.page >= leadsPagination.totalPages}
+                                                onClick={() => setLeadsPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'visits' && (
+                                <div className="bg-white rounded-[2.5rem] p-1 shadow-sm border border-slate-100 overflow-hidden">
+                                    <div className="p-8 border-b border-slate-50 bg-slate-50/20 flex flex-wrap items-center justify-between gap-4">
+                                        <div className="relative group">
+                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-purple-500 transition-colors" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search by IP, page or browser..."
+                                                value={visitsSearch}
+                                                onChange={(e) => setVisitsSearch(e.target.value)}
+                                                className="pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold outline-none focus:border-purple-500 transition-all w-80 shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="text-xs font-bold text-slate-400">
+                                            Total: {visitsPagination.total} visits
+                                        </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-slate-50">
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">IP Address</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Page</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Browser / OS</th>
+                                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-wider text-slate-400">Date & Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {visits.map((visit) => (
+                                                    <tr key={visit.id} className="hover:bg-slate-50/50 transition-colors">
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center font-black text-xs">
+                                                                    <Globe className="w-5 h-5" />
+                                                                </div>
+                                                                <span className="font-mono text-xs font-bold text-slate-700">{visit.ip_address}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-xs font-bold text-slate-600">{visit.page_url}</span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-xs font-bold text-slate-500">{visit.user_agent_short || '—'}</span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-xs font-bold text-slate-500">
+                                                                {new Date(visit.visited_at).toLocaleDateString('en-US', {
+                                                                    year: 'numeric', month: 'short', day: 'numeric',
+                                                                    hour: '2-digit', minute: '2-digit'
+                                                                })}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {visits.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={4} className="px-8 py-20 text-center">
+                                                            <Eye className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                                                            <p className="text-slate-400 font-black text-[11px] uppercase tracking-wider">No visits recorded yet</p>
+                                                            <p className="text-slate-300 text-xs font-medium mt-2">Visit data will appear once users browse the marketing site.</p>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {visitsPagination.totalPages > 1 && (
+                                        <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
+                                            <button
+                                                disabled={visitsPagination.page <= 1}
+                                                onClick={() => setVisitsPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="text-[10px] font-bold text-slate-400">
+                                                Page {visitsPagination.page} of {visitsPagination.totalPages}
+                                            </span>
+                                            <button
+                                                disabled={visitsPagination.page >= visitsPagination.totalPages}
+                                                onClick={() => setVisitsPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

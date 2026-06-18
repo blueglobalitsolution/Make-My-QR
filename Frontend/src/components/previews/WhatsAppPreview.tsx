@@ -38,7 +38,7 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
     is_protected,
     timerEnabled = false,
 }) => {
-    const [countdown, setCountdown] = useState(3);
+    const [countdown, setCountdown] = useState(1);
     const [redirecting, setRedirecting] = useState(false);
 
     const handleOpen = () => {
@@ -54,7 +54,7 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
             handleOpen();
             return;
         }
-        const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+        const timer = setTimeout(() => setCountdown(c => c - 1), 500);
         return () => clearTimeout(timer);
     }, [isAuthorized, timerEnabled, countdown, redirecting]);
 
@@ -191,7 +191,7 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({
                     {timerEnabled ? (
                         <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
                             <div className="w-5 h-5 rounded-full border-2 border-[#25D366] border-t-transparent animate-spin" />
-                            Opening WhatsApp in {countdown}s...
+                            Opening WhatsApp...
                         </div>
                     ) : (
                         <button
