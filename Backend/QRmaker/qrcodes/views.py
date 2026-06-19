@@ -430,6 +430,19 @@ class PublicQRCodeView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+class PublicQRAccessStatusView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, short_slug):
+        qrcode = get_object_or_404(QRCode, short_slug=short_slug, status="active")
+        return Response({
+            'max_access_count': qrcode.max_access_count,
+            'unique_access_count': qrcode.unique_access_count,
+            'limit_reached': qrcode.access_limit_reached,
+            'remaining': None if qrcode.max_access_count is None else max(0, qrcode.max_access_count - qrcode.unique_access_count),
+        })
+
+
 class CaptureLeadView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     
@@ -523,6 +536,17 @@ class VerifyPasswordView(generics.GenericAPIView):
                 {"error": "Incorrect password. Please try again."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+    @action(detail=True, methods=["get"])
+    def access_status(self, request, pk=None):
+        qrcode = self.get_object()
+        return Response({
+            'max_access_count': qrcode.max_access_count,
+            'unique_access_count': qrcode.unique_access_count,
+            'limit_reached': qrcode.access_limit_reached,
+            'remaining': None if qrcode.max_access_count is None else max(0, qrcode.max_access_count - qrcode.unique_access_count),
+        })
 
 
 class GatekeeperConfigListView(generics.ListAPIView):

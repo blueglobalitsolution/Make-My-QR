@@ -88,6 +88,7 @@ const getInitialWizardState = (): WizardState => ({
   isPasswordActive: false,
   is_protected: false,
   is_lead_capture: false,
+  max_access_count: null,
   show_preview: true,
   password: '',
   folderId: undefined,
@@ -352,6 +353,7 @@ export const useWizard = (
         is_protected: wizard.is_protected,
         password: wizard.password,
         is_lead_capture: wizard.is_lead_capture,
+        max_access_count: wizard.max_access_count || null,
         show_preview: wizard.show_preview,
         settings: {
           ...wizard.config,

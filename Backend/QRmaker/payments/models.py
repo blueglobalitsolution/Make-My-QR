@@ -13,6 +13,7 @@ class SubscriptionPlan(models.Model):
     can_create_business = models.BooleanField(default=False)
     can_password_protect = models.BooleanField(default=False)
     can_lead_capture = models.BooleanField(default=False)
+    can_set_access_limit = models.BooleanField(default=False, help_text="Allow setting max unique user access limit")
     can_access_analytics = models.BooleanField(default=False)
     upload_limit_mb = models.IntegerField(default=5)  # Default 5MB for free
     is_lifetime = models.BooleanField(default=False)

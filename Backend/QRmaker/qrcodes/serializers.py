@@ -22,7 +22,7 @@ class QRCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = QRCode
         fields = "__all__"
-        read_only_fields = ("user", "scans", "created_at")
+        read_only_fields = ("user", "scans", "unique_access_count", "created_at")
 
     def create(self, validated_data):
         password = validated_data.pop("password", None)

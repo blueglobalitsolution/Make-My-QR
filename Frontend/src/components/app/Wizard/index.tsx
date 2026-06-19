@@ -1402,6 +1402,49 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                   </div>
                 )}
+                {gatekeeperConfig?.access_limit_enabled !== false && (
+                  <div className="flex items-center justify-between py-4">
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => {
+                          const details = currentUser?.subscription?.plan_details;
+                          if (details && !details.can_set_access_limit) {
+                            alert("Upgrade to use Access Limit");
+                            return;
+                          }
+                          setWizard({ ...wizard, max_access_count: wizard.max_access_count ? null : 1 });
+                        }}
+                        className={`w-6 h-6 rounded-[15px] border-2 flex items-center justify-center transition-all ${wizard.max_access_count ? 'bg-[#dc2626] border-[#dc2626]' : 'bg-white border-slate-200'}`}
+                      >
+                        {wizard.max_access_count && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                      </button>
+                      <div className="cursor-pointer" onClick={() => {
+                        const details = currentUser?.subscription?.plan_details;
+                        if (details && !details.can_set_access_limit) {
+                          alert("Upgrade to use Access Limit");
+                          return;
+                        }
+                        setWizard({ ...wizard, max_access_count: wizard.max_access_count ? null : 1 });
+                      }}>
+                        <p className="font-black text-[#0F172A] text-sm ">Access Limit</p>
+                        <p className="text-[10px] font-medium text-slate-400">Restrict max unique users</p>
+                      </div>
+                    </div>
+                    {wizard.max_access_count !== null && wizard.max_access_count !== undefined && (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          max={999999}
+                          value={wizard.max_access_count || 1}
+                          onChange={(e) => setWizard({ ...wizard, max_access_count: parseInt(e.target.value) || 1 })}
+                          className="w-20 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-center outline-none focus:border-red-500 transition-all"
+                          placeholder="Count"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

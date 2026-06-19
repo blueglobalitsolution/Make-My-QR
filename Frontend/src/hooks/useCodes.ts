@@ -96,6 +96,10 @@ export const useCodes = (
       value: (code.category === 'whatsapp' || code.category === 'pdf' || code.category === 'business') ? '' : code.value,
       name: code.name,
       isPasswordActive: false,
+      is_protected: code.is_protected || false,
+      is_lead_capture: code.is_lead_capture || false,
+      max_access_count: code.max_access_count ?? null,
+      show_preview: code.show_preview ?? true,
       folderId: code.folderId,
       config: code.settings,
       business: code.settings.business || wizard.business

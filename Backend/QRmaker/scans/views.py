@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect, FileResponse, Http404
 from hashids import Hashids
-from qrcodes.models import QRCode, GatekeeperConfig
+from qrcodes.models import QRCode, GatekeeperConfig, QRAccess
 from files.models import File
 from .models import Scan
 from django.conf import settings
@@ -24,6 +24,34 @@ def redirect_scan(request, slug):
 
     qrcode = get_object_or_404(QRCode, short_slug=slug, status="active")
 
+    # --- Device ID for persistent tracking (cookie-based) ---
+    device_id = request.COOKIES.get('device_uuid')
+    if not device_id:
+        import uuid
+        device_id = str(uuid.uuid4())
+
+    ip_address = request.META.get("REMOTE_ADDR")
+
+    # Check access limit
+    if qrcode.max_access_count is not None:
+        has_accessed = QRAccess.objects.filter(
+            qr_code=qrcode, device_id=device_id
+        ).exists()
+
+        # Fallback: check by IP for legacy records (pre-device_id)
+        if not has_accessed:
+            legacy = QRAccess.objects.filter(
+                qr_code=qrcode, ip_address=ip_address, device_id__isnull=True
+            ).first()
+            if legacy:
+                legacy.device_id = device_id
+                legacy.save(update_fields=['device_id'])
+                has_accessed = True
+
+        if not has_accessed and qrcode.access_limit_reached:
+            response = HttpResponseRedirect(f"{settings.FRONTEND_URL}/view/{slug}?blocked=limit")
+            response.set_cookie('device_uuid', device_id, max_age=365*24*60*60)
+            return response
     # Analyze scanner info using django-user-agents
     user_agent = request.user_agent
 
@@ -35,8 +63,6 @@ def redirect_scan(request, slug):
     elif user_agent.is_bot:
         device_type = "Bot"
 
-    # Capture IP
-    ip_address = request.META.get("REMOTE_ADDR")
     country = "Unknown"
     city = "Unknown"
 
@@ -77,6 +103,16 @@ def redirect_scan(request, slug):
         from django.db.models import F
         qrcode.scans = F('scans') + 1
         qrcode.save(update_fields=["scans"])
+
+        # Track unique access for limit enforcement
+        if qrcode.max_access_count is not None:
+            QRAccess.objects.get_or_create(
+                qr_code=qrcode, device_id=device_id,
+                defaults={'ip_address': ip_address}
+            )
+            from django.db.models import Count
+            actual_unique = QRAccess.objects.filter(qr_code=qrcode).count()
+            QRCode.objects.filter(id=qrcode.id).update(unique_access_count=actual_unique)
     else:
         print(f"DEBUG: Deduplicated scan for QR {qrcode.id} from IP {ip_address}")
 
@@ -90,7 +126,9 @@ def redirect_scan(request, slug):
     else:
         redirect_url = f"{settings.FRONTEND_URL}/view/{slug}"
 
-    return HttpResponseRedirect(redirect_url)
+    response = HttpResponseRedirect(redirect_url)
+    response.set_cookie('device_uuid', device_id, max_age=365*24*60*60)
+    return response
 
 @csrf_exempt
 def capture_lead(request, slug):

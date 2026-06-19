@@ -84,6 +84,8 @@ export interface GeneratedCode {
   password?: string;
   is_lead_capture?: boolean;
   scans: number;
+  max_access_count?: number;
+  unique_access_count?: number;
   status: 'active' | 'paused';
   createdAt: string;
   show_preview: boolean;
@@ -210,6 +212,7 @@ export interface WizardState {
   isPasswordActive: boolean;
   is_protected: boolean;
   is_lead_capture: boolean;
+  max_access_count?: number | null;
   show_preview: boolean;
   folderId?: string;
   business?: BusinessConfig;

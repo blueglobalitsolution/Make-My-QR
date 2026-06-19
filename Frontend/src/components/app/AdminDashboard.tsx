@@ -65,6 +65,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
         can_create_business: false,
         can_password_protect: false,
         can_lead_capture: false,
+        can_set_access_limit: false,
         can_access_analytics: false,
         upload_limit_mb: 5,
         is_lifetime: false,
@@ -166,7 +167,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 await createAdminPlan(dataToSave);
             }
             setIsEditingPlan(null);
-            setPlanForm({ name: '', price: '', duration_months: 1, features: [], qr_limit: 5, can_create_dynamic: false, can_create_pdf: false, can_create_business: false, can_password_protect: false, can_lead_capture: false, can_access_analytics: false, upload_limit_mb: 5, is_lifetime: false });
+            setPlanForm({ name: '', price: '', duration_months: 1, features: [], qr_limit: 5, can_create_dynamic: false, can_create_pdf: false, can_create_business: false, can_password_protect: false, can_lead_capture: false, can_set_access_limit: false, can_access_analytics: false, upload_limit_mb: 5, is_lifetime: false });
             fetchData();
         } catch (err) {
             alert("Error saving plan");
@@ -280,6 +281,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_create_business: plan.can_create_business || false,
                 can_password_protect: plan.can_password_protect || false,
                 can_lead_capture: plan.can_lead_capture || false,
+                can_set_access_limit: plan.can_set_access_limit || false,
                 can_access_analytics: plan.can_access_analytics || false,
                 upload_limit_mb: plan.upload_limit_mb || 5,
                 is_lifetime: plan.is_lifetime || false
@@ -297,6 +299,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                 can_create_business: false,
                 can_password_protect: false,
                 can_lead_capture: false,
+                can_set_access_limit: false,
                 can_access_analytics: false,
                 upload_limit_mb: 5,
                 is_lifetime: false
@@ -596,6 +599,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ setView }) => {
                                                                     className="w-5 h-5 rounded border-slate-200 text-red-600 focus:ring-red-500"
                                                                 />
                                                                 <label htmlFor="can_lead_capture" className="text-xs font-bold text-slate-700">Lead Capture</label>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id="can_set_access_limit"
+                                                                    checked={planForm.can_set_access_limit}
+                                                                    onChange={(e) => setPlanForm({ ...planForm, can_set_access_limit: e.target.checked })}
+                                                                    className="w-5 h-5 rounded border-slate-200 text-red-600 focus:ring-red-500"
+                                                                />
+                                                                <label htmlFor="can_set_access_limit" className="text-xs font-bold text-slate-700">Access Limit</label>
                                                             </div>
                                                             <div className="flex items-center gap-3">
                                                                 <input

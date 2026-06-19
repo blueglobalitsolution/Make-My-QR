@@ -54,6 +54,14 @@ const QRViewer: React.FC<QRViewerProps> = ({ slug, setView, isFileMode = false }
                 return;
             }
 
+            // Check for blocked=limit from URL
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('blocked') === 'limit') {
+                setError("This QR code has reached its maximum access limit and is no longer available.");
+                setLoading(false);
+                return;
+            }
+
             try {
                 setLoading(true);
                 setIsAuthorized(false);

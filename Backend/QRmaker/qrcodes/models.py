@@ -61,6 +61,8 @@ class QRCode(models.Model):
     is_dynamic = models.BooleanField(default=False)
     is_protected = models.BooleanField(default=False)
     is_lead_capture = models.BooleanField(default=False)
+    max_access_count = models.IntegerField(null=True, blank=True, help_text="Max unique users who can access (null = unlimited)")
+    unique_access_count = models.IntegerField(default=0, help_text="Current unique access count (atomic)")
     scans = models.IntegerField(default=0)
     status = models.CharField(max_length=20, default="active", db_index=True)
     settings = models.JSONField(null=True, blank=True)
@@ -86,3 +88,23 @@ class QRCode(models.Model):
         if not self.password:
             return False
         return check_password(raw_password, self.password)
+
+    @property
+    def access_limit_reached(self):
+        if self.max_access_count is None:
+            return False
+        return self.unique_access_count >= self.max_access_count
+
+
+class QRAccess(models.Model):
+    qr_code = models.ForeignKey(QRCode, on_delete=models.CASCADE, related_name='access_log')
+    ip_address = models.GenericIPAddressField()
+    device_id = models.CharField(max_length=255, null=True, blank=True, db_index=True)
+    accessed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "QR Access"
+        verbose_name_plural = "QR Access Log"
+
+    def __str__(self):
+        return f"{self.qr_code.name} - {self.device_id or self.ip_address}"
