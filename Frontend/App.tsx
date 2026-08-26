@@ -398,7 +398,7 @@ const App: React.FC = () => {
 
   const downloadCode = async (code: GeneratedCode, format: 'png' | 'svg' = 'png', captureElement?: HTMLElement) => {
     // Handle high-fidelity download with frame from capture element
-    if (captureElement) {
+    if (captureElement && format === 'png') {
       try {
         const targetElement = captureElement.firstElementChild as HTMLElement || captureElement;
         const canvas = await html2canvas(targetElement, {
