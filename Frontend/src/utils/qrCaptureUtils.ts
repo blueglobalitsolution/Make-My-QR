@@ -312,38 +312,47 @@ export function normalizeSvgForIllustrator(rawSvg: string): string {
     const svg = doc.querySelector('svg');
     if (!svg) return rawSvg;
 
-    const allElements = Array.from(svg.querySelectorAll('path, rect'));
-    if (allElements.length === 0) return rawSvg;
+    const clipPaths = svg.querySelectorAll('defs clipPath');
+    if (clipPaths.length === 0) return rawSvg;
 
-    const colorGroups = new Map<string, string[]>();
-    allElements.forEach(el => {
-        const fill = el.getAttribute('fill') || (el as HTMLElement).style?.fill || '#000000';
-        let d = '';
-        if (el.tagName.toLowerCase() === 'rect') {
-            const x = parseFloat(el.getAttribute('x') || '0');
-            const y = parseFloat(el.getAttribute('y') || '0');
-            const w = parseFloat(el.getAttribute('width') || '0');
-            const h = parseFloat(el.getAttribute('height') || '0');
-            d = `M${x},${y} h${w} v${h} h${-w}Z`;
-        } else {
-            d = el.getAttribute('d') || '';
-        }
-        if (d) {
-            if (!colorGroups.has(fill)) colorGroups.set(fill, []);
-            colorGroups.get(fill)!.push(d);
-        }
-    });
+    const NS = 'http://www.w3.org/2000/svg';
 
-    allElements.forEach(el => el.remove());
-    svg.querySelectorAll('g').forEach(g => {
-        if (g.children.length === 0) g.remove();
-    });
+    clipPaths.forEach(clipPath => {
+        const children = Array.from(clipPath.children);
+        if (children.length <= 1) return;
 
-    colorGroups.forEach((paths, fill) => {
-        const merged = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
-        merged.setAttribute('d', paths.join(' '));
-        merged.setAttribute('fill', fill);
-        svg.appendChild(merged);
+        const allD: string[] = [];
+        children.forEach(child => {
+            const tag = child.tagName.toLowerCase();
+            if (tag === 'path') {
+                const d = child.getAttribute('d');
+                if (d) allD.push(d);
+            } else if (tag === 'rect') {
+                const x = parseFloat(child.getAttribute('x') || '0');
+                const y = parseFloat(child.getAttribute('y') || '0');
+                const w = parseFloat(child.getAttribute('width') || '0');
+                const h = parseFloat(child.getAttribute('height') || '0');
+                const rx = parseFloat(child.getAttribute('rx') || '0');
+                if (rx > 0) {
+                    allD.push(`M${x + rx},${y} h${w - 2 * rx} a${rx},${rx} 0 0 1 ${rx},${rx} v${h - 2 * rx} a${rx},${rx} 0 0 1 ${-rx},${rx} h${-(w - 2 * rx)} a${rx},${rx} 0 0 1 ${-rx},${-rx} v${-(h - 2 * rx)} a${rx},${rx} 0 0 1 ${rx},${-rx}Z`);
+                } else {
+                    allD.push(`M${x},${y} h${w} v${h} h${-w}Z`);
+                }
+            } else if (tag === 'circle') {
+                const cx = parseFloat(child.getAttribute('cx') || '0');
+                const cy = parseFloat(child.getAttribute('cy') || '0');
+                const r = parseFloat(child.getAttribute('r') || '0');
+                allD.push(`M${cx - r},${cy} a${r},${r} 0 1,0 ${r * 2},0 a${r},${r} 0 1,0 ${-r * 2},0`);
+            }
+        });
+
+        if (allD.length === 0) return;
+
+        while (clipPath.firstChild) clipPath.removeChild(clipPath.firstChild);
+
+        const merged = doc.createElementNS(NS, 'path');
+        merged.setAttribute('d', allD.join(' '));
+        clipPath.appendChild(merged);
     });
 
     if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
