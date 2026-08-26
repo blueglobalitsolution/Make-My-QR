@@ -58,6 +58,11 @@ export const getCodeAnalytics = async (id: string | number, params: any = {}) =>
     return response.data;
 };
 
+export const resetCodeAccess = async (id: string) => {
+    const response = await apiClient.post(`/qrcodes/${id}/reset-access/`);
+    return response.data;
+};
+
 export const exportScansCsv = async () => {
     try {
         const response = await apiClient.get('/qrcodes/export-scans-csv/', {

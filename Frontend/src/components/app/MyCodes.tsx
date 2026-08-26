@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X, Lock, Share2 } from 'lucide-react';
+import { Search, Plus, Pencil, Trash2, Download, Grid3X3, Barcode, Folder as FolderIcon, ChevronRight, ExternalLink, ChevronLeft, X, Lock, Share2, RotateCcw } from 'lucide-react';
 import { GeneratedCode, Folder } from '../../../types';
 import { StyledQRCode } from '../../../components/StyledQRCode';
 import { QRFrameWrapper } from '../../../components/QRFrameWrapper';
@@ -14,6 +14,7 @@ interface MyCodesProps {
   setSearchQuery: (query: string) => void;
   filteredHistory: GeneratedCode[];
   deleteCode: (id: string) => Promise<void>;
+  resetAccess: (id: string) => void;
   deleteFolder: (id: string) => Promise<void>;
   downloadCode: (code: GeneratedCode, format?: 'png' | 'svg') => void;
   startEditing: (code: GeneratedCode) => void;
@@ -36,6 +37,7 @@ export const MyCodes: React.FC<MyCodesProps> = ({
   setSearchQuery,
   filteredHistory,
   deleteCode,
+  resetAccess,
   deleteFolder,
   downloadCode,
   startEditing,
@@ -415,6 +417,15 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     >
                       <Pencil className="w-4 h-4 opacity-70 group-hover:opacity-100" />
                     </button>
+                    {code.max_access_count && (
+                      <button
+                        onClick={() => resetAccess(code.id)}
+                        className="w-9 h-9 flex items-center justify-center skeu-btn-secondary rounded-[5px] hover:!bg-amber-500 hover:!text-white hover:!border-amber-500 transition-all"
+                        title="Reset Access Count"
+                      >
+                        <RotateCcw className="w-4 h-4 opacity-70 group-hover:opacity-100" />
+                      </button>
+                    )}
                     <button
                       onClick={() => deleteCode(code.id)}
                       className="w-9 h-9 flex items-center justify-center skeu-btn-secondary rounded-[5px] hover:!bg-[#3eb5a9] hover:!text-white hover:!border-[#3eb5a9] transition-all"
@@ -515,6 +526,14 @@ export const MyCodes: React.FC<MyCodesProps> = ({
                     <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
+                {code.max_access_count && (
+                  <button
+                    onClick={() => resetAccess(code.id)}
+                    className="w-full mt-3 py-3 skeu-btn-secondary rounded-[5px] text-[12px] font-black capitalize flex items-center justify-center gap-2.5 hover:!bg-amber-500 hover:!text-white hover:!border-amber-500 transition-all"
+                  >
+                    <RotateCcw className="w-4 h-4" /> Reset Access
+                  </button>
+                )}
               </div>
             );
           })

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import QRCode, GatekeeperConfig
+from .models import QRCode, GatekeeperConfig, QRAccess
 from .serializers import QRCodeSerializer, GatekeeperConfigSerializer
 from folders.models import Folder
 from files.models import File
@@ -408,6 +408,15 @@ class QRCodeViewSet(viewsets.ModelViewSet):
                 "page_size": page_size
             }
         })
+
+    @action(detail=True, methods=["post"], url_path="reset-access")
+    def reset_access(self, request, pk=None):
+        """Reset all access records and unique access count for this QR code."""
+        qrcode = self.get_object()
+        qrcode.access_log.all().delete()
+        qrcode.unique_access_count = 0
+        qrcode.save(update_fields=['unique_access_count'])
+        return Response({'message': 'Access records reset successfully'})
 
 
 class PublicQRCodeView(generics.RetrieveAPIView):

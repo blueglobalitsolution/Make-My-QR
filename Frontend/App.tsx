@@ -5,7 +5,7 @@ import { ViewState, WizardState, GeneratedCode, Folder, Palette } from './types'
 import { StyledQRCode } from './components/StyledQRCode';
 import { QRFrameWrapper } from './components/QRFrameWrapper';
 import BusinessProfileViewer from './components/BusinessProfileViewer';
-import { getCodes, deleteCode as apiDeleteCode } from './src/api/qrcodes';
+import { getCodes, deleteCode as apiDeleteCode, resetCodeAccess as apiResetCodeAccess } from './src/api/qrcodes';
 import { getFolders, deleteFolder as apiDeleteFolder, createFolder as apiCreateFolder } from './src/api/folders';
 import { getInitialBusinessProfile, initBusinessProfilesDB, getAllBusinessProfiles } from './src/services/businessProfile';
 import { generateQRWithFrame } from './src/utils/qrCaptureUtils';
@@ -375,6 +375,27 @@ const App: React.FC = () => {
     );
   };
 
+  const resetAccess = (id: string) => {
+    const code = history.find(h => h.id === id);
+    if (!code) return;
+
+    showConfirm(
+      'Reset Access Count',
+      `Are you sure you want to reset access records for "${code.name}"? All current access data will be cleared.`,
+      async () => {
+        const backupHistory = [...history];
+        try {
+          setHistory(prev => prev.map(h => h.id === id ? { ...h, unique_access_count: 0 } : h));
+          await apiResetCodeAccess(id);
+          showAlert("Success", "Access records have been reset successfully.", "info");
+        } catch (err) {
+          setHistory(backupHistory);
+          showAlert("Error", "Failed to reset access records. Please try again.", "danger");
+        }
+      }
+    );
+  };
+
   const downloadCode = async (code: GeneratedCode, format: 'png' | 'svg' = 'png', captureElement?: HTMLElement) => {
     // Handle high-fidelity download with frame from capture element
     if (captureElement) {
@@ -654,6 +675,7 @@ const App: React.FC = () => {
             setSearchQuery={setSearchQuery}
             filteredHistory={filteredHistory}
             deleteCode={deleteCode}
+            resetAccess={resetAccess}
             deleteFolder={deleteFolder}
             downloadCode={downloadCode}
             startEditing={startEditing}

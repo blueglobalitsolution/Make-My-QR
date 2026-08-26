@@ -103,18 +103,19 @@ def redirect_scan(request, slug):
         from django.db.models import F
         qrcode.scans = F('scans') + 1
         qrcode.save(update_fields=["scans"])
+    else:
+        print(f"DEBUG: Deduplicated scan for QR {qrcode.id} from IP {ip_address}")
 
-        # Track unique access for limit enforcement
-        if qrcode.max_access_count is not None:
-            QRAccess.objects.get_or_create(
-                qr_code=qrcode, device_id=device_id,
-                defaults={'ip_address': ip_address}
-            )
+    # Track unique access for limit enforcement (outside dedup block, so every device counts)
+    if qrcode.max_access_count is not None:
+        _, created = QRAccess.objects.get_or_create(
+            qr_code=qrcode, device_id=device_id,
+            defaults={'ip_address': ip_address}
+        )
+        if created:
             from django.db.models import Count
             actual_unique = QRAccess.objects.filter(qr_code=qrcode).count()
             QRCode.objects.filter(id=qrcode.id).update(unique_access_count=actual_unique)
-    else:
-        print(f"DEBUG: Deduplicated scan for QR {qrcode.id} from IP {ip_address}")
 
     # Preview page hamesha dikhega — redirect to frontend
     # File-type QR codes go to file viewer, everything else goes to standard viewer
