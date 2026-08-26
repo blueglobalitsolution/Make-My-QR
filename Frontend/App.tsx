@@ -8,7 +8,7 @@ import BusinessProfileViewer from './components/BusinessProfileViewer';
 import { getCodes, deleteCode as apiDeleteCode, resetCodeAccess as apiResetCodeAccess } from './src/api/qrcodes';
 import { getFolders, deleteFolder as apiDeleteFolder, createFolder as apiCreateFolder } from './src/api/folders';
 import { getInitialBusinessProfile, initBusinessProfilesDB, getAllBusinessProfiles } from './src/services/businessProfile';
-import { generateQRWithFrame } from './src/utils/qrCaptureUtils';
+import { generateQRWithFrame, normalizeSvgForIllustrator } from './src/utils/qrCaptureUtils';
 import { getFile } from './src/services/fileStorage';
 import html2canvas from 'html2canvas';
 
@@ -470,6 +470,21 @@ const App: React.FC = () => {
       image: code.settings.logoUrl,
       imageOptions: { crossOrigin: "anonymous", margin: 10 }
     });
+    if (format === 'svg') {
+      const rawBlob = await qr.getRawData('svg');
+      if (rawBlob) {
+        const rawText = rawBlob instanceof Blob ? await rawBlob.text() : new TextDecoder().decode(rawBlob);
+        const cleanSvg = normalizeSvgForIllustrator(rawText);
+        const blob = new Blob([cleanSvg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${code.name || 'qr-code'}.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+      }
+    }
     qr.download({ name: code.name || 'qr-code', extension: format });
   };
 

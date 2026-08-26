@@ -306,6 +306,57 @@ export const getFrameConfig = (frame: FrameType): FrameConfig => {
     return FRAME_CONFIGS[frame] || FRAME_CONFIGS['none'];
 };
 
+export function normalizeSvgForIllustrator(rawSvg: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rawSvg, 'image/svg+xml');
+    const svg = doc.querySelector('svg');
+    if (!svg) return rawSvg;
+
+    const allElements = Array.from(svg.querySelectorAll('path, rect'));
+    if (allElements.length === 0) return rawSvg;
+
+    const colorGroups = new Map<string, string[]>();
+    allElements.forEach(el => {
+        const fill = el.getAttribute('fill') || (el as HTMLElement).style?.fill || '#000000';
+        let d = '';
+        if (el.tagName.toLowerCase() === 'rect') {
+            const x = parseFloat(el.getAttribute('x') || '0');
+            const y = parseFloat(el.getAttribute('y') || '0');
+            const w = parseFloat(el.getAttribute('width') || '0');
+            const h = parseFloat(el.getAttribute('height') || '0');
+            d = `M${x},${y} h${w} v${h} h${-w}Z`;
+        } else {
+            d = el.getAttribute('d') || '';
+        }
+        if (d) {
+            if (!colorGroups.has(fill)) colorGroups.set(fill, []);
+            colorGroups.get(fill)!.push(d);
+        }
+    });
+
+    allElements.forEach(el => el.remove());
+    svg.querySelectorAll('g').forEach(g => {
+        if (g.children.length === 0) g.remove();
+    });
+
+    colorGroups.forEach((paths, fill) => {
+        const merged = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+        merged.setAttribute('d', paths.join(' '));
+        merged.setAttribute('fill', fill);
+        svg.appendChild(merged);
+    });
+
+    if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    if (!svg.getAttribute('viewBox')) {
+        const w = svg.getAttribute('width') || '1000';
+        const h = svg.getAttribute('height') || '1000';
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    }
+
+    const serializer = new XMLSerializer();
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svg);
+}
+
 export const generateQRWithFrame = async (qrValue: string, config: any): Promise<string | null> => {
     const container = document.createElement('div');
     container.style.position = 'absolute';
