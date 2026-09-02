@@ -150,8 +150,18 @@ REST_FRAMEWORK = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://app.makemyqrcode.com",
+    "https://makemyqrcode.com",
+    "https://www.makemyqrcode.com",
+    "https://stage.makemyqrcode.com",
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://0.0.0.0",
+    "http://192.168.1.208",  # Machine IP
+]
 CSRF_TRUSTED_ORIGINS = [
     FRONTEND_URL,
     BACKEND_URL,
