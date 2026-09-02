@@ -111,7 +111,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": os.getenv("DATABASE_NAME", "qrmaker"),
         "USER": os.getenv("DATABASE_USER", "qrmaker"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD", "X0QKcA%%P%P1ni"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", ""),
         "HOST": os.getenv("DATABASE_HOST", "localhost"),
         "PORT": os.getenv("DATABASE_PORT", "3306"),
     }
@@ -218,8 +218,8 @@ RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY", "")
 
 # MinIO / S3 Storage Settings
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "minio:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "")
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
 MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
 MINIO_REGION = os.getenv("MINIO_REGION", "us-east-1")
