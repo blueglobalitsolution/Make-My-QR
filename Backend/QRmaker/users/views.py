@@ -241,11 +241,21 @@ class SendSignupOTPView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        cooldown_key = f"signup_otp_cooldown_{email}"
+        if cache.get(cooldown_key):
+            return Response(
+                {
+                    "error": "A verification code was already sent recently. Please wait a few minutes before requesting another."
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         otp = str(random.randint(100000, 999999))
         cache_key = f"signup_otp_{email}"
 
         try:
             cache.set(cache_key, otp, timeout=600)  # 10 minutes
+            cache.set(cooldown_key, True, timeout=180)  # 3-minute cooldown per email
             success = send_signup_otp_email(email, otp)
             if not success:
                 raise Exception("Email failed to send")
@@ -432,10 +442,20 @@ class PasswordResetRequestView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+        cooldown_key = f"otp_reset_cooldown_{email}"
+        if cache.get(cooldown_key):
+            return Response(
+                {
+                    "error": "A reset code was already sent recently. Please wait a few minutes before requesting another."
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         otp = "".join([str(random.randint(0, 9)) for _ in range(6)])
         try:
             # Store OTP in cache for 3 minutes (180 seconds)
             cache.set(f"otp_{email}", otp, timeout=180)
+            cache.set(cooldown_key, True, timeout=180)  # 3-minute cooldown per email
         except Exception as e:
             # Handle Redis connection errors gracefully
             print(f"Redis Cache Error: {e}")
@@ -487,9 +507,19 @@ class AdminPasswordResetRequestView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+        cooldown_key = f"otp_reset_cooldown_{email}"
+        if cache.get(cooldown_key):
+            return Response(
+                {
+                    "error": "A reset code was already sent recently. Please wait a few minutes before requesting another."
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         otp = "".join([str(random.randint(0, 9)) for _ in range(6)])
         # Store OTP in cache for 3 minutes (180 seconds)
         cache.set(f"otp_{email}", otp, timeout=180)
+        cache.set(cooldown_key, True, timeout=180)  # 3-minute cooldown per email
 
         if send_otp_email(email, otp):
             return Response({"message": "OTP sent successfully"})
