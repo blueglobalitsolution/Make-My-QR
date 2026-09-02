@@ -80,7 +80,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
-    "QRmaker.debug_middleware.LogHeadersMiddleware",
 ]
 
 ROOT_URLCONF = "QRmaker.urls"
