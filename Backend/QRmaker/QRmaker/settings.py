@@ -142,6 +142,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "20/hour",
+        "otp_send": "3/hour",
+        "otp_reset": "5/hour",
+    },
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

@@ -10,6 +10,7 @@ from django.core.cache import cache
 import random
 from .email_utils import send_welcome_email, send_otp_email, send_signup_otp_email
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.throttling import AnonRateThrottle
 
 
 def get_user_subscription_data(user):
@@ -224,6 +225,8 @@ class CustomObtainAuthToken(ObtainAuthToken):
 
 class SendSignupOTPView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    throttle_scope = "otp_send"
 
     def post(self, request):
         email = request.data.get("email")
@@ -406,6 +409,8 @@ class TokenRefreshView(APIView):
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    throttle_scope = "otp_reset"
 
     def post(self, request):
         email = request.data.get("email")
@@ -452,6 +457,8 @@ class PasswordResetRequestView(APIView):
 
 class AdminPasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    throttle_scope = "otp_reset"
 
     def post(self, request):
         email = request.data.get("email")
