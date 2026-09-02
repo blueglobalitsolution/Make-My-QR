@@ -11,6 +11,7 @@ import random
 from .email_utils import send_welcome_email, send_otp_email, send_signup_otp_email
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.throttling import AnonRateThrottle
+from .recaptcha import verify_recaptcha
 
 
 def get_user_subscription_data(user):
@@ -235,6 +236,13 @@ class SendSignupOTPView(APIView):
                 {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        recaptcha_token = request.data.get("recaptcha_token")
+        if not verify_recaptcha(recaptcha_token):
+            return Response(
+                {"error": "CAPTCHA verification failed"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if User.objects.filter(email=email).exists():
             return Response(
                 {"error": "This email is already registered"},
@@ -429,6 +437,13 @@ class PasswordResetRequestView(APIView):
                 {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        recaptcha_token = request.data.get("recaptcha_token")
+        if not verify_recaptcha(recaptcha_token):
+            return Response(
+                {"error": "CAPTCHA verification failed"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             user = User.objects.filter(email=email).first()
             if not user:
@@ -485,6 +500,13 @@ class AdminPasswordResetRequestView(APIView):
         if not email:
             return Response(
                 {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        recaptcha_token = request.data.get("recaptcha_token")
+        if not verify_recaptcha(recaptcha_token):
+            return Response(
+                {"error": "CAPTCHA verification failed"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:

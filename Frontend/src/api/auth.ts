@@ -1,5 +1,6 @@
 import apiClient from './client';
 import { mapUserData } from './mappers';
+import { getRecaptchaToken } from './recaptcha';
 
 export const login = async (username, password) => {
     const response = await apiClient.post('/users/login/', { username, password });
@@ -24,7 +25,8 @@ export const register = async (username, email, password, otp, first_name = '', 
 };
 
 export const sendSignupOTP = async (email: string) => {
-    const response = await apiClient.post('/users/send-signup-otp/', { email });
+    const recaptcha_token = await getRecaptchaToken('signup_otp');
+    const response = await apiClient.post('/users/send-signup-otp/', { email, recaptcha_token });
     return response.data;
 };
 
@@ -46,12 +48,14 @@ export const logout = () => {
 };
 
 export const requestPasswordReset = async (email: string) => {
-    const response = await apiClient.post('/users/password-reset-request/', { email });
+    const recaptcha_token = await getRecaptchaToken('password_reset');
+    const response = await apiClient.post('/users/password-reset-request/', { email, recaptcha_token });
     return response.data;
 };
 
 export const requestAdminPasswordReset = async (email: string) => {
-    const response = await apiClient.post('/users/admin-password-reset-request/', { email });
+    const recaptcha_token = await getRecaptchaToken('admin_password_reset');
+    const response = await apiClient.post('/users/admin-password-reset-request/', { email, recaptcha_token });
     return response.data;
 };
 
