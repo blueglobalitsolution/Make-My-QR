@@ -1,3 +1,4 @@
+import re
 from datetime import date, timedelta
 from rest_framework import permissions, status
 from rest_framework.views import APIView
@@ -7,8 +8,28 @@ from django.core.paginator import Paginator
 from .models import SiteVisit
 from .serializers import TrackVisitSerializer, SiteVisitSerializer
 
+BOT_UA_PATTERN = re.compile(
+    r"(googlebot|mediapartners-google|adsbot|bingbot|bingpreview|slurp|baiduspider"
+    r"|yandexbot|yahoo! slurp|duckduckbot|facebookexternalhit|whatsapp|twitterbot"
+    r"|telegrambot|discordbot|slackbot|skypeuripreview|pinterest|applebot"
+    r"|bytespider|semrush|ahrefsbot|mj12bot|dotbot|sogou|yisouspider|petalbot"
+    r"|exabot|coccocbot|crawl(er)?|spider|\bbot\b|uptimerobot|uptime|-monitoring"
+    r"|pingdom|headlesschrome|lighthouse|phantomjs|curl|wget|python-requests"
+    r"|go-http-client|java/|okhttp|openai|gptbot|claudebot|oai-searchbot"
+    r"|perplexitybot|youbot|dataprovider|blexbot|netcraftsurveyagent|ia_archiver"
+    r"|facebookcatalog|feedfetcher|wordpress|googlesiteverification|friendfeed"
+    r"|trackabot|rogerbot|scrapy|selenium|playwright|puppeteer)",
+    re.IGNORECASE,
+)
+
+
+def is_bot(user_agent):
+    return bool(user_agent) and bool(BOT_UA_PATTERN.search(user_agent))
+
+
 class TrackVisitView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = []
 
     def post(self, request):
         ip_address = request.META.get('REMOTE_ADDR')
@@ -16,13 +37,12 @@ class TrackVisitView(APIView):
         page_url = request.data.get('page', '/')
         today = date.today()
 
-        if ip_address:
-            if not SiteVisit.objects.filter(ip_address=ip_address, visited_at__date=today).exists():
-                SiteVisit.objects.create(
-                    ip_address=ip_address,
-                    user_agent=user_agent,
-                    page_url=page_url,
-                )
+        if ip_address and not is_bot(user_agent):
+            SiteVisit.objects.create(
+                ip_address=ip_address,
+                user_agent=user_agent,
+                page_url=page_url,
+            )
 
         today_count = SiteVisit.objects.filter(visited_at__date=today).count()
         total_count = SiteVisit.objects.count()
