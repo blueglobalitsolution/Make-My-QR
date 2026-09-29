@@ -53,25 +53,25 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
   }
 
   return (
-    <div className={`py-10 px-4 font-inter text-[#1e293b] antialiased bg-[#f0f0f0] w-full min-h-full flex flex-col justify-center`}>
-      <header className="text-center mb-10 space-y-1">
-        <h1 className="skeu-page-title">
+    <div className={`py-6 sm:py-10 px-3 sm:px-6 font-inter text-[#1e293b] antialiased bg-[#f0f0f0] w-full min-h-full flex flex-col justify-center pb-32 lg:pb-16`}>
+      <header className="text-center mb-6 sm:mb-10 space-y-1">
+        <h1 className="skeu-page-title text-2xl sm:text-3xl">
           Flexible <span className={brandRed}>Plans</span> & Pricing
         </h1>
-        <p className="skeu-page-subtitle max-w-2xl mx-auto">
+        <p className="skeu-page-subtitle text-xs sm:text-sm max-w-2xl mx-auto px-2">
           Choose A Professional Plan That Scales With Your Growth.
         </p>
       </header>
 
       {availableCycles.length > 1 && (
-        <section className="flex justify-center mb-12 px-4 w-full">
-          <div className="inline-flex items-center gap-2 bg-white p-2 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50">
+        <section className="flex justify-center mb-8 sm:mb-12 px-2 w-full">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white p-1.5 sm:p-2 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/50 max-w-full overflow-x-auto scrollbar-hide">
             {availableCycles.map((dur) => (
               <button
                 key={dur}
                 type="button"
                 onClick={() => setCycle(dur)}
-                className={`px-8 py-3.5 text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap  ${cycle === dur ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
+                className={`px-4 sm:px-8 py-2 sm:py-3.5 text-xs sm:text-[15px] font-bold rounded-full transition-all duration-300 outline-none focus:outline-none border-transparent ring-0 whitespace-nowrap ${cycle === dur ? `bg-[#ee4342] !text-white shadow-md shadow-red-500/20` : '!text-[#476077] hover:!text-white hover:bg-[#3eb5a9]'}`}
               >
                 {dur === 0 ? 'LIFETIME' : (dur === 12 ? 'ANNUAL' : (dur === 1 ? 'MONTHLY' : `${dur} MONTHS`))}
               </button>
@@ -80,14 +80,14 @@ export const Billing: React.FC<{ setView?: (view: any, data?: any) => void }> = 
         </section>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 pb-10 w-full">
-        <div className={`grid grid-cols-1 ${currentPlans.length === 2 ? 'md:grid-cols-2' : currentPlans.length >= 3 ? 'md:grid-cols-3' : ''} gap-8 items-center justify-center`}>
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 w-full">
+        <div className={`grid grid-cols-1 ${currentPlans.length === 2 ? 'md:grid-cols-2' : currentPlans.length >= 3 ? 'md:grid-cols-3' : ''} gap-6 sm:gap-8 items-center justify-center`}>
           {currentPlans.map((plan, index) => {
             const isFeatured = index === 1 || currentPlans.length === 1;
             return (
               <section 
                 key={plan.id}
-                className={`relative bg-white rounded-[2.5rem] p-8 border ${isFeatured ? `${borderBrandRed} border-2 shadow-[0_20px_60px_-15px_rgba(239,68,68,0.15)] scale-[1.05] z-10` : 'border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]'} flex flex-col h-full hover:-translate-y-1.5 transition-all duration-300`}
+                className={`relative bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 border ${isFeatured ? `${borderBrandRed} border-2 shadow-[0_20px_60px_-15px_rgba(239,68,68,0.15)] md:scale-[1.05] z-10` : 'border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]'} flex flex-col h-full hover:-translate-y-1.5 transition-all duration-300`}
               >
                 {isFeatured && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-max">

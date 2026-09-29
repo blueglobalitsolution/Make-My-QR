@@ -165,10 +165,10 @@ export const Account: React.FC<AccountProps> = ({
   };
 
   return (
-    <div className="h-full py-10 w-full space-y-4 animate-in fade-in duration-700 px-10">
-      <div className="space-y-1">
-        <h1 className="skeu-page-title">Account Settings</h1>
-        <p className="skeu-page-subtitle">Manage your personal information and security preferences.</p>
+    <div className="flex-1 w-full space-y-4 sm:space-y-6 font-lato py-4 sm:py-6 lg:py-10 px-3 sm:px-6 lg:px-10 pb-32 lg:pb-16 animate-in fade-in duration-500">
+      <div className="space-y-0.5 sm:space-y-1">
+        <h1 className="skeu-page-title text-2xl sm:text-3xl font-black">Account Settings</h1>
+        <p className="skeu-page-subtitle text-xs sm:text-sm">Manage your personal information and security preferences.</p>
       </div>
 
       <div className="flex bg-[#f8fafc] border border-slate-200 p-0.5 rounded-lg shadow-inner relative max-w-[280px] w-full">

@@ -95,33 +95,37 @@ export const PublicScan: React.FC<PublicScanProps> = ({ setView }) => {
 
     return (
         <div className="min-h-screen flex flex-col skeu-app-bg">
-            <header className="sticky top-0 z-[100] flex items-center justify-between px-8 py-3 backdrop-blur-xl bg-white/70 border-b border-red-100/50">
+            <header className="sticky top-0 z-[100] flex items-center justify-between px-4 sm:px-8 py-3 backdrop-blur-xl bg-white/85 border-b border-red-100/50 shadow-sm">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('login')}>
-                    <div className="bg-[#dc2626] p-1.5 rounded-lg shadow-lg">
+                    <div className="bg-[#dc2626] p-1.5 rounded-xl shadow-md">
                         <Scan className="text-white w-5 h-5" />
                     </div>
-                    <h1 className="skeu-page-title !text-lg">
+                    <h1 className="skeu-page-title !text-base sm:!text-lg">
                         Scanner <span className="text-[#dc2626]">Studio</span>
                     </h1>
                 </div>
-                <button onClick={() => setView('login')} className="text-slate-400 hover:text-[#dc2626] transition-colors">
-                    <X className="w-6 h-6" />
+                <button
+                    onClick={() => setView('login')}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#dc2626] hover:bg-red-50 transition-all"
+                    aria-label="Close"
+                >
+                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 bg-red-50/50">
+            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-red-50/40">
                 {!scannedData ? (
-                    <div className="w-full max-w-md space-y-8 animate-in fade-in zoom-in duration-500">
-                        <div className="text-center space-y-2">
-                            <h2 className="text-3xl font-black text-slate-800 ">Scan Any QR Code</h2>
-                            <p className="text-slate-500 font-medium">Point your camera at a QR code to preview it.</p>
+                    <div className="w-full max-w-md space-y-6 sm:space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                        <div className="text-center space-y-1 sm:space-y-2">
+                            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">Scan Any QR Code</h2>
+                            <p className="text-xs sm:text-sm text-slate-500 font-medium">Point your camera at a QR code to preview it.</p>
                         </div>
 
-                        <div className="skeu-card p-6 aspect-square flex flex-col overflow-hidden">
-                            <div id="reader" className="w-full h-full rounded-2xl overflow-hidden shadow-inner bg-black"></div>
+                        <div className="skeu-card p-3 sm:p-5 w-full aspect-square flex flex-col overflow-hidden shadow-xl rounded-2xl sm:rounded-3xl bg-white border border-red-100/50">
+                            <div id="reader" className="w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-inner bg-black"></div>
                         </div>
 
-                        <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100/50 flex items-start gap-3">
+                        <div className="bg-red-50/70 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-red-100/60 flex items-start gap-3">
                             <Smartphone className="w-5 h-5 text-[#dc2626] shrink-0 mt-0.5" />
                             <p className="text-xs text-[#dc2626] font-semibold leading-relaxed">
                                 This public scanner works without an account. Detected links will be shown in a protected phone preview.

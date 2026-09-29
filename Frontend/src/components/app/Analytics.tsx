@@ -145,24 +145,24 @@ export const Analytics: React.FC = () => {
     const devicesList = ['All', 'Mobile', 'PC', 'Tablet'];
 
     return (
-        <div className="flex-1 py-10 pb-16 space-y-8 font-lato px-10">
+        <div className="flex-1 w-full space-y-5 sm:space-y-8 font-lato py-4 sm:py-6 lg:py-10 px-3 sm:px-6 lg:px-10 pb-32 lg:pb-16 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <h1 className="skeu-page-title truncate max-w-lg">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-0.5 sm:mb-1">
+                        <h1 className="skeu-page-title text-2xl sm:text-3xl font-black truncate max-w-lg">
                             {selectedCodeId ? (detailData?.name || 'Loading...') : 'Analytics Dashboard'}
                         </h1>
                         {selectedCodeId && (
                             <button
                                 onClick={() => setSelectedCodeId(null)}
-                                className="ml-4 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black capitalize  transition-colors"
+                                className="ml-2 sm:ml-4 px-2.5 sm:px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-black capitalize transition-colors"
                             >
-                                ← Back to Overview
+                                ← Back
                             </button>
                         )}
                     </div>
-                    <p className="skeu-page-subtitle">
+                    <p className="skeu-page-subtitle text-xs sm:text-sm">
                         {selectedCodeId ? 'Detailed performance for this specific QR code.' : 'Track and analyze your QR code performance.'}
                     </p>
                 </div>
@@ -170,7 +170,7 @@ export const Analytics: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleExport}
-                        className="px-6 py-2.5 skeu-btn text-[14px] font-medium capitalize flex items-center gap-2 transition-all"
+                        className="w-full sm:w-auto px-5 py-2.5 sm:py-3 skeu-btn text-xs sm:text-[14px] font-medium capitalize flex items-center justify-center gap-2 transition-all rounded-xl"
                     >
                         <Download className="w-4 h-4" /> Export Data
                     </button>

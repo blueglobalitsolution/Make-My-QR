@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella, Lock, ShieldCheck, ScanEye } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Plus, X, Folder as FolderIcon, ChevronDown, Globe, FileText, Link as LinkIcon, MessageCircle, Briefcase, Layout, Maximize, Image as ImageIcon, Upload, Trash2, CheckCheck, Star, Palette as PaletteIcon, Info, Barcode, Type, Video, Phone, MoreVertical, Smile, Paperclip, Mic, UserCircle, Camera, Clock, MapPin, Share2, Coffee, Wifi, Dumbbell, Car, Bed, Facebook, Instagram, Twitter, Linkedin, Youtube, Armchair, Accessibility, Bath, Baby, PawPrint, ParkingSquare, Bus, CarFront, Martini, Utensils, Umbrella, Lock, ShieldCheck, ScanEye, Eye, Smartphone, Edit3 } from 'lucide-react';
 import { WizardState, Folder, BusinessConfig, BusinessButton, OpeningHours } from '../../../../types';
 import { QR_TYPES_CONFIG, FRAME_STYLES, PATTERN_OPTIONS, CORNER_SQUARE_OPTIONS, CORNER_DOT_OPTIONS, DEFAULT_BUSINESS_PRESETS, FONT_OPTIONS, LINKS_DESIGN_PRESETS, COUNTRY_CODES } from '../../../../components/constants';
 import { StyledQRCode } from '../../../../components/StyledQRCode';
@@ -115,6 +115,7 @@ export const Wizard: React.FC<WizardProps> = ({
   const [previewIsPasswordVerified, setPreviewIsPasswordVerified] = React.useState(false);
   const [previewViewMode, setPreviewViewMode] = React.useState<'landing' | 'preview'>('landing');
   const [gatekeeperConfig, setGatekeeperConfig] = React.useState<GatekeeperConfigMap>(null);
+  const [mobileTab, setMobileTab] = React.useState<'editor' | 'preview'>('editor');
 
   React.useEffect(() => {
     getGatekeeperConfig().then(setGatekeeperConfig).catch(() => {});
@@ -171,19 +172,19 @@ export const Wizard: React.FC<WizardProps> = ({
       { n: 3, label: 'STYLE' },
     ];
     return (
-      <div className="hidden lg:flex items-center justify-center w-full max-w-2xl mx-auto gap-3">
+      <div className="flex items-center justify-center w-full max-w-xl mx-auto gap-1.5 sm:gap-4">
         {steps.map((s, idx) => (
           <React.Fragment key={s.n}>
-            <div className="flex items-center gap-3 shrink-0">
-              <div className={`w-9 h-9 flex items-center justify-center text-[14px] font-black rounded-full transition-all ${step >= s.n ? 'skeu-tag-active shadow-lg shadow-red-500/10 scale-110' : 'skeu-inset skeu-text-muted'}`}>
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 flex items-center justify-center text-[11px] sm:text-[13px] lg:text-[14px] font-black rounded-full transition-all ${step >= s.n ? 'skeu-tag-active shadow-md shadow-red-500/20 scale-105' : 'skeu-inset skeu-text-muted'}`}>
                 {s.n}
               </div>
-              <span className={`text-[11px] font-black  transition-colors ${step >= s.n ? 'skeu-text-primary' : 'skeu-text-muted'}`}>
+              <span className={`text-[10px] sm:text-[11px] font-black transition-colors ${step >= s.n ? 'skeu-text-primary' : 'skeu-text-muted'}`}>
                 {s.label}
               </span>
             </div>
             {idx < steps.length - 1 && (
-              <div className="w-20 h-[2px] skeu-inset flex-shrink-0" />
+              <div className="w-5 sm:w-12 lg:w-16 h-[2px] skeu-inset flex-shrink-0" />
             )}
           </React.Fragment>
         ))}
@@ -192,12 +193,13 @@ export const Wizard: React.FC<WizardProps> = ({
   };
 
   const renderStep1TypeSelection = () => (
-    <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 w-full lg:space-y-16 py-2 lg:py-0">
-      <div className="hidden lg:block text-left px-1 mb-8">
-        <h2 className="skeu-step-header">1. Select a type of QR code</h2>
+    <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 w-full space-y-4 sm:space-y-6 lg:space-y-8 py-2 lg:py-0">
+      <div className="text-left px-1 mb-2 sm:mb-4 lg:mb-8">
+        <h2 className="skeu-step-header text-xl sm:text-2xl font-black">1. Select a type of QR code</h2>
+        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">Choose the destination or content for your dynamic QR code.</p>
       </div>
 
-      <div className="flex lg:grid lg:grid-cols-4 overflow-x-auto lg:overflow-x-visible pb-10 lg:pb-0 gap-3 px-4 lg:px-2 scrollbar-hide snap-x items-stretch">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 px-1 pb-4">
         {QR_TYPES_CONFIG.map((type) => (
           <button
             key={type.id}
@@ -213,27 +215,34 @@ export const Wizard: React.FC<WizardProps> = ({
               }
               setWizard(prev => ({ ...prev, type: type.id as any, step: 2 }));
               setPhonePreviewMode('ui');
+              setMobileTab('editor');
             }}
             onMouseEnter={() => setHoveredType(type.id as any)}
             onMouseLeave={() => setHoveredType(null)}
             type="button"
-            className={`group relative p-4 lg:p-8 flex-none w-[140px] lg:w-full lg:aspect-square rounded-[1.8rem] transition-all duration-500 flex flex-col items-center justify-center text-center gap-2 lg:gap-6 snap-center ${wizard.type === type.id ? 'bg-white border-2 border-[#dc2626] shadow-xl shadow-red-500/10' : 'bg-white border-2 border-slate-50 hover:border-slate-200 shadow-sm'}`}
+            className={`group relative p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[1.8rem] transition-all duration-300 flex flex-col items-center justify-center text-center gap-2.5 sm:gap-4 ${wizard.type === type.id ? 'bg-white border-2 border-[#dc2626] shadow-xl shadow-red-500/10 ring-2 ring-red-500/20' : 'bg-white border-2 border-slate-100 hover:border-slate-300 shadow-sm hover:shadow-md'}`}
           >
-            <div className={`w-11 h-11 lg:w-16 lg:h-16 rounded-[15px] flex items-center justify-center transition-all duration-500 relative shrink-0 ${wizard.type === type.id ? 'bg-[#dc2626] text-white' : 'bg-slate-50 text-slate-400 group-hover:bg-red-50 group-hover:text-[#dc2626]'}`}>
-              <div className="flex items-center justify-center transition-transform duration-500">
-                {type.id === 'website' && <Globe className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
-                {type.id === 'pdf' && <FileText className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
-                {type.id === 'whatsapp' && <MessageCircle className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
-                {type.id === 'business' && <Briefcase className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={1.5} />}
+            <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-2xl flex items-center justify-center transition-all duration-300 relative shrink-0 ${wizard.type === type.id ? 'bg-[#dc2626] text-white shadow-md shadow-red-500/20' : 'bg-slate-50 text-slate-500 group-hover:bg-red-50 group-hover:text-[#dc2626]'}`}>
+              <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                {type.id === 'website' && <Globe className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" strokeWidth={1.75} />}
+                {type.id === 'pdf' && <FileText className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" strokeWidth={1.75} />}
+                {type.id === 'whatsapp' && <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" strokeWidth={1.75} />}
+                {type.id === 'business' && <Briefcase className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" strokeWidth={1.75} />}
               </div>
             </div>
 
             <div className="space-y-1">
-              <h3 className={`font-bold text-[13px] lg:text-lg tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'text-[#0F172A]' : 'text-slate-600'}`}>{type.name}</h3>
-              <p className="text-[8px] font-medium text-slate-400 leading-relaxed px-1 line-clamp-1 capitalize tracking-tight">
+              <h3 className={`font-bold text-xs sm:text-sm lg:text-base tracking-tight transition-colors duration-300 ${wizard.type === type.id ? 'text-[#0F172A]' : 'text-slate-700'}`}>{type.name}</h3>
+              <p className="text-[10px] sm:text-xs font-medium text-slate-400 leading-relaxed px-1 line-clamp-2 capitalize tracking-tight">
                 {type.desc}
               </p>
             </div>
+
+            {wizard.type === type.id && (
+              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-5 h-5 bg-[#dc2626] text-white rounded-full flex items-center justify-center shadow-sm">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
+            )}
           </button>
         ))}
       </div>
@@ -1814,61 +1823,82 @@ export const Wizard: React.FC<WizardProps> = ({
     <div className="flex flex-col h-full overflow-hidden">
       <FontLoader fonts={[wizard.business?.fontTitle, wizard.business?.fontText]} />
       {/* Header with Stepper */}
-      <header className="bg-white/80 backdrop-blur-md lg:bg-white border-b border-slate-100 py-4 lg:py-6 sticky top-0 z-30 shadow-sm shrink-0 px-4 md:px-12">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-center w-full">
-          {renderStepper({ step: wizard.step })}
-          <div className="lg:hidden flex items-center justify-between w-full px-4">
-            <div className="w-20 flex items-center">
-              <button
-                onClick={handleBackStep}
-                className="flex items-center gap-1 -ml-2 text-slate-400 active:scale-95 transition-all"
-              >
-                <ChevronLeft className="w-6 h-6" strokeWidth={3} />
-                <span className="text-[11px] font-black tracking-tighter">BACK</span>
-              </button>
-            </div>
-            <div className="flex-1 flex justify-center">
-              <img src="/assets/logo-full.png" alt="Logo" className="h-8 object-contain" />
-            </div>
-            <div className="w-20" /> {/* Right Spacer for centering */}
+      <header className="bg-white/90 backdrop-blur-md lg:bg-white border-b border-slate-100 py-3 sm:py-4 lg:py-6 sticky top-0 z-30 shadow-sm shrink-0 px-3 sm:px-6 md:px-12">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between w-full gap-2">
+          {/* Back button (Left) */}
+          <div className="w-20 sm:w-28 flex items-center">
+            <button
+              onClick={handleBackStep}
+              className="flex items-center gap-1 text-slate-600 hover:text-slate-900 active:scale-95 transition-all py-1.5 px-2 rounded-xl hover:bg-slate-100"
+              type="button"
+            >
+              <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+              <span className="text-[11px] font-black tracking-tighter">BACK</span>
+            </button>
+          </div>
+
+          {/* Stepper (Center) */}
+          <div className="flex-1 flex justify-center">
+            {renderStepper({ step: wizard.step })}
+          </div>
+
+          {/* Mobile Preview Toggle (Right on < lg) */}
+          <div className="w-20 sm:w-28 flex justify-end">
+            {wizard.step > 1 && (
+              <div className="lg:hidden flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setMobileTab(prev => prev === 'editor' ? 'preview' : 'editor')}
+                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 shadow-sm transition-all active:scale-95 ${mobileTab === 'preview' ? 'bg-[#dc2626] text-white shadow-red-500/20' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                >
+                  {mobileTab === 'preview' ? (
+                    <>
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Form</span>
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Preview</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Content Area - Split Pane Layout */}
-      <div className="flex-1 overflow-hidden relative px-0 lg:px-12 bg-[#f0f0f0]">
-        <div className="max-w-[1600px] mx-auto h-full px-4 lg:px-0">
-          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-2 lg:gap-16 h-full items-stretch">
+      <div className="flex-1 overflow-hidden relative px-2 sm:px-4 lg:px-12 bg-[#f0f0f0]">
+        <div className="max-w-[1600px] mx-auto h-full">
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-16 h-full items-stretch">
 
-            {/* Phone Preview Section - Priority 1 on mobile */}
-            <div className={`lg:col-span-4 order-1 lg:order-2 flex flex-col items-center py-4 lg:py-12 shrink transition-all duration-300 ${wizard.step === 1 ? 'flex-1' : 'h-auto'}`}>
-              {/* Preview Toggle Pill - Hidden on mobile, visible on desktop */}
-              <div className="w-full hidden lg:flex justify-center mb-4 shrink-0 px-4">
+            {/* Desktop Phone Preview Section (lg and up) */}
+            <div className="hidden lg:flex lg:col-span-4 order-2 flex-col items-center py-6 lg:py-12 shrink transition-all duration-300">
+              {/* Preview Toggle Pill */}
+              <div className="w-full flex justify-center mb-4 shrink-0 px-4">
                 <div className="bg-white border border-slate-100 p-1.5 rounded-[15px] flex items-center shadow-sm relative w-full max-w-[220px]">
                   <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#dc2626] rounded-[15px] shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
 
                   <button
                     onClick={() => setPhonePreviewMode('ui')}
-                    className={`flex-1 py-1.5 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400'}`}
+                    className={`flex-1 py-1.5 text-[11px] font-black transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400'}`}
                   >
                     UI Preview
                   </button>
                   <button
                     onClick={() => setPhonePreviewMode('qr')}
-                    className={`flex-1 py-1.5 text-[11px] font-black  transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400'}`}
+                    className={`flex-1 py-1.5 text-[11px] font-black transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400'}`}
                   >
                     QR Code
                   </button>
                 </div>
               </div>
 
-              {/* PREVIEW AREA (Isolated Mobile/Desktop Architecture) */}
-
-              {/* PC & Tablet View (lg and up) - Decreased Fixed Mockup */}
-              <div className="hidden lg:flex flex-1 flex-col items-center justify-center w-full relative group transition-all duration-700">
+              {/* PC View Mockup */}
+              <div className="flex flex-1 flex-col items-center justify-center w-full relative group transition-all duration-700">
                 <div className="w-[280px] h-[600px] relative skeu-phone p-[10px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.85] xl:scale-[0.9] pointer-events-auto">
-
-                  {/* Inner Screen Area */}
                   <div className={`flex-1 rounded-[2.5rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f0f0f0]'
                     }`} style={{
@@ -1877,7 +1907,7 @@ export const Wizard: React.FC<WizardProps> = ({
                         : undefined
                     }}>
 
-                    {/* PC Status Bar & Notch - Resized for Compact Mockup */}
+                    {/* PC Status Bar & Notch */}
                     <div className="absolute top-0 left-0 right-0 h-14 z-[60] pointer-events-none flex flex-col items-center">
                       <div className="skeu-phone-notch mt-2 scale-[0.75]" />
                       <div className="absolute inset-0 flex items-center justify-between px-9 pt-1">
@@ -1941,11 +1971,39 @@ export const Wizard: React.FC<WizardProps> = ({
                 </div>
               </div>
 
-              {/* Phone View (below lg) - Resized Compact Adaptive Mockup */}
-              <div className="lg:hidden flex-1 flex flex-col items-center justify-center w-full px-4 py-4 relative group transition-all duration-700 h-[500px] overflow-hidden">
-                <div className="w-full max-w-[260px] h-[500px] relative skeu-phone p-[8px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.8] pointer-events-auto">
+              {/* Live Preview Label */}
+              <div className="mt-2 text-center shrink-0">
+                <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase flex items-center justify-center gap-2">
+                  Live Preview: <span className="text-[#dc2626] font-black">{selectedTypeConfig.name}</span>
+                </p>
+              </div>
+            </div>
 
-                  {/* Inner Screen Area */}
+            {/* Mobile Dedicated Preview Mode (< lg when mobileTab === 'preview' and step > 1) */}
+            {wizard.step > 1 && mobileTab === 'preview' && (
+              <div className="lg:hidden flex-1 flex flex-col items-center justify-center py-4 px-2 overflow-y-auto">
+                {/* Preview Toggle Pill */}
+                <div className="w-full flex justify-center mb-3 shrink-0 px-4">
+                  <div className="bg-white border border-slate-100 p-1.5 rounded-[15px] flex items-center shadow-sm relative w-full max-w-[220px]">
+                    <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#dc2626] rounded-[15px] shadow-md transition-all duration-300 ${phonePreviewMode === 'ui' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
+
+                    <button
+                      onClick={() => setPhonePreviewMode('ui')}
+                      className={`flex-1 py-1.5 text-[11px] font-black transition-all duration-300 relative z-10 ${phonePreviewMode === 'ui' ? 'text-white' : 'text-slate-400'}`}
+                    >
+                      UI Preview
+                    </button>
+                    <button
+                      onClick={() => setPhonePreviewMode('qr')}
+                      className={`flex-1 py-1.5 text-[11px] font-black transition-all duration-300 relative z-10 ${phonePreviewMode === 'qr' ? 'text-white' : 'text-slate-400'}`}
+                    >
+                      QR Code
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile Scaled Phone Mockup */}
+                <div className="w-[260px] h-[500px] relative skeu-phone p-[8px] flex flex-col shadow-2xl transition-all duration-500 scale-[0.88] pointer-events-auto shrink-0 my-auto">
                   <div className={`flex-1 rounded-[2.2rem] overflow-hidden flex flex-col z-40 relative shadow-inner transition-colors duration-500 ${(hoveredType || wizard.type) === 'whatsapp' ? 'bg-[#075E54]' :
                     ['business', 'links', 'pdf'].includes((hoveredType || wizard.type) as string) ? 'bg-[#dc2626]' : 'bg-[#f0f0f0]'
                     }`} style={{
@@ -1954,7 +2012,6 @@ export const Wizard: React.FC<WizardProps> = ({
                         : undefined
                     }}>
 
-                    {/* Mobile Status Bar & Notch - Ultra Compact */}
                     <div className="absolute top-0 left-0 right-0 h-10 z-[60] pointer-events-none flex flex-col items-center">
                       <div className="skeu-phone-notch mt-1.5 scale-[0.6]" />
                       <div className="absolute inset-0 flex items-center justify-between px-7 pt-1">
@@ -2002,26 +2059,30 @@ export const Wizard: React.FC<WizardProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Live Preview Label - Hidden on mobile, visible on desktop */}
-              <div className="mt-2 text-center shrink-0 hidden lg:block">
-                <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase flex items-center justify-center gap-2">
-                  Live Preview: <span className="text-[#dc2626] font-black">{selectedTypeConfig.name}</span>
-                </p>
+                <div className="mt-2 mb-20 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setMobileTab('editor')}
+                    className="px-5 py-2.5 bg-slate-900 text-white rounded-full text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95 transition-all"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    Back to Form
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Content/Selection Section - Priority 2 on mobile */}
-            <div className={`lg:col-span-8 order-2 lg:order-1 transition-all duration-300 ${wizard.step === 1 ? 'h-auto shrink-0 z-50 mb-6 pb-32 lg:mb-0 lg:pb-0 lg:py-12' : 'flex-1 overflow-y-auto scrollbar-hide py-4 lg:py-12 pb-48'}`}>
+            {/* Content/Selection Section (Visible on lg, or on mobile when not in preview-only mode) */}
+            <div className={`lg:col-span-8 order-1 transition-all duration-300 ${wizard.step > 1 && mobileTab === 'preview' ? 'hidden lg:block' : 'flex-1 overflow-y-auto scrollbar-hide py-3 sm:py-6 lg:py-12 pb-36 lg:pb-12'}`}>
               {wizard.step === 1 ? (
                 renderStep1TypeSelection()
               ) : wizard.step === 2 ? (
-                <div className="space-y-12 pb-32">
+                <div className="space-y-8 sm:space-y-12">
                   {renderStep2Content()}
                 </div>
               ) : (
-                <div className="space-y-12 pb-32">
+                <div className="space-y-8 sm:space-y-12">
                   {renderStep3Style()}
                 </div>
               )}
@@ -2029,11 +2090,23 @@ export const Wizard: React.FC<WizardProps> = ({
 
           </div>
         </div>
+
+        {/* Floating Quick Preview Pill for Mobile in Step 2 & 3 */}
+        {wizard.step > 1 && mobileTab === 'editor' && (
+          <button
+            type="button"
+            onClick={() => setMobileTab('preview')}
+            className="lg:hidden fixed bottom-20 right-4 z-40 bg-slate-900/95 backdrop-blur-md text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 text-xs font-bold active:scale-95 transition-all border border-white/20"
+          >
+            <Smartphone className="w-4 h-4 text-red-400 animate-pulse" />
+            <span>Live Preview</span>
+          </button>
+        )}
       </div>
 
-      {/* Footer Navigation - Refactored to be part of flow */}
-      <footer className={`${wizard.step === 1 ? 'hidden lg:block' : 'block'} skeu-toolbar border-t border-slate-100 py-6 z-[60] shrink-0 bg-white px-4 md:px-12 mt-auto`}>
-        <div className="max-w-[1600px] mx-auto flex justify-between items-center w-full">
+      {/* Footer Navigation */}
+      <footer className={`${wizard.step === 1 ? 'hidden lg:block' : 'block'} skeu-toolbar border-t border-slate-100 py-3 sm:py-4 pb-5 sm:pb-4 lg:py-6 z-[60] shrink-0 bg-white px-4 md:px-12 mt-auto shadow-[0_-10px_25px_rgba(0,0,0,0.04)]`}>
+        <div className="max-w-[1600px] mx-auto flex justify-between items-center w-full gap-4">
           <button
             onClick={handleBackStep}
             disabled={wizard.step === 1}
@@ -2047,7 +2120,7 @@ export const Wizard: React.FC<WizardProps> = ({
             onClick={handleNextStep}
             disabled={isNextStepDisabled() || isProcessing}
             type="button"
-            className={`${wizard.step === 1 ? 'hidden lg:flex' : 'flex'} w-full lg:w-48 py-4 lg:py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-[15px] lg:rounded-[15px] active:scale-95 transition-all shadow-lg ml-0 disabled:opacity-30 disabled:grayscale`}
+            className="w-full lg:w-48 py-3.5 skeu-btn text-[12px] lg:text-[11px] font-black lg:font-medium capitalize flex items-center justify-center gap-2 rounded-[15px] active:scale-95 transition-all shadow-lg ml-auto disabled:opacity-30 disabled:grayscale"
           >
             {isProcessing ? (
               <>
@@ -2062,7 +2135,7 @@ export const Wizard: React.FC<WizardProps> = ({
             )}
           </button>
         </div>
-      </footer >
-    </div >
+      </footer>
+    </div>
   );
 };

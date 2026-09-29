@@ -106,16 +106,24 @@ WSGI_APPLICATION = "QRmaker.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DATABASE_NAME", "qrmaker"),
-        "USER": os.getenv("DATABASE_USER", "qrmaker"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD", ""),
-        "HOST": os.getenv("DATABASE_HOST", "localhost"),
-        "PORT": os.getenv("DATABASE_PORT", "3306"),
+if os.getenv("DATABASE_ENGINE", "mysql").lower() == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("DATABASE_NAME", "qrmaker"),
+            "USER": os.getenv("DATABASE_USER", "qrmaker"),
+            "PASSWORD": os.getenv("DATABASE_PASSWORD", ""),
+            "HOST": os.getenv("DATABASE_HOST", "localhost"),
+            "PORT": os.getenv("DATABASE_PORT", "3306"),
+        }
+    }
 
 
 # Password validation
@@ -153,26 +161,39 @@ REST_FRAMEWORK = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "https://app.makemyqrcode.com",
-    "https://makemyqrcode.com",
-    "https://www.makemyqrcode.com",
-    "https://stage.makemyqrcode.com",
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://0.0.0.0",
-    "http://192.168.1.208",  # Machine IP
-]
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ALLOWED_ORIGINS = [
+        "https://app.makemyqrcode.com",
+        "https://makemyqrcode.com",
+        "https://www.makemyqrcode.com",
+        "https://stage.makemyqrcode.com",
+        "http://localhost",
+        "http://127.0.0.1",
+        "http://0.0.0.0",
+        "http://localhost:3010",  # Vite dev server
+        "http://192.168.1.208",  # Machine IP
+    ]
+
 CSRF_TRUSTED_ORIGINS = [
     FRONTEND_URL,
     BACKEND_URL,
     "http://localhost",
     "http://127.0.0.1",
     "http://0.0.0.0",
+    "http://localhost:3010",  # Vite dev server
     "http://192.168.1.208",  # Machine IP
 ]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        "http://192.168.1.103:3010",
+        "http://192.168.1.103:8000",
+        "http://192.168.1.103:8010",
+    ])
 
 SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() == "true"
 SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "True").lower() == "true"
@@ -229,43 +250,10 @@ RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 # Google reCAPTCHA v3
 RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY", "")
 
-# MinIO / S3 Storage Settings
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "minio:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "")
-MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "qrmaker-files")
-MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
-MINIO_REGION = os.getenv("MINIO_REGION", "us-east-1")
-
-AWS_S3_ENDPOINT_URL = (
-    f"http://{MINIO_ENDPOINT}"  # Internal Docker communication is always HTTP
-)
-AWS_S3_REGION_NAME = MINIO_REGION
-AWS_ACCESS_KEY_ID = MINIO_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
-AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
-AWS_S3_SIGNATURE_VERSION = "s3v4"
-AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = True  # Enabled for private MinIO buckets
-AWS_S3_AUTO_CREATE_BUCKET = True  # Ensure bucket exists
-
-DOMAIN = os.getenv("DOMAIN", "localhost")
-# AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", f"{DOMAIN}:9000/{MINIO_BUCKET_NAME}")
-MINIO_PUBLIC_URL = os.getenv("MINIO_PUBLIC_URL", "qrstorage.makemyqrcode.com/file")
-AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN", "qrstorage.makemyqrcode.com")
-AWS_S3_URL_PROTOCOL = "https" if MINIO_SECURE else "http"
-
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-
-# Construct MEDIA_URL for public access via browser
-# MEDIA_URL = f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/"
-MEDIA_URL = os.getenv("MEDIA_URL", f"{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/")
-
-
-# Custom URL function for MinIO
-def custom_get_file_url(self, name):
-    protocol = "https" if MINIO_SECURE else "http"
-    return f"{protocol}://qrstorage.makemyqrcode.com/file/{name}"
+# File storage (local disk)
+# Files are stored on the local filesystem under MEDIA_ROOT (/media/).
+# Production should serve /media/ via nginx (or switch to a CDN/S3 backend).
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 
 # Logging Configuration
@@ -289,8 +277,3 @@ LOGGING = {
         },
     },
 }
-
-# Monkey patch the storage
-from storages.backends.s3boto3 import S3Boto3Storage
-
-S3Boto3Storage.url = custom_get_file_url
