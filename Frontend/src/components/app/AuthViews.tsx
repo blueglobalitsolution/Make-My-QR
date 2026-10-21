@@ -362,9 +362,24 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             </p>
 
             <p className="text-center text-[11px] sm:text-xs text-slate-400 pt-2 sm:pt-4 leading-relaxed">
-              By creating an account, you consent that you have read and agree to our<br />
-              <button type="button" className="font-bold text-[#dc2626] hover:underline">Terms & Conditions</button> and the{' '}
-              <button type="button" className="font-bold text-[#dc2626] hover:underline">Privacy Policy.</button>
+              By creating an account, you agree to our<br />
+              <a
+                href="https://makemyqrcode.com/privacy-policy-qr-code-tool.html#terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-[#dc2626] hover:underline"
+              >
+                Terms &amp; Conditions
+              </a>{' '}
+              and the{' '}
+              <a
+                href="https://makemyqrcode.com/privacy-policy-qr-code-tool.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-[#dc2626] hover:underline"
+              >
+                Privacy Policy
+              </a>.
             </p>
           </form>
         </div>
