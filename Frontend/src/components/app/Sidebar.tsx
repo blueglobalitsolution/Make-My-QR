@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText, BarChart3, X } from 'lucide-react';
+import { Plus, Grid3X3, UserCircle, CreditCard, LogOut, Barcode, FileText, BarChart3, X, Upload } from 'lucide-react';
 import { User } from '../../../types';
 
 interface SidebarProps {
@@ -127,6 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {[
               { id: 'my_codes', name: 'My QR Codes', icon: Grid3X3 },
+              { id: 'bulk_upload', name: 'Bulk Upload', icon: Upload },
               { id: 'analytics', name: 'Analytics', icon: BarChart3 },
               { id: 'account', name: 'My Account', icon: UserCircle },
               { id: 'billing', name: 'Billing', icon: CreditCard },

@@ -16,6 +16,7 @@ import { Sidebar } from './src/components/app/Sidebar';
 import { BottomNav } from './src/components/app/BottomNav';
 import { AuthViews } from './src/components/app/AuthViews';
 import { MyCodes } from './src/components/app/MyCodes';
+import { BulkUpload } from './src/components/app/BulkUpload';
 import { Wizard } from './src/components/app/Wizard';
 import { Billing } from './src/components/app/Billing';
 import { Account } from './src/components/app/Account';
@@ -78,7 +79,7 @@ const App: React.FC = () => {
     }
 
     const validViews: ViewState[] = [
-      'login', 'wizard', 'my_codes', 'account', 'billing', 'payment',
+      'login', 'wizard', 'my_codes', 'bulk_upload', 'account', 'billing', 'payment',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
       'qr_viewer', 'superadmin_login', 'admin_dashboard', '404'
     ];
@@ -324,10 +325,18 @@ const App: React.FC = () => {
         const id = rawPath.replace('/view/file/', '').split('?')[0];
         // Check if id is numeric (file ID) vs alphanumeric (QR slug)
         if (/^\d+$/.test(id)) {
-          const fileData = await getFile(id);
-          if (fileData?.record.filePath) {
-            window.location.href = fileData.record.filePath;
-            return;
+          try {
+            // getFile() returns { record, blob } | null; record.filePath is the
+            // API file URL. Optional-chain both levels so a null/incomplete
+            // response cannot throw inside this async handler.
+            const fileData = await getFile(id);
+            const target = fileData?.record?.filePath;
+            if (target) {
+              window.location.href = target;
+              return;
+            }
+          } catch (err) {
+            console.error('Failed to load file for /view/file redirect', err);
           }
         }
         // If not numeric, let it render as QR viewer (file mode)
@@ -677,6 +686,16 @@ const App: React.FC = () => {
             setSignupStep={auth.setSignupStep}
             regOtp={auth.regOtp}
             setRegOtp={auth.setRegOtp}
+          />
+        )}
+
+        {view === 'bulk_upload' && (
+          <BulkUpload
+            planCanBulk={!!(auth.currentUser as any)?.subscription?.plan_details?.can_bulk_create}
+            bulkLimit={(auth.currentUser as any)?.subscription?.plan_details?.bulk_limit || 0}
+            remaining={Math.max(0, (((auth.currentUser as any)?.subscription?.plan_details?.qr_limit || 0) - history.length))}
+            onDone={() => { try { refreshData(); } catch (e) { /* noop */ } }}
+            setView={setView}
           />
         )}
 

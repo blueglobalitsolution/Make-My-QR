@@ -44,6 +44,9 @@ export interface User {
       can_password_protect: boolean;
       can_lead_capture: boolean;
       can_access_analytics: boolean;
+      can_bulk_create?: boolean;
+      bulk_limit?: number;
+      can_use_api?: boolean;
       upload_limit_mb: number;
       is_lifetime: boolean;
     };
@@ -100,6 +103,7 @@ export type ViewState =
   | 'dashboard'
   | 'analytics'
   | 'my_codes'
+  | 'bulk_upload'
   | 'my_files'
   | 'account'
   | 'billing'

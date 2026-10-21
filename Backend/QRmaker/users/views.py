@@ -11,7 +11,8 @@ import random
 from .email_utils import send_welcome_email, send_otp_email, send_signup_otp_email
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.throttling import AnonRateThrottle
-from .recaptcha import verify_recaptcha
+from .recaptcha import RecaptchaMisconfigured, verify_recaptcha
+from utils.pagination import get_page_and_size
 
 
 def get_user_subscription_data(user):
@@ -40,6 +41,12 @@ def get_user_subscription_data(user):
                     "can_lead_capture": superadmin_plan.can_lead_capture,
                     "can_set_access_limit": superadmin_plan.can_set_access_limit,
                     "can_access_analytics": superadmin_plan.can_access_analytics,
+
+                    "can_bulk_create": superadmin_plan.can_bulk_create,
+
+                    "bulk_limit": superadmin_plan.bulk_limit,
+
+                    "can_use_api": superadmin_plan.can_use_api,
                     "upload_limit_mb": superadmin_plan.upload_limit_mb,
                     "is_lifetime": superadmin_plan.is_lifetime,
                 },
@@ -66,6 +73,12 @@ def get_user_subscription_data(user):
                     "can_lead_capture": plan.can_lead_capture,
                     "can_set_access_limit": plan.can_set_access_limit,
                     "can_access_analytics": plan.can_access_analytics,
+
+                    "can_bulk_create": plan.can_bulk_create,
+
+                    "bulk_limit": plan.bulk_limit,
+
+                    "can_use_api": plan.can_use_api,
                     "upload_limit_mb": plan.upload_limit_mb,
                     "is_lifetime": plan.is_lifetime,
                 },
@@ -96,6 +109,12 @@ def get_user_subscription_data(user):
                 "can_lead_capture": plan.can_lead_capture,
                 "can_set_access_limit": plan.can_set_access_limit,
                 "can_access_analytics": plan.can_access_analytics,
+
+                "can_bulk_create": plan.can_bulk_create,
+
+                "bulk_limit": plan.bulk_limit,
+
+                "can_use_api": plan.can_use_api,
                 "upload_limit_mb": plan.upload_limit_mb,
                 "is_lifetime": plan.is_lifetime,
             },
@@ -127,6 +146,12 @@ def get_user_subscription_data(user):
                     "can_lead_capture": trial_plan.can_lead_capture,
                     "can_set_access_limit": trial_plan.can_set_access_limit,
                     "can_access_analytics": trial_plan.can_access_analytics,
+
+                    "can_bulk_create": trial_plan.can_bulk_create,
+
+                    "bulk_limit": trial_plan.bulk_limit,
+
+                    "can_use_api": trial_plan.can_use_api,
                     "upload_limit_mb": trial_plan.upload_limit_mb,
                     "is_lifetime": trial_plan.is_lifetime,
                 },
@@ -148,6 +173,9 @@ def get_user_subscription_data(user):
                 "can_lead_capture": False,
                 "can_set_access_limit": False,
                 "can_access_analytics": False,
+                "can_bulk_create": False,
+                "bulk_limit": 0,
+                "can_use_api": False,
                 "upload_limit_mb": 1,
                 "is_lifetime": False,
             },
@@ -237,7 +265,14 @@ class SendSignupOTPView(APIView):
             )
 
         recaptcha_token = request.data.get("recaptcha_token")
-        if not verify_recaptcha(recaptcha_token):
+        try:
+            captcha_ok = verify_recaptcha(recaptcha_token)
+        except RecaptchaMisconfigured:
+            return Response(
+                {"error": "CAPTCHA verification is temporarily unavailable. Please try again later."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        if not captcha_ok:
             return Response(
                 {"error": "CAPTCHA verification failed"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -438,7 +473,14 @@ class PasswordResetRequestView(APIView):
             )
 
         recaptcha_token = request.data.get("recaptcha_token")
-        if not verify_recaptcha(recaptcha_token):
+        try:
+            captcha_ok = verify_recaptcha(recaptcha_token)
+        except RecaptchaMisconfigured:
+            return Response(
+                {"error": "CAPTCHA verification is temporarily unavailable. Please try again later."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        if not captcha_ok:
             return Response(
                 {"error": "CAPTCHA verification failed"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -503,7 +545,14 @@ class AdminPasswordResetRequestView(APIView):
             )
 
         recaptcha_token = request.data.get("recaptcha_token")
-        if not verify_recaptcha(recaptcha_token):
+        try:
+            captcha_ok = verify_recaptcha(recaptcha_token)
+        except RecaptchaMisconfigured:
+            return Response(
+                {"error": "CAPTCHA verification is temporarily unavailable. Please try again later."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        if not captcha_ok:
             return Response(
                 {"error": "CAPTCHA verification failed"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -632,8 +681,7 @@ class AdminUserListView(APIView):
 
         # Get pagination parameters
         try:
-            page = int(request.query_params.get("page", 1))
-            page_size = int(request.query_params.get("page_size", 20))
+            page, page_size = get_page_and_size(request.query_params, default_size=20)
         except ValueError:
             page = 1
             page_size = 20
