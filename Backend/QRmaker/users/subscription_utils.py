@@ -77,6 +77,48 @@ def can_create_qr(user):
     return True
 
 
+def remaining_qr_slots(user):
+    """How many more QR codes this user may create (None = unlimited)."""
+    if user.is_superuser:
+        return None
+    sub = get_subscription(user)
+    if not sub or not sub.plan:
+        return 0
+    from qrcodes.models import QRCode
+
+    return max(0, sub.plan.qr_limit - QRCode.objects.filter(user=user).count())
+
+
+def can_use_bulk(user):
+    """Bulk creation is a paid-plan feature."""
+    if user.is_superuser:
+        return True
+    if not is_subscription_active(user):
+        return False
+    sub = get_subscription(user)
+    return bool(sub and sub.plan and sub.plan.can_bulk_create)
+
+
+def bulk_limit_for(user):
+    """Max codes allowed in a single bulk request."""
+    if user.is_superuser:
+        return None
+    sub = get_subscription(user)
+    if not sub or not sub.plan:
+        return 0
+    return sub.plan.bulk_limit or sub.plan.qr_limit
+
+
+def can_use_api(user):
+    """Programmatic access to /api/v1/ is a paid-plan feature."""
+    if user.is_superuser:
+        return True
+    if not is_subscription_active(user):
+        return False
+    sub = get_subscription(user)
+    return bool(sub and sub.plan and sub.plan.can_use_api)
+
+
 def can_upload_file(user, file_size_bytes):
     if user.is_superuser:
         return True

@@ -15,6 +15,15 @@ class SubscriptionPlan(models.Model):
     can_lead_capture = models.BooleanField(default=False)
     can_set_access_limit = models.BooleanField(default=False, help_text="Allow setting max unique user access limit")
     can_access_analytics = models.BooleanField(default=False)
+    can_bulk_create = models.BooleanField(
+        default=False, help_text="Allow creating many QR codes at once from a CSV or JSON payload"
+    )
+    bulk_limit = models.IntegerField(
+        default=0, help_text="Max QR codes per bulk request (0 = use the plan's qr_limit)"
+    )
+    can_use_api = models.BooleanField(
+        default=False, help_text="Allow programmatic access to the /api/v1/ endpoints with a token"
+    )
     upload_limit_mb = models.IntegerField(default=5)  # Default 5MB for free
     is_lifetime = models.BooleanField(default=False)
     is_trial = models.BooleanField(default=False)  # Dedicated flag for trial logic
@@ -79,9 +88,14 @@ class UserSubscription(models.Model):
                 plan=self.plan,
             )
 
-    def refresh_status(self):
-        """Update status based on current time, expiry date, and grace period."""
-        if self.status == "payment_pending":
+    def refresh_status(self, force=False):
+        """Update status based on current time, expiry date, and grace period.
+
+        `force=True` re-evaluates a subscription that is parked in
+        `payment_pending`, which is how failed/abandoned checkouts are put back
+        into whatever state they were in before the purchase attempt.
+        """
+        if self.status == "payment_pending" and not force:
             return
 
         from django.utils import timezone

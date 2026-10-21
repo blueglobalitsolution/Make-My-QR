@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/qrcodes/', include('qrcodes.urls')),
+    path('api/v1/', include('qrcodes.public_urls')),
     path('api/folders/', include('folders.urls')),
     path('api/files/', include('files.urls')),
     path('api/payments/', include('payments.urls')),
