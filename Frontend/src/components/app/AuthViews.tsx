@@ -105,13 +105,12 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             <div className="flex items-center gap-2">
               <img src="/assets/logo-full.png" alt="Make My QR Code Logo" className="h-8 sm:h-10 object-contain" />
             </div>
-            <button
-              type="button"
-              onClick={() => setView('login')}
+            <a
+              href="https://makemyqrcode.com/"
               className="flex items-center gap-1 text-xs sm:text-sm font-bold skeu-text-secondary hover:skeu-text-primary transition-colors"
             >
               <ChevronLeft className="w-4 h-4" /> Back to Home
-            </button>
+            </a>
           </div>
 
           <div className="text-center mb-6 sm:mb-8">
@@ -204,13 +203,12 @@ export const AuthViews: React.FC<AuthViewsProps> = ({
             <div className="flex items-center gap-2">
               <img src="/assets/logo-full.png" alt="Make My QR Code Logo" className="h-8 sm:h-10 object-contain" />
             </div>
-            <button
-              type="button"
-              onClick={() => { setView('login'); setSignupStep(1); }}
+            <a
+              href="https://makemyqrcode.com/"
               className="flex items-center gap-1 text-xs sm:text-sm font-bold skeu-text-secondary hover:skeu-text-primary transition-colors"
             >
               <ChevronLeft className="w-4 h-4" /> Back to Home
-            </button>
+            </a>
           </div>
 
           <div className="text-center mb-5 sm:mb-7">

@@ -19,13 +19,13 @@ export const NotFound: React.FC<NotFoundProps> = ({ setView }) => {
                     The requested URL was not found on this server. It might have been moved or doesn't exist anymore.
                 </p>
 
-                <button
-                    onClick={() => setView('login')}
+                <a
+                    href="https://makemyqrcode.com/"
                     className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
                 >
                     <Home className="w-5 h-5" />
                     Back to Home
-                </button>
+                </a>
             </div>
         </div>
     );
