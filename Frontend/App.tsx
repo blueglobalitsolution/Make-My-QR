@@ -639,7 +639,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && view !== 'wizard' ? 'pb-32 lg:pb-0 skeu-main-content' : 'w-full overflow-hidden'} ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
+      <main className={`flex-1 flex flex-col h-full relative overflow-y-auto ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && view !== 'wizard' ? 'pb-32 lg:pb-0 skeu-main-content' : (view === 'wizard' ? 'overflow-hidden skeu-main-content pb-24 lg:pb-0' : 'w-full overflow-hidden')} ${view !== 'login' && view !== 'forgot_password' && view !== 'register' && view !== 'business_profile' && view !== 'public_scan' && view !== 'qr_viewer' && view !== 'superadmin_login' && view !== 'admin_dashboard' && view !== '404' && (view !== 'wizard' && view !== 'payment') ? 'px-responsive' : ''}`}>
 
         {(view === 'login' || view === 'register' || view === 'forgot_password') && (
           <AuthViews
