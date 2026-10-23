@@ -23,6 +23,12 @@ pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Offline country lookup used to localise prices (DB-IP Lite / MaxMind format).
+# Refresh with: python manage.py update_geoip_db
+GEOIP_COUNTRY_DB = os.getenv(
+    "GEOIP_COUNTRY_DB", str(BASE_DIR.parent / "geoip" / "dbip-country-lite.mmdb")
+)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -159,6 +165,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "20/hour",
         "api": "120/min",
+        "plans": "60/min",
         "otp_send": "3/hour",
         "otp_reset": "5/hour",
     },

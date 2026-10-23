@@ -1,10 +1,12 @@
 import razorpay
 from django.conf import settings
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, viewsets
 from django.db import transaction
 from .models import PaymentOrder, SubscriptionPlan, UserSubscription
+from .pricing import active_currencies, client_ip, resolve_currency, BASE_CURRENCY
 from .serializers import (
     PaymentOrderSerializer,
     SubscriptionPlanSerializer,
@@ -180,6 +182,56 @@ class SubscriptionPlanViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer
     permission_classes = [permissions.AllowAny]
+    # The default anonymous throttle (20/hour) is far too tight for a pricing
+    # page that every visitor loads; give it its own readable budget.
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "plans"
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        country, currency = resolve_currency(self.request)
+        context["country"] = country
+        context["currency"] = currency
+        return context
+
+
+class PricingMetaView(APIView):
+    """Which currency this visitor should see prices in, plus the switcher options."""
+
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "plans"
+
+    def get(self, request):
+        country, currency = resolve_currency(request)
+        options = [
+            {
+                "code": row.code,
+                "name": row.name,
+                "symbol": row.symbol,
+                "rate": float(row.rate),
+                "is_base": row.code == BASE_CURRENCY,
+                "countries": row.countries or [],
+            }
+            for row in active_currencies()
+        ]
+        return Response(
+            {
+                "country": country,
+                "detected_ip": (client_ip(request) if request.query_params.get("debug") else None),
+                "currency": {
+                    "code": currency.code if currency else BASE_CURRENCY,
+                    "name": currency.name if currency else "Indian Rupee",
+                    "symbol": (currency.symbol if currency else "") or "₹",
+                    "rate": float(currency.rate) if currency else 1.0,
+                },
+                "charge_currency": BASE_CURRENCY,
+                "currencies": options,
+                "updated_at": (
+                    currency.updated_at.isoformat() if currency else None
+                ),
+            }
+        )
 
 
 class AdminUserSubscriptionListView(APIView):

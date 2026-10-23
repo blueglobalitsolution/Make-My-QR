@@ -50,3 +50,6 @@ staticfiles/
 
 # Build artifacts
 Frontend/public/assets/
+
+# GeoIP database is fetched per deployment: manage.py update_geoip_db
+Backend/geoip/*.mmdb

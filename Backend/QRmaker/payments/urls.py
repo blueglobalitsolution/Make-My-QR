@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CreateOrderView, VerifyPaymentView, RazorpayWebhookView,
     AdminSubscriptionPlanViewSet, AdminUserSubscriptionListView, AdminStatsView,
-    SubscriptionPlanViewSet
+    SubscriptionPlanViewSet, PricingMetaView
 )
 
 router = DefaultRouter()
@@ -11,6 +11,7 @@ router.register(r'admin/plans', AdminSubscriptionPlanViewSet, basename='admin-pl
 router.register(r'plans', SubscriptionPlanViewSet, basename='plans')
 
 urlpatterns = [
+    path('pricing/', PricingMetaView.as_view(), name='pricing-meta'),
     path('create-order/', CreateOrderView.as_view(), name='create-order'),
     path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('webhook/', RazorpayWebhookView.as_view(), name='razorpay-webhook'),

@@ -38,6 +38,49 @@ class SubscriptionPlan(models.Model):
         return self.name
 
 
+class CurrencyRate(models.Model):
+    """Display-only currency conversion for prices.
+
+    Razorpay settles in INR, so local prices are an approximation of the INR
+    charge, not a separate price point. ``rate`` is the number of units of this
+    currency per 1 INR.
+    """
+
+    ROUNDING_CHOICES = [
+        ("nearest_1", "Round to nearest whole number"),
+        ("nearest_99", "Round up to .99"),
+        ("nearest_5", "Round up to multiple of 5"),
+        ("nearest_10", "Round up to multiple of 10"),
+        ("exact", "Exact conversion (2 decimals)"),
+    ]
+
+    code = models.CharField(max_length=3, unique=True, help_text="ISO 4217 code, e.g. USD")
+    name = models.CharField(max_length=64)
+    symbol = models.CharField(max_length=8, default="")
+    rate = models.DecimalField(
+        max_digits=14,
+        decimal_places=6,
+        default=0,
+        help_text="Units of this currency per 1 INR (INR itself is 1)",
+    )
+    rounding = models.CharField(max_length=16, choices=ROUNDING_CHOICES, default="nearest_1")
+    countries = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="ISO 3166-1 alpha-2 country codes shown this currency",
+    )
+    is_active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["code"]
+        verbose_name = "Currency rate"
+        verbose_name_plural = "Currency rates"
+
+    def __str__(self):
+        return f"{self.code} ({self.symbol})"
+
+
 class PaymentOrder(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),

@@ -41,6 +41,17 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
     const formatPrice = (price: string | number) =>
         Number(price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+    // Display amount: local currency when the plan was localised by the API,
+    // otherwise the INR price. The charge itself is always INR.
+    const localAmount = plan?.display_price ?? (plan ? Number(plan.price) : 0);
+    const localSymbol = plan?.display_symbol || '₹';
+    const isLocalised = !!plan?.display_currency && plan.display_currency !== 'INR';
+    const formatLocal = (value: string | number) =>
+        Number(value).toLocaleString(undefined, {
+            minimumFractionDigits: Number.isInteger(Number(value)) ? 0 : 2,
+            maximumFractionDigits: 2,
+        });
+
     // Load Razorpay Script
     useEffect(() => {
         const script = document.createElement('script');
@@ -250,7 +261,7 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-lg font-black text-slate-900 tracking-tight">₹ {formatPrice(plan.price)}</p>
+                                        <p className="text-lg font-black text-slate-900 tracking-tight">{localSymbol} {formatLocal(localAmount)}</p>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase">{plan.is_lifetime ? 'Once' : (plan.duration_months === 12 ? 'Yearly' : 'Monthly')}</p>
                                     </div>
                                 </div>
@@ -259,10 +270,17 @@ export const Payment: React.FC<PaymentProps> = ({ setView, selectedPlan, current
                                 <div className="flex items-center justify-between">
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter">Total</span>
                                     <span className="text-5xl font-black text-slate-900 tracking-tighter flex items-baseline gap-1.5">
-                                        <span className="text-2xl">₹</span>
-                                        {formatPrice(plan.price)}
+                                        <span className="text-2xl">{localSymbol}</span>
+                                        {formatLocal(localAmount)}
                                     </span>
                                 </div>
+
+                                {isLocalised && (
+                                    <p className="-mt-8 text-[11px] font-semibold text-slate-400">
+                                        Charged ₹{formatPrice(plan.price)} in INR via Razorpay. The
+                                        {localSymbol} figure is an approximate conversion.
+                                    </p>
+                                )}
 
                                 {/* Features Checklist */}
                                 <div className="space-y-6">

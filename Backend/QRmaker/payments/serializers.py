@@ -4,9 +4,45 @@ from .models import PaymentOrder, SubscriptionPlan, UserSubscription
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
+    # Display-only local price. The amount actually charged is always INR.
+    display_price = serializers.SerializerMethodField()
+    display_currency = serializers.SerializerMethodField()
+    display_symbol = serializers.SerializerMethodField()
+    display_country = serializers.SerializerMethodField()
+    charge_amount = serializers.SerializerMethodField()
+    charge_currency = serializers.SerializerMethodField()
+
     class Meta:
         model = SubscriptionPlan
         fields = "__all__"
+
+    # -- localisation -----------------------------------------------------
+    def _localized(self, obj):
+        from .pricing import localize_price
+
+        currency = self.context.get("currency")
+        return localize_price(obj.price or 0, currency)
+
+    def get_display_price(self, obj):
+        amount, _, _ = self._localized(obj)
+        return float(amount)
+
+    def get_display_currency(self, obj):
+        _, code, _ = self._localized(obj)
+        return code
+
+    def get_display_symbol(self, obj):
+        _, _, symbol = self._localized(obj)
+        return symbol
+
+    def get_display_country(self, obj):
+        return self.context.get("country") or "IN"
+
+    def get_charge_amount(self, obj):
+        return float(obj.price or 0)
+
+    def get_charge_currency(self, obj):
+        return "INR"
 
     def validate_price(self, value):
         if value < 0:
