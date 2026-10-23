@@ -42,15 +42,30 @@ def _geoip_reader():
     return _geo_reader
 
 
-def client_ip(request):
+def client_ips(request):
+    """Candidate client IPs, most-trusted proxy hop first."""
     meta = getattr(request, "META", {}) or {}
+    candidates = []
     forwarded = meta.get("HTTP_X_FORWARDED_FOR")
     if forwarded:
-        # Right-most entry is the one added by our own proxy; prefer it.
         parts = [p.strip() for p in forwarded.split(",") if p.strip()]
-        if parts:
-            return parts[-1]
-    return meta.get("HTTP_X_REAL_IP") or meta.get("REMOTE_ADDR")
+        # The right-most entry is the one our own proxy appended.
+        candidates.extend(reversed(parts))
+    for header in ("HTTP_X_REAL_IP", "REMOTE_ADDR"):
+        value = meta.get(header)
+        if value:
+            candidates.append(value.strip())
+    seen, unique = set(), []
+    for ip in candidates:
+        if ip not in seen:
+            seen.add(ip)
+            unique.append(ip)
+    return unique
+
+
+def client_ip(request):
+    ips = client_ips(request)
+    return ips[0] if ips else None
 
 
 def country_from_ip(ip):
@@ -65,6 +80,15 @@ def country_from_ip(ip):
         return None
     code = ((record.get("country") or {}).get("iso_code") or "").upper()
     return code or None
+
+
+def country_from_request(request):
+    """First hop that resolves to a country wins."""
+    for ip in client_ips(request):
+        code = country_from_ip(ip)
+        if code:
+            return code
+    return None
 
 
 def resolve_country(request):
@@ -91,7 +115,7 @@ def resolve_country(request):
     code = str(raw).strip().upper()
     if len(code) != 2 or code in {"XX", "ZZ", "T1"}:
         # No edge header: fall back to a local lookup of the visitor's IP.
-        code = country_from_ip(client_ip(request)) or DEFAULT_COUNTRY
+        code = country_from_request(request) or DEFAULT_COUNTRY
     return code
 
 
