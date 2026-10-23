@@ -147,6 +147,8 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
+        # B2B clients use the standard "Authorization: Bearer <key>" form
+        "users.authentication.BearerTokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -156,6 +158,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": "20/hour",
+        "api": "120/min",
         "otp_send": "3/hour",
         "otp_reset": "5/hour",
     },

@@ -47,6 +47,8 @@ def get_user_subscription_data(user):
                     "bulk_limit": superadmin_plan.bulk_limit,
 
                     "can_use_api": superadmin_plan.can_use_api,
+                    "api_monthly_quota": superadmin_plan.api_monthly_quota,
+                    "api_rate_limit": superadmin_plan.api_rate_limit,
                     "upload_limit_mb": superadmin_plan.upload_limit_mb,
                     "is_lifetime": superadmin_plan.is_lifetime,
                 },
@@ -79,6 +81,8 @@ def get_user_subscription_data(user):
                     "bulk_limit": plan.bulk_limit,
 
                     "can_use_api": plan.can_use_api,
+                    "api_monthly_quota": plan.api_monthly_quota,
+                    "api_rate_limit": plan.api_rate_limit,
                     "upload_limit_mb": plan.upload_limit_mb,
                     "is_lifetime": plan.is_lifetime,
                 },
@@ -115,6 +119,8 @@ def get_user_subscription_data(user):
                 "bulk_limit": plan.bulk_limit,
 
                 "can_use_api": plan.can_use_api,
+                "api_monthly_quota": plan.api_monthly_quota,
+                "api_rate_limit": plan.api_rate_limit,
                 "upload_limit_mb": plan.upload_limit_mb,
                 "is_lifetime": plan.is_lifetime,
             },
@@ -152,6 +158,8 @@ def get_user_subscription_data(user):
                     "bulk_limit": trial_plan.bulk_limit,
 
                     "can_use_api": trial_plan.can_use_api,
+                    "api_monthly_quota": trial_plan.api_monthly_quota,
+                    "api_rate_limit": trial_plan.api_rate_limit,
                     "upload_limit_mb": trial_plan.upload_limit_mb,
                     "is_lifetime": trial_plan.is_lifetime,
                 },
@@ -176,6 +184,8 @@ def get_user_subscription_data(user):
                 "can_bulk_create": False,
                 "bulk_limit": 0,
                 "can_use_api": False,
+                "api_monthly_quota": 0,
+                "api_rate_limit": 0,
                 "upload_limit_mb": 1,
                 "is_lifetime": False,
             },

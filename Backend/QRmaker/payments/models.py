@@ -24,6 +24,12 @@ class SubscriptionPlan(models.Model):
     can_use_api = models.BooleanField(
         default=False, help_text="Allow programmatic access to the /api/v1/ endpoints with a token"
     )
+    api_monthly_quota = models.IntegerField(
+        default=0, help_text="API calls allowed per calendar month (0 = API not usable)"
+    )
+    api_rate_limit = models.IntegerField(
+        default=0, help_text="API requests per minute (0 = platform default)"
+    )
     upload_limit_mb = models.IntegerField(default=5)  # Default 5MB for free
     is_lifetime = models.BooleanField(default=False)
     is_trial = models.BooleanField(default=False)  # Dedicated flag for trial logic

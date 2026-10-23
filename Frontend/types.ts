@@ -104,6 +104,7 @@ export type ViewState =
   | 'analytics'
   | 'my_codes'
   | 'bulk_upload'
+  | 'api_access'
   | 'my_files'
   | 'account'
   | 'billing'

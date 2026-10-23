@@ -1,51 +1,83 @@
-# Make My QR Code — Public API v1
+# Make My QR Code — Public API v1 (B2B)
 
 Programmatic access to QR code creation, bulk import and destination editing.
 
-Base URL: `https://app.makemyqrcode.com/api/v1/`
+**Base URL:** `https://app.makemyqrcode.com/api/v1/`
+**Reference page:** `https://app.makemyqrcode.com/api/v1/docs/` (alias: `/api/docs/`)
 
-## Access
-
-The API is a **paid-plan feature**. A plan must have:
-
-| Flag | Controls |
-|---|---|
-| `can_use_api` | Access to `/api/v1/` at all |
-| `can_bulk_create` | Access to `POST /api/v1/bulk/` |
-| `bulk_limit` | Max rows per bulk request (0 = fall back to `qr_limit`) |
-| `qr_limit` | Total QR codes the account may hold |
-
-Requests from a plan without `can_use_api` return:
-
-```json
-403 {"detail": "API access requires an active plan that includes the API. Upgrade your plan to use /api/v1/."}
-```
+---
 
 ## Authentication
 
-Token authentication, the same token issued at login.
+Every request needs a token in the `Authorization` header.
+**Bearer** is the standard form; the legacy `Token` prefix is still accepted.
 
 ```http
-Authorization: Token <your-token>
+Authorization: Bearer YOUR_API_TOKEN
 ```
 
-Fetch or rotate it:
+```http
+Authorization: Token YOUR_API_TOKEN
+```
 
-- `GET  /api/v1/token/` → `{"token": "...", "header": "Authorization: Token <token>"}`
-- `POST /api/v1/token/` → rotates the token, invalidating the previous one
+```bash
+# read your token
+curl -s -H "Authorization: Bearer $TOKEN" https://app.makemyqrcode.com/api/v1/token/
 
-## Discovery
+# rotate it (invalidates the previous key immediately)
+curl -s -X POST -H "Authorization: Bearer $TOKEN" https://app.makemyqrcode.com/api/v1/token/
+```
 
-`GET /api/v1/` returns the service description, your plan limits and every endpoint. Useful as a smoke test.
+Bearer and Token are the **same credential** — only the header prefix differs.
+
+---
+
+## Plans and quotas
+
+| Plan | Price / month | API calls / month | Rate limit | QR codes | Bulk per upload |
+|---|---:|---:|---:|---:|---:|
+| Basic | ₹99 | — | — | 50 | — |
+| **Pro** | **₹299** | **5,000** | 120/min | 250 | 100 |
+| **Business** | **₹799** | **25,000** | 240/min | 1,000 | 500 |
+| **Enterprise** | **₹2,499** | **100,000** | 600/min | 20,000 | 1,000 |
+
+Cost per API call: **Pro ≈ ₹0.06**, vs QR TIGER's ≈ ₹0.45 (3,000 calls at $16).
+A plan without `can_use_api` receives `403` on every `/api/v1/` request.
+
+Every response carries the remaining allowance:
+
+```http
+X-RateLimit-Limit: 5000
+X-RateLimit-Remaining: 4987
+X-RateLimit-Rate: 120/min
+X-Quota-Period: 2026-10
+```
+
+- Per-minute limit exceeded → `429` with `Retry-After`.
+- Monthly quota exceeded → `429` until the 1st of the next month.
+- Quota is consumed only by requests that pass the rate limiter.
+
+---
 
 ## Endpoints
 
-### List QR codes
-```http
-GET /api/v1/qrcodes/
-```
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/v1/` | Plan, quota, usage and endpoint discovery |
+| GET | `/api/v1/docs/` | This reference (public) |
+| GET | `/api/v1/token/` | Read your token |
+| POST | `/api/v1/token/` | Rotate your token |
+| GET | `/api/v1/qrcodes/` | List your QR codes |
+| POST | `/api/v1/qrcodes/` | Create one QR code |
+| GET | `/api/v1/qrcodes/{id}/` | Retrieve one |
+| PATCH | `/api/v1/qrcodes/{id}/` | Change the destination after printing |
+| DELETE | `/api/v1/qrcodes/{id}/` | Delete one |
+| POST | `/api/v1/bulk/` | Create up to 5,000 codes from JSON or CSV |
 
-### Create one QR code
+---
+
+## Create a QR code
+
 ```http
 POST /api/v1/qrcodes/
 Content-Type: application/json
@@ -58,11 +90,15 @@ Content-Type: application/json
 }
 ```
 
-`category` defaults to `website`, `type` to `qr`. Optional: `is_dynamic`, `is_protected`, `is_lead_capture`, `settings`.
+`category` defaults to `website`, `type` to `qr`.
+Optional: `is_dynamic`, `is_protected`, `is_lead_capture`, `settings`.
 
 Response `201` includes `id`, `short_slug` and `short_url`.
 
-### Change the destination after printing
+---
+
+## Change the destination after printing
+
 ```http
 PATCH /api/v1/qrcodes/{id}/
 Content-Type: application/json
@@ -70,16 +106,16 @@ Content-Type: application/json
 { "value": "https://example.com/new-destination" }
 ```
 
-The printed code is unchanged; the redirect target updates immediately. This only
-applies to dynamic codes (`is_dynamic: true`) — a static code encodes its data
-directly and cannot be repointed.
+The printed code is unchanged; the redirect target updates immediately.
+This applies to **dynamic** codes (`is_dynamic: true`) — a static code stores its
+data inside the pattern and cannot be re-pointed.
 
-### Delete
-```http
-DELETE /api/v1/qrcodes/{id}/
-```
+---
 
-### Bulk create — JSON
+## Bulk create
+
+### JSON
+
 ```http
 POST /api/v1/bulk/
 Content-Type: application/json
@@ -92,7 +128,8 @@ Content-Type: application/json
 }
 ```
 
-### Bulk create — CSV
+### CSV
+
 ```http
 POST /api/v1/bulk/
 Content-Type: multipart/form-data
@@ -100,72 +137,80 @@ Content-Type: multipart/form-data
 file=@codes.csv
 ```
 
-CSV columns: `name`, `value`, and optionally `category`, `type`. A UTF-8 BOM is
-tolerated, so a file saved from Excel works as-is.
-
 ```csv
 name,value,category
 Table 1,https://example.com/1,website
 Table 2,https://example.com/2,website
 ```
 
-### Bulk behaviour
+A UTF-8 BOM is tolerated, so files saved from Excel work as-is.
 
-- **All-or-nothing.** If any row fails validation the whole batch is rolled back
-  and nothing is created, so a bad line never leaves you with a half-imported set.
-- Failures return the offending row and field:
-  ```json
-  {
-    "error": "Bulk creation failed. No codes were created.",
-    "created": 0,
-    "failed": 1,
-    "rows": [{ "row": 2, "error": { "value": ["This field may not be blank."] } }]
-  }
-  ```
+### Behaviour
+
+- **All-or-nothing.** If any row fails validation the whole batch is rolled back.
+- Failures report the offending line and field:
+
+```json
+{
+  "error": "Bulk creation failed. No codes were created.",
+  "created": 0,
+  "failed": 1,
+  "rows": [{ "row": 2, "error": { "value": ["This field may not be blank."] } }]
+}
+```
+
 - `row` is the CSV line number (header is line 1) or the array index for JSON.
 - Limits: `bulk_limit` rows per request, and the batch may not exceed the account's
-  remaining `qr_limit` slots.
-- Hard ceiling: 5,000 rows per request.
+  remaining `qr_limit` slots. Hard ceiling: 5,000 rows per request.
+
+---
 
 ## Errors
 
 | Status | Meaning |
 |---|---|
 | `401` | Missing or invalid token |
-| `403` | Plan does not include API / bulk creation, or `bulk_limit` exceeded |
-| `402` | Subscription inactive, or QR limit reached |
-| `400` | Validation failed (see `rows`) |
+| `402` | Subscription inactive, or QR code limit reached |
+| `403` | Plan excludes API / bulk creation, or `bulk_limit` exceeded |
+| `400` | Validation failed (see `rows` for bulk) |
+| `429` | Rate limit or monthly quota exceeded |
 
-## Example: full workflow
+---
+
+## Full example
 
 ```bash
 BASE=https://app.makemyqrcode.com/api/v1
-TOKEN=<your-token>
+TOKEN=YOUR_API_TOKEN
 
-# 1. check plan + limits
-curl -s -H "Authorization: Token $TOKEN" $BASE/
+# 1. plan, quota and usage
+curl -s -H "Authorization: Bearer $TOKEN" $BASE/
 
 # 2. bulk import from CSV
 curl -s -X POST "$BASE/bulk/" \
-  -H "Authorization: Token $TOKEN" \
+  -H "Authorization: Bearer $TOKEN" \
   -F "file=@codes.csv"
 
-# 3. repoint one code after printing
+# 3. re-point one code after printing
 curl -s -X PATCH "$BASE/qrcodes/42/" \
-  -H "Authorization: Token $TOKEN" \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"value":"https://example.com/seasonal-menu"}'
 ```
 
+---
+
 ## Enabling it for a plan
 
 Plans are edited through the admin dashboard (`/api/payments/admin/plans/{id}/`),
-whose serializer exposes every field. Current state:
+whose serializer exposes every field.
 
-| Plan | can_use_api | can_bulk_create | bulk_limit |
-|---|---|---|---|
-| Trial | false | false | 0 |
-| Basic | true | true | 50 |
-| Godmode | true | true | 0 (uses `qr_limit`) |
+| Plan | can_use_api | can_bulk_create | bulk_limit | api_monthly_quota | api_rate_limit |
+|---|---|---|---|---|---|
+| Trial | false | false | 0 | 0 | 0 |
+| Basic | false | false | 0 | 0 | 0 |
+| Pro | true | true | 100 | 5,000 | 120 |
+| Business | true | true | 500 | 25,000 | 240 |
+| Enterprise | true | true | 1,000 | 100,000 | 600 |
 
-New plans default to `false` / `false` / `0`, so the feature is opt-in per plan.
+New plans default to `false` / `0`, so the feature is opt-in per tier.

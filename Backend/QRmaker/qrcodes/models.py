@@ -108,3 +108,20 @@ class QRAccess(models.Model):
 
     def __str__(self):
         return f"{self.qr_code.name} - {self.device_id or self.ip_address}"
+
+
+class ApiUsage(models.Model):
+    """Monthly API call counter, used to enforce plan.api_monthly_quota."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="api_usage")
+    period = models.CharField(max_length=7, db_index=True, help_text="YYYY-MM")
+    calls = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "period")
+        verbose_name = "API Usage"
+        verbose_name_plural = "API Usage"
+
+    def __str__(self):
+        return f"{self.user.username} {self.period}: {self.calls}"

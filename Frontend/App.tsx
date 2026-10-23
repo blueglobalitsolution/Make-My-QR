@@ -17,6 +17,7 @@ import { BottomNav } from './src/components/app/BottomNav';
 import { AuthViews } from './src/components/app/AuthViews';
 import { MyCodes } from './src/components/app/MyCodes';
 import { BulkUpload } from './src/components/app/BulkUpload';
+import { ApiAccess } from './src/components/app/ApiAccess';
 import { Wizard } from './src/components/app/Wizard';
 import { Billing } from './src/components/app/Billing';
 import { Account } from './src/components/app/Account';
@@ -79,7 +80,7 @@ const App: React.FC = () => {
     }
 
     const validViews: ViewState[] = [
-      'login', 'wizard', 'my_codes', 'bulk_upload', 'account', 'billing', 'payment',
+      'login', 'wizard', 'my_codes', 'bulk_upload', 'api_access', 'account', 'billing', 'payment',
       'register', 'forgot_password', 'dashboard', 'analytics', 'public_scan',
       'qr_viewer', 'superadmin_login', 'admin_dashboard', '404'
     ];
@@ -695,6 +696,15 @@ const App: React.FC = () => {
             bulkLimit={(auth.currentUser as any)?.subscription?.plan_details?.bulk_limit || 0}
             remaining={Math.max(0, (((auth.currentUser as any)?.subscription?.plan_details?.qr_limit || 0) - history.length))}
             onDone={() => { try { refreshData(); } catch (e) { /* noop */ } }}
+            setView={setView}
+          />
+        )}
+
+        {view === 'api_access' && (
+          <ApiAccess
+            canUseApi={!!(auth.currentUser as any)?.subscription?.plan_details?.can_use_api}
+            quota={(auth.currentUser as any)?.subscription?.plan_details?.api_monthly_quota || 0}
+            planName={(auth.currentUser as any)?.subscription?.plan_details?.name}
             setView={setView}
           />
         )}

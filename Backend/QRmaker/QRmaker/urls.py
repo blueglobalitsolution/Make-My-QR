@@ -17,11 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from qrcodes.public_api import ApiDocsView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/qrcodes/', include('qrcodes.urls')),
     path('api/v1/', include('qrcodes.public_urls')),
+    # short, memorable alias for the developer docs
+    path('api/docs/', ApiDocsView.as_view(), name='api-docs-alias'),
     path('api/folders/', include('folders.urls')),
     path('api/files/', include('files.urls')),
     path('api/payments/', include('payments.urls')),
