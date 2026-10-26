@@ -1,0 +1,10 @@
+# app.makemyqrcode.com - the product application.
+#
+# The SPA shell carries <meta name="robots" content="noindex, nofollow">, so
+# routes must stay crawlable for Google to see that directive and drop them.
+# Only the JSON API is disallowed; the public API reference stays crawlable.
+
+User-agent: *
+Allow: /api/docs/
+Allow: /api/v1/docs/
+Disallow: /api/
